@@ -20,4 +20,3 @@
 | Team Ground Rule | https://github.com/muffinhead03/Start2026_1/blob/main/Team_Ground_Rule.md |
 | 최종수정일 | 2026.03.10 |
 
-[↑ 목록으로](#2026-spring-전체-프로젝트-리스트)
