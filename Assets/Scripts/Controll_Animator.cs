@@ -4,6 +4,8 @@ public class Controll_Animator : MonoBehaviour
 {
     Animator animator;
 
+    public string parameter;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -11,7 +13,7 @@ public class Controll_Animator : MonoBehaviour
 
     public void AnimSetInteger()
     {
-        int value = (animator.GetInteger(0)==0)?1:0;
-        animator.SetInteger(0, value);
+        int value = (animator.GetInteger(parameter)==0)?1:0;
+        animator.SetInteger(parameter, value);
     }
 }
