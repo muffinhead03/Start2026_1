@@ -26,6 +26,9 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
 
     void Start()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         Character = GetComponent<CharacterController>();
 
         if (CameraPivot == null)
