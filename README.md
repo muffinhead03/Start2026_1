@@ -98,3 +98,31 @@
 # 시스템 구조
 
 ![시스템 구조](images/system_architecture.png)
+
+# 레포지토리 구조
+
+```text
+📂 Start2026_1/
+├── 📂 Assets/                            # 유니티 프로젝트 에셋
+│   ├── 📂 Animation/                     # 애니메이션 클립 및 컨트롤러
+│   ├── 📂 BlenderAssetTest/              # 블렌더 에셋 연동 테스트 폴더
+│   ├── 📂 Material/                      # 3D 모델 머티리얼 및 텍스처
+│   ├── 📂 MobileDependencyResolver/      # 모바일/외부 패키지 종속성 관리
+│   ├── 📂 Prefabs/                       # 게임 내 재사용 가능한 프리팹 오브젝트
+│   ├── 📂 Resources/                     # 런타임 동적 로드용 리소스
+│   ├── 📂 Scenes/                        # 게임 씬
+│   ├── 📂 Scripts/                       # C# 스크립트
+│   ├── 📂 Settings/                      # 유니티 환경 및 렌더링 설정 (URP 등)
+│   └── 📂 TutorialInfo/                  # 유니티 튜토리얼 관련 데이터
+├── 📂 BlenderPractice/                   # 블렌더 3D 모델링 작업 및 연습 파일
+├── 📂 Packages/                          # 유니티 패키지
+├── 📂 ProjectSettings/                   # 유니티 프로젝트 설정
+├── 📂 experiments/
+│   └── 📂 ollama-negotiation/            # Ollama AI 기반 흥정 시스템 테스트 및 실험 데이터
+├── 📂 images/                            # README에 사용되는 이미지 파일
+├── Ideation.MD                            # 게임 기획 및 아이디어 정리 문서
+├── ProjectDescription.md                  # 프로젝트 상세 설명 문서
+├── README.md                              # 레포지토리 메인 소개 문서
+├── Start2026_1.slnx                       # 프로젝트 솔루션 파일
+├── Team_Ground_Rule.md                    # 팀 협업 규칙 및 그라운드 룰 문서
+└── index.html                             # 웹 호스팅용 메인 인덱스 페이지
