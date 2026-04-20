@@ -1,0 +1,17 @@
+{
+  "model": "gemma3:4b",
+  "case": "예민하고 깐깐한 손님 - 진품 여부 중시",
+  "input": {
+    "personality": "예민하고 깐깐함",
+    "situation": "진품 여부를 중요하게 생각함",
+    "item": "낡은 회중시계",
+    "original_price": 50000,
+    "player_offer": 43000
+  },
+  "output": {
+    "intent": "counter",
+    "price": 38000,
+    "dialogue": "이 시계 상태가 영 썩 좋지 않네요, 43000은 너무 비싼 것 같습니다."
+  },
+  "evaluation": "intent 단일값 정상. 성향이 dialogue에 자연스럽게 반영됨. 코드블록 감싸기 여전히 발생 → Unity Regex로 처리 예정."
+}
