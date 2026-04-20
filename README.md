@@ -1,22 +1,100 @@
-2026-1학기 캡스톤 디자인과 창업 프로젝트 <규교굥> 레포지토리.
+<div align="center">
+  
+<br/>
 
-<a id="team-5"></a>
-## Team 5 규교굥
+![게임 로고](images/game_logo.png)
 
-| 항목 | 내용 |
-|------|------|
-| 프로젝트명 | 평범한 골동품 가게 운영 시뮬레이션에서 금지된 상자를 열며 공포 게임으로 전환되는 생성형 AI NPC 기반 게임 |
-| 서비스명(브랜드) | Do Not Open This Box. |
-| 트랙 | 산학 |
-| 팀명 | 규교굥 |
-| 팀구성 | 정혜교, 윤민주, 박남규 |
-| 팀지도교수 | 윤명국 |
-| 무엇을 만들고자 하는가 | 판도라의 상자를 모티브로 한 3D 공포 게임. 주인공은 돌아가신 할머니가 운영하시던 골동품 가게를 물려받아 운영하게 된다. 플레이어는 손님에게 물건을 판매하고 가게를 청소하는 등 가게 운영 시뮬레이션을 즐길 수 있다. 하지만 가게에 있는 어떤 상자를 발견하고 나서부터 기이현상이 발생한다. |
-| 고객 (누구를 위해) | 평소 PC를 이용해 공포, 시뮬레이션 등의 게임을 즐겨하는 사람들과 영상 플랫폼을 이용해 이러한 게임들과 관련된 콘텐츠를 즐기는 사람들. |
-| Pain Point (해결할 문제) | 기존의 '8번 출구'나 '발디의 수학교실'과 같은 심리적인 공포의 재미를 유지하되, 플레이어가 NPC와 선택지로만 대화하는 것이 아닌, AI NPC인 손님과 타이핑으로 대화하며 플레이어가 실제 그 상황에 몰입하고 더 극대화된 공포를 느낄 수 있도록 하는 것이 목표이다. |
-| 사용 기술 | 유니티, 생성형 AI |
-| 기대 효과 | 플레이어는 다양한 방식으로 심리적 공포를 느낄 수 있다. 게임의 배경이나 분위기, 기이한 현상, 손님들의 기괴한 대사를 통해 점진적으로 공포를 느낄 수 있고, 그 공포가 극에 달했을 때 주인공의 숨겨진 이야기를 통해 반전을 경험할 수 있다. |
-| GitHub Repo | [https://github.com/muffinhead03/Start2026_1](https://github.com/muffinhead03/Start2026_1) |
-| Team Ground Rule | https://github.com/muffinhead03/Start2026_1/blob/main/Team_Ground_Rule.md |
-| 최종수정일 | 2026.03.10 |
+# 상점 광내기: Polished Madness
 
+### 생성형 AI NPC와 흥정하는 골동품 가게 운영 시뮬레이션 게임
+
+![Simulation](https://img.shields.io/badge/시뮬레이션-3498DB?style=for-the-badge)
+![1st Person](https://img.shields.io/badge/1인칭-3498DB?style=for-the-badge)
+![Single Player](https://img.shields.io/badge/싱글플레이어-3498DB?style=for-the-badge)
+![Horror](https://img.shields.io/badge/공포-3498DB?style=for-the-badge)
+![Management](https://img.shields.io/badge/경영-3498DB?style=for-the-badge)
+![Antique](https://img.shields.io/badge/골동품-3498DB?style=for-the-badge)
+![Anomaly](https://img.shields.io/badge/이상현상-3498DB?style=for-the-badge)
+
+<br/>
+
+2026-1학기 캡스톤 디자인과 창업 프로젝트 | **팀 규교굥 (Team 5)**
+
+<br/>
+
+</div>
+
+---
+
+# 게임 소개
+
+## 💵 상점을 운영해 빚을 갚으세요.
+
+당신은 매일 상점을 운영해 얻은 수익으로 빚을 갚아야 합니다.
+
+수익을 얻는 방법은 간단합니다.
+
+**물건을 싸게 사서 비싸게 팔기만 하면 됩니다.**
+
+그러기 위해선 다음과 같은 일을 해야 합니다.
+
+- 매일 아침 이메일을 통해 거래 제안을 확인하세요.
+- 마을을 돌아다니며 팔만한 물건들을 수집하세요.
+- 상점을 청소하세요.
+- 물건을 깨끗하게 하거나 빈티지스럽게 만들어 더 높은 가격에 팔 수 있습니다.
+- 물건을 진열하세요.
+- 손님에게 물건을 파세요.
+- AI NPC인 손님과 흥정하여 최대한 낮은 가격에 물건을 사세요.
+- 가게 안 컴퓨터로 물건을 주문하고 가게를 홍보하세요.
+
+**당신도 이제 사장님이 되어 당신만의 가게를 운영하고 확장할 수 있습니다!**
+
+<br/>
+
+## 📦 이상현상을 찾아 상자에 넣으세요.
+
+상점에는 아주 오래된 상자가 있는데 그 상자에는 비밀이 있습니다. **상자를 여는 것은 당신의 자유입니다!**
+
+<br/>
+
+---
+
+# 주요 기능
+
+- **AI NPC 실시간 흥정 시스템:** Ollama를 활용한 지능형 손님 구현.
+    - 플레이어의 대화에 따라 동적으로 변하는 물건 가격.
+- **골동품 관리 및 상호작용:** 1인칭 시점의 정교한 물건 조작.
+    - 도구를 활용한 아이템 닦기, 수리 등 상점 운영의 디테일 구현.
+- **상점 성장 및 확장:** 게임 내 수익을 통해 인벤토리 확충 및 매장 리모델링.
+- **미스터리 추적:** 특정 사건과 연관된 '특수 아이템'의 이상현상 감별하고 상자 안에 수집하는 퀘스트.
+
+<br/>
+
+---
+
+# AI 생성 콘텐츠 사용 공개
+
+- 이 게임에 사용된 일부 그래픽 에셋은 AI를 사용해 만들어졌습니다.
+- 게임 플레이 중 AI는 플레이어의 입력에 기반하여 일부 NPC의 대사를 생성합니다.
+
+<br/>
+
+---
+
+# 기술 소개
+
+| Category | Tech Stack |
+| :--- | :--- |
+| **Engine** | ![Unity](https://img.shields.io/badge/Unity_3D-100000?style=for-the-badge&logo=unity&logoColor=white) |
+| **Language** | ![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white) |
+| **AI** | ![Ollama](https://img.shields.io/badge/Ollama_Gemma3-000000?style=for-the-badge&logo=ollama&logoColor=white) |
+| **Platform** | ![Windows](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows&logoColor=white) ![MacOS](https://img.shields.io/badge/MacOS-000000?style=for-the-badge&logo=apple&logoColor=white) |
+| **Rendering** | ![URP](https://img.shields.io/badge/Unity_URP-5E5E5E?style=for-the-badge&logo=unity&logoColor=white) |
+
+<br/>
+
+---
+
+# 시스템 구조
+
+![시스템 구조](images/system_architecture.png)
