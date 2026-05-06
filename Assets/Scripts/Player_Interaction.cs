@@ -1,14 +1,15 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterController))]
 public class Player_Interaction : MonoBehaviour
 {
     InputAction interact;
 
-    IRayInteractable CurrentTarget;
-    IRayInteractable LastTarget;
+    Event_On_Ray CurrentTarget;
+    Event_On_Ray LastTarget;
 
     void Start()
     {
@@ -27,7 +28,7 @@ public class Player_Interaction : MonoBehaviour
         {
             Debug.DrawLine(ray.origin, hit.point);
 
-            var Interactable = hit.collider.GetComponent<IRayInteractable>();
+            var Interactable = hit.collider.GetComponent<Event_On_Ray>();
 
             // 상호작용 가능한 물체
             if (Interactable != null)
@@ -71,6 +72,8 @@ public class Player_Interaction : MonoBehaviour
         if(CurrentTarget != null)
         {
             CurrentTarget.OnRayClick();
+
         }
     }
+
 }
