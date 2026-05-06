@@ -26,6 +26,7 @@
 | API 비용 부담 | AI API 사용 시 비용이 사용자에게 전가될 수 있음 | 소형 LLM을 게임 내에 탑재하여 API 의존도를 낮춤 | 사용자의 비용 부담 감소 및 안정적인 힌트 제공 |
 
 ## 3. 기술/구현
+<img width="720" height="540" alt="walkie_talkie_hint_flow (1)" src="https://github.com/user-attachments/assets/3f4865a0-587c-4bd2-b3f1-ff89b4cf435c" />
 
 **사용 기술:** Unity (게임 엔진) + Ollama (로컬 LLM)
 
