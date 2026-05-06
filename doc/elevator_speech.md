@@ -84,5 +84,5 @@
 - 설문 방식: 구글 설문 폼 제출
 - 설문 결과
 
-![설문 결과1](images/interview_result1.png)
-![설문 결과2](images/interview_result2.png)
+![설문 결과1](../images/interview_result1.png)
+![설문 결과2](../images/interview_result2.png)
