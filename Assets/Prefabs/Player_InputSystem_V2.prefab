@@ -221,8 +221,8 @@ Camera:
   m_GameObject: {fileID: 6802239371208493924}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -327,6 +327,7 @@ GameObject:
   - component: {fileID: 2531691634658254648}
   - component: {fileID: 7085592565784361865}
   - component: {fileID: 8226634641620429372}
+  - component: {fileID: 6674939295336197482}
   - component: {fileID: 412710786664382884}
   m_Layer: 0
   m_Name: Player_InputSystem_V2
@@ -423,6 +424,18 @@ MonoBehaviour:
   mouseSensitivity: 0.1
   walkSpeed: 3
   friction: 0.9
+--- !u!114 &6674939295336197482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8573735766143835360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39cda86859f80cf408c2ec2d2d1bbaa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Inventory
 --- !u!114 &412710786664382884
 MonoBehaviour:
   m_ObjectHideFlags: 0
