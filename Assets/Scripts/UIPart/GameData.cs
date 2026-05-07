@@ -3,22 +3,27 @@ using UnityEngine;
 public static class GameData
 {
     public static int CurrentSceneNumber = 0;
+    public static string CurrentSceneName = "";
 
     public static int BackgroundVolume = 100;
     public static int ObjectSoundVolume = 100;
 
     private const string SavedSceneNumberKey = "SavedSceneNumber";
+    private const string SavedSceneNameKey = "SavedSceneName";
     private const string BackgroundVolumeKey = "BackgroundVolume";
     private const string ObjectSoundVolumeKey = "ObjectSoundVolume";
 
-    public static void SaveCurrentScene(int sceneNumber)
+    public static void SaveCurrentScene(int sceneNumber, string sceneName)
     {
         CurrentSceneNumber = sceneNumber;
+        CurrentSceneName = sceneName;
 
         PlayerPrefs.SetInt(SavedSceneNumberKey, CurrentSceneNumber);
+        PlayerPrefs.SetString(SavedSceneNameKey, CurrentSceneName);
         PlayerPrefs.Save();
 
         Debug.Log("Saved Scene Number: " + CurrentSceneNumber);
+        Debug.Log("Saved Scene Name: " + CurrentSceneName);
     }
 
     public static int LoadSavedSceneNumber()
@@ -30,9 +35,18 @@ public static class GameData
         return CurrentSceneNumber;
     }
 
+    public static string LoadSavedSceneName()
+    {
+        CurrentSceneName = PlayerPrefs.GetString(SavedSceneNameKey, "Tutorial");
+
+        Debug.Log("Loaded Scene Name: " + CurrentSceneName);
+
+        return CurrentSceneName;
+    }
+
     public static bool HasSavedScene()
     {
-        return PlayerPrefs.HasKey(SavedSceneNumberKey);
+        return PlayerPrefs.HasKey(SavedSceneNameKey);
     }
 
     public static void SaveVolumes()
@@ -54,6 +68,7 @@ public static class GameData
     public static void SaveAll()
     {
         PlayerPrefs.SetInt(SavedSceneNumberKey, CurrentSceneNumber);
+        PlayerPrefs.SetString(SavedSceneNameKey, CurrentSceneName);
 
         BackgroundVolume = Mathf.Clamp(BackgroundVolume, 0, 100);
         ObjectSoundVolume = Mathf.Clamp(ObjectSoundVolume, 0, 100);
@@ -67,6 +82,8 @@ public static class GameData
     public static void LoadAll()
     {
         CurrentSceneNumber = PlayerPrefs.GetInt(SavedSceneNumberKey, 1);
+        CurrentSceneName = PlayerPrefs.GetString(SavedSceneNameKey, "Tutorial");
+
         BackgroundVolume = PlayerPrefs.GetInt(BackgroundVolumeKey, 100);
         ObjectSoundVolume = PlayerPrefs.GetInt(ObjectSoundVolumeKey, 100);
     }
@@ -74,11 +91,14 @@ public static class GameData
     public static void ResetSaveData()
     {
         PlayerPrefs.DeleteKey(SavedSceneNumberKey);
+        PlayerPrefs.DeleteKey(SavedSceneNameKey);
         PlayerPrefs.DeleteKey(BackgroundVolumeKey);
         PlayerPrefs.DeleteKey(ObjectSoundVolumeKey);
         PlayerPrefs.Save();
 
         CurrentSceneNumber = 0;
+        CurrentSceneName = "";
+
         BackgroundVolume = 100;
         ObjectSoundVolume = 100;
 
