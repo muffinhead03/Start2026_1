@@ -139,7 +139,7 @@ Transform:
   m_GameObject: {fileID: 4548855321095361004}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -171,7 +171,7 @@ Transform:
   m_GameObject: {fileID: 6492009480990693706}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0, y: 1.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -221,7 +221,7 @@ Camera:
   m_GameObject: {fileID: 6802239371208493924}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -377,7 +377,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &7085592565784361865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -422,8 +422,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraPivot: {fileID: 2803602053977864669}
   mouseSensitivity: 0.1
+  bodyMesh: {fileID: 5177016150919761669}
+  crouchMeshScaleY: 0.5
   walkSpeed: 3
+  runSpeed: 4
+  crouchSpeed: 0.8
+  jumpHeight: 1.2
+  gravity: -9.81
   friction: 0.9
+  crouchHeight: 1
+  crouchCameraY: 0.6
 --- !u!114 &6674939295336197482
 MonoBehaviour:
   m_ObjectHideFlags: 0
