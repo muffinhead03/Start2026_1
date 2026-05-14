@@ -8,10 +8,15 @@ public static class GameData
     public static int BackgroundVolume = 100;
     public static int ObjectSoundVolume = 100;
 
+    public static readonly string[] LanguageType = { "Korean", "English" };
+    public static int CurrentLanguageIndex = 0;
+    public static string CurrentLanguage = "Korean";
+
     private const string SavedSceneNumberKey = "SavedSceneNumber";
     private const string SavedSceneNameKey = "SavedSceneName";
     private const string BackgroundVolumeKey = "BackgroundVolume";
     private const string ObjectSoundVolumeKey = "ObjectSoundVolume";
+    private const string CurrentLanguageIndexKey = "CurrentLanguageIndex";
 
     public static void SaveCurrentScene(int sceneNumber, string sceneName)
     {
@@ -63,6 +68,66 @@ public static class GameData
     {
         BackgroundVolume = PlayerPrefs.GetInt(BackgroundVolumeKey, 100);
         ObjectSoundVolume = PlayerPrefs.GetInt(ObjectSoundVolumeKey, 100);
+
+        BackgroundVolume = Mathf.Clamp(BackgroundVolume, 0, 100);
+        ObjectSoundVolume = Mathf.Clamp(ObjectSoundVolume, 0, 100);
+    }
+
+    public static void MoveLanguageIndex(int amount)
+    {
+        CurrentLanguageIndex += amount;
+
+        if (CurrentLanguageIndex < 0)
+        {
+            CurrentLanguageIndex = LanguageType.Length - 1;
+        }
+        else if (CurrentLanguageIndex >= LanguageType.Length)
+        {
+            CurrentLanguageIndex = 0;
+        }
+
+        CurrentLanguage = LanguageType[CurrentLanguageIndex];
+
+        PlayerPrefs.SetInt(CurrentLanguageIndexKey, CurrentLanguageIndex);
+        PlayerPrefs.Save();
+
+        Debug.Log("Current Language Index: " + CurrentLanguageIndex);
+        Debug.Log("Current Language: " + CurrentLanguage);
+    }
+
+    public static void SaveLanguage()
+    {
+        FixLanguageIndex();
+
+        PlayerPrefs.SetInt(CurrentLanguageIndexKey, CurrentLanguageIndex);
+        PlayerPrefs.Save();
+    }
+
+    public static void LoadLanguage()
+    {
+        CurrentLanguageIndex = PlayerPrefs.GetInt(CurrentLanguageIndexKey, 0);
+        FixLanguageIndex();
+    }
+
+    private static void FixLanguageIndex()
+    {
+        if (LanguageType == null || LanguageType.Length == 0)
+        {
+            CurrentLanguageIndex = 0;
+            CurrentLanguage = "";
+            return;
+        }
+
+        if (CurrentLanguageIndex < 0)
+        {
+            CurrentLanguageIndex = LanguageType.Length - 1;
+        }
+        else if (CurrentLanguageIndex >= LanguageType.Length)
+        {
+            CurrentLanguageIndex = 0;
+        }
+
+        CurrentLanguage = LanguageType[CurrentLanguageIndex];
     }
 
     public static void SaveAll()
@@ -76,6 +141,9 @@ public static class GameData
         PlayerPrefs.SetInt(BackgroundVolumeKey, BackgroundVolume);
         PlayerPrefs.SetInt(ObjectSoundVolumeKey, ObjectSoundVolume);
 
+        FixLanguageIndex();
+        PlayerPrefs.SetInt(CurrentLanguageIndexKey, CurrentLanguageIndex);
+
         PlayerPrefs.Save();
     }
 
@@ -86,6 +154,12 @@ public static class GameData
 
         BackgroundVolume = PlayerPrefs.GetInt(BackgroundVolumeKey, 100);
         ObjectSoundVolume = PlayerPrefs.GetInt(ObjectSoundVolumeKey, 100);
+
+        BackgroundVolume = Mathf.Clamp(BackgroundVolume, 0, 100);
+        ObjectSoundVolume = Mathf.Clamp(ObjectSoundVolume, 0, 100);
+
+        CurrentLanguageIndex = PlayerPrefs.GetInt(CurrentLanguageIndexKey, 0);
+        FixLanguageIndex();
     }
 
     public static void ResetSaveData()
@@ -94,6 +168,8 @@ public static class GameData
         PlayerPrefs.DeleteKey(SavedSceneNameKey);
         PlayerPrefs.DeleteKey(BackgroundVolumeKey);
         PlayerPrefs.DeleteKey(ObjectSoundVolumeKey);
+        PlayerPrefs.DeleteKey(CurrentLanguageIndexKey);
+
         PlayerPrefs.Save();
 
         CurrentSceneNumber = 0;
@@ -101,6 +177,9 @@ public static class GameData
 
         BackgroundVolume = 100;
         ObjectSoundVolume = 100;
+
+        CurrentLanguageIndex = 0;
+        CurrentLanguage = LanguageType[CurrentLanguageIndex];
 
         Debug.Log("Save data reset.");
     }
