@@ -9,6 +9,9 @@ public class StartingScene : MonoBehaviour
     [Header("Default Continue Scene")]
     [SerializeField] private int defaultSceneNumber = 1;
 
+    [Header("Setting Panel")]
+    [SerializeField] private GameObject settingPanel;
+
     public void StartGame()
     {
         Debug.Log("Start Button Clicked");
@@ -38,10 +41,14 @@ public class StartingScene : MonoBehaviour
     {
         Debug.Log("Setting Button Clicked");
 
-        // TODO:
-        // SettingPanel을 만든 뒤 여기에 연결
-        // 예:
-        // settingPanel.SetActive(true);
+        if (settingPanel != null)
+        {
+            settingPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("Setting Panel이 연결되지 않았습니다.");
+        }
     }
 
     public void ExitGame()
