@@ -9,6 +9,9 @@ public class PlayerState
     public string hintType; // "direct" or "indirect"
     public List<int> completedSteps = new List<int>();
     public List<string> foundClues = new List<string>();
+    public List<string> missedClues = new List<string>();
+    public List<string> visitedRooms = new List<string>();
+    public List<string> lastActions = new List<string>(); // 최근 상호작용 (
     public List<RepeatedInspection> repeatedInspections = new List<RepeatedInspection>();
 }
 

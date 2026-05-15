@@ -7,6 +7,7 @@ public class HintResult
     public string playerStatus;  // 상태명
     public PuzzleStep nextStep;  // 다음 안내할 단계
     public string hintType;      // direct / indirect
+    public string puzzleId;      // 현재 씬 퍼즐 ID — PromptBuilder 씬 컨텍스트 조회용
 }
 
 public static class HintEngine
@@ -25,7 +26,8 @@ public static class HintEngine
             hintLevel    = ScoreToLevel(score),
             playerStatus = DetermineStatus(state, config),
             nextStep     = GetNextStep(state, config),
-            hintType     = state.hintType
+            hintType     = state.hintType,
+            puzzleId     = config.puzzleId
         };
     }
 
