@@ -102,7 +102,7 @@
 ├── 📂 Packages/                          # 유니티 패키지
 ├── 📂 ProjectSettings/                   # 유니티 프로젝트 설정
 ├── 📂 experiments/
-│   └── 📂 ollama-negotiation/            # Ollama AI 기반 흥정 시스템 테스트 및 실험 데이터
+│   └── 📂 ollama-negotiation/            # Ollama AI 기반 시스템 테스트 및 실험 데이터
 ├── 📂 images/                            # README에 사용되는 이미지 파일
 ├── Ideation.MD                            # 게임 기획 및 아이디어 정리 문서
 ├── ProjectDescription.md                  # 프로젝트 상세 설명 문서
