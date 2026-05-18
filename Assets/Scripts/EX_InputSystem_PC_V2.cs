@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
@@ -20,16 +21,19 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
     public float walkSpeed = 1.5f;    // 걷기 속도
     public float runSpeed = 4.0f;     // 달리기 속도
     public float crouchSpeed = 0.8f;  // 웅크리기 속도
-    public float jumpHeight = 1.2f;   // 점프 높이 설정
+    public float jumpHeight = 1f;   // 점프 높이 설정
     public float gravity = -9.81f;    // 중력 값
     public float friction = 0.9f;
 
-    [Header("Crouch Settings")]
+    [Header("Crouch")]
     public float crouchHeight = 1.0f; // 웅크렸을 때의 콜라이더 높이
     public float crouchCameraY = 0.5f; // 웅크렸을 때의 카메라 위치(Y)
     private float originalHeight;
     private Vector3 originalCameraPos;
     private Vector3 originalMeshScale;
+
+    [Header("Settings")]
+    public GameObject panelSettings;    // 설정창 UI
 
     Vector3 Velocity;
     Vector2 MoveInput;
@@ -40,11 +44,13 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
     InputAction runAction;
     InputAction hideAction;
     InputAction jumpAction;
+    InputAction settingsAction;
+
+    bool isPanelOpened = false;
 
     void Start()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        LockPointer();
 
         Character = GetComponent<CharacterController>();
 
@@ -65,10 +71,15 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
         runAction = InputSystem.actions.FindAction("Run");
         hideAction = InputSystem.actions.FindAction("Hide");
         jumpAction = InputSystem.actions.FindAction("Jump");
+        settingsAction = InputSystem.actions.FindAction("Settings");
+
+        settingsAction.performed += OpenCloseSettings;
     }
 
     void Update()
     {
+        if (isPanelOpened) return;
+
         Look();
 
         Move();
@@ -164,5 +175,26 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
 
         // 매 프레임마다 중력 적용
         Velocity.y += gravity * Time.deltaTime;
+    }
+
+    void OpenCloseSettings(InputAction.CallbackContext context)
+    {
+        isPanelOpened = !isPanelOpened;
+        panelSettings.SetActive(isPanelOpened);
+
+        if (isPanelOpened) UnlockPointer();
+        else LockPointer();
+    }
+
+    public void LockPointer()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void UnlockPointer()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
     }
 }
