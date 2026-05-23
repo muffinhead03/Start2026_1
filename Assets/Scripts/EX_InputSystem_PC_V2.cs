@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
@@ -50,6 +52,8 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
 
     void Start()
     {
+        panelSettings.SetActive(false);
+        
         LockPointer();
 
         Character = GetComponent<CharacterController>();
@@ -78,6 +82,7 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
 
     void Update()
     {
+        
         if (isPanelOpened) return;
 
         Look();
@@ -87,6 +92,8 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
 
         if (lookAction != null) LookInput = lookAction.ReadValue<Vector2>();
         if (moveAction != null) MoveInput = moveAction.ReadValue<Vector2>();
+        
+        
     }
 
     void Look()
