@@ -69,6 +69,15 @@ public class OllamaClient : MonoBehaviour
         // 이스케이프 문자 복원 (\n → 줄바꿈 등)
         string result = raw.Substring(start, end - start);
         result = result.Replace("\\n", "\n").Replace("\\\"", "\"").Replace("\\\\", "\\");
+
+        // 영어 괄호 부분 제거 (모델이 한국어 뒤에 영어 번역을 붙이는 경우)
+        int bracketStart = result.IndexOf('(');
+        if (bracketStart > 0)
+            result = result.Substring(0, bracketStart).Trim();
+
+        // 따옴표 제거
+        result = result.Trim('"', '"', '"');
+
         return result.Trim();
     }
 
