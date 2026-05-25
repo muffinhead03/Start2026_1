@@ -27,7 +27,7 @@ public static class PuzzleConfigData
             {
                 puzzleId = puzzleId,
                 totalSteps = 4,
-                requiredClues = new List<string> { "clue_B", "clue_C" },
+                requiredClues = new List<string> { "clue_A", "clue_B", "clue_C" },
                 steps = new List<PuzzleStep>
                 {
                     new PuzzleStep { id = 1, goal = "와인잔을 조사한다", hintDirection = "와인잔 색깔 확인" },
