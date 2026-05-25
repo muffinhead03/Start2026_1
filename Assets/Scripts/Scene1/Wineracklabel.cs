@@ -25,13 +25,15 @@ public class WineRackLabel : MonoBehaviour
         if (infoText != null)
             infoText.text = $"{wineAlphabet}와인 = {wineColor}";
 
-        if (!collected)
+            if (!collected)
         {
             collected = true;
-            // clue_B 수집
             if (hintManager != null)
+            {
                 hintManager.currentPlayerState.foundClues.Add("clue_B");
-
+                if (!hintManager.currentPlayerState.completedSteps.Contains(2))
+                    hintManager.currentPlayerState.completedSteps.Add(2);
+            }
             Debug.Log($"[WineRackLabel] 단서 B 수집 — {wineAlphabet}와인: {wineColor}");
         }
     }
