@@ -8,14 +8,14 @@ public class HintManager : MonoBehaviour
 {
     [Header("연결 필요")]
     [SerializeField] OllamaClient        ollamaClient;
-    [SerializeField] GameObject          hintPanel;        // HintPanel 오브젝트
-    [SerializeField] TextMeshProUGUI     hintText;         // HintText
-    [SerializeField] TextMeshProUGUI     usageCountText;   // UsageText
+    [SerializeField] GameObject          hintPanel;
+    [SerializeField] TextMeshProUGUI     hintText;
+    [SerializeField] TextMeshProUGUI     usageCountText;
 
     [Header("버튼 3개")]
-    [SerializeField] Button puzzleHintButton;  // PuzzleHintButton
-    [SerializeField] Button exitButton;        // ExitButton
-    [SerializeField] Button entityButton;      // EntityButton
+    [SerializeField] Button puzzleHintButton;
+    [SerializeField] Button exitButton;
+    [SerializeField] Button entityButton;
 
     [Header("현재 퍼즐 ID (씬마다 변경)")]
     public string currentPuzzleId = "wine_glass_room";
@@ -28,37 +28,23 @@ public class HintManager : MonoBehaviour
 
     void Start()
     {
-        // 테스트용 더미 데이터
-        // TODO: 실제 게임 시스템에서 아래 값들을 채워줘야 함
-        // staySeconds  → 씬 체류 타이머
-        // failCount    → 사망 카운터
-        // foundClues   → 단서 수집 이벤트에서 Add()
-        // missedClues  → PuzzleConfig.requiredClues 미수집 항목
-        // visitedRooms → 구역 진입 트리거에서 Add()
-        // lastActions  → 상호작용마다 Add() (최대 5개 유지)
         currentPlayerState = new PlayerState
         {
-            staySeconds  = 200f,
-            hintCount    = 0,
-            failCount    = 1,
-            hintType     = "indirect",
-            completedSteps = new List<int> { 1 },
-            foundClues     = new List<string> { "clue_B" },
-            missedClues    = new List<string> { "clue_C" },
-            visitedRooms   = new List<string> { "room_a", "room_b" },
-            lastActions    = new List<string>
-                             { "inspect_wine_glass_red", "inspect_wine_rack", "inspect_wine_rack" },
-            repeatedInspections = new List<RepeatedInspection>
-            {
-                new RepeatedInspection { objectName = "wine_rack", count = 2 }
-            }
+            staySeconds         = 0f,           // 실제 타이머로 채움
+            hintCount           = 0,
+            failCount           = 0,            // TODO: 엔티티 사망 시 ++
+            hintType            = "indirect",
+            completedSteps      = new List<int>(),
+            foundClues          = new List<string>(),   // WineRackLabel, StainIntersection에서 Add()
+            missedClues         = new List<string>(),   // TODO: 씬 종료 시 미수집 단서 계산
+            visitedRooms        = new List<string>(),   // TODO: 구역 진입 트리거에서 Add()
+            lastActions         = new List<string>(),   // WineGlass, WineRack 등 조사 시 Add()
+            repeatedInspections = new List<RepeatedInspection>()  // TODO: 반복 조사 카운트
         };
 
-        // 패널 시작 시 비활성화
         hintPanel.SetActive(false);
         UpdateUsageUI();
 
-        // 버튼 이벤트 연결
         puzzleHintButton.onClick.AddListener(() => OnHintButtonClicked("puzzle"));
         exitButton.onClick.AddListener(()        => OnHintButtonClicked("exit"));
         entityButton.onClick.AddListener(()      => OnHintButtonClicked("entity"));
@@ -66,6 +52,9 @@ public class HintManager : MonoBehaviour
 
     void Update()
     {
+        // 씬 체류 시간 실시간 측정
+        currentPlayerState.staySeconds += Time.deltaTime;
+
         if (Keyboard.current.fKey.wasPressedThisFrame)
             TogglePanel();
 
@@ -81,14 +70,22 @@ public class HintManager : MonoBehaviour
         if (isOpen)
         {
             hintText.text = "치지직... 도움이 필요해?";
-            Cursor.lockState = CursorLockMode.None;  // 커서 잠금 해제
-            Cursor.visible   = true;                 // 커서 보이게
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible   = true;
         }
         else
         {
-            Cursor.lockState = CursorLockMode.Locked; // 커서 다시 잠금
+            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
         }
+    }
+
+    // 마지막 행동 기록 (최대 5개 유지)
+    public void AddLastAction(string actionName)
+    {
+        currentPlayerState.lastActions.Add(actionName);
+        if (currentPlayerState.lastActions.Count > 5)
+            currentPlayerState.lastActions.RemoveAt(0);
     }
 
     public void OnHintButtonClicked(string questionType)
