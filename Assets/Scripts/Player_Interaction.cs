@@ -6,6 +6,9 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CharacterController))]
 public class Player_Interaction : MonoBehaviour
 {
+    [Header("상호작용 최대 거리")]
+    public float dist;
+
     InputAction interact;
 
     Event_On_Ray CurrentTarget;
@@ -23,8 +26,7 @@ public class Player_Interaction : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2.0f, Screen.height / 2.0f));
         RaycastHit hit;
 
-        // 5미터 안에 물체가 있음
-        if (Physics.Raycast(ray, out hit, 5))
+        if (Physics.Raycast(ray, out hit, dist))
         {
             Debug.DrawLine(ray.origin, hit.point);
 
