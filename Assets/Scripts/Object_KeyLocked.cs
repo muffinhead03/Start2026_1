@@ -1,5 +1,6 @@
 using System.Data.Common;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Object_KeyLocked : MonoBehaviour
 {
@@ -7,6 +8,9 @@ public class Object_KeyLocked : MonoBehaviour
 
     [Header("열리는 애니메이션")]
     public Animator animator;
+
+    [Header("해제 이벤트")]
+    public UnityEvent UnlockEvent;
 
     [Header("열쇠")]
     public string keyName;
@@ -20,7 +24,8 @@ public class Object_KeyLocked : MonoBehaviour
             {
                 isLocked = false;
                 Debug.Log("열쇠로 문을 열었습니다.");
-                OpenCloseDoor();
+                UnlockEvent?.Invoke();
+                if (animator!=null) OpenCloseDoor();
             }
             else
             {
