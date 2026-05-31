@@ -90,6 +90,9 @@ public class HintManager : MonoBehaviour
 
     public void OnHintButtonClicked(string questionType)
     {
+        Debug.Log("[foundClues] " + string.Join(", ", currentPlayerState.foundClues));
+        Debug.Log("[completedSteps] " + string.Join(", ", currentPlayerState.completedSteps));
+        
         if (currentPlayerState.hintCount >= MAX_HINTS)
         {
             hintText.text = "더 이상 도움을 받을 수 없어.";
