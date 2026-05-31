@@ -64,6 +64,12 @@
 <br/>
 
 ---
+# 설치 및 실행 방법
+해당 레포지토리 첫 페이지에서 BuildFile 폴더로 들어간다. 
+다운로드를 하면 OOO 파일을 연다
+
+
+---
 
 # 기술 소개
 
@@ -99,6 +105,7 @@
 │   ├── 📂 Settings/                      # 유니티 환경 및 렌더링 설정 (URP 등)
 │   └── 📂 TutorialInfo/                  # 유니티 튜토리얼 관련 데이터
 ├── 📂 BlenderPractice/                   # 블렌더 3D 모델링 작업 및 연습 파일
+├── 📂 BuildFile/                         # 빌드할 결과 파일을 저장할 곳
 ├── 📂 Packages/                          # 유니티 패키지
 ├── 📂 ProjectSettings/                   # 유니티 프로젝트 설정
 ├── 📂 experiments/
