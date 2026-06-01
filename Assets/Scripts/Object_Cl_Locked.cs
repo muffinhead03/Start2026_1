@@ -7,7 +7,7 @@ public class Object_Cl_Locked : MonoBehaviour
     public UnityEvent Unlock;
 
     public int num;
-    private int count=0;
+    public int count=0;
 
     public void SetCount()
     {
