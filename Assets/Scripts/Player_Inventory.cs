@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class Player_Inventory : MonoBehaviour
 {
@@ -15,9 +16,9 @@ public class Player_Inventory : MonoBehaviour
     {
         foreach (string s in KeyNames)
         {
-            if (s == key)
+            if (Regex.IsMatch(s, key))
             {
-                KeyNames.Remove(key);
+                KeyNames.Remove(s);
                 return true;
             }
         }
