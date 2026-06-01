@@ -39,15 +39,15 @@ public static class OrganRoomData
             steps = new List<PuzzleStep>
             {
                 // ── Phase 1 : 오르간 수리하기 ──────────────────────────
-                new PuzzleStep { id = 1, goal = "오르간 설명서를 읽고 파이프 교체가 필요함을 파악한다",             hintDirection = "1층 거실의 오르간 설명서를 확인하세요" },
-                new PuzzleStep { id = 2, goal = "파이프 1, 2를 수집한다",                                           hintDirection = "1층 거실 계단 옆, 오르간 밑을 살펴보세요" },
-                new PuzzleStep { id = 3, goal = "방2 열쇠로 방2를 열고 방3 단서를 확인한다",                       hintDirection = "1층 거실 바닥의 열쇠로 방2를 여세요" },
-                new PuzzleStep { id = 4, goal = "오르골을 재생해 방3 키패드 번호를 알아낸다",                      hintDirection = "선반 위 오르골을 재생하면 (솔-도-미-라) 순서로 힌트가 나옵니다" },
-                new PuzzleStep { id = 5, goal = "키패드에 4025를 입력해 방3을 열고 파이프 3을 수집한다",           hintDirection = "오르골 음에 맞는 키패드 번호를 입력하세요" },
-                new PuzzleStep { id = 6, goal = "LP 단서를 확인해 어떤 LP를 넣어야 하는지 파악한다",               hintDirection = "방3 어딘가에 LP 관련 단서가 있습니다" },
+                new PuzzleStep { id = 1, goal = "오르간 설명서를 읽고 파이프 교체가 필요함을 파악한다",             hintDirection = "오르간 근처에 무언가 단서가 있을 것입니다" },
+                new PuzzleStep { id = 2, goal = "파이프 1, 2를 수집한다",                                           hintDirection = "파이프는 공간 곳곳에 숨겨져 있습니다" },
+                new PuzzleStep { id = 3, goal = "방2 열쇠로 방2를 열고 방3 단서를 확인한다",                       hintDirection = "잠긴 문을 열 수 있는 무언가를 찾아보세요" },
+                new PuzzleStep { id = 4, goal = "오르골을 재생해 방3 키패드 번호를 알아낸다",                      hintDirection = "음악 소리가 힌트를 줄 수도 있습니다" },
+                new PuzzleStep { id = 5, goal = "키패드에 4025를 입력해 방3을 열고 파이프 3을 수집한다",           hintDirection = "들었던 소리와 숫자를 연결해보세요" },
+                new PuzzleStep { id = 6, goal = "LP 단서를 확인해 어떤 LP를 넣어야 하는지 파악한다",               hintDirection = "LP 플레이어 근처에 단서가 있을 것입니다" },
                 new PuzzleStep { id = 7, goal = "초록색 7번 LP를 LP 플레이어에 넣어 파이프 4를 수집한다",          hintDirection = "올바른 LP를 플레이어에 넣어보세요" },
-                new PuzzleStep { id = 8, goal = "파이프 4개를 오르간에 교체해 수리를 완료한다",                    hintDirection = "모은 파이프를 오르간에 설치하세요" },
-                new PuzzleStep { id = 9, goal = "오르간 수리 완료 후 다음 단계를 인지한다",                        hintDirection = "오르간에서 무언가 변화가 생겼습니다" },
+                new PuzzleStep { id = 8, goal = "파이프 4개를 오르간에 교체해 수리를 완료한다",                    hintDirection = "모은 것들을 오르간에 사용해보세요" },
+                new PuzzleStep { id = 9, goal = "오르간 수리 완료 후 다음 단계를 인지한다",                        hintDirection = "무언가 달라진 것이 있습니다" },
 
                 // ── Phase 2 (구현 후 주석 해제, totalSteps = 12) ─────
                 // new PuzzleStep { id = 10, goal = "오르간 수리 후 엔티티가 등장함을 인지한다",          hintDirection = "소리에 집중하세요 — 엔티티는 눈에 보이지 않습니다" },
