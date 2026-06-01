@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 public class Object_Pipe : MonoBehaviour
 {
@@ -24,7 +25,7 @@ public class Object_Pipe : MonoBehaviour
         else if (state == 1)
         {
             // 플레이어에게 열쇠가 있는지 확인
-            if (Player_Inventory.hasKey(keyName))
+            if (Player_Inventory.hasKey(keyName + "_" + @"[0-9]"))
             {
                 mesh.material = mat;
                 gameObject.SetActive(true);
