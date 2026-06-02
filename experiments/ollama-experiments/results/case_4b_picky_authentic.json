@@ -1,17 +1,18 @@
 {
   "model": "gemma3:4b",
-  "case": "예민하고 깐깐한 손님 - 진품 여부 중시",
+  "case": "와인글라스 방 - 단서 미발견 상태, 힌트 레벨 2",
   "input": {
-    "personality": "예민하고 깐깐함",
-    "situation": "진품 여부를 중요하게 생각함",
-    "item": "낡은 회중시계",
-    "original_price": 50000,
-    "player_offer": 43000
+    "puzzleId": "wine_glass_room",
+    "hintLevel": 2,
+    "hintType": "indirect",
+    "playerStatus": "단서 미발견",
+    "staySeconds": 150,
+    "failCount": 1,
+    "hintCount": 1,
+    "questionType": "puzzle"
   },
   "output": {
-    "intent": "counter",
-    "price": 38000,
-    "dialogue": "이 시계 상태가 영 썩 좋지 않네요, 43000은 너무 비싼 것 같습니다."
+    "hint": "어둠 속에서 무언가 번지고 있어... 테이블 위를 자세히 들여다봐."
   },
-  "evaluation": "intent 단일값 정상. 성향이 dialogue에 자연스럽게 반영됨. 코드블록 감싸기 여전히 발생 → Unity Regex로 처리 예정."
+  "evaluation": "한국어 유지 정상. 1문장 준수. 씬 오브젝트(테이블) 자연스럽게 언급. 코드블록 미발생."
 }
