@@ -22,4 +22,12 @@ public class LPPlayer : MonoBehaviour
             Debug.Log("[LPPlayer] 오답 LP: " + lpId);
         }
     }
+
+    public void SolveLP()
+    {
+        if (solved) return;
+        solved = true;
+        hintManager.currentPlayerState.completedSteps.Add(7);
+        Debug.Log("[LPPlayer] 정답 LP 삽입 — 파이프 4 등장");
+    }
 }
