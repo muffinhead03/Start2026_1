@@ -18,4 +18,4 @@
 | 기대 효과 | 플레이어는 공포 분위기 속 추리·탐색의 긴장감을 즐기는 동시에, On-device LLM 기반 맞춤형 힌트로 게임 흐름을 끊지 않고 자연스럽게 진행할 수 있다. 외부 서버 없이 로컬에서 실행되어 API 비용이 없으므로 플레이어가 비용을 부담할 필요가 없으며, 또한 플레이어마다 다른 맥락 기반 힌트 경험을 제공한다. |
 | GitHub Repo | [https://github.com/muffinhead03/Start2026_1](https://github.com/muffinhead03/Start2026_1) |
 | Team Ground Rule | https://github.com/muffinhead03/Start2026_1/blob/main/Team_Ground_Rule.md |
-| 최종수정일 | 2026.05.01 |
+| 최종수정일 | 2026.06.03 |
