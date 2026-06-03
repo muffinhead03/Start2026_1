@@ -126,4 +126,5 @@
 ├── README.md                             # 레포지토리 메인 소개 문서
 ├── Self_demo.md                          # 게임 시연 가이드
 ├── Start2026_1.slnx                      # 프로젝트 솔루션 파일
+├── index.html                            # 웹 호스팅용 메인 인덱스 페이지
 └── Team_Ground_Rule.md                   # 팀 협업 규칙 및 그라운드 룰 문서
