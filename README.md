@@ -17,7 +17,9 @@
 
 <br/>
 
-2026-1학기 캡스톤 디자인과 창업 프로젝트 | **팀 규교굥 (Team 5)**
+2026-1학기 캡스톤 디자인과 창업 프로젝트 | **팀 규교굥 (Team 5)**  
+
+지도교수 : 윤명국 교수님 | 이화여자대학교 컴퓨터공학과
 
 <br/>
 
@@ -56,6 +58,13 @@
 
 ---
 
+# 데모 영상
+
+(링크)
+<br/>
+
+---
+
 # AI 생성 콘텐츠 사용 공개
 
 - 이 게임에 사용된 일부 그래픽 에셋은 AI를 사용해 만들어졌습니다.
@@ -65,8 +74,23 @@
 
 ---
 # 설치 및 실행 방법
-해당 레포지토리 첫 페이지에서 BuildFile 폴더로 들어간다. 
-다운로드를 하면 OOO 파일을 연다
+실행 환경
+
+Unity 6000.3.11f1
+OS: Windows 10 이상 / macOS 12 이상
+
+게임 실행
+
+이 레포지토리의 BuildFile/ 폴더로 이동
+운영체제에 맞는 파일 실행:
+
+- Windows: Start2026_1.exe
+- macOS: Start2026_1.app
+
+
+처음 따라해보는 분은 Self_demo.md를 참고하세요.
+
+<br/>
 
 
 ---
@@ -89,31 +113,71 @@
 
 ![시스템 구조](images/system_architecture.png)
 
+플레이어가 무전기로 힌트를 요청하면 Unity가 로컬 Ollama 서버에 HTTP 요청을 보냅니다.
+플레이어의 진행 상황(체류 시간, 발견 단서, 실패 횟수)을 분석해 1~5단계 맞춤형 힌트를 생성합니다.
+
 # 레포지토리 구조
 
 ```text
 📂 Start2026_1/
 ├── 📂 Assets/                            # 유니티 프로젝트 에셋
 │   ├── 📂 Animation/                     # 애니메이션 클립 및 컨트롤러
+│   ├── 📂 ArtSource/                     # 아트 원본 소스 파일
 │   ├── 📂 BlenderAssetTest/              # 블렌더 에셋 연동 테스트 폴더
+│   ├── 📂 FontCollector/                 # 폰트 리소스 모음
 │   ├── 📂 Material/                      # 3D 모델 머티리얼 및 텍스처
+│   ├── 📂 Meshes/                        # 3D 메시 파일
 │   ├── 📂 MobileDependencyResolver/      # 모바일/외부 패키지 종속성 관리
+│   ├── 📂 Music/                         # 배경음악 및 오디오 파일
 │   ├── 📂 Prefabs/                       # 게임 내 재사용 가능한 프리팹 오브젝트
 │   ├── 📂 Resources/                     # 런타임 동적 로드용 리소스
 │   ├── 📂 Scenes/                        # 게임 씬
 │   ├── 📂 Scripts/                       # C# 스크립트
 │   ├── 📂 Settings/                      # 유니티 환경 및 렌더링 설정 (URP 등)
-│   └── 📂 TutorialInfo/                  # 유니티 튜토리얼 관련 데이터
+│   ├── 📂 Sounds/                        # 효과음 파일
+│   ├── 📂 TextMesh Pro/                  # TextMesh Pro 폰트 및 설정
+│   ├── 📂 TimeLine/                      # 타임라인 애니메이션 데이터
+│   └── 📂 _Recovery/                     # 복구용 백업 파일
 ├── 📂 BlenderPractice/                   # 블렌더 3D 모델링 작업 및 연습 파일
-├── 📂 BuildFile/                         # 빌드할 결과 파일을 저장할 곳
+├── 📂 doc/                               # 프로젝트 관련 문서 및 발표 자료
+├── 📂 experiments/
+│   └── 📂 ollama-experiments/            # Ollama AI 힌트 시스템 실험 및 결과 데이터
+├── 📂 images/                            # README에 사용되는 이미지 파일
 ├── 📂 Packages/                          # 유니티 패키지
 ├── 📂 ProjectSettings/                   # 유니티 프로젝트 설정
-├── 📂 experiments/
-│   └── 📂 ollama-negotiation/            # Ollama AI 기반 시스템 테스트 및 실험 데이터
-├── 📂 images/                            # README에 사용되는 이미지 파일
-├── Ideation.MD                            # 게임 기획 및 아이디어 정리 문서
-├── ProjectDescription.md                  # 프로젝트 상세 설명 문서
-├── README.md                              # 레포지토리 메인 소개 문서
-├── Start2026_1.slnx                       # 프로젝트 솔루션 파일
-├── Team_Ground_Rule.md                    # 팀 협업 규칙 및 그라운드 룰 문서
-└── index.html                             # 웹 호스팅용 메인 인덱스 페이지
+├── INDUSTRY_TRACK.md                     # 경쟁 게임 분석 및 차별점 정리
+├── Ideation.MD                           # 게임 기획 및 아이디어 정리 문서
+├── ProjectDescription.md                 # 프로젝트 상세 설명 문서
+├── README.md                             # 레포지토리 메인 소개 문서
+├── Self_demo.md                          # 게임 시연 가이드
+├── Start2026_1.slnx                      # 프로젝트 솔루션 파일
+├── index.html                            # 웹 호스팅용 메인 인덱스 페이지
+└── Team_Ground_Rule.md                   # 팀 협업 규칙 및 그라운드 룰 문서
+```
+
+<br/>
+
+
+# 팀원 소개
+[![Contributors](https://contrib.rocks/image?repo=muffinhead03/Start2026_1)](https://github.com/muffinhead03/Start2026_1/graphs/contributors)
+
+| 이름 | 역할 |
+|------|------|
+| 정혜교 | PM, Unity 씬 개발, Blender 3D 에셋 제작 |
+| 윤민주 | 기획, Unity 씬 개발, 레벨 디자인 |
+| 박남규 | AI 힌트 시스템 개발, Unity 씬 개발 |
+<br/>
+
+---
+
+# AI 투명성 리포트
+
+| AI 도구 | 활용 내역 | 인간 검수 여부 |
+|---------|----------|--------------|
+| Claude | 힌트 시스템 스크립트 초안 작성 (HintManager, PromptBuilder 등) | ✅ 팀원이 직접 검토 후 수정 |
+| ChatGPT | 기획 보조, 문서 초안 작성 | ✅ 팀원이 직접 검토 후 수정 |
+| Ollama (gemma3:4b) | 게임 내 플레이어 맞춤형 힌트 실시간 생성 | ✅ 프롬프트 설계 및 결과 검증 |
+| Blender AI 기능 | 일부 3D 에셋 생성 보조 | ✅ 팀원이 직접 수정 |
+
+> AI 출력물은 모두 팀원이 직접 검토하고 수정했습니다.
+> 핵심 게임 로직, 퍼즐 설계, 레벨 디자인은 팀원이 직접 구현했습니다.
