@@ -6,8 +6,22 @@
 
 ## 🚀 시작 전 준비
 
-- 🎥 시연 영상: [(링크)]()
-- 📦 게임 빌드 파일: [(링크)]()
+- 🎥 시연 영상: [(링크)](https://www.youtube.com/watch?v=JZrWJRSucn8)
+- 📦 게임 빌드 파일 다운로드 방법:
+1. GitHub 상단의 Code → Download ZIP 클릭
+2. 압축 해제
+3. `Builds` 폴더로 이동
+4. 실행 파일을 실행
+
+또는 터미널에서 다음 명령어로 Builds 폴더만 다운로드할 수 있습니다.
+
+```bash
+svn export https://github.com/muffinhead03/Start2026_1/trunk/Builds
+
+운영체제에 맞는 파일 실행:
+
+Windows: Start2026_1.exe
+macOS: Start2026_1.app
 - 🔗 레포지토리: [github.com/muffinhead03/Start2026_1](https://github.com/muffinhead03/Start2026_1)
 
 ### 사전 설치 (AI 힌트 시스템 사용 시 필요)
