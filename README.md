@@ -85,14 +85,17 @@
 Unity 6000.3.11f1
 OS: Windows 10 이상 / macOS 12 이상
 
-게임 실행
+게임 실행 방법 및 빌드파일 위치
+
+빌드 파일은 레포지토리 최상단의 `BuildFiles/Start2026_1` 폴더에 있습니다.
+실행하려면 GitHub에서 `BuildFiles` → `Start2026_1` 순서로 들어간 뒤, 폴더 안의 실행 파일을 실행하면 됩니다.
 
 이 레포지토리의 Builds/ 폴더로 이동
 운영체제에 맞는 파일 실행:
 
 - Windows: Start2026_1.exe
 - macOS: Start2026_1.app
-
+단, Unity 빌드 특성상 `Start2026_1_Data` 폴더와 실행 파일이 같은 위치에 있어야 하므로 폴더 구조를 변경하지 않는 것을 권장합니다.
 
 처음 따라해보는 분은 Self_demo.md를 참고하세요.
 
