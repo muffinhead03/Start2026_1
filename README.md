@@ -67,8 +67,7 @@
 
 # 데모 영상
 
-(링크)
-[<br/>](https://www.youtube.com/watch?v=JZrWJRSucn8)
+https://www.youtube.com/watch?v=JZrWJRSucn8
 
 ---
 
