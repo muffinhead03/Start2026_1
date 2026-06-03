@@ -88,7 +88,7 @@ OS: Windows 10 이상 / macOS 12 이상
 
 게임 실행
 
-이 레포지토리의 BuildFile/ 폴더로 이동
+이 레포지토리의 Builds/ 폴더로 이동
 운영체제에 맞는 파일 실행:
 
 - Windows: Start2026_1.exe
