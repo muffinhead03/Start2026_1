@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class HintManager : MonoBehaviour
 {
+    [Header("Player Character")]
+    [SerializeField] EX_InputSystem_PC_V2 player;
+
     [Header("연결 필요")]
     [SerializeField] OllamaClient        ollamaClient;
     [SerializeField] GameObject          hintPanel;
@@ -72,11 +75,13 @@ public class HintManager : MonoBehaviour
             hintText.text = "치지직... 도움이 필요해?";
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible   = true;
+            player.SetMoveLock(true);
         }
         else
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
+            player.SetMoveLock(false);
         }
     }
 
