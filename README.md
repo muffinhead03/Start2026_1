@@ -84,11 +84,8 @@ OS: Windows 10 이상 / macOS 12 이상
 이 레포지토리의 BuildFile/ 폴더로 이동
 운영체제에 맞는 파일 실행:
 
-Windows: Start2026_1.exe
-macOS: Start2026_1.app
-
-
-AI 힌트 시스템은 게임 실행 시 자동으로 시작됩니다.
+- Windows: Start2026_1.exe
+- macOS: Start2026_1.app
 
 
 처음 따라해보는 분은 Self_demo.md를 참고하세요.
@@ -159,7 +156,7 @@ AI 힌트 시스템은 게임 실행 시 자동으로 시작됩니다.
 ```
 
 <br/>
----
+
 
 # 팀원 소개
 
