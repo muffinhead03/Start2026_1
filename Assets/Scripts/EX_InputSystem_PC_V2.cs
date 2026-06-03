@@ -48,7 +48,7 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
     InputAction jumpAction;
     InputAction settingsAction;
 
-    bool isPanelOpened = false;
+    bool moveLocked=false;
 
     void Start()
     {
@@ -82,8 +82,7 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
 
     void Update()
     {
-        
-        if (isPanelOpened) return;
+        if (moveLocked) return;
 
         Look();
 
@@ -184,12 +183,17 @@ public class EX_InputSystem_PC_V2 : MonoBehaviour
         Velocity.y += gravity * Time.deltaTime;
     }
 
+    public void SetMoveLock(bool locked)
+    {
+        moveLocked = locked;
+    }
+
     void OpenCloseSettings(InputAction.CallbackContext context)
     {
-        isPanelOpened = !isPanelOpened;
-        panelSettings.SetActive(isPanelOpened);
+        moveLocked = !moveLocked;
+        panelSettings.SetActive(moveLocked);
 
-        if (isPanelOpened) UnlockPointer();
+        if (moveLocked) UnlockPointer();
         else LockPointer();
     }
 
