@@ -159,7 +159,7 @@ OS: Windows 10 이상 / macOS 12 이상
 
 
 # 팀원 소개
-
+[![Contributors](https://contrib.rocks/image?repo=muffinhead03/Start2026_1)](https://github.com/muffinhead03/Start2026_1/graphs/contributors)
 
 | 이름 | 역할 |
 |------|------|
