@@ -4,6 +4,9 @@ using TMPro;
 
 public class Object_Inspecatable : MonoBehaviour
 {
+    [Header("Player Character")]
+    public EX_InputSystem_PC_V2 player;
+
     [Header("Inspect Settings")]
     public float moveSpeed = 5f;
     public float inspectDistance = 1f;
@@ -37,6 +40,7 @@ public class Object_Inspecatable : MonoBehaviour
             gameObject.SetActive(false);
             isInspecting = false;
             panel.SetActive(false);
+            player.SetMoveLock(false);
             //StartCoroutine(ReturnToOriginalPosition());
         }
     }
@@ -51,7 +55,7 @@ public class Object_Inspecatable : MonoBehaviour
         originalParent = transform.parent;
 
         // 플레이어 이동 잠금
-        //PlayerController.Instance.SetMoveLock(true);
+        player.SetMoveLock(true);
 
         // 목표 위치 (카메라 앞 1m)
         Vector3 targetPosition =
