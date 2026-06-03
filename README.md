@@ -96,6 +96,7 @@ OS: Windows 10 이상 / macOS 12 이상
 
 - Windows: Start2026_1.exe
 - macOS: Start2026_1.app
+
 단, Unity 빌드 특성상 `Start2026_1_Data` 폴더와 실행 파일이 같은 위치에 있어야 하므로 폴더 구조를 변경하지 않는 것을 권장합니다.
 
 처음 따라해보는 분은 Self_demo.md를 참고하세요.
