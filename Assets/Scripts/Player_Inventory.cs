@@ -14,7 +14,6 @@ public class Player_Inventory : MonoBehaviour
 
     public static bool hasKey(string key)
     {
-        foreach (string s in KeyNames) Debug.Log(s);
         foreach (string s in KeyNames)
         {
             if (Regex.IsMatch(s, key))

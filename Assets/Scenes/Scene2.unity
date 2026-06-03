@@ -750,6 +750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0298dd8607407184f9a57a15ac5ede88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Inspecatable
+  player: {fileID: 482636803}
   moveSpeed: 5
   inspectDistance: 1
   disc: "\uD30C\uC774\uD504 4\uAC1C\uB97C \uAD50\uCCB4\uD558\uC2DC\uC624."
@@ -1569,6 +1570,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c38c10eec6c9104aa8d6217bf2f85c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Controll_Animator
+--- !u!114 &482636803 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8226634641620429372, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 743923335}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84393eca26bf9a345aa2ef3e33a5f712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &496945101
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6763,6 +6775,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 482636803}
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: hintText
       value: 
