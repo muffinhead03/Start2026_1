@@ -68,7 +68,8 @@
 ---
 # 설치 및 실행 방법
 해당 레포지토리 첫 페이지에서 BuildFile 폴더로 들어간다. 
-다운로드를 하면 OOO 파일을 연다
+- Windows: `Start2026_1.exe` 실행
+- macOS: `Start2026_1.app` 실행
 
 
 ---
