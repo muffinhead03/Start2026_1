@@ -57,6 +57,13 @@
 <br/>
 
 ---
+# 스크린샷
+
+| 게임 플레이 | AI 힌트 UI | AI 힌트 생성 중 |
+|:-----------:|:----------:|:--------------:|
+| ![gameplay](images/game_play.png) | ![hint_ui](images/game_hint_ui.png) | ![hint_ai](images/hint_ai_announcing.png) |
+
+---
 
 # 데모 영상
 
