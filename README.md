@@ -98,7 +98,7 @@ OS: Windows 10 이상
 
 단, Unity 빌드 특성상 `Start2026_1_Data` 폴더와 실행 파일이 같은 위치에 있어야 하므로 폴더 구조를 변경하지 않는 것을 권장합니다.
 
-처음 따라해보는 분은 Self_demo.md를 참고하세요.
+처음 따라해보는 분은 [Self_demo.md](Self_demo.md)를 참고하세요.
 
 <br/>
 
@@ -143,6 +143,9 @@ OS: Windows 10 이상
 
 ```text
 📂 Start2026_1/
+├── 📂 .github/                           # GitHub 협업 설정
+│   ├── 📂 ISSUE_TEMPLATE/                # 이슈 템플릿 (버그/기능 제안)
+│   └── pull_request_template.md          # PR 템플릿
 ├── 📂 Assets/                            # 유니티 프로젝트 에셋
 │   ├── 📂 Animation/                     # 애니메이션 클립 및 컨트롤러
 │   ├── 📂 ArtSource/                     # 아트 원본 소스 파일
@@ -156,6 +159,7 @@ OS: Windows 10 이상
 │   ├── 📂 Resources/                     # 런타임 동적 로드용 리소스
 │   ├── 📂 Scenes/                        # 게임 씬
 │   ├── 📂 Scripts/                       # C# 스크립트
+│   │   └── 📂 AI_test/                   # AI 힌트 시스템 (HintManager 등)
 │   ├── 📂 Settings/                      # 유니티 환경 및 렌더링 설정 (URP 등)
 │   ├── 📂 Sounds/                        # 효과음 파일
 │   ├── 📂 TextMesh Pro/                  # TextMesh Pro 폰트 및 설정
@@ -165,9 +169,13 @@ OS: Windows 10 이상
 ├── 📂 doc/                               # 프로젝트 관련 문서 및 발표 자료
 ├── 📂 experiments/
 │   └── 📂 ollama-experiments/            # Ollama AI 힌트 시스템 실험 및 결과 데이터
+│       ├── README.md                     # 실험 개요 및 모델 비교 결과
+│       ├── 📂 prompts/                   # 버전별 시스템 프롬프트 기록
+│       └── 📂 results/                   # 씬/케이스별 응답 로그
 ├── 📂 images/                            # README에 사용되는 이미지 파일
 ├── 📂 Packages/                          # 유니티 패키지
 ├── 📂 ProjectSettings/                   # 유니티 프로젝트 설정
+├── AI_TRANSPARENCY.md                    # AI 투명성 리포트
 ├── INDUSTRY_TRACK.md                     # 경쟁 게임 분석 및 차별점 정리
 ├── Ideation.MD                           # 게임 기획 및 아이디어 정리 문서
 ├── ProjectDescription.md                 # 프로젝트 상세 설명 문서
@@ -204,4 +212,4 @@ OS: Windows 10 이상
 
 > AI 출력물은 모두 팀원이 직접 검토하고 수정했습니다.
 > 핵심 게임 로직, 퍼즐 설계, 레벨 디자인은 팀원이 직접 구현했습니다.
-> 수정·거부 사례 및 신뢰 이슈 포함 전체 내용 → AI_TRANSPARENCY.md
+> 수정·거부 사례 및 신뢰 이슈 포함 전체 내용 → [AI_TRANSPARENCY.md](AI_TRANSPARENCY.md)
