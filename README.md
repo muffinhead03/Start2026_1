@@ -110,8 +110,8 @@ https://www.youtube.com/watch?v=JZrWJRSucn8
 빌드 파일은 레포지토리 최상단 `Builds` 폴더에 있습니다.
 Start2026_1/
 └── Builds/
-├── Start2026_1.exe       ← Windows 실행 파일
-└── Start2026_1_Data/     ← 반드시 같은 폴더에 위치해야 함
+  ├── Start2026_1.exe       ← Windows 실행 파일
+  └── Start2026_1_Data/     ← 반드시 같은 폴더에 위치해야 함
 ```
 
 1. GitHub에서 `Builds` 폴더를 다운로드합니다.
