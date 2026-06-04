@@ -71,8 +71,17 @@
 
 # 주요 기능
 
-- **플레이어별 맞춤형 AI 힌트 제공:** 플레이어의 스테이지 진행 상황에 따라 Ollama를 활용한 텍스트 형식의 힌트 생성.
-- **6가지 탈출 맵과 기믹:** 총 6가지 스테이지가 있으며 각 스테이지마다 다른 기믹과 상호작용을 구현.
+## 🤖 AI 힌트 시스템
+- 플레이어의 체류 시간, 실패 횟수, 발견 단서를 실시간 분석해 hintLevel 1~5 결정
+- Ollama(gemma3:4b) 로컬 LLM이 씬 컨텍스트 기반 한국어 힌트 1~2문장 생성
+- 씬당 2회 사용 제한, 외부 서버 없이 완전 로컬 실행
+
+## 🎮 게임 시스템
+- **상자 개봉 이벤트**: 금지된 상자를 여는 순간 공포 이벤트 트리거, 이후 모든 씬에 이상현상 발생
+- **퍼즐 기믹 6종**: 각 스테이지마다 고유한 퍼즐 구조 (와인잔 얼룩 교차점, 오르간 수리 및 연주 등)
+- **아이템 획득 및 사용**: 레이캐스트 기반 상호작용으로 단서 수집, 열쇠 사용, 탈출 아이템을 상자에 배치
+- **엔티티 시스템**: 씬별 배회하는 공포 엔티티, 소리 감지 및 추격 패턴 구현
+- **탈출 구조**: 퍼즐 완료 → 탈출 아이템 획득 → 상자에 배치 → 출구 개방의 6단계 순차 진행
 <br/>
 
 ---
@@ -110,27 +119,44 @@ https://www.youtube.com/watch?v=JZrWJRSucn8
 | 운영체제 | Windows 10 이상 / macOS 12 이상 |
 | AI 런타임 | [Ollama](https://ollama.com) (gemma3:4b 모델) |
 
-## 게임 실행 (빌드 파일)
+## ▶ 빠른 시작 (빌드 파일 실행)
 
-```
-빌드 파일은 레포지토리 최상단 `Builds` 폴더에 있습니다.
-Start2026_1/
-└── Builds/
-  ├── Start2026_1.exe       ← Windows 실행 파일
-  └── Start2026_1_Data/     ← 반드시 같은 폴더에 위치해야 함
-```
-
-1. GitHub에서 `Builds` 폴더를 다운로드합니다.
-2. `Start2026_1_Data` 폴더와 실행 파일을 **같은 경로**에 유지합니다.
-3. **Ollama를 먼저 실행**한 뒤 게임을 시작합니다.
+1. GitHub 상단 `Code → Download ZIP` 또는 `Builds` 폴더만 다운로드
 ```bash
-   ollama run gemma3:4b
+svn export https://github.com/muffinhead03/Start2026_1/trunk/Builds
 ```
-4. `Start2026_1.exe`를 실행합니다.
+2. Ollama 설치 후 모델 다운로드 (최초 1회, 약 2.5GB)
+```bash
+ollama pull gemma3:4b
+```
+3. Ollama 실행
+```bash
+ollama run gemma3:4b
+```
+4. 운영체제에 맞는 실행 파일 실행
+   - Windows: `Builds/Start2026_1.exe`
+   - macOS: `Builds/Start2026_1.app`
 
-> **참고**: Ollama가 실행되지 않은 상태에서는 무전기 힌트 기능을 사용할 수 없습니다.
+> ⚠️ `Start2026_1_Data` 폴더와 실행 파일이 반드시 같은 경로에 있어야 합니다.  
+> ⚠️ Ollama가 실행되지 않은 상태에서는 무전기 힌트 기능을 사용할 수 없습니다.
 
 처음 실행하는 분은 [Self_demo.md](Self_demo.md)를 참고하세요.
+
+## 🛠 개발 환경에서 실행 (Unity Editor)
+
+```bash
+git clone https://github.com/muffinhead03/Start2026_1.git
+```
+
+1. Unity Hub → `Add` → 클론한 폴더 선택
+2. Unity **6000.3.11f1** 버전으로 열기 (버전 불일치 시 렌더링 오류 발생 가능)
+3. `Assets/Scenes/BeforeGame/StartingScene.unity` 를 열고 Play
+4. AI 힌트 시스템 사용 시 Ollama가 백그라운드에서 실행 중이어야 함
+
+```bash
+ollama pull gemma3:4b   # 최초 1회
+ollama run gemma3:4b    # 게임 실행 전 매번
+```
 
 <br/>
 
