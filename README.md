@@ -84,7 +84,7 @@ https://www.youtube.com/watch?v=JZrWJRSucn8
 실행 환경
 
 Unity 6000.3.11f1
-OS: Windows 10 이상 / macOS 12 이상
+OS: Windows 10 이상
 
 게임 실행 방법 및 빌드파일 위치
 
@@ -95,7 +95,6 @@ OS: Windows 10 이상 / macOS 12 이상
 운영체제에 맞는 파일 실행:
 
 - Windows: Start2026_1.exe
-- macOS: Start2026_1.app
 
 단, Unity 빌드 특성상 `Start2026_1_Data` 폴더와 실행 파일이 같은 위치에 있어야 하므로 폴더 구조를 변경하지 않는 것을 권장합니다.
 
@@ -126,6 +125,19 @@ OS: Windows 10 이상 / macOS 12 이상
 
 플레이어가 무전기로 힌트를 요청하면 Unity가 로컬 Ollama 서버에 HTTP 요청을 보냅니다.
 플레이어의 진행 상황(체류 시간, 발견 단서, 실패 횟수)을 분석해 1~5단계 맞춤형 힌트를 생성합니다.
+
+### 힌트 레벨 결정 로직
+
+| 지표 | 가중치 | 설명 |
+|------|--------|------|
+| 감정 점수 (체류 시간 + 힌트 횟수 + 실패 횟수) | 35% | 플레이어 답답함 추정 |
+| 정체 점수 (failCount + staySeconds) | 20% | 같은 자리에서 막힌 정도 |
+| 진행률 | 15% | 남은 퍼즐 단계 비율 |
+| 반복 조사 횟수 | 5% | 같은 오브젝트 반복 조사 |
+
+점수 합산으로 `hintLevel 1~5`를 결정하며, 레벨이 높을수록 직접적인 힌트를 제공합니다.
+
+> 모델 선정 과정 및 실험 결과 → [experiments/ollama-experiments/README.md](experiments/ollama-experiments/README.md)
 
 # 레포지토리 구조
 
@@ -192,3 +204,4 @@ OS: Windows 10 이상 / macOS 12 이상
 
 > AI 출력물은 모두 팀원이 직접 검토하고 수정했습니다.
 > 핵심 게임 로직, 퍼즐 설계, 레벨 디자인은 팀원이 직접 구현했습니다.
+> 수정·거부 사례 및 신뢰 이슈 포함 전체 내용 → AI_TRANSPARENCY.md
