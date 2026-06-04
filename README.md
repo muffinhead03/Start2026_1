@@ -23,6 +23,11 @@
 
 <br/>
 
+[![데모 영상](https://img.shields.io/badge/▶_데모_영상-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=JZrWJRSucn8)
+[![시연 가이드](https://img.shields.io/badge/🎮_시연_가이드-24292E?style=for-the-badge)](Self_demo.md)
+[![AI 투명성 리포트](https://img.shields.io/badge/🤖_AI_투명성_리포트-6A0DAD?style=for-the-badge)](AI_TRANSPARENCY.md)
+[![실험 결과](https://img.shields.io/badge/🧪_AI_실험_결과-2EA44F?style=for-the-badge)](experiments/ollama-experiments/README.md)
+
 </div>
 ---
 
