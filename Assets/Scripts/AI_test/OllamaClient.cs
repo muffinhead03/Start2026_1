@@ -38,10 +38,13 @@ public class OllamaClient : MonoBehaviour
             fallbackSent = true;
             onComplete?.Invoke(msg);
         }));
+        float startTime = Time.realtimeSinceStartup;
         yield return req.SendWebRequest();
-
-        requestFinished = true;
+        float elapsed = Time.realtimeSinceStartup - startTime;
+        Debug.Log($"[Ollama 응답 시간] {elapsed:F2}초");
         
+        requestFinished = true;
+
         if (fallbackSent) yield break;
 
         if (req.result == UnityWebRequest.Result.Success)
