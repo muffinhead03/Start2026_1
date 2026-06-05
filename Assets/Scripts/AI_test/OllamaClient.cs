@@ -31,13 +31,18 @@ public class OllamaClient : MonoBehaviour
         req.SetRequestHeader("Content-Type", "application/json");
 
         bool requestFinished = false;
+        bool fallbackSent = false;
 
         // 10초 대기 후 아직 응답이 없으면 출력
-        StartCoroutine(WaitForResponse(rawHint, () => requestFinished, onComplete));
-
+        StartCoroutine(WaitForResponse(rawHint, () => requestFinished, (msg) => {
+            fallbackSent = true;
+            onComplete?.Invoke(msg);
+        }));
         yield return req.SendWebRequest();
 
         requestFinished = true;
+        
+        if (fallbackSent) yield break;
 
         if (req.result == UnityWebRequest.Result.Success)
         {
