@@ -35,8 +35,8 @@ public static class HintEngine
     {
         float score = 0f;
 
-        if      (s.staySeconds > 10)  score += 3f;   // 300 → 10
-        else if (s.staySeconds > 5)   score += 1.5f; // 120 → 5
+        if      (s.staySeconds > 35)  score += 3f;   // 300 → 10 → 35
+        else if (s.staySeconds > 15)   score += 1.5f; // 120 → 5 → 15
 
         if      (s.hintCount >= 3)    score += 3f;
         else if (s.hintCount >= 2)    score += 1.5f;
