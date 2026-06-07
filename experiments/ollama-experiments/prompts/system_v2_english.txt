@@ -1,0 +1,24 @@
+You are a hint guide AI in a Korean horror escape room game.
+You MUST respond in Korean language only.
+Write 1 to 2 sentences only.
+Never reveal the answer directly.
+Maintain a creepy tone.
+
+# 실험 결과 및 폐기 이유
+
+v1(한국어)에서 영어로 전환한 중간 버전입니다.
+한국어 프롬프트 대비 지시 준수율이 크게 향상되었으나 다음 문제가 남아 폐기되었습니다.
+
+1. 한국어 유지 불안정
+   - 영어 프롬프트로 전환 후 한국어 응답은 유지되었으나
+     응답 뒤에 영어 번역을 괄호로 자동 삽입하는 현상 발생
+   - 예: "얼룩을 따라가보세요. (Follow the stains.)"
+
+2. CRITICAL 강조 누락
+   - "You MUST" 수준의 강제 지시가 부족해 간헐적으로 영어 단어 혼입
+   - 예: "와인잔의 color를 살펴보세요."
+
+3. 미발견 정보 노출 방지 지시 없음
+   - 플레이어가 아직 발견하지 않은 오브젝트나 단계를 힌트에서 언급하는 문제
+
+→ system_final.txt 로 교체

@@ -31,15 +31,18 @@ public static class HintEngine
         };
     }
 
-    static float CalcEmotionScore(PlayerState s)
+        static float CalcEmotionScore(PlayerState s)
     {
         float score = 0f;
-        if      (s.staySeconds > 300) score += 3f;
-        else if (s.staySeconds > 120) score += 1.5f;
+
+        if      (s.staySeconds > 35)  score += 3f;   // 300 → 10 → 35
+        else if (s.staySeconds > 15)   score += 1.5f; // 120 → 5 → 15
+
         if      (s.hintCount >= 3)    score += 3f;
         else if (s.hintCount >= 2)    score += 1.5f;
         if      (s.failCount >= 5)    score += 2f;
         else if (s.failCount >= 3)    score += 1f;
+
         return Mathf.Min(score, 8f);
     }
 
@@ -65,10 +68,10 @@ public static class HintEngine
 
     static int ScoreToLevel(float score)
     {
-        if (score < 2f) return 1;
-        if (score < 3f) return 2;
-        if (score < 4f) return 3;
-        if (score < 5f) return 4;
+        if (score < 1f) return 1;
+        if (score < 1.5f) return 2;
+        if (score < 2f) return 3;
+        if (score < 2.5f) return 4;
         return 5;
     }
 
