@@ -265,6 +265,7 @@ flowchart TD
 │   └── 📂 _Recovery/                     # 복구용 백업 파일
 ├── 📂 BlenderPractice/                   # 블렌더 3D 모델링 작업 및 연습 파일
 ├── 📂 doc/                               # 프로젝트 관련 문서 및 발표 자료
+├── 📂 Builds/                            # 게임실행파일
 ├── 📂 experiments/
 │   └── 📂 ollama-experiments/            # Ollama AI 힌트 시스템 실험 및 결과 데이터
 │       ├── README.md                     # 실험 개요 및 모델 비교 결과
