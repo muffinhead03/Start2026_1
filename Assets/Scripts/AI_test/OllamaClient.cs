@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.Networking;
 
 public class OllamaClient : MonoBehaviour
 {
     const string URL = "http://localhost:11434/api/generate";
 
-    public IEnumerator RequestHint(string systemPrompt, string userPrompt, Action<string> onComplete)
+    public IEnumerator RequestHint(string systemPrompt, string userPrompt, Action<string> onComplete, string rawHint)
     {
         // JSON 수동 조립 (JsonUtility 파싱 오류 방지)
         string jsonBody = "{" +
@@ -29,7 +30,22 @@ public class OllamaClient : MonoBehaviour
         req.downloadHandler = new DownloadHandlerBuffer();
         req.SetRequestHeader("Content-Type", "application/json");
 
+        bool requestFinished = false;
+        bool fallbackSent = false;
+
+        // 10초 대기 후 아직 응답이 없으면 출력
+        StartCoroutine(WaitForResponse(rawHint, () => requestFinished, (msg) => {
+            fallbackSent = true;
+            onComplete?.Invoke(msg);
+        }));
+        float startTime = Time.realtimeSinceStartup;
         yield return req.SendWebRequest();
+        float elapsed = Time.realtimeSinceStartup - startTime;
+        Debug.Log($"[Ollama 응답 시간] {elapsed:F2}초");
+        
+        requestFinished = true;
+
+        if (fallbackSent) yield break;
 
         if (req.result == UnityWebRequest.Result.Success)
         {
@@ -44,6 +60,16 @@ public class OllamaClient : MonoBehaviour
             Debug.LogError("[Ollama 오류] " + req.error);
             Debug.LogError("[응답 본문] " + req.downloadHandler.text);
             onComplete?.Invoke("...무언가가 방해하고 있어.");
+        }
+    }
+
+    private IEnumerator WaitForResponse(string rawHint, Func<bool> isFinished, Action<string> onComplete)
+    {
+        yield return new WaitForSeconds(10f);
+
+        if (!isFinished())
+        {
+            onComplete?.Invoke("..." + rawHint + "...");
         }
     }
 

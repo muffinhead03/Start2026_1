@@ -10,7 +10,7 @@ public class Pipe3Collect : MonoBehaviour
         if (collected) return;
         collected = true;
         hintManager.currentPlayerState.foundClues.Add("clue_pipe_3");
-        Player_Inventory.AddItem("pipe_3");
+        //hintManager.currentPlayerState.completedSteps.Add(5);  // 추가
         gameObject.SetActive(false);
         Debug.Log("[Pipe3] 파이프 3 수집");
     }
