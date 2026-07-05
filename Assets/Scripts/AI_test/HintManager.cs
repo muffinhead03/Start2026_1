@@ -10,7 +10,8 @@ public class HintManager : MonoBehaviour
     [SerializeField] EX_InputSystem_PC_V2 player;
 
     [Header("연결 필요")]
-    [SerializeField] OllamaClient        ollamaClient;
+    //[SerializeField] OllamaClient        ollamaClient;
+    [SerializeField] LLMClient           llmClient;
     [SerializeField] GameObject          hintPanel;
     [SerializeField] TextMeshProUGUI     hintText;
     [SerializeField] TextMeshProUGUI     usageCountText;
@@ -122,8 +123,8 @@ public class HintManager : MonoBehaviour
         string userPrompt   = PromptBuilder.Build(result, questionType);
 
         hintText.text = "치지직.. 교신 중...";
-
-        StartCoroutine(ollamaClient.RequestHint(systemPrompt, userPrompt, (hint) =>
+        // OllamaClient 대신 LLMClient 사용
+        StartCoroutine(llmClient.RequestHint(systemPrompt, userPrompt, (hint) =>
         {
             hintText.text = hint;
             Debug.Log($"[힌트 결과] 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus}");
