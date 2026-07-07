@@ -127,7 +127,7 @@ public class HintManager : MonoBehaviour
         {
             hintText.text = hint;
             Debug.Log($"[힌트 결과] 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus}");
-        }, result.nextStep.hintDirection));
+        }));
 
         currentPlayerState.hintCount++;
         UpdateUsageUI();

@@ -2,26 +2,40 @@ using System;
 using System.Collections;
 using System.Text;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.Networking;
 
 public class OllamaClient : MonoBehaviour
 {
     const string URL = "http://localhost:11434/api/generate";
 
-    public IEnumerator RequestHint(string systemPrompt, string userPrompt, Action<string> onComplete, string rawHint)
+    [Header("테스트할 모델 (Inspector에서 변경)")]
+    [Tooltip("gemma4:e2b / gemma4:e4b / gemma4-e2b-q4 / gemma4-e4b-q4 중 하나 입력")]
+    public string modelName = "gemma4:e2b";
+
+    [Header("think 옵션 (gemma4 계열 thinking 스트림 억제)")]
+    public bool useThinkFalse = true;
+
+    public IEnumerator RequestHint(string systemPrompt, string userPrompt, Action<string> onComplete)
     {
-        // JSON 수동 조립 (JsonUtility 파싱 오류 방지)
-        string jsonBody = "{" +
-            "\"model\":\"gemma3:4b\"," +
-            "\"system\":" + EscapeJson(systemPrompt) + "," +
-            "\"prompt\":" + EscapeJson(userPrompt) + "," +
-            "\"stream\":false," +
+        string optionsBlock =
             "\"options\":{" +
                 "\"temperature\":0.7," +
                 "\"num_predict\":80" +
-            "}" +
+            "}";
+
+        string thinkField = useThinkFalse ? "\"think\":false," : "";
+
+        // JSON 수동 조립 (JsonUtility 파싱 오류 방지)
+        string jsonBody = "{" +
+            "\"model\":\"" + modelName + "\"," +
+            thinkField +
+            "\"system\":" + EscapeJson(systemPrompt) + "," +
+            "\"prompt\":" + EscapeJson(userPrompt) + "," +
+            "\"stream\":false," +
+            optionsBlock +
         "}";
+
+        Debug.Log($"[Ollama 요청] model={modelName}, think:false={useThinkFalse}");
 
         byte[] bytes = Encoding.UTF8.GetBytes(jsonBody);
 
@@ -30,22 +44,11 @@ public class OllamaClient : MonoBehaviour
         req.downloadHandler = new DownloadHandlerBuffer();
         req.SetRequestHeader("Content-Type", "application/json");
 
-        bool requestFinished = false;
-        bool fallbackSent = false;
-
-        // 10초 대기 후 아직 응답이 없으면 출력
-        StartCoroutine(WaitForResponse(rawHint, () => requestFinished, (msg) => {
-            fallbackSent = true;
-            onComplete?.Invoke(msg);
-        }));
         float startTime = Time.realtimeSinceStartup;
         yield return req.SendWebRequest();
         float elapsed = Time.realtimeSinceStartup - startTime;
-        Debug.Log($"[Ollama 응답 시간] {elapsed:F2}초");
-        
-        requestFinished = true;
 
-        if (fallbackSent) yield break;
+        Debug.Log($"[Ollama 응답 시간] model={modelName} think:false={useThinkFalse} → {elapsed:F2}초");
 
         if (req.result == UnityWebRequest.Result.Success)
         {
@@ -60,16 +63,6 @@ public class OllamaClient : MonoBehaviour
             Debug.LogError("[Ollama 오류] " + req.error);
             Debug.LogError("[응답 본문] " + req.downloadHandler.text);
             onComplete?.Invoke("...무언가가 방해하고 있어.");
-        }
-    }
-
-    private IEnumerator WaitForResponse(string rawHint, Func<bool> isFinished, Action<string> onComplete)
-    {
-        yield return new WaitForSeconds(10f);
-
-        if (!isFinished())
-        {
-            onComplete?.Invoke("..." + rawHint + "...");
         }
     }
 
