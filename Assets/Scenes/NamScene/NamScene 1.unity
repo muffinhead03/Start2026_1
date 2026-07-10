@@ -1450,16 +1450,16 @@ MonoBehaviour:
   _parallelPrompts: 1
   _contextSize: 8192
   _batchSize: 512
-  _model: 
+  _model: gemma-3-4b-it-Q4_K_M.gguf
   _flashAttention: 0
   _reasoning: 0
   _lora: 
   _loraWeights: 
   dontDestroyOnLoad: 1
   _embeddingsOnly: 0
-  _embeddingLength: 0
+  _embeddingLength: 2560
   minContextLength: 0
-  maxContextLength: 0
+  maxContextLength: 131072
 --- !u!4 &313998639
 Transform:
   m_ObjectHideFlags: 0
@@ -2301,6 +2301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1090064154}
   - component: {fileID: 1090064153}
+  - component: {fileID: 1090064155}
   m_Layer: 0
   m_Name: HintLLMCharacter
   m_TagString: Untagged
@@ -2351,8 +2352,7 @@ MonoBehaviour:
   overflowTargetRatio: 0.5
   overflowSummarizePrompt: 
   _slot: -1
-  _systemPrompt: A chat between a curious human and an artificial intelligence assistant.
-    The assistant gives helpful, detailed, and polite answers to the human's questions.
+  _systemPrompt: 
 --- !u!4 &1090064154
 Transform:
   m_ObjectHideFlags: 0
@@ -2368,6 +2368,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1090064155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090064152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e121fdf103b943b7b037a282ccade17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LLMClient
+  llmCharacter: {fileID: 1090064153}
 --- !u!1 &1113080031
 GameObject:
   m_ObjectHideFlags: 0
@@ -4783,6 +4796,10 @@ PrefabInstance:
       propertyPath: hintPanel
       value: 
       objectReference: {fileID: 1318228001}
+    - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
+      propertyPath: llmClient
+      value: 
+      objectReference: {fileID: 1090064155}
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: exitButton
       value: 
