@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+//using System.Diagnostics; // 파일 상단에 추가 (Debug랑 이름 충돌 주의 -> UnityEngine.Debug로 명시 필요)
 
 public class HintManager : MonoBehaviour
 {
@@ -95,7 +96,7 @@ public class HintManager : MonoBehaviour
     }
 
     public void OnHintButtonClicked(string questionType)
-    {
+    {   
         Debug.Log("[foundClues] " + string.Join(", ", currentPlayerState.foundClues));
         Debug.Log("[completedSteps] " + string.Join(", ", currentPlayerState.completedSteps));
         
@@ -123,11 +124,14 @@ public class HintManager : MonoBehaviour
         string userPrompt   = PromptBuilder.Build(result, questionType);
 
         hintText.text = "치지직.. 교신 중...";
-        // OllamaClient 대신 LLMClient 사용
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
         StartCoroutine(llmClient.RequestHint(systemPrompt, userPrompt, (hint) =>
         {
+            stopwatch.Stop();
             hintText.text = hint;
-            Debug.Log($"[힌트 결과] 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus}");
+            Debug.Log($"[힌트 결과] 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms");
         }, result.nextStep.hintDirection));
 
         currentPlayerState.hintCount++;

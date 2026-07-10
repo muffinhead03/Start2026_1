@@ -8,8 +8,8 @@ public class LLMClient : MonoBehaviour
 {
     [SerializeField] LLMCharacter llmCharacter;
 
-    // HintManager가 부르는 시그니처는 OllamaClient랑 똑같이 유지
-    public IEnumerator RequestHint(string systemPrompt, string userPrompt, Action<string> onComplete)
+    // HintManager가 부르는 시그니처는 OllamaClient랑 똑같이 유지 + hintDirection 추가
+    public IEnumerator RequestHint(string systemPrompt, string userPrompt, Action<string> onComplete, string hintDirection = null)
     {
         bool done = false;
         string result = null;
@@ -17,6 +17,10 @@ public class LLMClient : MonoBehaviour
         // PromptBuilder가 매 요청마다 다르게 만들기 때문에
         // LLMCharacter의 고정 Prompt 대신 매번 시스템+유저를 합쳐서 보낸다
         string combined = systemPrompt + "\n\n" + userPrompt;
+
+        // 힌트 방향성이 있으면 프롬프트에 명시적으로 덧붙임
+        if (!string.IsNullOrEmpty(hintDirection))
+            combined += "\n\n[힌트 방향: " + hintDirection + "]";
 
         _ = SendChat(combined, (reply) =>
         {
