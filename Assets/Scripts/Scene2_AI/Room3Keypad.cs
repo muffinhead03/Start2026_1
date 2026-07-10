@@ -23,7 +23,7 @@ public class Room3Keypad : MonoBehaviour
         {
             solved = true;
             door.SetActive(false);
-            pipe3Object.SetActive(true);
+            //pipe3Object.SetActive(true);
             hintManager.currentPlayerState.completedSteps.Add(5);
             Debug.Log("[Room3Keypad] 방3 개방, 파이프 3 등장");
         }

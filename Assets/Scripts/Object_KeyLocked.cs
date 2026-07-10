@@ -1,10 +1,12 @@
-using System.Data.Common;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Object_KeyLocked : MonoBehaviour
 {
     private bool isLocked = true;
+
+    [Header("Player")]
+    [SerializeField] GameObject player;
 
     [Header("열리는 애니메이션")]
     public Animator animator;
@@ -20,9 +22,10 @@ public class Object_KeyLocked : MonoBehaviour
         if (isLocked)
         {
             // 플레이어에게 열쇠가 있는지 확인
-            if (Player_Inventory.hasKey(keyName))
+            if (player.GetComponent<Player_Grab>().hasKey(keyName))
             {
                 isLocked = false;
+                player.GetComponent<Player_Grab>().UseKey();
                 Debug.Log("열쇠로 문을 열었습니다.");
                 UnlockEvent?.Invoke();
                 if (animator!=null) OpenCloseDoor();

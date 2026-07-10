@@ -5,7 +5,7 @@ using Cursor = UnityEngine.Cursor;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
-public class EX_InputSystem_PC_V2 : MonoBehaviour
+public class Player_Move : MonoBehaviour
 {
     CharacterController Character;
 

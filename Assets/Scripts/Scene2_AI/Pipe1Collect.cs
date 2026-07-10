@@ -10,7 +10,7 @@ public class Pipe1Collect : MonoBehaviour
         if (collected) return;
         collected = true;
         hintManager.currentPlayerState.foundClues.Add("clue_pipe_1");
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
         Debug.Log("[Pipe1] 파이프 1 수집");
     }
 }
