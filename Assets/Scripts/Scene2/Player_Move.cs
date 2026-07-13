@@ -34,8 +34,8 @@ public class Player_Move : MonoBehaviour
     private Vector3 originalCameraPos;
     private Vector3 originalMeshScale;
 
-    [Header("Settings")]
-    public GameObject panelSettings;    // 설정창 UI
+    [Header("UI Settings")]
+    public Scene_UI_Manager SceneUI;    // UI 매니저
 
     Vector3 Velocity;
     Vector2 MoveInput;
@@ -52,9 +52,11 @@ public class Player_Move : MonoBehaviour
 
     void Start()
     {
-        panelSettings.SetActive(false);
+        yaw = 90;
+
+        SceneUI.SetActivePanel(0, false); // 설정 창 끄기
         
-        LockPointer();
+        SceneUI.LockPointer();
 
         Character = GetComponent<CharacterController>();
 
@@ -191,21 +193,9 @@ public class Player_Move : MonoBehaviour
     void OpenCloseSettings(InputAction.CallbackContext context)
     {
         moveLocked = !moveLocked;
-        panelSettings.SetActive(moveLocked);
+        SceneUI.SetActivePanel(0, moveLocked);
 
-        if (moveLocked) UnlockPointer();
-        else LockPointer();
-    }
-
-    public void LockPointer()
-    {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    public void UnlockPointer()
-    {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        if (moveLocked) SceneUI.UnlockPointer();
+        else SceneUI.LockPointer();
     }
 }
