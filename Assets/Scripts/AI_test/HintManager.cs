@@ -131,7 +131,7 @@ public class HintManager : MonoBehaviour
         {
             stopwatch.Stop();
             hintText.text = hint;
-            Debug.Log($"[힌트 결과] 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms");
+            Debug.Log($"[힌트 결과] 모델: {llmClient.LlmCharacter.llm.model} / 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {hint}");
         }, result.nextStep.hintDirection));
 
         currentPlayerState.hintCount++;
