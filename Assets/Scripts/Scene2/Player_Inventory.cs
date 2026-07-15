@@ -29,4 +29,10 @@ public class Player_Inventory : MonoBehaviour
     {
         KeyNames.Add(item);
     }
+
+    public static void RemoveItem(string item)
+    {
+        KeyNames.Remove(item);
+    }
+
 }

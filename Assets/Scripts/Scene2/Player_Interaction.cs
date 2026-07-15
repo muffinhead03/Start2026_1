@@ -41,7 +41,6 @@ public class Player_Interaction : MonoBehaviour
 
                     CurrentTarget = Interactable;
                     CurrentTarget.OnRayEnter();
-                    Debug.Log("Enter");
                 }
 
                 CurrentTarget.OnRayStay();
@@ -70,12 +69,13 @@ public class Player_Interaction : MonoBehaviour
 
     void Interact()
     {
-        Debug.Log("Click");
         if(CurrentTarget != null)
         {
             CurrentTarget.OnRayClick();
-
+        }
+        else
+        {
+            GetComponent<Player_Grab>().Release();
         }
     }
-
 }

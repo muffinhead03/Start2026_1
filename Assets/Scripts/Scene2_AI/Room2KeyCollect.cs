@@ -10,7 +10,7 @@ public class Room2KeyCollect : MonoBehaviour
         if (collected) return;
         collected = true;
         hintManager.currentPlayerState.foundClues.Add("clue_room2_key");
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
         Debug.Log("[Room2Key] 방2 열쇠 수집");
     }
 }
