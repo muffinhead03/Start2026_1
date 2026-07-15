@@ -168,11 +168,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4408132895485258649}
   - {fileID: 8459219703221980683}
   - {fileID: 4158712402127631572}
   - {fileID: 1145535115815354765}
   - {fileID: 7489320768447605242}
-  - {fileID: 4408132895485258649}
   - {fileID: 3942649189596274593}
   - {fileID: 4391901382465237748}
   - {fileID: 1855589153215546943}
@@ -2911,6 +2911,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_FixCamera
   targetPos: {x: -0.4, y: 0, z: 0}
+  Fixed:
+    m_PersistentCalls:
+      m_Calls: []
+  UnFixed:
+    m_PersistentCalls:
+      m_Calls: []
   SceneUI: {fileID: 0}
   player: {fileID: 0}
 --- !u!1 &6210846611322150972
@@ -2926,6 +2932,8 @@ GameObject:
   - component: {fileID: 2520773292101657105}
   - component: {fileID: 1725652768901949787}
   - component: {fileID: 1602038575114092324}
+  - component: {fileID: 4253439264404397608}
+  - component: {fileID: 4150114866804804795}
   m_Layer: 0
   m_Name: Cube.004
   m_TagString: Untagged
@@ -3049,6 +3057,79 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4253439264404397608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6210846611322150972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 769669703f5d3034da924e8f0b65d1eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Event_On_Ray
+  OnEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnStay:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &4150114866804804795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6210846611322150972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b540fbb47df2447b5aca5ae01029f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Pwd_Locked
+  animator: {fileID: 0}
 --- !u!1 &6309269882545308886
 GameObject:
   m_ObjectHideFlags: 0
