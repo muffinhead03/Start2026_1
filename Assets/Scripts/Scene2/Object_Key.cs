@@ -8,7 +8,6 @@ public class Object_Key : MonoBehaviour
 
     public void Collect()
     {
-        //gameObject.SetActive(false);
         Player_Inventory.AddItem(keyName);
     }
 
