@@ -3,8 +3,11 @@ using UnityEngine.Events;
 
 public class Object_FixCamera : MonoBehaviour
 {
+    [Header("Fix Position")]
+    public Transform pivot;
     public Vector3 targetPos;
 
+    [Header("Fix Event")]
     public UnityEvent Fixed;
     public UnityEvent UnFixed;
 
@@ -12,36 +15,25 @@ public class Object_FixCamera : MonoBehaviour
 
     Vector3 targetRot;
 
+    [Header("Player")]
     public Player_FixCamera player;
 
-    bool isFixing;
 
     void Start()
     {
         targetRot = (-1) * targetPos;
-        isFixing = false;
     }
 
-    public void OnFix()
+    public void FixCamera()
     {
-        if (isFixing) UnFixCamera();
-        else FixCamera();
-    }
-
-    void FixCamera()
-    {
-        isFixing = true;
-
         SceneUI.SetActiveCursor(false);
         Fixed?.Invoke();
 
-        player.FixCamera(transform.position + targetPos, targetRot);
+        player.FixCamera(pivot.position + targetPos, targetRot, this.gameObject);
     }
 
-    void UnFixCamera()
+    public void UnFixCamera()
     {
-        isFixing = false;
-
         SceneUI.SetActiveCursor(true);
         UnFixed?.Invoke();
 

@@ -1,21 +1,31 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Analytics;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class Object_Pwd : MonoBehaviour
+public class Object_Organ : MonoBehaviour
 {
-    public string pwd;
-    public Object_Pwd_Locked obj;
-    public HintManager hintManager; // 추가
+    [Header("Answer")]
+    [SerializeField] string answer;
 
+    [Header("해제 완료")]
+    [SerializeField] UnityEvent Unlock;
+
+    public bool isDebug;
+    bool isPipeChanged;
     bool isActive;
-
-    private string input="";
+    string input;
 
     InputAction click;
 
     void Start()
     {
+        isPipeChanged = false;
+        if (isDebug) isPipeChanged = true;
+
+        input = "";
+
         click = InputSystem.actions.FindAction("Click");
         click.Disable();
 
@@ -28,6 +38,7 @@ public class Object_Pwd : MonoBehaviour
 
         if (active)
         {
+            input = "";
             click.performed += ctx => PressButton();
             click.Enable();
         }
@@ -40,6 +51,8 @@ public class Object_Pwd : MonoBehaviour
 
     public void PressButton()
     {
+        if (!isPipeChanged) return;
+
         if (!isActive) return;
 
         Vector2 mousePosition = Mouse.current.position.ReadValue();
@@ -47,27 +60,32 @@ public class Object_Pwd : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 0.5f))
+        if (Physics.Raycast(ray, out hit, 0.8f))
         {
             var button = hit.collider.GetComponent<Object_Pwd_Button>();
 
-            if(button != null)
+            if (button != null)
             {
                 string n = button.id;
 
                 button.Pressed();
 
-                if (n == "submit")
-                {
-                    if (pwd == input)
-                    {
-                        obj.UnlockDoor();
-                        hintManager.currentPlayerState.completedSteps.Add(5);
-                    }
-                    else input = "";
-                }
-                else input += n;
+                input += n;
+                if (input.Length >= answer.Length) CheckAnswer();
             }
+        }
+    }
+
+    void CheckAnswer()
+    {
+        if (answer == input)
+        {
+            Unlock?.Invoke();
+            GetComponent<Object_FixCamera>().UnFixCamera();
+        }
+        else
+        {
+            GetComponent<Object_FixCamera>().UnFixCamera();
         }
     }
 }

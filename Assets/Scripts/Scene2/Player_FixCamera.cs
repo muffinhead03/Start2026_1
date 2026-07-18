@@ -11,36 +11,44 @@ public class Player_FixCamera : MonoBehaviour
     [Header("UI Settings")]
     public Scene_UI_Manager SceneUI;    // UI 매니저
 
+    [Header("Fix Object")]
+    public Object_FixCamera fixObject;
+
     Vector3 originalPos;
     Vector3 originalRot;
 
     Vector3 targetPos;
     Vector3 targetRot;
 
-    bool isFixing;
 
     void Start()
     {
-        isFixing = false;
+        fixObject = null;
     }
 
-    public void FixCamera(Vector3 targetPos, Vector3 targetRot)
+    public bool isPlayerFix()
     {
-        if (isFixing) return;
+        return (fixObject != null);
+    }
 
-        isFixing = true;
+
+    public void FixCamera(Vector3 targetPos, Vector3 targetRot, GameObject fixObject)
+    {
+        if (this.fixObject != null) return;
 
         this.targetPos = targetPos;
         this.targetRot = targetRot;
 
         StartCoroutine(MoveToFixPosition());
+
+        this.fixObject = fixObject.GetComponent<Object_FixCamera>();
     }
 
     public void UnFixCamera()
     {
-        if (!isFixing) return;
+        if (fixObject == null) return;
 
-        isFixing = false;
+        fixObject = null;
 
         StartCoroutine(MoveToOriginalPosition());
     }

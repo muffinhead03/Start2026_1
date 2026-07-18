@@ -15,9 +15,8 @@ public class Object_Metro : MonoBehaviour
 
     void Start()
     {
-        click = InputSystem.actions.FindAction("click");
-
-        click.performed += ctx => PressButton();
+        click = InputSystem.actions.FindAction("Click");
+        click.Disable();
 
         active = false;
     }
@@ -31,11 +30,11 @@ public class Object_Metro : MonoBehaviour
         else count--;
 
         Debug.Log(count);
-        if (count == 0) GetComponent<Object_FixCamera>().OnFix();
+        if (count == 0) GetComponent<Object_FixCamera>().UnFixCamera();
         else if (count == 5)
         {
             obj.UnlockDoor();
-            GetComponent<Object_FixCamera>().OnFix();
+            GetComponent<Object_FixCamera>().UnFixCamera();
         }
     }
 
@@ -43,7 +42,18 @@ public class Object_Metro : MonoBehaviour
     {
         this.active = active;
 
-        if (active) ResetGame();
+        if (active)
+        {
+            ResetGame();
+
+            click.performed += ctx => PressButton();
+            click.Enable();
+        }
+        else
+        {
+            click.performed -= ctx => PressButton();
+            click.Disable();
+        }
     }
 
     void ResetGame()

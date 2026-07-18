@@ -38,12 +38,14 @@ public class Object_KeyLocked : MonoBehaviour
         }
         else
         {
-            OpenCloseDoor();
+            if (animator != null) OpenCloseDoor();
         }
     }
 
     private void OpenCloseDoor()
     {
+        if (animator == null) return;
+
         int value = (animator.GetInteger("Open") == 0) ? 1 : 0;
         animator.SetInteger("Open", value);
     }
