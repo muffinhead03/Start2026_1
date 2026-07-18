@@ -56,7 +56,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1994582791206629622}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.403, y: 4.3999996, z: -4.498}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 210730049254105286}
   - component: {fileID: 2681670331471391226}
   - component: {fileID: 4596910125852351176}
-  - component: {fileID: 8601694811003923827}
+  - component: {fileID: 2963235096424899723}
   m_Layer: 0
   m_Name: right
   m_TagString: Untagged
@@ -393,7 +393,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 4
+  m_VersionIndex: 22
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -446,9 +446,9 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8601694811003923827}
-        m_TargetAssemblyTypeName: Object_Pwd_Locked, Assembly-CSharp
-        m_MethodName: OnInteract
+      - m_Target: {fileID: 2963235096424899723}
+        m_TargetAssemblyTypeName: Object_Door, Assembly-CSharp
+        m_MethodName: OpenCloseDoor
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -458,7 +458,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &8601694811003923827
+--- !u!114 &2963235096424899723
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -467,10 +467,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3142458640661015495}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76b540fbb47df2447b5aca5ae01029f6, type: 3}
+  m_Script: {fileID: 11500000, guid: ad174821983d47b42836f4739a9646ce, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Object_Pwd_Locked
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Door
   animator: {fileID: 6452301449457893481}
+  isLocked: 0
+  audio_open: {fileID: 8300000, guid: e88bb406222252b448b9ad48d6d80328, type: 3}
+  audio_locked: {fileID: 8300000, guid: 58c40df1c778ff94d8eb0dac09b89c3b, type: 3}
 --- !u!1 &4511056978652309047
 GameObject:
   m_ObjectHideFlags: 0
@@ -1849,7 +1852,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 8
+  m_VersionIndex: 32
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -2209,7 +2212,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 4
+  m_VersionIndex: 28
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []

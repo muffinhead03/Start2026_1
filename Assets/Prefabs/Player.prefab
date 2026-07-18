@@ -482,6 +482,7 @@ MonoBehaviour:
   CameraPivot: {fileID: 2803602053977864669}
   targetTime: 0.5
   SceneUI: {fileID: 0}
+  fixObject: {fileID: 0}
 --- !u!114 &6674939295336197482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -507,6 +508,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_Interaction
   dist: 2
+  fix: {fileID: 1133352419626379065}
+  grab: {fileID: 8747588067531962059}
 --- !u!114 &8747588067531962059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -521,7 +524,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player_Grab
   Hand: {fileID: 4093937196723730831}
   targetTime: 0.5
-  GrabbingObject: {fileID: 0}
 --- !u!1 &8975025566476872664
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class Object_Metro : MonoBehaviour
 {
-    public Object_Pwd_Locked obj;
+    public Object_Door obj;
     public UnityEvent OnClick;
     public Transform pivot;
 

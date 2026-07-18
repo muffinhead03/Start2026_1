@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 556781998568032495}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pipes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.size
@@ -112,9 +112,13 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
-      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 5014031650611816645}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1993219190928158289}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
@@ -141,7 +145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: Collect
+      value: OnGrab
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
@@ -156,8 +160,12 @@ PrefabInstance:
       value: Scene_UI_Manager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
-      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: Pipe3Collect, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
@@ -312,7 +320,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.size
@@ -330,6 +338,10 @@ PrefabInstance:
       propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5997491906389334223}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -351,6 +363,10 @@ PrefabInstance:
       value: SwitchCursor
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
       value: OnGrab
       objectReference: {fileID: 0}
@@ -361,6 +377,10 @@ PrefabInstance:
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: Scene_UI_Manager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -503,7 +523,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.size
@@ -526,9 +546,13 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
-      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 6589633107917126089}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 6688362032735135908}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
@@ -555,7 +579,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: Collect
+      value: OnGrab
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
@@ -570,8 +594,12 @@ PrefabInstance:
       value: Scene_UI_Manager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
-      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: Pipe2Collect, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
@@ -718,7 +746,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.size
@@ -741,9 +769,13 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
-      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 5446829537780375812}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 8714088839905511440}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
@@ -770,7 +802,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: Collect
+      value: OnGrab
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
@@ -785,8 +817,12 @@ PrefabInstance:
       value: Scene_UI_Manager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
-      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: Pipe4Collect, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5767129641815275130, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
@@ -823,6 +859,10 @@ PrefabInstance:
     - target: {fileID: 7517179125593000327, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: m_Name
       value: Pipe 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517179125593000327, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7517179125593000327, guid: b3c474d5fb439954ea95c73ae7bea37b, type: 3}
       propertyPath: m_IsActive

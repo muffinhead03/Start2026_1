@@ -5,7 +5,7 @@ public class Object_Pwd_State : MonoBehaviour
 {
     char[] input;
     public string pwd;
-    public Object_Pwd_Locked obj;
+    public Object_Door obj;
 
     void Start()
     {
