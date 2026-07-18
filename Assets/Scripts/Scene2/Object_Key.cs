@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Object_Key : MonoBehaviour
 {
@@ -7,7 +8,11 @@ public class Object_Key : MonoBehaviour
 
     public void Collect()
     {
-        gameObject.SetActive(false);
         Player_Inventory.AddItem(keyName);
+    }
+
+    public void UseKey()
+    {
+        gameObject.SetActive(false);
     }
 }

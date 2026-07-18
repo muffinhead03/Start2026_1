@@ -7,10 +7,11 @@ using UnityEngine.UI;
 public class HintManager : MonoBehaviour
 {
     [Header("Player Character")]
-    [SerializeField] EX_InputSystem_PC_V2 player;
+    [SerializeField] Player_Move player;
 
     [Header("연결 필요")]
-    [SerializeField] OllamaClient        ollamaClient;
+    //[SerializeField] OllamaClient        ollamaClient;
+    [SerializeField] LLMClient           llmClient;
     [SerializeField] GameObject          hintPanel;
     [SerializeField] TextMeshProUGUI     hintText;
     [SerializeField] TextMeshProUGUI     usageCountText;
@@ -123,6 +124,7 @@ public class HintManager : MonoBehaviour
 
         hintText.text = "치지직.. 교신 중...";
 
+        /*
         StartCoroutine(ollamaClient.RequestHint(systemPrompt, userPrompt, (hint) =>
         {
             hintText.text = hint;
@@ -130,7 +132,20 @@ public class HintManager : MonoBehaviour
         }, result.nextStep.hintDirection));
 
         currentPlayerState.hintCount++;
+        UpdateUsageUI();*/
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+        StartCoroutine(llmClient.RequestHint(systemPrompt, userPrompt, (hint) =>
+        {
+            stopwatch.Stop();
+            hintText.text = hint;
+            Debug.Log($"[힌트 결과] 모델: {llmClient.LlmCharacter.llm.model} / 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {hint}");
+        }, result.nextStep.hintDirection));
+
+        currentPlayerState.hintCount++;
         UpdateUsageUI();
+        
     }
 
     void UpdateUsageUI()
