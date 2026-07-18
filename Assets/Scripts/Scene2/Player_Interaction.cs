@@ -9,6 +9,12 @@ public class Player_Interaction : MonoBehaviour
     [Header("상호작용 최대 거리")]
     public float dist;
 
+    [Header("화면 고정")]
+    public Player_FixCamera fix;
+
+    [Header("물건 잡기")]
+    public Player_Grab grab;
+
     InputAction interact;
 
     Event_On_Ray CurrentTarget;
@@ -41,7 +47,6 @@ public class Player_Interaction : MonoBehaviour
 
                     CurrentTarget = Interactable;
                     CurrentTarget.OnRayEnter();
-                    Debug.Log("Enter");
                 }
 
                 CurrentTarget.OnRayStay();
@@ -70,12 +75,22 @@ public class Player_Interaction : MonoBehaviour
 
     void Interact()
     {
-        Debug.Log("Click");
+        if (fix.isPlayerFix())
+        {
+            fix.fixObject.UnFixCamera();
+            return;
+        }
+
+
         if(CurrentTarget != null)
         {
+            // 상호작용
             CurrentTarget.OnRayClick();
-
+        }
+        else
+        {
+            // 들고 있는 물건 놓기
+            grab.Release();
         }
     }
-
 }

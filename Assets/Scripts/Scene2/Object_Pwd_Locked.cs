@@ -2,10 +2,16 @@ using UnityEngine;
 
 public class Object_Pwd_Locked : MonoBehaviour
 {
+    public bool isDebug;
     private bool isLocked = true;
 
     [Header("열리는 애니메이션")]
     public Animator animator;
+
+    void Start()
+    {
+        if (isDebug) UnlockDoor();
+    }
 
     public void OnInteract()
     {

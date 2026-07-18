@@ -10,7 +10,7 @@ public class Pipe2Collect : MonoBehaviour
         if (collected) return;
         collected = true;
         hintManager.currentPlayerState.foundClues.Add("clue_pipe_2");
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
         Debug.Log("[Pipe2] 파이프 2 수집");
 
         // 파이프 1, 2 둘 다 수집했으면 step 2 완료

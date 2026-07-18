@@ -11,7 +11,7 @@ public class Pipe4Collect : MonoBehaviour
         collected = true;
         hintManager.currentPlayerState.foundClues.Add("clue_pipe_4");
         hintManager.currentPlayerState.completedSteps.Add(6);  // 추가
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
         Debug.Log("[Pipe4] 파이프 4 수집");
     }
 }

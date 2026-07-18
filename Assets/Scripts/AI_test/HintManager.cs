@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class HintManager : MonoBehaviour
 {
     [Header("Player Character")]
-    [SerializeField] EX_InputSystem_PC_V2 player;
+    [SerializeField] Player_Move player;
 
     [Header("연결 필요")]
     [SerializeField] OllamaClient        ollamaClient;

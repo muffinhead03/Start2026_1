@@ -5,10 +5,10 @@ using TMPro;
 public class Object_Inspecatable : MonoBehaviour
 {
     [Header("Player Character")]
-    public EX_InputSystem_PC_V2 player;
+    public Player_Move player;
 
     [Header("Inspect Settings")]
-    public float moveSpeed = 5f;
+    public float targetTime = 1f;
     public float inspectDistance = 1f;
 
     [Header("UI Settings")]
@@ -67,15 +67,16 @@ public class Object_Inspecatable : MonoBehaviour
 
         float t = 0f;
 
-        while (t < 1f)
+        while (t < targetTime)
         {
-            t += Time.deltaTime * moveSpeed;
+            t += Time.deltaTime;
+            float tp = t / targetTime;
 
             transform.position =
-                Vector3.Lerp(transform.position, targetPosition, t);
+                Vector3.Lerp(transform.position, targetPosition, tp);
 
             transform.rotation =
-                Quaternion.Lerp(transform.rotation, targetRotation, t*10);
+                Quaternion.Lerp(transform.rotation, targetRotation, tp);
 
             yield return null;
         }
@@ -86,24 +87,6 @@ public class Object_Inspecatable : MonoBehaviour
 
     IEnumerator ReturnToOriginalPosition()
     {
-        float t = 0f;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime * moveSpeed;
-
-            transform.position =
-                Vector3.Lerp(transform.position, originalPosition, t);
-
-            transform.rotation =
-                Quaternion.Lerp(transform.rotation, originalRotation, t);
-
-            yield return null;
-        }
-
-        // 플레이어 이동 해제
-        //PlayerController.Instance.SetMoveLock(false);
-
-        isInspecting = false;
+        yield return null;
     }
 }
