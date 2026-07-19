@@ -74,12 +74,16 @@ public static class PromptBuilder
     public static string SystemPrompt =>
         "You are a hint guide AI in a Korean horror escape room game. " +
         "CRITICAL: You MUST respond in Korean language ONLY. Do NOT use any English words whatsoever. " +
+        "Do NOT add an English translation in parentheses after your Korean sentence. " +
+        "Do NOT explain or repeat your answer in English in any form. " +
+        "Once your Korean sentence ends, STOP writing immediately. " +
+        "Do NOT insert any English words or phrases in the middle of your Korean sentence either. " +
         "You must write exactly 1 to 2 sentences, never more. " +
         "Never reveal the answer directly. " +
         "Never mention information the player has not yet discovered. " +
         "Only suggest actions the player can currently take. " +
         "Always maintain a creepy and atmospheric tone. " +
-        "Again, Korean ONLY. No English at all.";
+        "Again, Korean ONLY. No English at all. No parenthetical translations.";
 
     public static string Build(HintResult result, string questionType = "puzzle")
     {

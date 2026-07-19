@@ -9,6 +9,13 @@ public class LLMClient : MonoBehaviour
     [SerializeField] LLMCharacter llmCharacter;
     public LLMCharacter LlmCharacter => llmCharacter;
 
+    async void Start()
+    {
+        await llmCharacter.Warmup(WarmupCompleted);
+    }
+
+    void WarmupCompleted() => Debug.Log("[LLMUnity] 모델 워밍업 완료");
+
     // HintManager가 부르는 시그니처는 OllamaClient랑 똑같이 유지 + hintDirection 추가
     public IEnumerator RequestHint(string systemPrompt, string userPrompt, Action<string> onComplete, string hintDirection = null)
     {

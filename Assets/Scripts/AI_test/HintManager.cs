@@ -27,8 +27,9 @@ public class HintManager : MonoBehaviour
     [HideInInspector]
     public PlayerState currentPlayerState;
 
-    const int MAX_HINTS = 2;
+    const int MAX_HINTS = 5;
     bool isOpen = false;
+    bool isRequesting = false;
 
     void Start()
     {
@@ -96,9 +97,14 @@ public class HintManager : MonoBehaviour
 
     public void OnHintButtonClicked(string questionType)
     {
+        if (isRequesting)
+        {
+            Debug.Log("[HintManager] 이미 힌트 요청 처리 중");
+            return;
+        }
+
         Debug.Log("[foundClues] " + string.Join(", ", currentPlayerState.foundClues));
         Debug.Log("[completedSteps] " + string.Join(", ", currentPlayerState.completedSteps));
-        
         if (currentPlayerState.hintCount >= MAX_HINTS)
         {
             hintText.text = "더 이상 도움을 받을 수 없어.";
@@ -124,28 +130,19 @@ public class HintManager : MonoBehaviour
 
         hintText.text = "치지직.. 교신 중...";
 
-        /*
-        StartCoroutine(ollamaClient.RequestHint(systemPrompt, userPrompt, (hint) =>
-        {
-            hintText.text = hint;
-            Debug.Log($"[힌트 결과] 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus}");
-        }, result.nextStep.hintDirection));
-
-        currentPlayerState.hintCount++;
-        UpdateUsageUI();*/
-
+        isRequesting = true;
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         StartCoroutine(llmClient.RequestHint(systemPrompt, userPrompt, (hint) =>
         {
             stopwatch.Stop();
             hintText.text = hint;
+            isRequesting = false;
             Debug.Log($"[힌트 결과] 모델: {llmClient.LlmCharacter.llm.model} / 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {hint}");
         }, result.nextStep.hintDirection));
 
         currentPlayerState.hintCount++;
         UpdateUsageUI();
-        
     }
 
     void UpdateUsageUI()
