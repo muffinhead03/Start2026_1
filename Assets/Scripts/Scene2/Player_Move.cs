@@ -34,6 +34,9 @@ public class Player_Move : MonoBehaviour
     private Vector3 originalCameraPos;
     private Vector3 originalMeshScale;
 
+    [Header("Head Bobbing")]
+    public Animator cameraAnimator;
+
     [Header("UI Settings")]
     public Scene_UI_Manager SceneUI;    // UI 매니저
 
@@ -183,6 +186,14 @@ public class Player_Move : MonoBehaviour
 
         // 매 프레임마다 중력 적용
         Velocity.y += gravity * Time.deltaTime;
+
+        // 헤드 보빙
+        if (cameraAnimator != null)
+        {
+            float currentMoveSpeed = Character.isGrounded ? new Vector2(Velocity.x, Velocity.z).magnitude : 0f;
+
+            cameraAnimator.SetFloat("MoveSpeed", currentMoveSpeed, 0.1f, Time.deltaTime);
+        }
     }
 
     public void SetMoveLock(bool locked)
