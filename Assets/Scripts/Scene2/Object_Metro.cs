@@ -12,10 +12,15 @@ public class Object_Metro : MonoBehaviour
     public MeshRenderer[] lights;
     public Material[] materials;
 
+    [Header("애니메이션")]
+    public Animator anim;
+
     int count;
 
     InputAction click;
     bool active;
+
+    Play_Audio audio_player;
 
     void Start()
     {
@@ -23,6 +28,8 @@ public class Object_Metro : MonoBehaviour
         click.Disable();
 
         active = false;
+
+        audio_player = GetComponent<Play_Audio>();
     }
 
     void PressButton()
@@ -56,6 +63,9 @@ public class Object_Metro : MonoBehaviour
         {
             click.performed += ctx => PressButton();
             click.Enable();
+
+            anim.SetInteger("On", 1);
+            audio_player.PlayAudioLoop();
         }
         else
         {
@@ -63,6 +73,9 @@ public class Object_Metro : MonoBehaviour
             click.Disable(); 
             
             ResetGame();
+
+            anim.SetInteger("On", 0);
+            audio_player.PauseAudio();
         }
     }
 

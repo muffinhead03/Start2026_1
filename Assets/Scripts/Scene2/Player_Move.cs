@@ -199,6 +199,11 @@ public class Player_Move : MonoBehaviour
     public void SetMoveLock(bool locked)
     {
         moveLocked = locked;
+
+        if(cameraAnimator != null && locked)
+        {
+            cameraAnimator.SetFloat("MoveSpeed", 0);
+        }
     }
 
     void OpenCloseSettings(InputAction.CallbackContext context)

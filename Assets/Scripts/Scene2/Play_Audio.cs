@@ -16,4 +16,19 @@ public class Play_Audio : MonoBehaviour
 
         source.PlayOneShot(ac);
     }
+
+    public void PlayAudioLoop()
+    {
+        if (source == null) return;
+
+        source.Play();
+        source.loop = true;
+    }
+
+    public void PauseAudio()
+    {
+        if (source == null) return;
+
+        source.Pause();
+    }
 }
