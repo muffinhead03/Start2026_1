@@ -58,7 +58,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 602035814101364237}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.119999886, z: 0.19999981}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -614,19 +614,7 @@ MonoBehaviour:
         m_CallState: 2
   OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4917487492018246182}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Press
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &5762794301776679616
 GameObject:
   m_ObjectHideFlags: 0
@@ -955,7 +943,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 140
+  m_VersionIndex: 161
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1010,19 +998,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8363194687666883586}
         m_TargetAssemblyTypeName: Object_FixCamera, Assembly-CSharp
-        m_MethodName: OnFix
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6172513646216748328}
-        m_TargetAssemblyTypeName: Object_Metro, Assembly-CSharp
-        m_MethodName: SetEnable
+        m_MethodName: FixCamera
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1044,21 +1020,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8088130aecedfca49a6bb92aa94c1f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Metro
+  obj: {fileID: 0}
   OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4917487492018246182}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
+        m_MethodName: Play
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Press
+          m_StringArgument: Button_Press
           m_BoolArgument: 0
         m_CallState: 2
+  pivot: {fileID: 7907597899740040781}
 --- !u!114 &8363194687666883586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1071,6 +1049,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ef4f5845c5a2034aa97c8ec6c86af82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_FixCamera
+  pivot: {fileID: 6232497511013538558}
   targetPos: {x: 0, y: 0, z: 0.5}
+  Fixed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6172513646216748328}
+        m_TargetAssemblyTypeName: Object_Metro, Assembly-CSharp
+        m_MethodName: SetEnable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  UnFixed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6172513646216748328}
+        m_TargetAssemblyTypeName: Object_Metro, Assembly-CSharp
+        m_MethodName: SetEnable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   SceneUI: {fileID: 0}
   player: {fileID: 0}

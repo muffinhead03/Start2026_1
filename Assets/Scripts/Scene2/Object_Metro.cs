@@ -4,14 +4,23 @@ using UnityEngine.InputSystem;
 
 public class Object_Metro : MonoBehaviour
 {
-    public Object_Pwd_Locked obj;
+    public Object_Door obj;
     public UnityEvent OnClick;
     public Transform pivot;
+
+    [Header("빛 효과")]
+    public MeshRenderer[] lights;
+    public Material[] materials;
+
+    [Header("애니메이션")]
+    public Animator anim;
 
     int count;
 
     InputAction click;
     bool active;
+
+    Play_Audio audio_player;
 
     void Start()
     {
@@ -19,6 +28,8 @@ public class Object_Metro : MonoBehaviour
         click.Disable();
 
         active = false;
+
+        audio_player = GetComponent<Play_Audio>();
     }
 
     void PressButton()
@@ -26,12 +37,18 @@ public class Object_Metro : MonoBehaviour
         if (!active) return;
 
         OnClick?.Invoke();
-        if (pivot.rotation.eulerAngles.z >= 30) count++;
+        if (pivot.rotation.eulerAngles.z >= 30)
+        {
+            if (count < 0) count = 1;
+            else count++;
+        }
         else count--;
 
+        TurnLight(count);
+
         Debug.Log(count);
-        if (count == 0) GetComponent<Object_FixCamera>().UnFixCamera();
-        else if (count == 5)
+        if (count == -3) GetComponent<Object_FixCamera>().UnFixCamera();
+        else if (count == 3)
         {
             obj.UnlockDoor();
             GetComponent<Object_FixCamera>().UnFixCamera();
@@ -44,20 +61,42 @@ public class Object_Metro : MonoBehaviour
 
         if (active)
         {
-            ResetGame();
-
             click.performed += ctx => PressButton();
             click.Enable();
+
+            anim.SetInteger("On", 1);
+            audio_player.PlayAudioLoop();
         }
         else
         {
             click.performed -= ctx => PressButton();
-            click.Disable();
+            click.Disable(); 
+            
+            ResetGame();
+
+            anim.SetInteger("On", 0);
+            audio_player.PauseAudio();
         }
     }
 
     void ResetGame()
     {
-        count = 4;
+        count = 0;
+
+        TurnLight(0);
+    }
+
+    void TurnLight(int count)
+    {
+        int i;
+        for(i = 0; i < lights.Length && i < count; i++)
+        {
+            lights[i].material = materials[0];
+        }
+
+        for (; i < lights.Length; i++)
+        {
+            lights[i].material = materials[1];
+        }
     }
 }

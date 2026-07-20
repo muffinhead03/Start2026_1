@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,7 +13,11 @@ public class Object_Organ : MonoBehaviour
     [Header("해제 완료")]
     [SerializeField] UnityEvent Unlock;
 
-    public bool isDebug;
+    [Header("사운드")]
+    public AudioClip[] audio_organ;
+
+    private Play_Audio audio_player;
+
     bool isPipeChanged;
     bool isActive;
     string input;
@@ -22,7 +27,6 @@ public class Object_Organ : MonoBehaviour
     void Start()
     {
         isPipeChanged = false;
-        if (isDebug) isPipeChanged = true;
 
         input = "";
 
@@ -30,6 +34,13 @@ public class Object_Organ : MonoBehaviour
         click.Disable();
 
         isActive = false;
+
+        audio_player = GetComponent<Play_Audio>();
+    }
+
+    public void ActivateAudio()
+    {
+        isPipeChanged = true;
     }
 
     public void SetActive(bool active)
@@ -51,8 +62,6 @@ public class Object_Organ : MonoBehaviour
 
     public void PressButton()
     {
-        if (!isPipeChanged) return;
-
         if (!isActive) return;
 
         Vector2 mousePosition = Mouse.current.position.ReadValue();
@@ -69,6 +78,10 @@ public class Object_Organ : MonoBehaviour
                 string n = button.id;
 
                 button.Pressed();
+
+                if (!isPipeChanged) return;
+
+                audio_player.PlayAudio(audio_organ[Convert.ToInt32(n)]);
 
                 input += n;
                 if (input.Length >= answer.Length) CheckAnswer();

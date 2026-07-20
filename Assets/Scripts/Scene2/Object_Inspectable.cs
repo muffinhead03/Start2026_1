@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine;
+using static Unity.VisualScripting.Member;
 
 public class Object_Inspecatable : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class Object_Inspecatable : MonoBehaviour
     public string disc;
     public GameObject panel;
 
+    [Header("사운드")]
+    public AudioClip audio_inspect;
+
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private Transform originalParent;
@@ -23,9 +27,12 @@ public class Object_Inspecatable : MonoBehaviour
 
     private Camera mainCamera;
 
+    private Play_Audio audio_player;
+
     private void Start()
     {
         mainCamera = Camera.main;
+        audio_player = GetComponent<Play_Audio>();
     }
 
     // OnClick 에 연결할 함수
@@ -83,10 +90,7 @@ public class Object_Inspecatable : MonoBehaviour
 
         panel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = disc;
         panel.SetActive(true);
-    }
 
-    IEnumerator ReturnToOriginalPosition()
-    {
-        yield return null;
+        audio_player.PlayAudio(audio_inspect);
     }
 }
