@@ -8,6 +8,10 @@ public class Object_Metro : MonoBehaviour
     public UnityEvent OnClick;
     public Transform pivot;
 
+    [Header("빛 효과")]
+    public MeshRenderer[] lights;
+    public Material[] materials;
+
     int count;
 
     InputAction click;
@@ -26,12 +30,18 @@ public class Object_Metro : MonoBehaviour
         if (!active) return;
 
         OnClick?.Invoke();
-        if (pivot.rotation.eulerAngles.z >= 30) count++;
+        if (pivot.rotation.eulerAngles.z >= 30)
+        {
+            if (count < 0) count = 1;
+            else count++;
+        }
         else count--;
 
+        TurnLight(count);
+
         Debug.Log(count);
-        if (count == 0) GetComponent<Object_FixCamera>().UnFixCamera();
-        else if (count == 5)
+        if (count == -3) GetComponent<Object_FixCamera>().UnFixCamera();
+        else if (count == 3)
         {
             obj.UnlockDoor();
             GetComponent<Object_FixCamera>().UnFixCamera();
@@ -44,20 +54,36 @@ public class Object_Metro : MonoBehaviour
 
         if (active)
         {
-            ResetGame();
-
             click.performed += ctx => PressButton();
             click.Enable();
         }
         else
         {
             click.performed -= ctx => PressButton();
-            click.Disable();
+            click.Disable(); 
+            
+            ResetGame();
         }
     }
 
     void ResetGame()
     {
-        count = 4;
+        count = 0;
+
+        TurnLight(0);
+    }
+
+    void TurnLight(int count)
+    {
+        int i;
+        for(i = 0; i < lights.Length && i < count; i++)
+        {
+            lights[i].material = materials[0];
+        }
+
+        for (; i < lights.Length; i++)
+        {
+            lights[i].material = materials[1];
+        }
     }
 }
