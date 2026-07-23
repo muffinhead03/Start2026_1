@@ -1,3 +1,4 @@
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,8 +12,11 @@ public class Scene_UI_Manager : MonoBehaviour
     [Header("커서 판넬")]
     public GameObject cursor;
 
-    [UnitHeaderInspectable("커서 이미지")]
+    [Header("커서 이미지")]
     public Sprite[] cursor_imgs;
+
+    [Header("텍스트")]
+    public TextMeshProUGUI[] texts;
 
     bool cursor_id;
 
@@ -48,5 +52,10 @@ public class Scene_UI_Manager : MonoBehaviour
     {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+    }
+
+    public void ChangeText(int id, string text)
+    {
+        texts[id].text = text;
     }
 }
