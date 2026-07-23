@@ -33,12 +33,12 @@ public class Object_Door : MonoBehaviour
         if (animator == null) return;
         if (isLocked)
         {
-            audio_player.PlayAudio(audio_locked);
+            audio_player?.PlayAudio(audio_locked);
             return;
         }
 
         int value = (animator.GetInteger("Open") == 0) ? 1 : 0;
         animator.SetInteger("Open", value);
-        audio_player.PlayAudio(audio_open);
+        audio_player?.PlayAudio(audio_open);
     }
 }
