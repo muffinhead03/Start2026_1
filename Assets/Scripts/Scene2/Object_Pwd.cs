@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class Object_Pwd : MonoBehaviour
 {
     public string pwd;
-    public Object_Pwd_Locked obj;
+    public Object_Door obj;
     public HintManager hintManager; // 추가
 
     bool isActive;
