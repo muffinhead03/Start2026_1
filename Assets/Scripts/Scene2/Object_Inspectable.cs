@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine;
+using static Unity.VisualScripting.Member;
 
 public class Object_Inspecatable : MonoBehaviour
 {
@@ -15,17 +16,29 @@ public class Object_Inspecatable : MonoBehaviour
     public string disc;
     public GameObject panel;
 
+    [Header("사운드")]
+    public AudioClip audio_inspect;
+
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private Transform originalParent;
+
+    private Collider col;
+    private Rigidbody rigid;
 
     private bool isInspecting = false;
 
     private Camera mainCamera;
 
+    private Play_Audio audio_player;
+
     private void Start()
     {
         mainCamera = Camera.main;
+        audio_player = GetComponent<Play_Audio>();
+
+        col = GetComponent<Collider>();
+        rigid = GetComponent<Rigidbody>();
     }
 
     // OnClick 에 연결할 함수
@@ -53,6 +66,8 @@ public class Object_Inspecatable : MonoBehaviour
         originalPosition = transform.position;
         originalRotation = transform.rotation;
         originalParent = transform.parent;
+
+        col.isTrigger = true;
 
         // 플레이어 이동 잠금
         player.SetMoveLock(true);
@@ -83,10 +98,11 @@ public class Object_Inspecatable : MonoBehaviour
 
         panel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = disc;
         panel.SetActive(true);
-    }
 
-    IEnumerator ReturnToOriginalPosition()
-    {
-        yield return null;
+        col.isTrigger = false;
+
+        if (rigid != null) rigid.isKinematic = true;
+
+        audio_player?.PlayAudio(audio_inspect);
     }
 }

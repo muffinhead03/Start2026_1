@@ -20,13 +20,28 @@ public class Object_Pipe : MonoBehaviour
 
     [Header("Cl Locked Item")]
     [SerializeField] Object_Cl_Locked obj;
+
+    [Header("사운드")]
+    public AudioClip audio_remove;
+    public AudioClip audio_change;
+
+    private Play_Audio audio_player;
+
     private int state = 0;
+
+    void Start()
+    {
+        audio_player = GetComponent<Play_Audio>();
+    }
+
     public void OnInteract()
     {
         if (state == 0)
         {
             mesh.enabled = false;
             state = 1;
+
+            audio_player.PlayAudio(audio_remove);
         }
         else if (state == 1)
         {
@@ -38,6 +53,8 @@ public class Object_Pipe : MonoBehaviour
 
                 obj.SetCount();
                 player.GetComponent<Player_Grab>().UseKey();
+
+                audio_player.PlayAudio(audio_change);
             }
         }
     }
