@@ -23,6 +23,9 @@ public class Object_Inspecatable : MonoBehaviour
     private Quaternion originalRotation;
     private Transform originalParent;
 
+    private Collider col;
+    private Rigidbody rigid;
+
     private bool isInspecting = false;
 
     private Camera mainCamera;
@@ -33,6 +36,9 @@ public class Object_Inspecatable : MonoBehaviour
     {
         mainCamera = Camera.main;
         audio_player = GetComponent<Play_Audio>();
+
+        col = GetComponent<Collider>();
+        rigid = GetComponent<Rigidbody>();
     }
 
     // OnClick 에 연결할 함수
@@ -60,6 +66,8 @@ public class Object_Inspecatable : MonoBehaviour
         originalPosition = transform.position;
         originalRotation = transform.rotation;
         originalParent = transform.parent;
+
+        col.isTrigger = true;
 
         // 플레이어 이동 잠금
         player.SetMoveLock(true);
@@ -91,6 +99,10 @@ public class Object_Inspecatable : MonoBehaviour
         panel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = disc;
         panel.SetActive(true);
 
-        audio_player.PlayAudio(audio_inspect);
+        col.isTrigger = false;
+
+        if (rigid != null) rigid.isKinematic = true;
+
+        audio_player?.PlayAudio(audio_inspect);
     }
 }
