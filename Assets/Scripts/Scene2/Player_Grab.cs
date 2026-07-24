@@ -29,49 +29,47 @@ public class Player_Grab : MonoBehaviour
 
     public bool hasKey(string key)
     {
-        if (GrabbingObject == null || GrabbingObject.GetComponent<Object_Key>() == null) return false;
+        if (GrabbingObject == null || GrabbingObject.GetComponent<Object_Grabbable>() == null) return false;
 
-        string s = GrabbingObject.GetComponent<Object_Key>().keyName;
+        string s = GrabbingObject.GetComponent<Object_Grabbable>().objectName;
         return Regex.IsMatch(s, key);
     }
 
     public void UseKey()
     {
-        if (GrabbingObject == null || GrabbingObject.GetComponent<Object_Key>() == null) return;
+        if (GrabbingObject == null) return;
 
-        string s = GrabbingObject.GetComponent<Object_Key>().keyName;
+        string s = GrabbingObject.GetComponent<Object_Grabbable>().objectName;
         Player_Inventory.RemoveItem(s);
 
         GrabbingObject.transform.parent = null;
-        GrabbingObject.GetComponent<Object_Key>().UseKey();
+        GrabbingObject.SetActive(false);
 
         isGrabbing = false;
         GrabbingObject = null;
     }
 
-    public void Grab(GameObject grab)
+    public void Grab(Object_Grabbable grab)
     {
         if (isGrabbing) return;
 
         isGrabbing = true;
-        GrabbingObject = grab;
+        GrabbingObject = grab.gameObject;
 
         GrabbingObject.transform.parent = Hand;
 
-        StartCoroutine(MoveToGrabPosition());
+        StartCoroutine(MoveToTargetPosition(Hand.position, GrabbingObject));
 
-        if (GrabbingObject.GetComponent<Object_Key>() != null) GrabbingObject.GetComponent<Object_Key>().Collect();
+        //if (GrabbingObject.GetComponent<Object_Key>() != null) GrabbingObject.GetComponent<Object_Key>().Collect();
+        Player_Inventory.AddItem(grab.objectName);
     }
 
     public void Release()
     {
         if (!isGrabbing) return;
 
-        if (GrabbingObject.GetComponent<Object_Key>() != null)
-        {
-            string s = GrabbingObject.GetComponent<Object_Key>().keyName;
-            Player_Inventory.RemoveItem(s);
-        }
+        string s = GrabbingObject.GetComponent<Object_Grabbable>().objectName;
+        Player_Inventory.RemoveItem(s);
 
         releasePos = transform.position + new Vector3(0, 1.8f, 0) + 0.4f * transform.forward;
 
@@ -90,15 +88,20 @@ public class Player_Grab : MonoBehaviour
     {
         if (!isGrabbing) return null;
 
-        if (GrabbingObject.GetComponent<Object_Key>() != null)
-        {
-            string s = GrabbingObject.GetComponent<Object_Key>().keyName;
-            Player_Inventory.RemoveItem(s);
-        }
+        //if (GrabbingObject.GetComponent<Object_Key>() != null)
+        //{
+        //    string s = GrabbingObject.GetComponent<Object_Key>().keyName;
+        //    Player_Inventory.RemoveItem(s);
+        //}
+        string s = GrabbingObject.GetComponent<Object_Grabbable>().objectName;
+        Player_Inventory.RemoveItem(s);
 
         GrabbingObject.transform.parent = null;
+        isGrabbing = false;
+        GameObject targetObj = GrabbingObject;
+        GrabbingObject = null;
 
-        StartCoroutine(MoveToTargetPosition(targetPos));
+        StartCoroutine(MoveToTargetPosition(targetPos, targetObj));
 
         return GrabbingObject;
     }
@@ -112,18 +115,16 @@ public class Player_Grab : MonoBehaviour
         grab.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Discrete;
     }
 
-    IEnumerator MoveToGrabPosition()
+    IEnumerator MoveToTargetPosition(Vector3 targetPos, GameObject targetObj)
     {
         // 플레이어 이동 잠금
         GetComponent<Player_Move>().SetMoveLock(true);
 
-        GrabbingObject.transform.GetComponent<Collider>().isTrigger = true;
-        GrabbingObject.transform.GetComponent<Rigidbody>().isKinematic = true;
+        targetObj.transform.GetComponent<Collider>().isTrigger = true;
+        targetObj.transform.GetComponent<Rigidbody>().isKinematic = true;
 
-        originalPos = GrabbingObject.transform.position;
-        originalRot = GrabbingObject.transform.rotation;
-
-        Vector3 targetPos = Hand.position;
+        originalPos = targetObj.transform.position;
+        originalRot = targetObj.transform.rotation;
 
         float t = 0f;
 
@@ -132,44 +133,13 @@ public class Player_Grab : MonoBehaviour
             t += Time.deltaTime;
             float tp = t / targetTime;
 
-            GrabbingObject.transform.position = Vector3.Lerp(originalPos, targetPos, tp);
+            targetObj.transform.position = Vector3.Lerp(originalPos, targetPos, tp);
 
-            GrabbingObject.transform.rotation = Quaternion.Lerp(originalRot, Quaternion.identity, tp);
-
-            yield return null;
-        }
-
-        GetComponent<Player_Move>().SetMoveLock(false);
-    }
-
-    IEnumerator MoveToTargetPosition(Vector3 targetPos)
-    {
-        // 플레이어 이동 잠금
-        GetComponent<Player_Move>().SetMoveLock(true);
-
-        GrabbingObject.transform.GetComponent<Collider>().isTrigger = true;
-        GrabbingObject.transform.GetComponent<Rigidbody>().isKinematic = true;
-
-        originalPos = GrabbingObject.transform.position;
-        originalRot = GrabbingObject.transform.rotation;
-
-        float t = 0f;
-
-        while (t < targetTime)
-        {
-            t += Time.deltaTime;
-            float tp = t / targetTime;
-
-            GrabbingObject.transform.position = Vector3.Lerp(originalPos, targetPos, tp);
-
-            GrabbingObject.transform.rotation = Quaternion.Lerp(originalRot, Quaternion.identity, tp);
+            targetObj.transform.rotation = Quaternion.Lerp(originalRot, Quaternion.identity, tp);
 
             yield return null;
         }
 
         GetComponent<Player_Move>().SetMoveLock(false);
-
-        isGrabbing = false;
-        GrabbingObject = null;
     }
 }
