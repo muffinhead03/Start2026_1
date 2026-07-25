@@ -10,16 +10,13 @@ public class HintManager : MonoBehaviour
     [SerializeField] Player_Move player;
 
     [Header("연결 필요")]
-    //[SerializeField] OllamaClient        ollamaClient;
     [SerializeField] LLMClient           llmClient;
     [SerializeField] GameObject          hintPanel;
     [SerializeField] TextMeshProUGUI     hintText;
     [SerializeField] TextMeshProUGUI     usageCountText;
 
-    [Header("버튼 3개")]
-    [SerializeField] Button puzzleHintButton;
-    [SerializeField] Button exitButton;
-    [SerializeField] Button entityButton;
+    [Header("버튼")]
+    [SerializeField] Button puzzleHintButton;   // exitButton, entityButton 제거
 
     [Header("현재 퍼즐 ID (씬마다 변경)")]
     public string currentPuzzleId = "wine_glass_room";
@@ -27,36 +24,34 @@ public class HintManager : MonoBehaviour
     [HideInInspector]
     public PlayerState currentPlayerState;
 
-    const int MAX_HINTS = 2;
+    const int MAX_HINTS = 4;
     bool isOpen = false;
+    bool isRequesting = false;
 
     void Start()
     {
         currentPlayerState = new PlayerState
         {
-            staySeconds         = 0f,           // 실제 타이머로 채움
+            staySeconds         = 0f,
             hintCount           = 0,
-            failCount           = 0,            // TODO: 엔티티 사망 시 ++
+            failCount           = 0,            // TODO: 엔티티 삭제됨 — 대체 실패 조건 필요한지 팀 논의 필요
             hintType            = "indirect",
             completedSteps      = new List<int>(),
-            foundClues          = new List<string>(),   // WineRackLabel, StainIntersection에서 Add()
-            missedClues         = new List<string>(),   // TODO: 씬 종료 시 미수집 단서 계산
-            visitedRooms        = new List<string>(),   // TODO: 구역 진입 트리거에서 Add()
-            lastActions         = new List<string>(),   // WineGlass, WineRack 등 조사 시 Add()
-            repeatedInspections = new List<RepeatedInspection>()  // TODO: 반복 조사 카운트
+            foundClues          = new List<string>(),
+            missedClues         = new List<string>(),
+            visitedRooms        = new List<string>(),
+            lastActions         = new List<string>(),
+            repeatedInspections = new List<RepeatedInspection>()
         };
 
         hintPanel.SetActive(false);
         UpdateUsageUI();
 
-        puzzleHintButton.onClick.AddListener(() => OnHintButtonClicked("puzzle"));
-        exitButton.onClick.AddListener(()        => OnHintButtonClicked("exit"));
-        entityButton.onClick.AddListener(()      => OnHintButtonClicked("entity"));
+        puzzleHintButton.onClick.AddListener(OnHintButtonClicked);
     }
 
     void Update()
     {
-        // 씬 체류 시간 실시간 측정
         currentPlayerState.staySeconds += Time.deltaTime;
 
         if (Keyboard.current.fKey.wasPressedThisFrame)
@@ -86,7 +81,6 @@ public class HintManager : MonoBehaviour
         }
     }
 
-    // 마지막 행동 기록 (최대 5개 유지)
     public void AddLastAction(string actionName)
     {
         currentPlayerState.lastActions.Add(actionName);
@@ -94,11 +88,16 @@ public class HintManager : MonoBehaviour
             currentPlayerState.lastActions.RemoveAt(0);
     }
 
-    public void OnHintButtonClicked(string questionType)
+    public void OnHintButtonClicked()
     {
+        if (isRequesting)
+        {
+            Debug.Log("[HintManager] 이미 힌트 요청 처리 중");
+            return;
+        }
+
         Debug.Log("[foundClues] " + string.Join(", ", currentPlayerState.foundClues));
         Debug.Log("[completedSteps] " + string.Join(", ", currentPlayerState.completedSteps));
-        
         if (currentPlayerState.hintCount >= MAX_HINTS)
         {
             hintText.text = "더 이상 도움을 받을 수 없어.";
@@ -120,32 +119,23 @@ public class HintManager : MonoBehaviour
         }
 
         string systemPrompt = PromptBuilder.SystemPrompt;
-        string userPrompt   = PromptBuilder.Build(result, questionType);
+        string userPrompt   = PromptBuilder.Build(result);
 
         hintText.text = "치지직.. 교신 중...";
 
-        /*
-        StartCoroutine(ollamaClient.RequestHint(systemPrompt, userPrompt, (hint) =>
-        {
-            hintText.text = hint;
-            Debug.Log($"[힌트 결과] 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus}");
-        }, result.nextStep.hintDirection));
-
-        currentPlayerState.hintCount++;
-        UpdateUsageUI();*/
-
+        isRequesting = true;
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         StartCoroutine(llmClient.RequestHint(systemPrompt, userPrompt, (hint) =>
         {
             stopwatch.Stop();
             hintText.text = hint;
-            Debug.Log($"[힌트 결과] 모델: {llmClient.LlmCharacter.llm.model} / 유형: {questionType} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {hint}");
-        }, result.nextStep.hintDirection));
+            isRequesting = false;
+            Debug.Log($"[힌트 결과] 모델: {llmClient.LlmCharacter.llm.model} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {hint}");
+        }, PromptBuilder.GetStepHint(result.nextStep, result.hintLevel)));
 
         currentPlayerState.hintCount++;
         UpdateUsageUI();
-        
     }
 
     void UpdateUsageUI()

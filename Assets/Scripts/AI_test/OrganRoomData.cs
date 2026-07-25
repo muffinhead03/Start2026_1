@@ -7,66 +7,209 @@ public static class OrganRoomData
         return new PuzzleConfig
         {
             puzzleId = "organ_room",
-            totalSteps = 9, // 시연 범위: Phase 1만 (Phase 2까지 구현 시 totalsteps = 12), 3(18), 4(22) 구현 후 22으로 변경)
+            totalSteps = 17, // Phase 1(7) + Phase 2(7) + Phase 3(3)
             requiredClues = new List<string>
             {
-                // ── Phase 1 (시연 범위) ──────────────────────────────
-                "clue_organ_manual",  // 오르간 설명서
-                "clue_pipe_1",        // 파이프 1
-                "clue_pipe_2",        // 파이프 2
-                "clue_pipe_3",        // 파이프 3
-                "clue_pipe_4",        // 파이프 4
-                "clue_music_box",     // 오르골 (방3 키패드 단서)
-                "clue_room2_key",     // 방2 열쇠
-                "clue_lp_hint",       // LP 단서 (어떤 LP를 넣어야 하는지)
-
-                // ── Phase 2 (구현 후 주석 해제) ──────────────────────
-                // "clue_entity_pattern",
-                // "clue_room4_key",
-
-                // ── Phase 3 (구현 후 주석 해제) ──────────────────────
-                // "clue_torn_sheet_1",
-                // "clue_torn_sheet_2",
-                // "clue_torn_sheet_3",
-                // "clue_torn_sheet_4",
-                // "clue_drawer_password",
-                // "clue_room5_switch",
-
-                // ── Phase 4 (구현 후 주석 해제) ──────────────────────
-                // "clue_completed_sheet",
-                // "clue_grandson_diary",
+                "clue_organ_broken",
+                "clue_music_box_melody",
+                "clue_lp_painting_hint",
+                "clue_torn_sheet_pieces",
+                "clue_completed_sheet",
             },
             steps = new List<PuzzleStep>
             {
-                // ── Phase 1 : 오르간 수리하기 ──────────────────────────
-                new PuzzleStep { id = 1, goal = "오르간 설명서를 읽고 파이프 교체가 필요함을 파악한다",             hintDirection = "오르간 근처에 무언가 단서가 있을 것입니다" },
-                new PuzzleStep { id = 2, goal = "파이프 1, 2를 수집한다",                                           hintDirection = "파이프는 공간 곳곳에 숨겨져 있습니다" },
-                new PuzzleStep { id = 3, goal = "방2 열쇠로 방2를 열고 방3 단서를 확인한다",                       hintDirection = "잠긴 문을 열 수 있는 무언가를 찾아보세요" },
-                new PuzzleStep { id = 4, goal = "오르골을 재생해 방3 키패드 번호를 알아낸다",                      hintDirection = "음악 소리가 힌트를 줄 수도 있습니다" },
-                new PuzzleStep { id = 5, goal = "키패드에 4025를 입력해 방3을 열고 파이프 3을 수집한다",           hintDirection = "들었던 소리와 숫자를 연결해보세요" },
-                new PuzzleStep { id = 6, goal = "LP 단서를 확인해 어떤 LP를 넣어야 하는지 파악한다",               hintDirection = "LP 플레이어 근처에 단서가 있을 것입니다" },
-                new PuzzleStep { id = 7, goal = "초록색 7번 LP를 LP 플레이어에 넣어 파이프 4를 수집한다",          hintDirection = "올바른 LP를 플레이어에 넣어보세요" },
-                new PuzzleStep { id = 8, goal = "파이프 4개를 오르간에 교체해 수리를 완료한다",                    hintDirection = "모은 것들을 오르간에 사용해보세요" },
-                new PuzzleStep { id = 9, goal = "오르간 수리 완료 후 다음 단계를 인지한다",                        hintDirection = "무언가 달라진 것이 있습니다" },
+                // ── Phase 1 : 파이프 4개 찾아 교체하기 ──────────────────
+                new PuzzleStep
+                {
+                    id = 1, goal = "오르간이 고장났음을 확인한다",
+                    hintByLevel = new[]
+                    {
+                        "이 방의 중심에 있는 것을 살펴보는 게 어떨까요.",
+                        "오르간 쪽에 뭔가 문제가 있어 보여요.",
+                        "오르간을 조사해 무엇이 문제인지 확인하세요.",
+                        "오르간을 자세히 조사하면 소리가 안 나는 이유를 알 수 있을 거예요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 2, goal = "거실에서 파이프 1을 찾는다",
+                    hintByLevel = new[]
+                    {
+                        "다른 공간도 살펴봐야 할 것 같아요.",
+                        "가까운 곳에 뭔가 숨겨져 있을지도 몰라요.",
+                        "1층 거실을 살펴보세요.",
+                        "거실 어딘가에 숨겨진 파이프 하나를 찾아보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 3, goal = "오르간이 있는 방에서 파이프 2를 찾는다",
+                    hintByLevel = new[]
+                    {
+                        "지금 있는 이 방을 다시 살펴보는 것도 좋을 것 같아요.",
+                        "가까운 곳에 또 다른 것이 있을 수 있어요.",
+                        "오르간이 있는 방을 살펴보세요.",
+                        "오르간이 있는 이 방 안에서 파이프 하나를 더 찾아보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 4, goal = "거실의 오르골을 재생해 멜로디를 확인한다",
+                    hintByLevel = new[]
+                    {
+                        "소리 나는 물건이 있을지도 몰라요.",
+                        "거실 쪽에서 소리가 날 수도 있어요.",
+                        "거실의 오르골을 재생해보세요.",
+                        "오르골을 재생해서 나오는 멜로디를 기억해두세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 5, goal = "오르골 멜로디로 비밀번호 방을 열고 파이프 3을 찾는다",
+                    hintByLevel = new[]
+                    {
+                        "방금 들은 것이 다른 곳에 쓰일 수도 있어요.",
+                        "숫자로 여는 문이 있는 곳이 있어요.",
+                        "오르골과 같은 소리가 나는 비밀번호를 입력하세요.",
+                        "오르골 멜로디를 숫자로 바꿔 비밀번호 문에 입력하고 안에서 파이프를 찾아보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 6, goal = "거실 그림을 보고 올바른 색 LP를 재생해 파이프 4를 찾는다",
+                    hintByLevel = new[]
+                    {
+                        "거실에 걸린 것도 관련이 있을 수 있어요.",
+                        "그림이 뭔가를 가리키고 있을지도 몰라요.",
+                        "거실 그림이 어떤 색 LP를 가리키는지 확인하세요.",
+                        "그림이 가리키는 색의 LP를 재생하면 파이프가 나타날 거예요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 7, goal = "파이프 4개를 오르간에 교체한다",
+                    hintByLevel = new[]
+                    {
+                        "지금까지 모은 것들을 쓸 차례인 것 같아요.",
+                        "오르간에 무언가를 사용해야 할 것 같아요.",
+                        "모은 파이프를 오르간에 교체하세요.",
+                        "찾은 파이프 4개를 모두 오르간에 교체해보세요."
+                    }
+                },
 
-                // ── Phase 2 (구현 후 주석 해제, totalSteps = 12) ─────
-                // new PuzzleStep { id = 10, goal = "오르간 수리 후 엔티티가 등장함을 인지한다",          hintDirection = "소리에 집중하세요 — 엔티티는 눈에 보이지 않습니다" },
-                // new PuzzleStep { id = 11, goal = "방1의 LP를 작동시켜 엔티티를 방1로 유인한다",       hintDirection = "방1 LP 플레이어로 엔티티의 주의를 돌리세요" },
-                // new PuzzleStep { id = 12, goal = "2층 복도에서 방4 열쇠를 획득하고 방4를 개방한다",   hintDirection = "2층 복도 바닥을 확인하세요" },
+                // ── Phase 2 : 악보 4조각 찾기 ───────────────────────────
+                new PuzzleStep
+                {
+                    id = 8, goal = "파이프 교체 후 흩어진 악보 조각들을 확인한다",
+                    hintByLevel = new[]
+                    {
+                        "주변이 조금 달라진 것 같아요.",
+                        "거실 상황이 바뀐 것 같아요.",
+                        "파이프를 교체하고 나면 거실 상황이 바뀝니다.",
+                        "거실을 다시 둘러보며 흩어진 종이 조각들을 확인해보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 9, goal = "거실 바닥에서 악보 조각 2를 찾는다",
+                    hintByLevel = new[]
+                    {
+                        "발밑을 살펴보는 게 좋을 것 같아요.",
+                        "거실 바닥에 뭔가 떨어져 있을지도 몰라요.",
+                        "거실 바닥에 흩어진 악보를 확인하세요.",
+                        "거실 바닥에서 악보 조각 하나를 주워보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 10, goal = "비밀 통로를 통해 메트로놈 방으로 이동한다",
+                    hintByLevel = new[]
+                    {
+                        "지나온 곳 중 하나에 다른 길이 있을지도 몰라요.",
+                        "LP 방 쪽에 뭔가 있을 수 있어요.",
+                        "LP 방에서 비밀 통로를 찾아보세요.",
+                        "LP 방에서 숨겨진 통로를 찾아 메트로놈 방으로 들어가보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 11, goal = "메트로놈 박자를 맞춰 캐비닛을 열고 악보 조각 1을 찾는다",
+                    hintByLevel = new[]
+                    {
+                        "소리에 맞춰 무언가를 해야 할 것 같아요.",
+                        "메트로놈이 있는 곳에서 시도해볼 게 있어요.",
+                        "메트로놈의 박자에 맞게 상호작용하세요.",
+                        "메트로놈 박자에 맞춰 상호작용하면 캐비닛이 열리고 악보 조각이 나올 거예요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 12, goal = "캐비닛 안 힌트 그림대로 책장을 조작해 큰 방을 연다",
+                    hintByLevel = new[]
+                    {
+                        "방금 연 것 안에 또 다른 단서가 있을지도 몰라요.",
+                        "캐비닛 안쪽을 잘 살펴보세요.",
+                        "캐비닛 문 안쪽 그림을 확인하고 책장의 책을 조작하세요.",
+                        "캐비닛 안 그림이 가리키는 대로 책장의 책들을 순서대로 조작해보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 13, goal = "가족 사진 액자 안에서 악보 조각 3을 찾는다",
+                    hintByLevel = new[]
+                    {
+                        "새로 열린 방에 뭔가 있을 것 같아요.",
+                        "벽에 걸린 것을 살펴보세요.",
+                        "큰 방의 가족 사진 액자를 확인하세요.",
+                        "가족 사진 액자 안쪽을 확인해 악보 조각을 찾아보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 14, goal = "쓰레기통 안에서 악보 조각 4를 찾는다",
+                    hintByLevel = new[]
+                    {
+                        "구석에 있는 것도 살펴볼 만해요.",
+                        "버려진 물건들 사이에 뭔가 있을지도 몰라요.",
+                        "큰 방의 쓰레기통을 확인하세요.",
+                        "쓰레기통 안을 뒤져 마지막 악보 조각을 찾아보세요."
+                    }
+                },
 
-                // ── Phase 3 (구현 후 주석 해제, totalSteps = 18) ─────
-                // new PuzzleStep { id = 13, goal = "방4에서 메트로놈 박자를 맞춰 악보 조각 1을 획득한다",           hintDirection = "방4 메트로놈의 박자에 맞게 상호작용하세요" },
-                // new PuzzleStep { id = 14, goal = "1층 거실 바닥에서 악보 조각 2를 찾는다",                        hintDirection = "바람에 흩어진 악보들 사이 거실 바닥을 살펴보세요" },
-                // new PuzzleStep { id = 15, goal = "거실 첫 번째 책장 두 번째 줄 스위치로 방5를 개방한다",          hintDirection = "첫 번째 책장을 자세히 살펴보세요" },
-                // new PuzzleStep { id = 16, goal = "방5 책 사이에서 악보 조각 3을 찾는다",                          hintDirection = "방5 책장의 책들을 하나씩 확인하세요" },
-                // new PuzzleStep { id = 17, goal = "방5 책장 두 번째 줄 책 번호를 나열해 서랍 비밀번호를 알아낸다", hintDirection = "책등에 적힌 번호의 순서를 확인하세요" },
-                // new PuzzleStep { id = 18, goal = "잠긴 서랍을 열어 악보 조각 4를 획득하고 악보를 완성한다",       hintDirection = "알아낸 번호로 서랍을 열어보세요" },
-
-                // ── Phase 4 (구현 후 주석 해제, totalSteps = 22) ─────
-                // new PuzzleStep { id = 19, goal = "완성된 악보를 들고 오르간과 상호작용해 악보를 세팅한다",         hintDirection = "오르간 앞에서 완성된 악보를 사용하세요" },
-                // new PuzzleStep { id = 20, goal = "오르간을 다시 상호작용해 연주 모드로 진입한다",                  hintDirection = "악보가 세팅된 오르간을 다시 조작하세요" },
-                // new PuzzleStep { id = 21, goal = "악보에 표시된 번호 순서대로 건반을 눌러 곡을 완주한다",          hintDirection = "악보의 번호와 건반의 번호를 맞춰 순서대로 연주하세요" },
-                // new PuzzleStep { id = 22, goal = "엔티티가 사라진 후 거실에서 열쇠를 찾아 상자에 넣고 탈출한다",   hintDirection = "연주가 끝나면 거실을 확인하세요" },
+                // ── Phase 3 : 오르간 연주 & 탈출 ────────────────────────
+                new PuzzleStep
+                {
+                    id = 15, goal = "모은 악보 조각을 기존 조각과 조합해 완성한다",
+                    hintByLevel = new[]
+                    {
+                        "모은 것들을 정리할 때가 된 것 같아요.",
+                        "조각들이 서로 맞춰질 수 있어요.",
+                        "모은 악보 조각들을 오르간의 기존 조각과 맞춰보세요.",
+                        "모은 악보 조각 4개를 오르간에 있던 조각과 합쳐 악보를 완성해보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 16, goal = "완성된 악보의 숫자 순서대로 건반을 눌러 연주한다",
+                    hintByLevel = new[]
+                    {
+                        "이제 오르간으로 뭔가 해야 할 것 같아요.",
+                        "완성된 것을 오르간에서 사용해보세요.",
+                        "건반 위 숫자와 악보의 숫자를 맞춰 순서대로 누르세요.",
+                        "완성된 악보에 적힌 숫자 순서대로 건반을 눌러 연주해보세요."
+                    }
+                },
+                new PuzzleStep
+                {
+                    id = 17, goal = "연주 후 떨어진 열쇠를 찾아 상자에 넣고 탈출한다",
+                    hintByLevel = new[]
+                    {
+                        "연주가 끝나면 뭔가 달라질 수 있어요.",
+                        "주변에 뭔가 나타났을지도 몰라요.",
+                        "연주가 끝나면 주변을 확인하세요.",
+                        "떨어진 열쇠를 찾아 상자에 넣고 탈출하세요."
+                    }
+                },
             }
         };
     }
