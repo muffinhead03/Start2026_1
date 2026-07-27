@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -8,6 +9,7 @@ public class HintManager : MonoBehaviour
 {
     [Header("Player Character")]
     [SerializeField] Player_Move player;
+    [SerializeField] WalkieTalkieExamine walkieExamine;   // 무전기 3d
 
     [Header("연결 필요")]
     [SerializeField] LLMClient           llmClient;
@@ -21,12 +23,20 @@ public class HintManager : MonoBehaviour
     [Header("현재 퍼즐 ID (씬마다 변경)")]
     public string currentPuzzleId = "wine_glass_room";
 
+    [Header("타이핑 연출")]
+    [SerializeField] float typingSpeed = 0.03f;         // 고정 멘트 글자당 간격
+    [SerializeField] float loadingDotInterval = 0.4f;   // 로딩 점 애니메이션 간격
+
     [HideInInspector]
     public PlayerState currentPlayerState;
 
     const int MAX_HINTS = 4;
     bool isOpen = false;
     bool isRequesting = false;
+    bool firstChunkReceived = false;
+
+    Coroutine typingCoroutine;
+    Coroutine loadingCoroutine;
 
     void Start()
     {
@@ -34,7 +44,7 @@ public class HintManager : MonoBehaviour
         {
             staySeconds         = 0f,
             hintCount           = 0,
-            failCount           = 0,            // TODO: 엔티티 삭제됨 — 대체 실패 조건 필요한지 팀 논의 필요
+            failCount           = 0,
             hintType            = "indirect",
             completedSteps      = new List<int>(),
             foundClues          = new List<string>(),
@@ -68,16 +78,18 @@ public class HintManager : MonoBehaviour
 
         if (isOpen)
         {
-            hintText.text = "치지직... 도움이 필요해?";
+            SetHintText("치지직... 도움이 필요해?");
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible   = true;
             player.SetMoveLock(true);
+            walkieExamine?.StartExamine();
         }
         else
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
             player.SetMoveLock(false);
+            walkieExamine?.EndExamine();
         }
     }
 
@@ -98,9 +110,10 @@ public class HintManager : MonoBehaviour
 
         Debug.Log("[foundClues] " + string.Join(", ", currentPlayerState.foundClues));
         Debug.Log("[completedSteps] " + string.Join(", ", currentPlayerState.completedSteps));
+
         if (currentPlayerState.hintCount >= MAX_HINTS)
         {
-            hintText.text = "더 이상 도움을 받을 수 없어.";
+            SetHintText("더 이상 도움을 받을 수 없어.");
             return;
         }
 
@@ -114,28 +127,78 @@ public class HintManager : MonoBehaviour
         var result = HintEngine.Calculate(currentPlayerState, config);
         if (result.nextStep == null)
         {
-            hintText.text = "이미 모든 단서를 찾았어.";
+            SetHintText("이미 모든 단서를 찾았어.");
             return;
         }
 
         string systemPrompt = PromptBuilder.SystemPrompt;
         string userPrompt   = PromptBuilder.Build(result);
 
-        hintText.text = "치지직.. 교신 중...";
-
         isRequesting = true;
+        firstChunkReceived = false;
+        string lastReply = "";
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-        StartCoroutine(llmClient.RequestHint(systemPrompt, userPrompt, (hint) =>
-        {
-            stopwatch.Stop();
-            hintText.text = hint;
-            isRequesting = false;
-            Debug.Log($"[힌트 결과] 모델: {llmClient.LlmCharacter.llm.model} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {hint}");
-        }, PromptBuilder.GetStepHint(result.nextStep, result.hintLevel)));
+        // 고정 멘트 타이핑 정지하고 로딩 애니메이션 시작
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+        loadingCoroutine = StartCoroutine(LoadingDots());
+
+        llmClient.RequestHintStream(
+            systemPrompt,
+            userPrompt,
+            onChunk: (partial) =>
+            {
+                if (!firstChunkReceived)
+                {
+                    firstChunkReceived = true;
+                    if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
+                }
+                hintText.text = partial;   // 스트리밍은 직접 대입 — 타이핑 효과 걸지 않음
+                lastReply = partial;
+            },
+            onComplete: () =>
+            {
+                stopwatch.Stop();
+                isRequesting = false;
+                if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
+                Debug.Log($"[힌트 결과] 모델: {llmClient.LlmCharacter.llm.model} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {lastReply}");   // ← lastReply 추가
+            },
+            hintDirection: PromptBuilder.GetStepHint(result.nextStep, result.hintLevel)
+        );
 
         currentPlayerState.hintCount++;
         UpdateUsageUI();
+    }
+
+    // ─── 타이핑 효과 (고정 멘트 전용) ───
+    IEnumerator TypeText(string message)
+    {
+        hintText.text = "";
+        foreach (char c in message)
+        {
+            hintText.text += c;
+            yield return new WaitForSecondsRealtime(typingSpeed);
+        }
+    }
+
+    void SetHintText(string message)
+    {
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+        typingCoroutine = StartCoroutine(TypeText(message));
+    }
+
+    // ─── 로딩 애니메이션 (스트리밍 대기 중) ───
+    IEnumerator LoadingDots()
+    {
+        string baseText = "치지직.. 교신 중";
+        int dotCount = 0;
+
+        while (true)
+        {
+            hintText.text = baseText + new string('.', dotCount);
+            dotCount = (dotCount + 1) % 4;
+            yield return new WaitForSecondsRealtime(loadingDotInterval);
+        }
     }
 
     void UpdateUsageUI()
