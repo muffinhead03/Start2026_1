@@ -8,6 +8,7 @@ public class HintManager : MonoBehaviour
 {
     [Header("Player Character")]
     [SerializeField] Player_Move player;
+    [SerializeField] WalkieTalkieExamine walkieExamine;   // 무전기 3d
 
     [Header("연결 필요")]
     [SerializeField] LLMClient           llmClient;
@@ -72,12 +73,14 @@ public class HintManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible   = true;
             player.SetMoveLock(true);
+            walkieExamine?.StartExamine();      // ← 추가
         }
         else
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
             player.SetMoveLock(false);
+            walkieExamine?.EndExamine();
         }
     }
 
