@@ -5,6 +5,9 @@ using static Unity.VisualScripting.Member;
 
 public class Object_Inspecatable : MonoBehaviour
 {
+    [Header("이름")]
+    public string objectName;
+
     [Header("Player Character")]
     public Player_Move player;
 
@@ -14,7 +17,7 @@ public class Object_Inspecatable : MonoBehaviour
 
     [Header("UI Settings")]
     public string disc;
-    public GameObject panel;
+    public Scene_UI_Manager SceneUI;
 
     [Header("사운드")]
     public AudioClip audio_inspect;
@@ -52,8 +55,13 @@ public class Object_Inspecatable : MonoBehaviour
         { 
             gameObject.SetActive(false);
             isInspecting = false;
-            panel.SetActive(false);
+
+            SceneUI.SetActivePanel(1, false);
+            SceneUI.SetActiveCursor(true);
+
             player.SetMoveLock(false);
+
+            Player_Inventory.AddItem(objectName);
             //StartCoroutine(ReturnToOriginalPosition());
         }
     }
@@ -68,6 +76,7 @@ public class Object_Inspecatable : MonoBehaviour
         originalParent = transform.parent;
 
         col.isTrigger = true;
+        if (rigid != null) rigid.isKinematic = true;
 
         // 플레이어 이동 잠금
         player.SetMoveLock(true);
@@ -96,12 +105,11 @@ public class Object_Inspecatable : MonoBehaviour
             yield return null;
         }
 
-        panel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = disc;
-        panel.SetActive(true);
+        SceneUI.ChangeText(0, disc);
+        SceneUI.SetActivePanel(1, true);
+        SceneUI.SetActiveCursor(false);
 
         col.isTrigger = false;
-
-        if (rigid != null) rigid.isKinematic = true;
 
         audio_player?.PlayAudio(audio_inspect);
     }
