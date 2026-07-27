@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 
-public class Object_Pwd_State : MonoBehaviour
+public class Object_Puzzle : MonoBehaviour
 {
     char[] input;
 
@@ -20,26 +19,38 @@ public class Object_Pwd_State : MonoBehaviour
     void Init()
     {
         input = new char[pwd.Length];
-        for (int i = 0; i < input.Length; i++) input[i] = '0';
+        for (int i = 0; i < input.Length; i++) input[i] = '-';
     }
 
-    public void PressButton(int id)
+    public void PieceOn(int id, char num)
     {
-        if(id >= input.Length)
+        if (id >= input.Length)
         {
             Debug.Log("Index out of range :" + id);
             return;
         }
 
-        if (input[id] == '0') input[id] = '1';
-        else input[id] = '0';
+        input[id] = num;
 
         CheckResult();
+    }
+
+    public void PieceOff(int id)
+    {
+        if (id >= input.Length)
+        {
+            Debug.Log("Index out of range :" + id);
+            return;
+        }
+
+        input[id] = '-';
     }
 
     void CheckResult()
     {
         string input_str = new string(input);
         if (input_str == pwd) UnlockEvent?.Invoke();
+
+        Debug.Log(input_str);
     }
 }

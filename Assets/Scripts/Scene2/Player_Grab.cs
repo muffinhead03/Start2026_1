@@ -9,6 +9,9 @@ public class Player_Grab : MonoBehaviour
     public Transform Hand;
     public float targetTime = 1f;
 
+    [Header("Release")]
+    public float throwForce;
+
     bool isGrabbing;
     GameObject GrabbingObject;
 
@@ -71,14 +74,16 @@ public class Player_Grab : MonoBehaviour
         string s = GrabbingObject.GetComponent<Object_Grabbable>().objectName;
         Player_Inventory.RemoveItem(s);
 
-        releasePos = transform.position + new Vector3(0, 1.8f, 0) + 0.4f * transform.forward;
+        releasePos = transform.position + new Vector3(0, 1.5f, 0) + 0.4f * transform.forward;
 
         GrabbingObject.transform.position = releasePos;
         GrabbingObject.transform.parent = null;
-        GrabbingObject.transform.GetComponent<Collider>().isTrigger = false;
+        GrabbingObject.transform.GetComponent<Collider>().enabled = true;
         GrabbingObject.transform.GetComponent<Rigidbody>().isKinematic = false;
 
         StartCoroutine(CollisionMode(GrabbingObject.gameObject));
+
+        GrabbingObject.transform.GetComponent<Rigidbody>().AddForce(Hand.forward * throwForce, ForceMode.Impulse);
 
         isGrabbing = false;
         GrabbingObject = null;
@@ -103,7 +108,7 @@ public class Player_Grab : MonoBehaviour
 
         StartCoroutine(MoveToTargetPosition(targetPos, targetObj));
 
-        return GrabbingObject;
+        return targetObj;
     }
 
     IEnumerator CollisionMode(GameObject grab)
@@ -120,7 +125,7 @@ public class Player_Grab : MonoBehaviour
         // 플레이어 이동 잠금
         GetComponent<Player_Move>().SetMoveLock(true);
 
-        targetObj.transform.GetComponent<Collider>().isTrigger = true;
+        targetObj.transform.GetComponent<Collider>().enabled = false;
         targetObj.transform.GetComponent<Rigidbody>().isKinematic = true;
 
         originalPos = targetObj.transform.position;

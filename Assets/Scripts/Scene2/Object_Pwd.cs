@@ -1,11 +1,16 @@
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class Object_Pwd : MonoBehaviour
 {
+    [Header("정답")]
     public string pwd;
-    public Object_Door obj;
+
+    [Header("해제 이벤트")]
+    public UnityEvent UnlockEvent;
+
     public HintManager hintManager; // 추가
 
     bool isActive;
@@ -61,8 +66,8 @@ public class Object_Pwd : MonoBehaviour
                 {
                     if (pwd == input)
                     {
-                        obj.UnlockDoor();
-                        hintManager.currentPlayerState.completedSteps.Add(5);
+                        UnlockEvent?.Invoke();
+                        hintManager?.currentPlayerState.completedSteps.Add(5);
                     }
                     else input = "";
                 }

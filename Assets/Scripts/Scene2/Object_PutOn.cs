@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Object_PutOn : MonoBehaviour
 {
@@ -18,6 +19,10 @@ public class Object_PutOn : MonoBehaviour
 
     [Header("사운드")]
     public AudioClip audio_puton;
+
+    [Header("이벤트")]
+    public UnityEvent putDown;
+    public UnityEvent pickUp;
 
     private Play_Audio audio_player;
 
@@ -37,31 +42,36 @@ public class Object_PutOn : MonoBehaviour
     {
         if (state == 0 && player.GetComponent<Player_Grab>().hasKey(keyName + "_" + @"[0-9]"))
         {
-            mesh.enabled = false;
-            state = 1;
-            putOn = player.GetComponent<Player_Grab>().PutOn(transform.position);
-
-            StartCoroutine(PlayAudioAfter(0.5f));
+            PutOn();
         }
+        else if(state == 1 && !player.GetComponent<Player_Grab>().isGrab())
+        {
+            TakeOff();
+
+        }
+    }
+
+    void PutOn()
+    {
+        mesh.enabled = false;
+        state = 1;
+        putOn = player.GetComponent<Player_Grab>().PutOn(transform.position);
+
+        StartCoroutine(AfterPutDown(0.5f));
+    }
+
+    void TakeOff()
+    {
+        Object_Grabbable grab = putOn.GetComponent<Object_Grabbable>();
+        player.GetComponent<Player_Grab>().Grab(grab);
+        state = 0;
+        putOn = null;
+
+        pickUp?.Invoke();
     }
 
     public void OnEnter()
     {
-        if (putOn == null)
-        {
-            state = 0;
-        }
-        else
-        {
-            float dist = Vector3.Distance(putOn.transform.position, transform.position);
-            if (dist < 0.1f) state = 1;
-            else
-            {
-                state = 0;
-                putOn = null;
-            }
-        }
-
         if (state == 0 && player.GetComponent<Player_Grab>().hasKey(keyName + "_" + @"[0-9]"))
         {
             mesh.material = mat_trans;
@@ -74,10 +84,19 @@ public class Object_PutOn : MonoBehaviour
         mesh.enabled = false;
     }
 
-    IEnumerator PlayAudioAfter(float delay)
+    public char GetKeyId()
+    {
+        string name = putOn.GetComponent<Object_Grabbable>().objectName;
+        if (putOn != null) return name[name.Length - 1];
+        else return '-';
+    }
+
+    IEnumerator AfterPutDown(float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        audio_player.PlayAudio(audio_puton);
+        audio_player?.PlayAudio(audio_puton);
+
+        putDown?.Invoke();
     }
 }
