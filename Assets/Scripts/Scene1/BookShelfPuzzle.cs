@@ -30,10 +30,13 @@ public class BookShelfPuzzle : MonoBehaviour
     {
         hintManager?.AddLastAction("collect_book_" + letter);
 
+        Debug.Log($"[BookShelfPuzzle] 책 '{letter}' 수집됨");   // ← 추가
+
         if (HasAllAnswerLetters() && hintManager != null &&
             !hintManager.currentPlayerState.completedSteps.Contains(5))
         {
             hintManager.currentPlayerState.completedSteps.Add(5);
+            Debug.Log("[BookShelfPuzzle] Step 5 완료 — 정답 알파벳 4권 모두 수집");   // ← 추가
         }
     }
 
@@ -50,6 +53,8 @@ public class BookShelfPuzzle : MonoBehaviour
     {
         if (isSolved || isFocused) return;
         isFocused = true;
+
+        Debug.Log("[BookShelfPuzzle] 책장 슬롯 영역 포커스 진입"); 
 
         SpawnPlacementBooks();
     }
@@ -74,6 +79,8 @@ public class BookShelfPuzzle : MonoBehaviour
             item.bookShelfPuzzle = this;
             spawnedBooks.Add(obj);
         }
+
+        Debug.Log($"[BookShelfPuzzle] 배치용 책 {spawnedBooks.Count}권 스폰됨");   // ← 추가
     }
 
     void ClearSpawnedBooks()
@@ -151,7 +158,7 @@ public class BookShelfPuzzle : MonoBehaviour
         Debug.Log("[BookShelfPuzzle] 정답! 책장이 밀려나며 열쇠 발견");
 
         ClearSpawnedBooks();
-        // focus?.EndFocus();
+        //focus?.EndFocus();
         isFocused = false;
 
         if (bookshelfAnimator != null) bookshelfAnimator.SetTrigger("Slide");
@@ -160,9 +167,15 @@ public class BookShelfPuzzle : MonoBehaviour
         if (hintManager != null)
         {
             if (!hintManager.currentPlayerState.completedSteps.Contains(6))
+            {
                 hintManager.currentPlayerState.completedSteps.Add(6);
+                Debug.Log("[BookShelfPuzzle] Step 6 완료");   // ← 추가
+            }
             if (!hintManager.currentPlayerState.foundClues.Contains("clue_bookshelf_order"))
+            {
                 hintManager.currentPlayerState.foundClues.Add("clue_bookshelf_order");
+                Debug.Log("[BookShelfPuzzle] clue_bookshelf_order 획득 — 와인방 퍼즐 완료");   // ← 추가
+            }
         }
     }
 
