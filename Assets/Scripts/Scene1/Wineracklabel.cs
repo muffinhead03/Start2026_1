@@ -9,14 +9,15 @@ using TMPro;
 public class WineRackLabel : MonoBehaviour
 {
     [Header("와인 정보")]
-    public string wineAlphabet; // ex. "a"
-    public string wineColor;    // ex. "딥레드"
+    public string wineAlphabet;
+    public string wineColor;
 
     [Header("UI 텍스트")]
     public TextMeshProUGUI infoText;
 
-    [Header("힌트 매니저 연결")]
+    [Header("연결")]
     public HintManager hintManager;
+    public WineLabelManager labelManager;   // ← 추가
 
     bool collected = false;
 
@@ -25,22 +26,16 @@ public class WineRackLabel : MonoBehaviour
         if (infoText != null)
             infoText.text = $"{wineAlphabet}와인 = {wineColor}";
 
-            if (!collected)
+        if (!collected)
         {
             collected = true;
-            if (hintManager != null)
-            {
-                hintManager.currentPlayerState.foundClues.Add("clue_B");
-                if (!hintManager.currentPlayerState.completedSteps.Contains(2))
-                    hintManager.currentPlayerState.completedSteps.Add(2);
-            }
-            Debug.Log($"[WineRackLabel] 단서 B 수집 — {wineAlphabet}와인: {wineColor}");
+            hintManager?.AddLastAction("inspect_wine_label_" + wineAlphabet);
+            labelManager?.OnLabelInspected(gameObject);   // ← clue_B 직접 추가하던 부분 교체
         }
     }
 
-        public void Hide()
+    public void Hide()
     {
-        if (infoText != null)
-            infoText.text = "";
+        if (infoText != null) infoText.text = "";
     }
 }
