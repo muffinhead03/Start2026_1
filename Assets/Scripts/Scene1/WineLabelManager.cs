@@ -16,10 +16,15 @@ public class WineLabelManager : MonoBehaviour
         bool isFirst = inspected.Count == 0;
         inspected.Add(label);
 
+        Debug.Log($"[WineLabelManager] {label.name} 조사됨 ({inspected.Count}/{totalLabels})");
+
         if (hintManager == null) return;
 
         if (isFirst && !hintManager.currentPlayerState.completedSteps.Contains(3))
+        {
             hintManager.currentPlayerState.completedSteps.Add(3);
+            Debug.Log("[WineLabelManager] Step 3 완료");
+        }
 
         if (inspected.Count >= totalLabels)
         {
@@ -27,6 +32,8 @@ public class WineLabelManager : MonoBehaviour
                 hintManager.currentPlayerState.completedSteps.Add(4);
             if (!hintManager.currentPlayerState.foundClues.Contains("clue_wine_labels"))
                 hintManager.currentPlayerState.foundClues.Add("clue_wine_labels");
+
+            Debug.Log("[WineLabelManager] Step 4 완료 + clue_wine_labels 획득");
         }
     }
 }
