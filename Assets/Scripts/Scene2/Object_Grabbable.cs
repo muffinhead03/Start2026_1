@@ -8,6 +8,10 @@ public class Object_Grabbable : MonoBehaviour
     [Header("이름")]
     public string objectName;
 
+    [Header("설명")]
+    [TextArea(3, 7)]
+    public string description;
+
     [Header("Player Character")]
     public GameObject player;
 
@@ -26,7 +30,7 @@ public class Object_Grabbable : MonoBehaviour
     {
         player.GetComponent<Player_Grab>().Grab(this);
 
-        if(audio_player != null) audio_player.PlayAudio(audio_grap);
+        if (audio_player != null)
+            audio_player.PlayAudio(audio_grap);
     }
 }
-
