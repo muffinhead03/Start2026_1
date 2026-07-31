@@ -236,4 +236,16 @@ public sealed class InventoryData : MonoBehaviour
 
         return root;
     }
+    public bool RemoveBySource(Object_Grabbable source)
+{
+    if (source == null)
+        return false;
+
+    int index = FindIndexBySource(source);
+
+    if (index < 0)
+        return false;
+
+    return RemoveAt(index);
+}
 }
