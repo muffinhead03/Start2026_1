@@ -1,11 +1,29 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InventoryInputBridge : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class InventoryInputBridge : MonoBehaviour
 {
-    [Header("인벤토리")]
-    [SerializeField]
-    private InventoryUIManager inventoryUIManager;
+    [SerializeField] private InventoryUIManager inventoryUIManager;
+
+    private void Awake()
+    {
+        if (inventoryUIManager == null)
+        {
+            inventoryUIManager =
+                GetComponentInChildren<InventoryUIManager>(true);
+        }
+
+        if (inventoryUIManager == null)
+        {
+            Debug.LogError(
+                "[InventoryInputBridge] InventoryUIManager가 연결되지 않았습니다.",
+                this
+            );
+
+            enabled = false;
+        }
+    }
 
     private void Update()
     {
@@ -17,11 +35,8 @@ public class InventoryInputBridge : MonoBehaviour
             return;
         }
 
-        // I: 인벤토리 열기/닫기
         if (keyboard.iKey.wasPressedThisFrame)
         {
-            Debug.Log("InventoryInputBridge: I 키 감지");
-
             inventoryUIManager.ToggleInventory();
             return;
         }
@@ -29,17 +44,13 @@ public class InventoryInputBridge : MonoBehaviour
         if (!inventoryUIManager.IsOpen)
             return;
 
-        // ESC: 닫기
         if (keyboard.escapeKey.wasPressedThisFrame)
         {
             inventoryUIManager.CloseInventory();
             return;
         }
 
-        // E: 선택한 아이템 장착
         if (keyboard.eKey.wasPressedThisFrame)
-        {
             inventoryUIManager.ConfirmSelectedItem();
-        }
     }
 }
