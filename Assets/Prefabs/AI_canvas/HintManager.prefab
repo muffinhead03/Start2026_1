@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2416955432377620776}
   - component: {fileID: 4259074310291933702}
-  - component: {fileID: 9155053581007161001}
+  - component: {fileID: 7073582449341293015}
+  - component: {fileID: 5347934386039576611}
   m_Layer: 0
   m_Name: HintManager
   m_TagString: Untagged
@@ -45,14 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27bdd14bfa3e746e692aebc60382f50d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HintManager
-  ollamaClient: {fileID: 9155053581007161001}
+  player: {fileID: 0}
+  walkieExamine: {fileID: 5347934386039576611}
+  llmClient: {fileID: 0}
   hintPanel: {fileID: 0}
   hintText: {fileID: 0}
   usageCountText: {fileID: 0}
   puzzleHintButton: {fileID: 0}
-  exitButton: {fileID: 0}
-  entityButton: {fileID: 0}
-  currentPuzzleId: clock_bookshelf_lock
+  currentPuzzleId: organ_room
   currentPlayerState:
     staySeconds: 0
     hintCount: 0
@@ -64,7 +65,7 @@ MonoBehaviour:
     visitedRooms: []
     lastActions: []
     repeatedInspections: []
---- !u!114 &9155053581007161001
+--- !u!114 &7073582449341293015
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,6 +74,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 6061279514347985201}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4a8c357d59e7441e95e96c453708ede, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e121fdf103b943b7b037a282ccade17, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OllamaClient
+  m_EditorClassIdentifier: Assembly-CSharp::LLMClient
+  llmCharacter: {fileID: 0}
+--- !u!114 &5347934386039576611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6061279514347985201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 027ff245691154c60840752c0a81e8de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WalkieTalkieExamine
+  walkieTalkieObject: {fileID: 0}
+  examinePoint: {fileID: 0}
+  moveDuration: 0.4
+  rotateSpeed: 20
