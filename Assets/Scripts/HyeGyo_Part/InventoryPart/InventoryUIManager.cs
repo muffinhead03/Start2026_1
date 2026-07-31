@@ -19,9 +19,11 @@ public class InventorySlotView
     {
         get
         {
+            // Inspector에서 root가 직접 연결되어 있으면 그것을 우선 사용합니다.
             if (root != null)
                 return root;
 
+            // root가 없더라도 Button이 연결되어 있는지 확인합니다.
             if (button != null)
                 return button.transform as RectTransform;
 
@@ -29,19 +31,23 @@ public class InventorySlotView
         }
     }
 
+    // 이 슬롯 버튼을 특정 슬롯 번호와 클릭 콜백에 연결합니다.
     public void Bind(int slotIndex, Action<int> onClicked)
     {
         if (button == null)
             return;
 
+        // Button을 클릭했을 때 실행할 함수를 등록합니다.
         button.onClick.AddListener(
             () => onClicked?.Invoke(slotIndex)
         );
     }
 
+    // 슬롯의 이름, 선택 상태, 장착 상태를 화면에 다시 표시합니다.
     public void Refresh(
         string itemName,
         bool isSelected,
+               // 이 슬롯이 현재 손에 든 아이템인지 나타냅니다.
         bool isEquipped)
     {
         if (itemNameText != null)
@@ -51,7 +57,7 @@ public class InventorySlotView
                     ? "—"
                     : itemName;
         }
-
+        // 장착 테두리 오브젝트가 연결되어 있는지 확인합니다.
         if (selectedFrame != null)
             selectedFrame.SetActive(isSelected);
 
@@ -60,21 +66,24 @@ public class InventorySlotView
     }
 }
 
+// 이 클래스를 Unity Inspector에서 펼쳐 보고 값을 연결할 수 있게 직렬화합니다.
 [Serializable]
 public class GrabbableUnityEvent :
     UnityEvent<Object_Grabbable>
 {
 }
 
-/// <summary>
+
 /// 인벤토리의 기능적 UI 처리를 담당합니다.
 /// 애니메이션은 InventoryUIEffect에 위임합니다.
-/// </summary>
+
 public class InventoryUIManager : MonoBehaviour
 {
+// 인벤토리 데이터 참조 영역입니다.
     [Header("데이터")]
     [SerializeField] private InventoryData inventoryData;
 
+    // 인벤토리 창 자체 설정 영역입니다.
     [Header("인벤토리 창")]
     [SerializeField] private GameObject inventoryRoot;
     [SerializeField] private bool startClosed = true;
@@ -128,7 +137,7 @@ public class InventoryUIManager : MonoBehaviour
     [SerializeField] private InventoryUIEffect uiEffect;
 
     [Header("장착 요청")]
-    [Tooltip(
+    [Tooltip(//손으로 옮기는 코드 부분만 질문하기
         "선택 아이템을 실제 손으로 옮기는 코드와 나중에 연결합니다. " +
         "빈 슬롯이면 null이 전달됩니다."
     )]
@@ -211,40 +220,22 @@ public class InventoryUIManager : MonoBehaviour
     }
 
     private void Update()
+{
+    // 키 입력은 InventoryInputBridge가 담당합니다.
+
+    if (autoRotatePreview &&
+        currentPreviewObject != null)
     {
-        if (Input.GetKeyDown(openKey))
-        {
-            ToggleInventory();
-            return;
-        }
-
-        if (!isOpen)
-            return;
-
-        if (Input.GetKeyDown(closeKey))
-        {
-            CloseInventory();
-            return;
-        }
-
-        if (Input.GetKeyDown(confirmKey))
-        {
-            ConfirmSelectedItem();
-        }
-
-        if (autoRotatePreview &&
-            currentPreviewObject != null)
-        {
-            currentPreviewObject.transform.Rotate(
-                previewRoot != null
-                    ? previewRoot.up
-                    : Vector3.up,
-                previewRotationSpeed *
-                Time.unscaledDeltaTime,
-                Space.World
-            );
-        }
+        currentPreviewObject.transform.Rotate(
+            previewRoot != null
+                ? previewRoot.up
+                : Vector3.up,
+            previewRotationSpeed *
+            Time.unscaledDeltaTime,
+            Space.World
+        );
     }
+}
 
     private void BindSlotButtons()
     {
@@ -379,10 +370,10 @@ public class InventoryUIManager : MonoBehaviour
         inventoryData.SelectSlot(slotIndex);
     }
 
-    /// <summary>
+
     /// 슬롯의 E키 장착 요청입니다.
     /// 실제 교체 연출은 Player_Grab 또는 별도 장착 코드와 연결합니다.
-    /// </summary>
+
     public void ConfirmSelectedItem()
     {
         Object_Grabbable selectedObject = null;
@@ -472,8 +463,7 @@ public class InventoryUIManager : MonoBehaviour
                 selectedItem.Description;
         }
 
-        /*
-         * 창이 닫혀 있을 때는 3D 오브젝트를 만들지 않습니다.
+        /* 창이 닫혀 있을 때는 3D 오브젝트를 만들지 않습니다.
          * 다음에 열 때 다시 생성합니다.
          */
         if (!isOpen)

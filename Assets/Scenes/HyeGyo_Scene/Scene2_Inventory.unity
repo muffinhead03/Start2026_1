@@ -403,7 +403,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -2635,7 +2635,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -100, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &319697011
@@ -2692,7 +2692,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -2951,7 +2951,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 5}
+  m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &332776200
 MonoBehaviour:
@@ -3007,7 +3007,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -5405,7 +5405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4275d387d847cb4b8fb2d6b2f33a29b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryUIManager
-  inventoryData: {fileID: 0}
+  inventoryData: {fileID: 1236615489}
   inventoryRoot: {fileID: 444896417}
   startClosed: 1
   openKey: 105
@@ -5428,7 +5428,7 @@ MonoBehaviour:
   previewRotationSpeed: 20
   pauseGameWhileOpen: 0
   disableWhileOpen: []
-  uiEffect: {fileID: 0}
+  uiEffect: {fileID: 1916002708}
   onEquipRequested:
     m_PersistentCalls:
       m_Calls: []
@@ -5711,7 +5711,7 @@ MonoBehaviour:
   previewRotationSpeed: 20
   pauseGameWhileOpen: 0
   disableWhileOpen: []
-  uiEffect: {fileID: 0}
+  uiEffect: {fileID: 1916002708}
   onEquipRequested:
     m_PersistentCalls:
       m_Calls: []
@@ -6057,7 +6057,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -8076,7 +8076,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -100, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &859303579
@@ -8133,7 +8133,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -10889,6 +10889,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1125256727}
+  - component: {fileID: 1125256728}
   m_Layer: 0
   m_Name: InventorySystem
   m_TagString: Untagged
@@ -10914,6 +10915,21 @@ Transform:
   - {fileID: 1916002707}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1125256728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125256726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00523dab984c94744ab9dd59ada33be7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  inputActions: {fileID: -944628639613478452, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
+  toggleActionName: PC/ItemClick
+  inventoryUIManager: {fileID: 444896422}
 --- !u!1001 &1127358460
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11087,7 +11103,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -11762,7 +11778,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -17091,6 +17107,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1916002707}
+  - component: {fileID: 1916002708}
   m_Layer: 0
   m_Name: InventoryUIEffect
   m_TagString: Untagged
@@ -17113,6 +17130,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1125256727}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1916002708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916002706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e18773a3e3c6fe84993ccc926b252aac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUIEffect
+  windowCanvasGroup: {fileID: 0}
+  windowPanel: {fileID: 0}
+  windowDuration: 0.15
+  closedScale: {x: 0.96, y: 0.96, z: 1}
+  slotPulseDuration: 0.1
+  slotPulseScale: 1.04
+  previewCanvasGroup: {fileID: 0}
+  previewFadeDuration: 0.1
 --- !u!43 &1923540454
 Mesh:
   m_ObjectHideFlags: 0
@@ -18141,7 +18178,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0

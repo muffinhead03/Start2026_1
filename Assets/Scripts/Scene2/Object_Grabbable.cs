@@ -9,7 +9,7 @@ public class Object_Grabbable : MonoBehaviour
     public string objectName;
 
     [Header("설명")]
-    [TextArea(3, 7)]
+    [TextArea(3, 8)]
     public string description;
 
     [Header("Player Character")]
