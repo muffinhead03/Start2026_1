@@ -13,21 +13,73 @@ public sealed class InventorySlotView
     [SerializeField] private GameObject equippedFrame;
 
     private UnityAction clickAction;
+    private int boundSlotIndex = -1;
+
+    public bool IsConfigured => button != null;
 
     public void Bind(
         int slotIndex,
         Action<int> onClicked)
     {
         if (button == null)
+        {
+            Debug.LogError(
+                $"[InventorySlotView] " +
+                $"슬롯 {slotIndex}의 Button이 연결되지 않았습니다."
+            );
+
             return;
+        }
 
-        if (clickAction != null)
-            button.onClick.RemoveListener(clickAction);
+        if (onClicked == null)
+        {
+            Debug.LogError(
+                $"[InventorySlotView] " +
+                $"슬롯 {slotIndex}의 클릭 콜백이 없습니다.",
+                button
+            );
 
-        clickAction =
-            () => onClicked?.Invoke(slotIndex);
+            return;
+        }
+
+        Unbind();
+
+        boundSlotIndex = slotIndex;
+
+        clickAction = () =>
+        {
+            Debug.Log(
+                $"[InventorySlotView] " +
+                $"슬롯 클릭: {boundSlotIndex}",
+                button
+            );
+
+            onClicked.Invoke(boundSlotIndex);
+        };
 
         button.onClick.AddListener(clickAction);
+        button.interactable = true;
+
+        Debug.Log(
+            $"[InventorySlotView] " +
+            $"슬롯 바인딩 완료: {slotIndex}, " +
+            $"Button={button.name}",
+            button
+        );
+    }
+
+    public void Unbind()
+    {
+        if (button != null &&
+            clickAction != null)
+        {
+            button.onClick.RemoveListener(
+                clickAction
+            );
+        }
+
+        clickAction = null;
+        boundSlotIndex = -1;
     }
 
     public void Refresh(
