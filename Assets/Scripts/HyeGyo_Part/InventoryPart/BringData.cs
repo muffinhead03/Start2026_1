@@ -6,184 +6,179 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class BringData : MonoBehaviour
 {
-    [Header("Mesh 탐색")]
-
-    [Tooltip(
-        "Object_Grabbable 아래에서 Mesh를 찾지 못하면 " +
-        "부모 오브젝트를 올라가며 외형을 찾습니다."
-    )]
-    [SerializeField]
-    private bool searchParentWhenMeshMissing = true;
-
-    [Tooltip(
-        "부모 방향으로 탐색할 최대 단계입니다. " +
-        "너무 크게 설정하면 HandPivot이나 Player Mesh까지 포함될 수 있습니다."
-    )]
-    [SerializeField, Min(0)]
-    private int maxParentSearchDepth = 2;
-
     [Header("Debug")]
     [SerializeField]
-    private bool showDebugLog = true;
+    private bool showDebugLog;
 
     /// <summary>
-    /// Object_Grabbable에서 이름, 설명, Mesh 정보를 수집합니다.
+    /// InventoryData의 선택 index를 기준으로
+    /// 이름, 설명, Mesh 정보를 가져옵니다.
     /// </summary>
-    public InventoryItemData Capture(
-        Object_Grabbable source)
+    public InventoryDisplayData BuildDisplayData(
+        InventoryData inventoryData,
+        int slotIndex)
     {
-        if (source == null)
+        if (inventoryData == null)
         {
-            Debug.LogWarning(
-                "[BringData] 가져올 Object_Grabbable이 없습니다.",
-                this
-            );
-
             return null;
         }
 
-        string itemName = ReadStringMember(
-            source,
-            source.gameObject.name,
-            "objectName",
-            "ObjectName"
-        );
+        Object_Grabbable sourceObject =
+            inventoryData.GetObjectAt(
+                slotIndex
+            );
 
-        string description = ReadStringMember(
-            source,
-            string.Empty,
-            "description",
-            "Description"
-        );
+        if (sourceObject == null)
+        {
+            return null;
+        }
 
-        Transform captureRoot =
-            FindCaptureRoot(source.transform);
+        string objectName =
+            inventoryData.GetObjectNameAt(
+                slotIndex
+            );
+
+        string description =
+            ResolveDescription(
+                sourceObject
+            );
 
         List<InventoryMeshPartData> meshParts =
-            CaptureMeshParts(captureRoot);
-
-        if (meshParts.Count == 0)
-        {
-            Debug.LogWarning(
-                $"[BringData] '{itemName}'에서 표시 가능한 " +
-                "MeshFilter + MeshRenderer를 찾지 못했습니다. " +
-                $"탐색 루트: " +
-                $"{(captureRoot != null ? captureRoot.name : "null")}",
-                source
+            CollectMeshParts(
+                sourceObject.transform
             );
-        }
-        else if (showDebugLog)
+
+        InventoryDisplayData displayData =
+            new InventoryDisplayData(
+                objectName,
+                description,
+                sourceObject,
+                meshParts
+            );
+
+        if (showDebugLog)
         {
             Debug.Log(
-                $"[BringData] '{itemName}' 데이터 수집 완료. " +
-                $"Root={captureRoot.name}, " +
-                $"MeshParts={meshParts.Count}",
-                source
+                $"[BringData] 표시 데이터 생성: " +
+                $"Index={slotIndex}, " +
+                $"Name={displayData.ItemName}, " +
+                $"MeshParts={displayData.MeshParts.Count}",
+                sourceObject
             );
         }
 
-        return new InventoryItemData(
-            itemName,
-            description,
-            source,
-            meshParts
+        return displayData;
+    }
+
+    public string GetItemNameAt(
+        InventoryData inventoryData,
+        int slotIndex)
+    {
+        if (inventoryData == null)
+        {
+            return "—";
+        }
+
+        return inventoryData.GetObjectNameAt(
+            slotIndex
         );
     }
 
-    /// <summary>
-    /// Mesh를 수집할 기준 루트를 찾습니다.
-    /// 먼저 Object_Grabbable 자신을 검사하고,
-    /// 없을 경우 설정된 깊이만큼 부모를 검사합니다.
-    /// </summary>
-    private Transform FindCaptureRoot(
-        Transform sourceTransform)
+    private static string ResolveDescription(
+        Object_Grabbable sourceObject)
     {
-        if (sourceTransform == null)
-            return null;
-
-        if (ContainsRenderableMesh(sourceTransform))
-            return sourceTransform;
-
-        if (!searchParentWhenMeshMissing)
-            return sourceTransform;
-
-        Transform current =
-            sourceTransform.parent;
-
-        for (int depth = 0;
-             depth < maxParentSearchDepth &&
-             current != null;
-             depth++)
+        if (sourceObject == null)
         {
-            if (ContainsRenderableMesh(current))
-            {
-                if (showDebugLog)
-                {
-                    Debug.Log(
-                        $"[BringData] '{sourceTransform.name}' 아래에서 " +
-                        $"Mesh를 찾지 못해 부모 '{current.name}'을 " +
-                        "외형 루트로 사용합니다.",
-                        sourceTransform
-                    );
-                }
-
-                return current;
-            }
-
-            current = current.parent;
+            return string.Empty;
         }
 
-        return sourceTransform;
-    }
+        Type sourceType =
+            sourceObject.GetType();
 
-    /// <summary>
-    /// 지정된 루트 아래에 표시 가능한 정적 Mesh가 있는지 확인합니다.
-    /// </summary>
-    private static bool ContainsRenderableMesh(
-        Transform root)
-    {
-        if (root == null)
-            return false;
+        FieldInfo descriptionField =
+            sourceType.GetField(
+                "description",
+                BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.NonPublic
+            );
 
-        MeshFilter[] meshFilters =
-            root.GetComponentsInChildren<MeshFilter>(true);
-
-        foreach (MeshFilter meshFilter in meshFilters)
+        if (descriptionField != null &&
+            descriptionField.FieldType == typeof(string))
         {
-            if (meshFilter == null ||
-                meshFilter.sharedMesh == null)
-            {
-                continue;
-            }
+            object fieldValue =
+                descriptionField.GetValue(
+                    sourceObject
+                );
 
-            MeshRenderer renderer =
-                meshFilter.GetComponent<MeshRenderer>();
-
-            if (renderer != null)
-                return true;
+            return fieldValue as string
+                ?? string.Empty;
         }
 
-        return false;
+        PropertyInfo descriptionProperty =
+            sourceType.GetProperty(
+                "Description",
+                BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.NonPublic
+            );
+
+        if (descriptionProperty != null &&
+            descriptionProperty.PropertyType ==
+            typeof(string))
+        {
+            object propertyValue =
+                descriptionProperty.GetValue(
+                    sourceObject
+                );
+
+            return propertyValue as string
+                ?? string.Empty;
+        }
+
+        return string.Empty;
     }
 
-    /// <summary>
-    /// sourceRoot 아래의 정적 Mesh들을 수집합니다.
-    /// 각 파트 Transform은 sourceRoot 기준으로 저장합니다.
-    /// </summary>
     private static List<InventoryMeshPartData>
-        CaptureMeshParts(Transform sourceRoot)
+        CollectMeshParts(Transform sourceRoot)
     {
         List<InventoryMeshPartData> result =
             new List<InventoryMeshPartData>();
 
         if (sourceRoot == null)
-            return result;
-
-        MeshFilter[] meshFilters =
-            sourceRoot.GetComponentsInChildren<MeshFilter>(true);
-
-        foreach (MeshFilter meshFilter in meshFilters)
         {
+            return result;
+        }
+
+        CollectMeshFilters(
+            sourceRoot,
+            result
+        );
+
+        CollectSkinnedMeshes(
+            sourceRoot,
+            result
+        );
+
+        return result;
+    }
+
+    private static void CollectMeshFilters(
+        Transform sourceRoot,
+        List<InventoryMeshPartData> result)
+    {
+        MeshFilter[] meshFilters =
+            sourceRoot.GetComponentsInChildren<MeshFilter>(
+                true
+            );
+
+        for (int i = 0;
+             i < meshFilters.Length;
+             i++)
+        {
+            MeshFilter meshFilter =
+                meshFilters[i];
+
             if (meshFilter == null ||
                 meshFilter.sharedMesh == null)
             {
@@ -193,143 +188,140 @@ public sealed class BringData : MonoBehaviour
             MeshRenderer meshRenderer =
                 meshFilter.GetComponent<MeshRenderer>();
 
-            // MeshRenderer가 없으면 프리뷰 화면에 표시할 수 없음
-            if (meshRenderer == null)
-                continue;
+            Material[] materials =
+                meshRenderer != null
+                    ? meshRenderer.sharedMaterials
+                    : Array.Empty<Material>();
 
             Matrix4x4 relativeMatrix =
                 sourceRoot.worldToLocalMatrix *
                 meshFilter.transform.localToWorldMatrix;
 
-            Vector4 positionColumn =
-                relativeMatrix.GetColumn(3);
+            DecomposeMatrix(
+                relativeMatrix,
+                out Vector3 localPosition,
+                out Quaternion localRotation,
+                out Vector3 localScale
+            );
 
-            Vector3 localPosition =
-                new Vector3(
-                    positionColumn.x,
-                    positionColumn.y,
-                    positionColumn.z
-                );
-
-            Quaternion localRotation =
-                relativeMatrix.rotation;
-
-            Vector3 localScale =
-                relativeMatrix.lossyScale;
-
-            Material[] sharedMaterials =
-                meshRenderer.sharedMaterials;
-
-            Material[] materials =
-                sharedMaterials != null
-                    ? (Material[])sharedMaterials.Clone()
-                    : Array.Empty<Material>();
-
-            InventoryMeshPartData partData =
+            result.Add(
                 new InventoryMeshPartData(
                     meshFilter.sharedMesh,
                     materials,
                     localPosition,
                     localRotation,
                     localScale
-                );
-
-            result.Add(partData);
+                )
+            );
         }
-
-        return result;
     }
 
-    /// <summary>
-    /// 필드 또는 프로퍼티에서 문자열을 읽습니다.
-    /// Object_Grabbable을 직접 수정하지 않기 위한 호환 처리입니다.
-    /// </summary>
-    private static string ReadStringMember(
-        object target,
-        string fallback,
-        params string[] memberNames)
+    private static void CollectSkinnedMeshes(
+        Transform sourceRoot,
+        List<InventoryMeshPartData> result)
     {
-        if (target == null)
-            return fallback ?? string.Empty;
+        SkinnedMeshRenderer[] renderers =
+            sourceRoot.GetComponentsInChildren
+                <SkinnedMeshRenderer>(true);
 
-        const BindingFlags flags =
-            BindingFlags.Instance |
-            BindingFlags.Public |
-            BindingFlags.NonPublic |
-            BindingFlags.DeclaredOnly;
-
-        Type currentType =
-            target.GetType();
-
-        while (currentType != null)
+        for (int i = 0;
+             i < renderers.Length;
+             i++)
         {
-            foreach (string memberName in memberNames)
+            SkinnedMeshRenderer renderer =
+                renderers[i];
+
+            if (renderer == null ||
+                renderer.sharedMesh == null)
             {
-                FieldInfo field =
-                    currentType.GetField(
-                        memberName,
-                        flags
-                    );
-
-                if (field != null &&
-                    field.FieldType == typeof(string))
-                {
-                    string value =
-                        field.GetValue(target) as string;
-
-                    return NormalizeString(
-                        value,
-                        fallback
-                    );
-                }
-
-                PropertyInfo property =
-                    currentType.GetProperty(
-                        memberName,
-                        flags
-                    );
-
-                if (property == null ||
-                    property.PropertyType != typeof(string) ||
-                    !property.CanRead ||
-                    property.GetIndexParameters().Length > 0)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    string propertyValue =
-                        property.GetValue(target) as string;
-
-                    return NormalizeString(
-                        propertyValue,
-                        fallback
-                    );
-                }
-                catch (Exception exception)
-                {
-                    Debug.LogWarning(
-                        $"[BringData] '{memberName}' 프로퍼티를 " +
-                        $"읽지 못했습니다: {exception.Message}"
-                    );
-                }
+                continue;
             }
 
-            currentType =
-                currentType.BaseType;
-        }
+            Matrix4x4 relativeMatrix =
+                sourceRoot.worldToLocalMatrix *
+                renderer.transform.localToWorldMatrix;
 
-        return fallback ?? string.Empty;
+            DecomposeMatrix(
+                relativeMatrix,
+                out Vector3 localPosition,
+                out Quaternion localRotation,
+                out Vector3 localScale
+            );
+
+            result.Add(
+                new InventoryMeshPartData(
+                    renderer.sharedMesh,
+                    renderer.sharedMaterials,
+                    localPosition,
+                    localRotation,
+                    localScale
+                )
+            );
+        }
     }
 
-    private static string NormalizeString(
-        string value,
-        string fallback)
+    private static void DecomposeMatrix(
+        Matrix4x4 matrix,
+        out Vector3 position,
+        out Quaternion rotation,
+        out Vector3 scale)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            return fallback?.Trim() ?? string.Empty;
+        position =
+            matrix.GetColumn(3);
 
-        return value.Trim();
+        Vector3 right =
+            matrix.GetColumn(0);
+
+        Vector3 up =
+            matrix.GetColumn(1);
+
+        Vector3 forward =
+            matrix.GetColumn(2);
+
+        scale =
+            new Vector3(
+                right.magnitude,
+                up.magnitude,
+                forward.magnitude
+            );
+
+        if (scale.x > 0.0001f)
+        {
+            right /= scale.x;
+        }
+
+        if (scale.y > 0.0001f)
+        {
+            up /= scale.y;
+        }
+
+        if (scale.z > 0.0001f)
+        {
+            forward /= scale.z;
+        }
+
+        if (Vector3.Dot(
+                Vector3.Cross(right, up),
+                forward) < 0f)
+        {
+            scale.x *= -1f;
+            right *= -1f;
+        }
+
+        if (forward.sqrMagnitude < 0.0001f)
+        {
+            forward = Vector3.forward;
+        }
+
+        if (up.sqrMagnitude < 0.0001f)
+        {
+            up = Vector3.up;
+        }
+
+        rotation =
+            Quaternion.LookRotation(
+                forward,
+                up
+            );
     }
 }

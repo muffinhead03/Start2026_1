@@ -1,17 +1,45 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
 public sealed class InventoryData : MonoBehaviour
 {
-    [Header("Inventory")]
-    [SerializeField, Min(1)]
-    private int capacity = 8;
+    private const int Capacity = 8;
 
+    [Serializable]
+    private sealed class SlotEntry
+    {
+        [SerializeField]
+        private string objectName;
+
+        [SerializeField]
+        private Object_Grabbable sourceObject;
+
+        public string ObjectName => objectName;
+
+        public Object_Grabbable SourceObject =>
+            sourceObject;
+
+        public SlotEntry(
+            string objectName,
+            Object_Grabbable sourceObject)
+        {
+            this.objectName =
+                string.IsNullOrWhiteSpace(objectName)
+                    ? sourceObject != null
+                        ? sourceObject.gameObject.name
+                        : "Unknown"
+                    : objectName;
+
+            this.sourceObject = sourceObject;
+        }
+    }
+
+    [Header("Slots")]
+    [Tooltip("Index 0부터 Index 7까지 총 8개 슬롯입니다.")]
     [SerializeField]
-    private List<InventoryItemData> slots =
-        new List<InventoryItemData>();
+    private SlotEntry[] slots =
+        new SlotEntry[Capacity];
 
     [Header("Runtime State")]
     [SerializeField]
@@ -24,210 +52,233 @@ public sealed class InventoryData : MonoBehaviour
     [SerializeField]
     private bool showDebugLog = true;
 
-    /// <summary>
-    /// 슬롯 내용, 선택 인덱스 또는 장착 인덱스가 변경될 때 발생합니다.
-    /// </summary>
     public event Action Changed;
-
-    /// <summary>
-    /// 빈 슬롯이 없어서 아이템 추가에 실패했을 때 발생합니다.
-    /// </summary>
     public event Action InventoryFull;
 
-    public int SlotCount => capacity;
-
+    public int SlotCount => Capacity;
     public int SelectedIndex => selectedIndex;
-
     public int EquippedIndex => equippedIndex;
 
-    /// <summary>
-    /// 현재 선택된 슬롯의 아이템입니다.
-    /// 빈 슬롯을 선택했다면 null입니다.
-    /// </summary>
-    public InventoryItemData SelectedItem =>
-        GetItemAt(selectedIndex);
+    public Object_Grabbable SelectedObject =>
+        GetObjectAt(selectedIndex);
 
-    /// <summary>
-    /// 현재 실제로 장착된 슬롯의 아이템입니다.
-    /// </summary>
-    public InventoryItemData EquippedItem =>
-        GetItemAt(equippedIndex);
+    public Object_Grabbable EquippedObject =>
+        GetObjectAt(equippedIndex);
 
     private void Awake()
     {
-        EnsureSlotCount();
+        EnsureSlots();
         ValidateIndices();
     }
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        capacity = Mathf.Max(1, capacity);
-        EnsureSlotCount();
+        EnsureSlots();
         ValidateIndices();
     }
 #endif
 
-    /// <summary>
-    /// 특정 슬롯의 아이템을 가져옵니다.
-    /// 범위를 벗어나거나 빈 슬롯이면 null입니다.
-    /// </summary>
-    public InventoryItemData GetItemAt(int slotIndex)
+    public Object_Grabbable GetObjectAt(
+        int slotIndex)
     {
-        EnsureSlotCount();
+        EnsureSlots();
 
         if (!IsValidIndex(slotIndex))
-            return null;
-
-        return slots[slotIndex];
-    }
-
-    public bool TryGetItemAt(
-        int slotIndex,
-        out InventoryItemData item)
-    {
-        item = GetItemAt(slotIndex);
-        return item != null;
-    }
-
-    /// <summary>
-    /// 새 아이템을 첫 번째 빈 슬롯에 등록합니다.
-    /// 성공 시 true와 등록된 슬롯 번호를 반환합니다.
-    ///
-    /// 동일한 SourceObject가 이미 등록돼 있다면
-    /// 중복 생성하지 않고 기존 슬롯 번호를 반환합니다.
-    /// </summary>
-    public bool TryAdd(
-        InventoryItemData item,
-        out int addedIndex)
-    {
-        addedIndex = -1;
-
-        EnsureSlotCount();
-
-        if (item == null)
         {
-            Debug.LogWarning(
-                "[InventoryData] 추가할 InventoryItemData가 없습니다.",
-                this
-            );
+            return null;
+        }
 
-            return false;
+        SlotEntry slot =
+            slots[slotIndex];
+
+        if (slot == null)
+        {
+            return null;
         }
 
         /*
-         * HandPivot 재검사로 같은 실제 물체가 반복 감지돼도
-         * 인벤토리에 중복으로 추가되지 않게 합니다.
+         * 원본 오브젝트가 실제로 파괴됐다면
+         * 해당 슬롯도 자동으로 비웁니다.
+         *
+         * 단순 비활성화된 오브젝트는 null이 아니므로
+         * 인벤토리에 그대로 유지됩니다.
          */
-        if (item.SourceObject != null)
+        if (slot.SourceObject == null)
         {
-            int existingIndex =
-                FindIndexBySource(item.SourceObject);
+            slots[slotIndex] = null;
 
-            if (existingIndex >= 0)
+            if (equippedIndex == slotIndex)
             {
-                addedIndex = existingIndex;
-
-                if (showDebugLog)
-                {
-                    Debug.Log(
-                        $"[InventoryData] '{item.ItemName}'은 이미 " +
-                        $"Slot {existingIndex + 1}에 등록돼 있습니다.",
-                        this
-                    );
-                }
-
-                return true;
+                equippedIndex = -1;
             }
+
+            return null;
         }
 
-        int emptyIndex = FindFirstEmptyIndex();
-
-        if (emptyIndex < 0)
-        {
-            Debug.LogWarning(
-                $"[InventoryData] 인벤토리가 가득 차서 " +
-                $"'{item.ItemName}'을 추가하지 못했습니다.",
-                this
-            );
-
-            InventoryFull?.Invoke();
-            return false;
-        }
-
-        slots[emptyIndex] = item;
-        addedIndex = emptyIndex;
-
-        if (showDebugLog)
-        {
-            Debug.Log(
-                $"[InventoryData] '{item.ItemName}'을 " +
-                $"Slot {emptyIndex + 1}에 등록했습니다.",
-                this
-            );
-        }
-
-        NotifyChanged();
-        return true;
+        return slot.SourceObject;
     }
 
-    /// <summary>
-    /// 실제 Object_Grabbable을 기준으로 슬롯 번호를 찾습니다.
-    /// 찾지 못하면 -1을 반환합니다.
-    /// </summary>
+    public string GetObjectNameAt(
+        int slotIndex)
+    {
+        EnsureSlots();
+
+        if (!IsValidIndex(slotIndex))
+        {
+            return "—";
+        }
+
+        SlotEntry slot =
+            slots[slotIndex];
+
+        if (slot == null ||
+            slot.SourceObject == null)
+        {
+            return "—";
+        }
+
+        return string.IsNullOrWhiteSpace(
+                slot.ObjectName)
+            ? ResolveObjectName(slot.SourceObject)
+            : slot.ObjectName;
+    }
+
+    /*
+     * 이름이 아니라 실제 Object_Grabbable 참조로 찾습니다.
+     *
+     * 따라서 objectName이 같은 서로 다른 물체는
+     * 서로 다른 슬롯에 저장할 수 있습니다.
+     */
     public int FindIndexBySource(
         Object_Grabbable sourceObject)
     {
         if (sourceObject == null)
-            return -1;
-
-        EnsureSlotCount();
-
-        for (int i = 0; i < slots.Count; i++)
         {
-            InventoryItemData item = slots[i];
+            return -1;
+        }
 
-            if (item == null)
-                continue;
+        EnsureSlots();
 
-            if (item.SourceObject == sourceObject)
+        for (int i = 0;
+             i < Capacity;
+             i++)
+        {
+            Object_Grabbable storedObject =
+                GetObjectAt(i);
+
+            if (storedObject == sourceObject)
+            {
                 return i;
+            }
         }
 
         return -1;
     }
 
-    /// <summary>
-    /// UI에서 클릭한 슬롯을 선택합니다.
-    ///
-    /// 빈 슬롯이어도 selectedIndex는 해당 슬롯으로 이동합니다.
-    /// 따라서 빈 슬롯에도 SelectedFrame이 표시될 수 있습니다.
-    /// </summary>
-    public void Select(int slotIndex)
+    /*
+     * index 0부터 검사해 첫 번째 빈 슬롯에 저장합니다.
+     *
+     * 같은 objectName은 허용합니다.
+     * 같은 실제 SourceObject의 중복 등록만 막습니다.
+     */
+    public bool TryAdd(
+        Object_Grabbable sourceObject,
+        out int addedIndex)
     {
-        EnsureSlotCount();
+        addedIndex = -1;
 
-        if (!IsValidIndex(slotIndex))
+        if (sourceObject == null)
         {
             Debug.LogWarning(
-                $"[InventoryData] 잘못된 선택 슬롯 번호: {slotIndex}",
+                "[InventoryData] 추가할 Object_Grabbable이 없습니다.",
                 this
             );
 
+            return false;
+        }
+
+        EnsureSlots();
+
+        int existingIndex =
+            FindIndexBySource(
+                sourceObject
+            );
+
+        if (existingIndex >= 0)
+        {
+            addedIndex = existingIndex;
+
+            if (showDebugLog)
+            {
+                Debug.Log(
+                    $"[InventoryData] 같은 실제 오브젝트가 이미 있습니다. " +
+                    $"Index={existingIndex}, " +
+                    $"ObjectName={ResolveObjectName(sourceObject)}, " +
+                    $"Source={sourceObject.gameObject.name}",
+                    sourceObject
+                );
+            }
+
+            return true;
+        }
+
+        string objectName =
+            ResolveObjectName(
+                sourceObject
+            );
+
+        for (int i = 0;
+             i < Capacity;
+             i++)
+        {
+            if (GetObjectAt(i) != null)
+            {
+                continue;
+            }
+
+            slots[i] =
+                new SlotEntry(
+                    objectName,
+                    sourceObject
+                );
+
+            addedIndex = i;
+
+            if (showDebugLog)
+            {
+                Debug.Log(
+                    $"[InventoryData] 아이템 추가 완료: " +
+                    $"Index={i}, " +
+                    $"ObjectName={objectName}, " +
+                    $"Source={sourceObject.gameObject.name}",
+                    sourceObject
+                );
+            }
+
+            NotifyChanged();
+            return true;
+        }
+
+        Debug.LogWarning(
+            "[InventoryData] 인벤토리가 가득 찼습니다.",
+            this
+        );
+
+        InventoryFull?.Invoke();
+        return false;
+    }
+
+    public void Select(
+        int slotIndex)
+    {
+        if (!IsValidIndex(slotIndex))
+        {
             return;
         }
 
         if (selectedIndex == slotIndex)
         {
-            if (showDebugLog)
-            {
-                Debug.Log(
-                    $"[InventoryData] Slot {slotIndex + 1}은 " +
-                    "이미 선택돼 있습니다.",
-                    this
-                );
-            }
-
             return;
         }
 
@@ -235,12 +286,10 @@ public sealed class InventoryData : MonoBehaviour
 
         if (showDebugLog)
         {
-            InventoryItemData item =
-                GetItemAt(selectedIndex);
-
             Debug.Log(
-                $"[InventoryData] SelectedIndex={selectedIndex}, " +
-                $"Item={(item != null ? item.ItemName : "빈 슬롯")}",
+                $"[InventoryData] 슬롯 선택: " +
+                $"SelectedIndex={selectedIndex}, " +
+                $"ObjectName={GetObjectNameAt(selectedIndex)}",
                 this
             );
         }
@@ -248,66 +297,40 @@ public sealed class InventoryData : MonoBehaviour
         NotifyChanged();
     }
 
-    /// <summary>
-    /// 실제 HandPivot 아래에 있는 아이템의 슬롯을 장착 상태로 설정합니다.
-    /// -1을 전달하면 장착을 해제합니다.
-    /// </summary>
-    public void SetEquipped(int slotIndex)
+    public void SetEquipped(
+        int slotIndex)
     {
-        EnsureSlotCount();
-
         if (slotIndex == -1)
         {
             if (equippedIndex == -1)
-                return;
-
-            equippedIndex = -1;
-
-            if (showDebugLog)
             {
-                Debug.Log(
-                    "[InventoryData] 장착 상태를 해제했습니다.",
-                    this
-                );
+                return;
             }
 
+            equippedIndex = -1;
             NotifyChanged();
             return;
         }
 
-        if (!IsValidIndex(slotIndex))
+        if (!IsValidIndex(slotIndex) ||
+            GetObjectAt(slotIndex) == null)
         {
-            Debug.LogWarning(
-                $"[InventoryData] 잘못된 장착 슬롯 번호: {slotIndex}",
-                this
-            );
-
-            return;
-        }
-
-        /*
-         * 장착 슬롯은 실제 아이템이 있어야 합니다.
-         */
-        if (slots[slotIndex] == null)
-        {
-            Debug.LogWarning(
-                $"[InventoryData] 비어 있는 Slot {slotIndex + 1}은 " +
-                "장착할 수 없습니다.",
-                this
-            );
-
             return;
         }
 
         if (equippedIndex == slotIndex)
+        {
             return;
+        }
 
         equippedIndex = slotIndex;
 
         if (showDebugLog)
         {
             Debug.Log(
-                $"[InventoryData] EquippedIndex={equippedIndex}",
+                $"[InventoryData] 장착 슬롯 변경: " +
+                $"EquippedIndex={equippedIndex}, " +
+                $"ObjectName={GetObjectNameAt(equippedIndex)}",
                 this
             );
         }
@@ -315,33 +338,12 @@ public sealed class InventoryData : MonoBehaviour
         NotifyChanged();
     }
 
-    /// <summary>
-    /// 새 물건을 획득했을 때 선택과 장착을 동시에 맞춥니다.
-    /// Changed 이벤트는 한 번만 발생합니다.
-    /// </summary>
     public void SetSelectedAndEquipped(
         int slotIndex)
     {
-        EnsureSlotCount();
-
-        if (!IsValidIndex(slotIndex))
+        if (!IsValidIndex(slotIndex) ||
+            GetObjectAt(slotIndex) == null)
         {
-            Debug.LogWarning(
-                $"[InventoryData] 잘못된 슬롯 번호: {slotIndex}",
-                this
-            );
-
-            return;
-        }
-
-        if (slots[slotIndex] == null)
-        {
-            Debug.LogWarning(
-                $"[InventoryData] Slot {slotIndex + 1}에 " +
-                "장착할 아이템이 없습니다.",
-                this
-            );
-
             return;
         }
 
@@ -357,46 +359,49 @@ public sealed class InventoryData : MonoBehaviour
             Debug.Log(
                 $"[InventoryData] 선택 및 장착 완료: " +
                 $"SelectedIndex={selectedIndex}, " +
-                $"EquippedIndex={equippedIndex}",
+                $"EquippedIndex={equippedIndex}, " +
+                $"ObjectName={GetObjectNameAt(slotIndex)}",
                 this
             );
         }
 
         if (changed)
+        {
             NotifyChanged();
+        }
     }
 
-    /// <summary>
-    /// 슬롯 번호를 기준으로 아이템을 제거합니다.
-    /// 뒤의 슬롯을 앞으로 당기지 않습니다.
-    /// </summary>
-    public bool RemoveAt(int slotIndex)
+    public bool RemoveAt(
+        int slotIndex)
     {
-        EnsureSlotCount();
+        EnsureSlots();
 
-        if (!IsValidIndex(slotIndex))
+        if (!IsValidIndex(slotIndex) ||
+            slots[slotIndex] == null)
+        {
             return false;
+        }
 
-        InventoryItemData removedItem =
-            slots[slotIndex];
-
-        if (removedItem == null)
-            return false;
+        string removedName =
+            GetObjectNameAt(slotIndex);
 
         slots[slotIndex] = null;
 
-        /*
-         * 빈 슬롯도 선택 가능하므로 selectedIndex는 유지합니다.
-         * 제거된 슬롯은 선택된 빈 슬롯 상태가 됩니다.
-         */
         if (equippedIndex == slotIndex)
+        {
             equippedIndex = -1;
+        }
 
+        /*
+         * selectedIndex는 빈 슬롯을 가리킬 수 있으므로
+         * 그대로 유지합니다.
+         */
         if (showDebugLog)
         {
             Debug.Log(
-                $"[InventoryData] '{removedItem.ItemName}'을 " +
-                $"Slot {slotIndex + 1}에서 제거했습니다.",
+                $"[InventoryData] 아이템 삭제 완료: " +
+                $"Index={slotIndex}, " +
+                $"ObjectName={removedName}",
                 this
             );
         }
@@ -405,108 +410,132 @@ public sealed class InventoryData : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// 실제 Object_Grabbable 참조를 기준으로 아이템을 제거합니다.
-    /// </summary>
     public bool RemoveBySource(
         Object_Grabbable sourceObject)
     {
         int index =
-            FindIndexBySource(sourceObject);
+            FindIndexBySource(
+                sourceObject
+            );
 
         if (index < 0)
+        {
             return false;
+        }
 
         return RemoveAt(index);
     }
 
-    /// <summary>
-    /// 모든 인벤토리 데이터를 초기화합니다.
-    /// </summary>
     [ContextMenu("Clear Inventory")]
     public void Clear()
     {
-        EnsureSlotCount();
+        EnsureSlots();
 
-        for (int i = 0; i < slots.Count; i++)
+        for (int i = 0;
+             i < Capacity;
+             i++)
+        {
             slots[i] = null;
+        }
 
         selectedIndex = -1;
         equippedIndex = -1;
 
-        if (showDebugLog)
-        {
-            Debug.Log(
-                "[InventoryData] 인벤토리를 초기화했습니다.",
-                this
-            );
-        }
-
         NotifyChanged();
     }
 
-    private int FindFirstEmptyIndex()
+    [ContextMenu("Print Slot State")]
+    private void PrintSlotState()
     {
-        EnsureSlotCount();
+        EnsureSlots();
 
-        for (int i = 0; i < slots.Count; i++)
+        for (int i = 0;
+             i < Capacity;
+             i++)
         {
-            if (slots[i] == null)
-                return i;
-        }
+            Object_Grabbable source =
+                GetObjectAt(i);
 
-        return -1;
+            Debug.Log(
+                $"[InventoryData] " +
+                $"Index={i}, " +
+                $"ObjectName={GetObjectNameAt(i)}, " +
+                $"Source={(source != null ? source.gameObject.name : "null")}",
+                this
+            );
+        }
     }
 
-    private bool IsValidIndex(int slotIndex)
+    private static string ResolveObjectName(
+        Object_Grabbable sourceObject)
     {
-        return slotIndex >= 0 &&
-               slotIndex < slots.Count;
-    }
-
-    private void EnsureSlotCount()
-    {
-        capacity = Mathf.Max(1, capacity);
-
-        if (slots == null)
+        if (sourceObject == null)
         {
-            slots =
-                new List<InventoryItemData>();
+            return "Unknown";
         }
 
-        while (slots.Count < capacity)
-            slots.Add(null);
+        if (!string.IsNullOrWhiteSpace(
+                sourceObject.objectName))
+        {
+            return sourceObject.objectName;
+        }
 
-        /*
-         * Capacity를 줄였을 때 뒤쪽 슬롯을 제거합니다.
-         */
-        while (slots.Count > capacity)
-            slots.RemoveAt(slots.Count - 1);
+        return sourceObject.gameObject.name;
+    }
+
+    private bool IsValidIndex(
+        int index)
+    {
+        return index >= 0 &&
+               index < Capacity;
+    }
+
+    private void EnsureSlots()
+    {
+        if (slots != null &&
+            slots.Length == Capacity)
+        {
+            return;
+        }
+
+        SlotEntry[] newSlots =
+            new SlotEntry[Capacity];
+
+        if (slots != null)
+        {
+            int count =
+                Mathf.Min(
+                    slots.Length,
+                    Capacity
+                );
+
+            for (int i = 0;
+                 i < count;
+                 i++)
+            {
+                newSlots[i] = slots[i];
+            }
+        }
+
+        slots = newSlots;
     }
 
     private void ValidateIndices()
     {
-        /*
-         * 빈 슬롯인지 여부는 검사하지 않습니다.
-         * 빈 슬롯도 선택할 수 있기 때문입니다.
-         */
         if (selectedIndex < -1 ||
-            selectedIndex >= capacity)
+            selectedIndex >= Capacity)
         {
             selectedIndex = -1;
         }
 
         if (equippedIndex < -1 ||
-            equippedIndex >= capacity)
+            equippedIndex >= Capacity)
         {
             equippedIndex = -1;
         }
 
-        /*
-         * 장착 슬롯에는 실제 아이템이 있어야 합니다.
-         */
         if (equippedIndex >= 0 &&
-            GetItemAt(equippedIndex) == null)
+            GetObjectAt(equippedIndex) == null)
         {
             equippedIndex = -1;
         }
@@ -516,4 +545,6 @@ public sealed class InventoryData : MonoBehaviour
     {
         Changed?.Invoke();
     }
+
+
 }
