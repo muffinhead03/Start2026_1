@@ -1,47 +1,173 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
 public sealed class InventoryData : MonoBehaviour
 {
-    [SerializeField, Min(1)] private int capacity = 8;
-    [SerializeField] private List<InventoryItemData> items = new();
+    private const int Capacity = 8;
 
-    [SerializeField] private int selectedIndex = -1;
-    [SerializeField] private int equippedIndex = -1;
+    [Serializable]
+    private sealed class SlotEntry
+    {
+        [SerializeField]
+        private string objectName;
+
+        [SerializeField]
+        private Object_Grabbable sourceObject;
+
+        public string ObjectName => objectName;
+
+        public Object_Grabbable SourceObject =>
+            sourceObject;
+
+        public SlotEntry(
+            string objectName,
+            Object_Grabbable sourceObject)
+        {
+            this.objectName =
+                string.IsNullOrWhiteSpace(objectName)
+                    ? sourceObject != null
+                        ? sourceObject.gameObject.name
+                        : "Unknown"
+                    : objectName;
+
+            this.sourceObject = sourceObject;
+        }
+    }
+
+    [Header("Slots")]
+    [Tooltip("Index 0부터 Index 7까지 총 8개 슬롯입니다.")]
+    [SerializeField]
+    private SlotEntry[] slots =
+        new SlotEntry[Capacity];
+
+    [Header("Runtime State")]
+    [SerializeField]
+    private int selectedIndex = -1;
+
+    [SerializeField]
+    private int equippedIndex = -1;
+
+    [Header("Debug")]
+    [SerializeField]
+    private bool showDebugLog = true;
 
     public event Action Changed;
     public event Action InventoryFull;
 
-    public int Capacity => capacity;
-    public int Count => items.Count;
+    public int SlotCount => Capacity;
     public int SelectedIndex => selectedIndex;
     public int EquippedIndex => equippedIndex;
 
-    public InventoryItemData SelectedItem =>
-        GetItemAt(selectedIndex);
+    public Object_Grabbable SelectedObject =>
+        GetObjectAt(selectedIndex);
 
-    public InventoryItemData EquippedItem =>
-        GetItemAt(equippedIndex);
+    public Object_Grabbable EquippedObject =>
+        GetObjectAt(equippedIndex);
 
-    public InventoryItemData GetItemAt(int index)
+    private void Awake()
     {
-        if (index < 0 || index >= items.Count)
-            return null;
-
-        return items[index];
+        EnsureSlots();
+        ValidateIndices();
     }
 
-    public int FindIndexBySource(Object_Grabbable source)
+#if UNITY_EDITOR
+    private void OnValidate()
     {
-        if (source == null)
-            return -1;
+        EnsureSlots();
+        ValidateIndices();
+    }
+#endif
 
-        for (int i = 0; i < items.Count; i++)
+    public Object_Grabbable GetObjectAt(
+        int slotIndex)
+    {
+        EnsureSlots();
+
+        if (!IsValidIndex(slotIndex))
         {
-            if (items[i] != null &&
-                items[i].SourceObject == source)
+            return null;
+        }
+
+        SlotEntry slot =
+            slots[slotIndex];
+
+        if (slot == null)
+        {
+            return null;
+        }
+
+        /*
+         * 원본 오브젝트가 실제로 파괴됐다면
+         * 해당 슬롯도 자동으로 비웁니다.
+         *
+         * 단순 비활성화된 오브젝트는 null이 아니므로
+         * 인벤토리에 그대로 유지됩니다.
+         */
+        if (slot.SourceObject == null)
+        {
+            slots[slotIndex] = null;
+
+            if (equippedIndex == slotIndex)
+            {
+                equippedIndex = -1;
+            }
+
+            return null;
+        }
+
+        return slot.SourceObject;
+    }
+
+    public string GetObjectNameAt(
+        int slotIndex)
+    {
+        EnsureSlots();
+
+        if (!IsValidIndex(slotIndex))
+        {
+            return "—";
+        }
+
+        SlotEntry slot =
+            slots[slotIndex];
+
+        if (slot == null ||
+            slot.SourceObject == null)
+        {
+            return "—";
+        }
+
+        return string.IsNullOrWhiteSpace(
+                slot.ObjectName)
+            ? ResolveObjectName(slot.SourceObject)
+            : slot.ObjectName;
+    }
+
+    /*
+     * 이름이 아니라 실제 Object_Grabbable 참조로 찾습니다.
+     *
+     * 따라서 objectName이 같은 서로 다른 물체는
+     * 서로 다른 슬롯에 저장할 수 있습니다.
+     */
+    public int FindIndexBySource(
+        Object_Grabbable sourceObject)
+    {
+        if (sourceObject == null)
+        {
+            return -1;
+        }
+
+        EnsureSlots();
+
+        for (int i = 0;
+             i < Capacity;
+             i++)
+        {
+            Object_Grabbable storedObject =
+                GetObjectAt(i);
+
+            if (storedObject == sourceObject)
             {
                 return i;
             }
@@ -50,202 +176,375 @@ public sealed class InventoryData : MonoBehaviour
         return -1;
     }
 
+    /*
+     * index 0부터 검사해 첫 번째 빈 슬롯에 저장합니다.
+     *
+     * 같은 objectName은 허용합니다.
+     * 같은 실제 SourceObject의 중복 등록만 막습니다.
+     */
     public bool TryAdd(
-        InventoryItemData item,
-        out int index)
+        Object_Grabbable sourceObject,
+        out int addedIndex)
     {
-        index = -1;
+        addedIndex = -1;
 
-        if (item == null || item.SourceObject == null)
+        if (sourceObject == null)
+        {
+            Debug.LogWarning(
+                "[InventoryData] 추가할 Object_Grabbable이 없습니다.",
+                this
+            );
+
             return false;
+        }
+
+        EnsureSlots();
 
         int existingIndex =
-            FindIndexBySource(item.SourceObject);
+            FindIndexBySource(
+                sourceObject
+            );
 
         if (existingIndex >= 0)
         {
-            index = existingIndex;
+            addedIndex = existingIndex;
+
+            if (showDebugLog)
+            {
+                Debug.Log(
+                    $"[InventoryData] 같은 실제 오브젝트가 이미 있습니다. " +
+                    $"Index={existingIndex}, " +
+                    $"ObjectName={ResolveObjectName(sourceObject)}, " +
+                    $"Source={sourceObject.gameObject.name}",
+                    sourceObject
+                );
+            }
+
             return true;
         }
 
-        if (items.Count >= capacity)
-        {
-            InventoryFull?.Invoke();
-            return false;
-        }
-
-        items.Add(item);
-        index = items.Count - 1;
-
-        GameObject storedVisual =
-            CreateStoredVisual(item, index);
-
-        item.SetStoredVisualObject(storedVisual);
-
-        if (selectedIndex < 0)
-            selectedIndex = index;
-
-        Changed?.Invoke();
-        return true;
-    }
-
-    public void Select(int index)
-    {
-        int normalized =
-            IsValidIndex(index)
-                ? index
-                : -1;
-
-        if (selectedIndex == normalized)
-            return;
-
-        selectedIndex = normalized;
-        Changed?.Invoke();
-    }
-
-    public void SetEquipped(int index)
-    {
-        int normalized =
-            IsValidIndex(index)
-                ? index
-                : -1;
-
-        if (equippedIndex == normalized)
-            return;
-
-        equippedIndex = normalized;
-        Changed?.Invoke();
-    }
-
-    public void SetSelectedAndEquipped(int index)
-    {
-        int normalized =
-            IsValidIndex(index)
-                ? index
-                : -1;
-
-        bool changed =
-            selectedIndex != normalized ||
-            equippedIndex != normalized;
-
-        selectedIndex = normalized;
-        equippedIndex = normalized;
-
-        if (changed)
-            Changed?.Invoke();
-    }
-
-    public bool RemoveAt(int index)
-    {
-        if (!IsValidIndex(index))
-            return false;
-
-        InventoryItemData removed = items[index];
-
-        if (removed?.StoredVisualObject != null)
-            Destroy(removed.StoredVisualObject);
-
-        items.RemoveAt(index);
-
-        selectedIndex = RemapIndexAfterRemove(
-            selectedIndex,
-            index,
-            items.Count
-        );
-
-        equippedIndex = RemapIndexAfterRemove(
-            equippedIndex,
-            index,
-            items.Count
-        );
-
-        Changed?.Invoke();
-        return true;
-    }
-
-    private bool IsValidIndex(int index)
-    {
-        return index >= 0 && index < items.Count;
-    }
-
-    private static int RemapIndexAfterRemove(
-        int currentIndex,
-        int removedIndex,
-        int newCount)
-    {
-        if (currentIndex == removedIndex)
-            return -1;
-
-        if (currentIndex > removedIndex)
-            currentIndex--;
-
-        return currentIndex >= 0 &&
-               currentIndex < newCount
-            ? currentIndex
-            : -1;
-    }
-
-    private GameObject CreateStoredVisual(
-        InventoryItemData item,
-        int index)
-    {
-        GameObject root = new(
-            $"Stored_{index}_{item.ItemName}"
-        );
-
-        root.transform.SetParent(transform, false);
-
-        for (int i = 0; i < item.MeshParts.Count; i++)
-        {
-            InventoryMeshPartData part =
-                item.MeshParts[i];
-
-            if (part == null || part.Mesh == null)
-                continue;
-
-            GameObject meshObject =
-                new($"MeshPart_{i}");
-
-            meshObject.transform.SetParent(
-                root.transform,
-                false
+        string objectName =
+            ResolveObjectName(
+                sourceObject
             );
 
-            meshObject.transform.localPosition =
-                part.LocalPosition;
+        for (int i = 0;
+             i < Capacity;
+             i++)
+        {
+            if (GetObjectAt(i) != null)
+            {
+                continue;
+            }
 
-            meshObject.transform.localRotation =
-                part.LocalRotation;
+            slots[i] =
+                new SlotEntry(
+                    objectName,
+                    sourceObject
+                );
 
-            meshObject.transform.localScale =
-                part.LocalScale;
+            addedIndex = i;
 
-            MeshFilter meshFilter =
-                meshObject.AddComponent<MeshFilter>();
+            if (showDebugLog)
+            {
+                Debug.Log(
+                    $"[InventoryData] 아이템 추가 완료: " +
+                    $"Index={i}, " +
+                    $"ObjectName={objectName}, " +
+                    $"Source={sourceObject.gameObject.name}",
+                    sourceObject
+                );
+            }
 
-            MeshRenderer meshRenderer =
-                meshObject.AddComponent<MeshRenderer>();
-
-            meshFilter.sharedMesh = part.Mesh;
-            meshRenderer.sharedMaterials =
-                part.Materials;
+            NotifyChanged();
+            return true;
         }
 
-        // Hierarchy에는 보관되지만 게임 화면에는 렌더링되지 않습니다.
-        root.SetActive(false);
+        Debug.LogWarning(
+            "[InventoryData] 인벤토리가 가득 찼습니다.",
+            this
+        );
 
-        return root;
+        InventoryFull?.Invoke();
+        return false;
     }
-    public bool RemoveBySource(Object_Grabbable source)
-{
-    if (source == null)
-        return false;
 
-    int index = FindIndexBySource(source);
+    public void Select(
+        int slotIndex)
+    {
+        if (!IsValidIndex(slotIndex))
+        {
+            return;
+        }
 
-    if (index < 0)
-        return false;
+        if (selectedIndex == slotIndex)
+        {
+            return;
+        }
 
-    return RemoveAt(index);
-}
+        selectedIndex = slotIndex;
+
+        if (showDebugLog)
+        {
+            Debug.Log(
+                $"[InventoryData] 슬롯 선택: " +
+                $"SelectedIndex={selectedIndex}, " +
+                $"ObjectName={GetObjectNameAt(selectedIndex)}",
+                this
+            );
+        }
+
+        NotifyChanged();
+    }
+
+    public void SetEquipped(
+        int slotIndex)
+    {
+        if (slotIndex == -1)
+        {
+            if (equippedIndex == -1)
+            {
+                return;
+            }
+
+            equippedIndex = -1;
+            NotifyChanged();
+            return;
+        }
+
+        if (!IsValidIndex(slotIndex) ||
+            GetObjectAt(slotIndex) == null)
+        {
+            return;
+        }
+
+        if (equippedIndex == slotIndex)
+        {
+            return;
+        }
+
+        equippedIndex = slotIndex;
+
+        if (showDebugLog)
+        {
+            Debug.Log(
+                $"[InventoryData] 장착 슬롯 변경: " +
+                $"EquippedIndex={equippedIndex}, " +
+                $"ObjectName={GetObjectNameAt(equippedIndex)}",
+                this
+            );
+        }
+
+        NotifyChanged();
+    }
+
+    public void SetSelectedAndEquipped(
+        int slotIndex)
+    {
+        if (!IsValidIndex(slotIndex) ||
+            GetObjectAt(slotIndex) == null)
+        {
+            return;
+        }
+
+        bool changed =
+            selectedIndex != slotIndex ||
+            equippedIndex != slotIndex;
+
+        selectedIndex = slotIndex;
+        equippedIndex = slotIndex;
+
+        if (showDebugLog)
+        {
+            Debug.Log(
+                $"[InventoryData] 선택 및 장착 완료: " +
+                $"SelectedIndex={selectedIndex}, " +
+                $"EquippedIndex={equippedIndex}, " +
+                $"ObjectName={GetObjectNameAt(slotIndex)}",
+                this
+            );
+        }
+
+        if (changed)
+        {
+            NotifyChanged();
+        }
+    }
+
+    public bool RemoveAt(
+        int slotIndex)
+    {
+        EnsureSlots();
+
+        if (!IsValidIndex(slotIndex) ||
+            slots[slotIndex] == null)
+        {
+            return false;
+        }
+
+        string removedName =
+            GetObjectNameAt(slotIndex);
+
+        slots[slotIndex] = null;
+
+        if (equippedIndex == slotIndex)
+        {
+            equippedIndex = -1;
+        }
+
+        /*
+         * selectedIndex는 빈 슬롯을 가리킬 수 있으므로
+         * 그대로 유지합니다.
+         */
+        if (showDebugLog)
+        {
+            Debug.Log(
+                $"[InventoryData] 아이템 삭제 완료: " +
+                $"Index={slotIndex}, " +
+                $"ObjectName={removedName}",
+                this
+            );
+        }
+
+        NotifyChanged();
+        return true;
+    }
+
+    public bool RemoveBySource(
+        Object_Grabbable sourceObject)
+    {
+        int index =
+            FindIndexBySource(
+                sourceObject
+            );
+
+        if (index < 0)
+        {
+            return false;
+        }
+
+        return RemoveAt(index);
+    }
+
+    [ContextMenu("Clear Inventory")]
+    public void Clear()
+    {
+        EnsureSlots();
+
+        for (int i = 0;
+             i < Capacity;
+             i++)
+        {
+            slots[i] = null;
+        }
+
+        selectedIndex = -1;
+        equippedIndex = -1;
+
+        NotifyChanged();
+    }
+
+    [ContextMenu("Print Slot State")]
+    private void PrintSlotState()
+    {
+        EnsureSlots();
+
+        for (int i = 0;
+             i < Capacity;
+             i++)
+        {
+            Object_Grabbable source =
+                GetObjectAt(i);
+
+            Debug.Log(
+                $"[InventoryData] " +
+                $"Index={i}, " +
+                $"ObjectName={GetObjectNameAt(i)}, " +
+                $"Source={(source != null ? source.gameObject.name : "null")}",
+                this
+            );
+        }
+    }
+
+    private static string ResolveObjectName(
+        Object_Grabbable sourceObject)
+    {
+        if (sourceObject == null)
+        {
+            return "Unknown";
+        }
+
+        if (!string.IsNullOrWhiteSpace(
+                sourceObject.objectName))
+        {
+            return sourceObject.objectName;
+        }
+
+        return sourceObject.gameObject.name;
+    }
+
+    private bool IsValidIndex(
+        int index)
+    {
+        return index >= 0 &&
+               index < Capacity;
+    }
+
+    private void EnsureSlots()
+    {
+        if (slots != null &&
+            slots.Length == Capacity)
+        {
+            return;
+        }
+
+        SlotEntry[] newSlots =
+            new SlotEntry[Capacity];
+
+        if (slots != null)
+        {
+            int count =
+                Mathf.Min(
+                    slots.Length,
+                    Capacity
+                );
+
+            for (int i = 0;
+                 i < count;
+                 i++)
+            {
+                newSlots[i] = slots[i];
+            }
+        }
+
+        slots = newSlots;
+    }
+
+    private void ValidateIndices()
+    {
+        if (selectedIndex < -1 ||
+            selectedIndex >= Capacity)
+        {
+            selectedIndex = -1;
+        }
+
+        if (equippedIndex < -1 ||
+            equippedIndex >= Capacity)
+        {
+            equippedIndex = -1;
+        }
+
+        if (equippedIndex >= 0 &&
+            GetObjectAt(equippedIndex) == null)
+        {
+            equippedIndex = -1;
+        }
+    }
+
+    private void NotifyChanged()
+    {
+        Changed?.Invoke();
+    }
+
+
 }

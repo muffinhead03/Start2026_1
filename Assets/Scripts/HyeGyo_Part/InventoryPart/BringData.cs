@@ -6,51 +6,184 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class BringData : MonoBehaviour
 {
-    public InventoryItemData Capture(Object_Grabbable source)
+    [Header("Debug")]
+    [SerializeField]
+    private bool showDebugLog;
+
+    /// <summary>
+    /// InventoryData의 선택 index를 기준으로
+    /// 이름, 설명, Mesh 정보를 가져옵니다.
+    /// </summary>
+    public InventoryDisplayData BuildDisplayData(
+        InventoryData inventoryData,
+        int slotIndex)
     {
-        if (source == null)
+        if (inventoryData == null)
         {
-            Debug.LogWarning("[BringData] 가져올 Object_Grabbable이 없습니다.", this);
             return null;
         }
 
-        string itemName = ReadStringMember(
-            source,
-            source.gameObject.name,
-            "objectName",
-            "ObjectName"
-        );
+        Object_Grabbable sourceObject =
+            inventoryData.GetObjectAt(
+                slotIndex
+            );
 
-        string description = ReadStringMember(
-            source,
-            string.Empty,
-            "description",
-            "Description"
-        );
+        if (sourceObject == null)
+        {
+            return null;
+        }
+
+        string objectName =
+            inventoryData.GetObjectNameAt(
+                slotIndex
+            );
+
+        string description =
+            ResolveDescription(
+                sourceObject
+            );
 
         List<InventoryMeshPartData> meshParts =
-            CaptureMeshParts(source.transform);
+            CollectMeshParts(
+                sourceObject.transform
+            );
 
-        return new InventoryItemData(
-            itemName,
-            description,
-            source,
-            meshParts
+        InventoryDisplayData displayData =
+            new InventoryDisplayData(
+                objectName,
+                description,
+                sourceObject,
+                meshParts
+            );
+
+        if (showDebugLog)
+        {
+            Debug.Log(
+                $"[BringData] 표시 데이터 생성: " +
+                $"Index={slotIndex}, " +
+                $"Name={displayData.ItemName}, " +
+                $"MeshParts={displayData.MeshParts.Count}",
+                sourceObject
+            );
+        }
+
+        return displayData;
+    }
+
+    public string GetItemNameAt(
+        InventoryData inventoryData,
+        int slotIndex)
+    {
+        if (inventoryData == null)
+        {
+            return "—";
+        }
+
+        return inventoryData.GetObjectNameAt(
+            slotIndex
         );
     }
 
-    private static List<InventoryMeshPartData> CaptureMeshParts(
-        Transform sourceRoot)
+    private static string ResolveDescription(
+        Object_Grabbable sourceObject)
     {
-        List<InventoryMeshPartData> result = new();
-
-        MeshFilter[] meshFilters =
-            sourceRoot.GetComponentsInChildren<MeshFilter>(true);
-
-        foreach (MeshFilter meshFilter in meshFilters)
+        if (sourceObject == null)
         {
-            if (meshFilter == null || meshFilter.sharedMesh == null)
+            return string.Empty;
+        }
+
+        Type sourceType =
+            sourceObject.GetType();
+
+        FieldInfo descriptionField =
+            sourceType.GetField(
+                "description",
+                BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.NonPublic
+            );
+
+        if (descriptionField != null &&
+            descriptionField.FieldType == typeof(string))
+        {
+            object fieldValue =
+                descriptionField.GetValue(
+                    sourceObject
+                );
+
+            return fieldValue as string
+                ?? string.Empty;
+        }
+
+        PropertyInfo descriptionProperty =
+            sourceType.GetProperty(
+                "Description",
+                BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.NonPublic
+            );
+
+        if (descriptionProperty != null &&
+            descriptionProperty.PropertyType ==
+            typeof(string))
+        {
+            object propertyValue =
+                descriptionProperty.GetValue(
+                    sourceObject
+                );
+
+            return propertyValue as string
+                ?? string.Empty;
+        }
+
+        return string.Empty;
+    }
+
+    private static List<InventoryMeshPartData>
+        CollectMeshParts(Transform sourceRoot)
+    {
+        List<InventoryMeshPartData> result =
+            new List<InventoryMeshPartData>();
+
+        if (sourceRoot == null)
+        {
+            return result;
+        }
+
+        CollectMeshFilters(
+            sourceRoot,
+            result
+        );
+
+        CollectSkinnedMeshes(
+            sourceRoot,
+            result
+        );
+
+        return result;
+    }
+
+    private static void CollectMeshFilters(
+        Transform sourceRoot,
+        List<InventoryMeshPartData> result)
+    {
+        MeshFilter[] meshFilters =
+            sourceRoot.GetComponentsInChildren<MeshFilter>(
+                true
+            );
+
+        for (int i = 0;
+             i < meshFilters.Length;
+             i++)
+        {
+            MeshFilter meshFilter =
+                meshFilters[i];
+
+            if (meshFilter == null ||
+                meshFilter.sharedMesh == null)
+            {
                 continue;
+            }
 
             MeshRenderer meshRenderer =
                 meshFilter.GetComponent<MeshRenderer>();
@@ -64,13 +197,11 @@ public sealed class BringData : MonoBehaviour
                 sourceRoot.worldToLocalMatrix *
                 meshFilter.transform.localToWorldMatrix;
 
-            Vector4 positionColumn =
-                relativeMatrix.GetColumn(3);
-
-            Vector3 localPosition = new(
-                positionColumn.x,
-                positionColumn.y,
-                positionColumn.z
+            DecomposeMatrix(
+                relativeMatrix,
+                out Vector3 localPosition,
+                out Quaternion localRotation,
+                out Vector3 localScale
             );
 
             result.Add(
@@ -78,51 +209,119 @@ public sealed class BringData : MonoBehaviour
                     meshFilter.sharedMesh,
                     materials,
                     localPosition,
-                    relativeMatrix.rotation,
-                    relativeMatrix.lossyScale
+                    localRotation,
+                    localScale
                 )
             );
         }
-
-        return result;
     }
 
-    private static string ReadStringMember(
-        object target,
-        string fallback,
-        params string[] memberNames)
+    private static void CollectSkinnedMeshes(
+        Transform sourceRoot,
+        List<InventoryMeshPartData> result)
     {
-        if (target == null)
-            return fallback;
+        SkinnedMeshRenderer[] renderers =
+            sourceRoot.GetComponentsInChildren
+                <SkinnedMeshRenderer>(true);
 
-        const BindingFlags flags =
-            BindingFlags.Instance |
-            BindingFlags.Public |
-            BindingFlags.NonPublic;
-
-        Type type = target.GetType();
-
-        foreach (string memberName in memberNames)
+        for (int i = 0;
+             i < renderers.Length;
+             i++)
         {
-            FieldInfo field = type.GetField(memberName, flags);
+            SkinnedMeshRenderer renderer =
+                renderers[i];
 
-            if (field != null &&
-                field.FieldType == typeof(string))
+            if (renderer == null ||
+                renderer.sharedMesh == null)
             {
-                return field.GetValue(target) as string ?? fallback;
+                continue;
             }
 
-            PropertyInfo property =
-                type.GetProperty(memberName, flags);
+            Matrix4x4 relativeMatrix =
+                sourceRoot.worldToLocalMatrix *
+                renderer.transform.localToWorldMatrix;
 
-            if (property != null &&
-                property.PropertyType == typeof(string) &&
-                property.CanRead)
-            {
-                return property.GetValue(target) as string ?? fallback;
-            }
+            DecomposeMatrix(
+                relativeMatrix,
+                out Vector3 localPosition,
+                out Quaternion localRotation,
+                out Vector3 localScale
+            );
+
+            result.Add(
+                new InventoryMeshPartData(
+                    renderer.sharedMesh,
+                    renderer.sharedMaterials,
+                    localPosition,
+                    localRotation,
+                    localScale
+                )
+            );
+        }
+    }
+
+    private static void DecomposeMatrix(
+        Matrix4x4 matrix,
+        out Vector3 position,
+        out Quaternion rotation,
+        out Vector3 scale)
+    {
+        position =
+            matrix.GetColumn(3);
+
+        Vector3 right =
+            matrix.GetColumn(0);
+
+        Vector3 up =
+            matrix.GetColumn(1);
+
+        Vector3 forward =
+            matrix.GetColumn(2);
+
+        scale =
+            new Vector3(
+                right.magnitude,
+                up.magnitude,
+                forward.magnitude
+            );
+
+        if (scale.x > 0.0001f)
+        {
+            right /= scale.x;
         }
 
-        return fallback;
+        if (scale.y > 0.0001f)
+        {
+            up /= scale.y;
+        }
+
+        if (scale.z > 0.0001f)
+        {
+            forward /= scale.z;
+        }
+
+        if (Vector3.Dot(
+                Vector3.Cross(right, up),
+                forward) < 0f)
+        {
+            scale.x *= -1f;
+            right *= -1f;
+        }
+
+        if (forward.sqrMagnitude < 0.0001f)
+        {
+            forward = Vector3.forward;
+        }
+
+        if (up.sqrMagnitude < 0.0001f)
+        {
+            up = Vector3.up;
+        }
+
+        rotation =
+            Quaternion.LookRotation(
+                forward,
+                up
+            );
     }
 }
