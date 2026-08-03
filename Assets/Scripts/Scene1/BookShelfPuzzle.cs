@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class BookShelfPuzzle : MonoBehaviour
 {
@@ -20,23 +21,34 @@ public class BookShelfPuzzle : MonoBehaviour
     [Header("HintManager 연결")]
     public HintManager hintManager;
 
+    [Header("클릭 판정 거리")]
+    public float clickDistance = 5f;
+
     List<GameObject> spawnedBooks = new List<GameObject>();
     PlacementBookItem heldItem;
     bool isSolved = false;
     bool isFocused = false;
+
+    InputAction click;
+
+    void Start()
+    {
+        click = InputSystem.actions.FindAction("Click");
+        click.Disable();
+    }
 
     // ── 책장에서 책 뽑았을 때 (Book.cs가 호출) ──
     public void OnBookCollected(char letter)
     {
         hintManager?.AddLastAction("collect_book_" + letter);
 
-        Debug.Log($"[BookShelfPuzzle] 책 '{letter}' 수집됨");   // ← 추가
+        Debug.Log($"[BookShelfPuzzle] 책 '{letter}' 수집됨");
 
         if (HasAllAnswerLetters() && hintManager != null &&
             !hintManager.currentPlayerState.completedSteps.Contains(5))
         {
             hintManager.currentPlayerState.completedSteps.Add(5);
-            Debug.Log("[BookShelfPuzzle] Step 5 완료 — 정답 알파벳 4권 모두 수집");   // ← 추가
+            Debug.Log("[BookShelfPuzzle] Step 5 완료 — 정답 알파벳 4권 모두 수집");
         }
     }
 
@@ -48,15 +60,64 @@ public class BookShelfPuzzle : MonoBehaviour
         return true;
     }
 
-    // ── 빈 칸(슬롯 영역) 클릭했을 때 ──
+    // ── 빈 칸(슬롯 영역) 포커스 진입 시 — Object_FixCamera의 Fixed() 이벤트에 연결 ──
     public void OnBookshelfClicked()
     {
         if (isSolved || isFocused) return;
         isFocused = true;
 
-        Debug.Log("[BookShelfPuzzle] 책장 슬롯 영역 포커스 진입"); 
+        Debug.Log("[BookShelfPuzzle] 책장 슬롯 영역 포커스 진입");
 
         SpawnPlacementBooks();
+
+        click.performed += OnClickPerformed;
+        click.Enable();
+    }
+
+    // ── 포커스 해제 시 — Object_FixCamera의 UnFixed() 이벤트에 연결 ──
+    public void OnBookshelfUnfocused()
+    {
+        if (!isFocused) return;
+        isFocused = false;
+
+        Debug.Log("[BookShelfPuzzle] 책장 슬롯 영역 포커스 해제");
+
+        click.performed -= OnClickPerformed;
+        click.Disable();
+
+        ClearSpawnedBooks();
+        heldItem = null;
+    }
+
+    void OnClickPerformed(InputAction.CallbackContext ctx)
+    {
+        Vector2 mousePos = Mouse.current.position.ReadValue();
+        Debug.Log($"[BookShelfPuzzle] 클릭 발생 — 마우스 위치: {mousePos}");   // ← 1. 클릭 자체가 감지되는지
+
+        Ray ray = Camera.main.ScreenPointToRay(mousePos);
+
+        if (!Physics.Raycast(ray, out RaycastHit hit, clickDistance))
+        {
+            Debug.Log("[BookShelfPuzzle] 레이캐스트 아무것도 안 맞음");   // ← 2. 뭔가에 맞긴 하는지
+            return;
+        }
+
+        Debug.Log($"[BookShelfPuzzle] 레이캐스트 히트: {hit.collider.gameObject.name}");   // ← 3. 뭘 맞췄는지
+
+        var book = hit.collider.GetComponent<PlacementBookItem>();
+        if (book != null)
+        {
+            Debug.Log($"[BookShelfPuzzle] 책 '{book.letter}' 들기 시도");   // ← 4.
+            TryHoldBook(book);
+            return;
+        }
+
+        var slot = hit.collider.GetComponent<BookSlot>();
+        if (slot != null)
+        {
+            Debug.Log($"[BookShelfPuzzle] 슬롯 {slot.slotIndex} 배치 시도");   // ← 5.
+            TryPlaceBook(slot);
+        }
     }
 
     void SpawnPlacementBooks()
@@ -80,7 +141,7 @@ public class BookShelfPuzzle : MonoBehaviour
             spawnedBooks.Add(obj);
         }
 
-        Debug.Log($"[BookShelfPuzzle] 배치용 책 {spawnedBooks.Count}권 스폰됨");   // ← 추가
+        Debug.Log($"[BookShelfPuzzle] 배치용 책 {spawnedBooks.Count}권 스폰됨");
     }
 
     void ClearSpawnedBooks()
@@ -136,6 +197,8 @@ public class BookShelfPuzzle : MonoBehaviour
         {
             Debug.Log("[BookShelfPuzzle] 순서 오답: " + placedOrder + " (정답: " + puzzleSolver.answerFurnitureName + ")");
             hintManager?.AddLastAction("wrong_book_order");
+            if (hintManager != null)
+                hintManager.currentPlayerState.failCount++;
             ResetSlots();
         }
     }
@@ -157,8 +220,10 @@ public class BookShelfPuzzle : MonoBehaviour
     {
         Debug.Log("[BookShelfPuzzle] 정답! 책장이 밀려나며 열쇠 발견");
 
+        click.performed -= OnClickPerformed;
+        click.Disable();
+
         ClearSpawnedBooks();
-        //focus?.EndFocus();
         isFocused = false;
 
         if (bookshelfAnimator != null) bookshelfAnimator.SetTrigger("Slide");
@@ -169,22 +234,13 @@ public class BookShelfPuzzle : MonoBehaviour
             if (!hintManager.currentPlayerState.completedSteps.Contains(6))
             {
                 hintManager.currentPlayerState.completedSteps.Add(6);
-                Debug.Log("[BookShelfPuzzle] Step 6 완료");   // ← 추가
+                Debug.Log("[BookShelfPuzzle] Step 6 완료");
             }
             if (!hintManager.currentPlayerState.foundClues.Contains("clue_bookshelf_order"))
             {
                 hintManager.currentPlayerState.foundClues.Add("clue_bookshelf_order");
-                Debug.Log("[BookShelfPuzzle] clue_bookshelf_order 획득 — 와인방 퍼즐 완료");   // ← 추가
+                Debug.Log("[BookShelfPuzzle] clue_bookshelf_order 획득 — 와인방 퍼즐 완료");
             }
         }
-    }
-
-    // ── 포커스 도중 나가기 (ESC 등, 선택사항) ──
-    public void ExitFocus()
-    {
-        if (isSolved) return;
-        isFocused = false;
-        //focus?.EndFocus();
-        ClearSpawnedBooks();
     }
 }
