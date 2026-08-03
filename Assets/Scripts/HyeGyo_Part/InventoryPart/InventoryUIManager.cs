@@ -12,25 +12,40 @@ public sealed class GrabbableEvent :
 public sealed class InventoryUIManager : MonoBehaviour
 {
     [Header("Core")]
-    [SerializeField] private InventoryData inventoryData;
-    [SerializeField] private PerceiveObjectHandPivot handPerception;
-    [SerializeField] private BringData bringData;
-    [SerializeField] private InventoryUIEffect uiEffect;
+    [SerializeField]
+    private InventoryData inventoryData;
+
+    [SerializeField]
+    private PerceiveObjectHandPivot handPerception;
+
+    [SerializeField]
+    private BringData bringData;
+
+    [SerializeField]
+    private InventoryUIEffect uiEffect;
 
     [Header("Window")]
-    [SerializeField] private bool startClosed = true;
+    [SerializeField]
+    private bool startClosed = true;
 
     [Header("인벤토리 중 게임 입력")]
-    [Tooltip("인벤토리가 열렸을 때 끌 이동/시점 입력 스크립트")]
-    [SerializeField] private MonoBehaviour[] disableWhileOpen;
+    [Tooltip("인벤토리가 열렸을 때 이동/시점 입력 스크립트")]
+    [SerializeField]
+    private MonoBehaviour[] disableWhileOpen;
 
-    [SerializeField] private bool pauseGameWhileOpen;
+    [SerializeField]
+    private bool pauseGameWhileOpen;
 
     [Header("Optional Equip Request")]
-    [SerializeField] private GrabbableEvent onEquipRequested;
+    [SerializeField]
+    private GrabbableEvent onEquipRequested;
+
+    [Header("Debug")]
+    [SerializeField]
+    private bool showDebugLog = true;
 
     private Object_Grabbable currentHeldObject;
-    private InventoryItemData selectedItem;
+    private InventoryDisplayData selectedDisplayData;
     private bool isOpen;
 
     private CursorLockMode previousCursorLock;
@@ -40,50 +55,73 @@ public sealed class InventoryUIManager : MonoBehaviour
     private bool inventoryControlModeApplied;
 
     public bool IsOpen => isOpen;
-    public Object_Grabbable CurrentHeldObject => currentHeldObject;
-    public InventoryItemData SelectedItem => selectedItem;
+
+    public Object_Grabbable CurrentHeldObject =>
+        currentHeldObject;
+
+    public InventoryDisplayData SelectedDisplayData =>
+        selectedDisplayData;
 
     private void Awake()
     {
         isOpen = !startClosed;
 
-        uiEffect?.BindSlots(SelectSlot);
-        uiEffect?.SetOpen(isOpen);
+        if (uiEffect != null)
+        {
+            uiEffect.BindSlots(
+                SelectSlot
+            );
+
+            uiEffect.SetOpen(
+                isOpen
+            );
+        }
     }
 
     private void OnEnable()
     {
+        if (inventoryData != null)
+        {
+            inventoryData.Changed +=
+                HandleInventoryChanged;
+
+            inventoryData.InventoryFull +=
+                HandleInventoryFull;
+        }
+
         if (handPerception != null)
         {
             handPerception.HandObjectChanged +=
                 HandleHandObjectChanged;
         }
-
-        if (inventoryData != null)
-        {
-            inventoryData.Changed += HandleInventoryChanged;
-            inventoryData.InventoryFull += HandleInventoryFull;
-        }
     }
 
     private void Start()
     {
-        handPerception?.ForceScan();
-
         if (isOpen)
+        {
             EnterInventoryControlMode();
+        }
 
-        SyncSelectedItem();
+        if (handPerception != null)
+        {
+            handPerception.ForceScan();
+        }
+
+        SyncSelectedDisplayData();
         RefreshView();
     }
 
     private void LateUpdate()
     {
         if (!isOpen)
+        {
             return;
+        }
 
-        // 다른 플레이어 스크립트가 커서를 다시 잠가도 UI 상태를 유지합니다.
-        Cursor.lockState = CursorLockMode.None;
+        Cursor.lockState =
+            CursorLockMode.None;
+
         Cursor.visible = true;
     }
 
@@ -97,8 +135,16 @@ public sealed class InventoryUIManager : MonoBehaviour
 
         if (inventoryData != null)
         {
-            inventoryData.Changed -= HandleInventoryChanged;
-            inventoryData.InventoryFull -= HandleInventoryFull;
+            inventoryData.Changed -=
+                HandleInventoryChanged;
+
+            inventoryData.InventoryFull -=
+                HandleInventoryFull;
+        }
+
+        if (uiEffect != null)
+        {
+            uiEffect.SetOpen(false);
         }
 
         ExitInventoryControlMode();
@@ -107,185 +153,314 @@ public sealed class InventoryUIManager : MonoBehaviour
     public void ToggleInventory()
     {
         if (isOpen)
+        {
             CloseInventory();
+        }
         else
+        {
             OpenInventory();
+        }
     }
 
     public void OpenInventory()
     {
         if (isOpen)
+        {
             return;
-
-        handPerception?.ForceScan();
+        }
 
         isOpen = true;
+
         EnterInventoryControlMode();
 
-        uiEffect?.SetOpen(true);
+        if (uiEffect != null)
+        {
+            uiEffect.SetOpen(true);
+        }
 
-        SyncSelectedItem();
+        if (handPerception != null)
+        {
+            handPerception.ForceScan();
+        }
+
+        SyncSelectedDisplayData();
         RefreshView();
     }
 
     public void CloseInventory()
     {
         if (!isOpen)
+        {
             return;
+        }
 
         isOpen = false;
 
-        uiEffect?.SetOpen(false);
+        if (uiEffect != null)
+        {
+            uiEffect.SetOpen(false);
+        }
+
+        SyncSelectedDisplayData();
+        RefreshView();
+
         ExitInventoryControlMode();
     }
 
-    public void SelectSlot(int slotIndex)
+    public void SelectSlot(
+        int slotIndex)
     {
-        inventoryData?.Select(slotIndex);
+        if (inventoryData == null)
+        {
+            Debug.LogError(
+                "[InventoryUIManager] InventoryData가 없습니다.",
+                this
+            );
+
+            return;
+        }
+
+        if (showDebugLog)
+        {
+            Debug.Log(
+                $"[InventoryUIManager] 슬롯 선택 요청: {slotIndex}",
+                this
+            );
+        }
+
+        inventoryData.Select(
+            slotIndex
+        );
+
+        SyncSelectedDisplayData();
+        RefreshView();
+
+        if (showDebugLog)
+        {
+            string selectedName =
+                selectedDisplayData != null
+                    ? selectedDisplayData.ItemName
+                    : "null";
+
+            Debug.Log(
+                $"[InventoryUIManager] 선택 결과: " +
+                $"SelectedIndex={inventoryData.SelectedIndex}, " +
+                $"EquippedIndex={inventoryData.EquippedIndex}, " +
+                $"SelectedItem={selectedName}",
+                this
+            );
+        }
     }
 
     public void ConfirmSelectedItem()
     {
-        SyncSelectedItem();
-
-        if (selectedItem == null)
+        if (inventoryData == null)
+        {
             return;
+        }
+
+        Object_Grabbable selectedObject =
+            inventoryData.SelectedObject;
+
+        if (selectedObject == null)
+        {
+            return;
+        }
 
         onEquipRequested?.Invoke(
-            selectedItem.SourceObject
+            selectedObject
         );
     }
 
     private void HandleHandObjectChanged(
         Object_Grabbable detectedObject)
     {
-        /*
-         * 이전 물체를 저장한 뒤 현재 물체를 갱신합니다.
-         * HandPivot에서 물체가 빠지면 detectedObject는 null입니다.
-         */
-        Object_Grabbable previousHeldObject =
-            currentHeldObject;
-
-        if (previousHeldObject == detectedObject)
-            return;
-
-        currentHeldObject = detectedObject;
-
         if (inventoryData == null)
         {
-            SyncSelectedItem();
-            RefreshView();
+            Debug.LogError(
+                "[InventoryUIManager] InventoryData가 없습니다.",
+                this
+            );
+
             return;
         }
 
-        /*
-         * 이전 물체가 HandPivot에서 빠졌거나 다른 물체로 교체됐다면
-         * 이전 물체의 데이터와 Stored_x 오브젝트를 함께 제거합니다.
-         */
-        if (previousHeldObject != null &&
-            previousHeldObject != detectedObject)
+        currentHeldObject =
+            detectedObject;
+
+        if (showDebugLog)
         {
-            inventoryData.RemoveBySource(
-                previousHeldObject
+            string detectedName =
+                detectedObject != null
+                    ? detectedObject.gameObject.name
+                    : "null";
+
+            string objectName =
+                detectedObject != null
+                    ? ResolveObjectName(detectedObject)
+                    : "null";
+
+            Debug.Log(
+                $"[InventoryUIManager] HandObjectChanged: " +
+                $"Source={detectedName}, " +
+                $"ObjectName={objectName}",
+                this
             );
         }
 
         /*
-         * 현재 손이 비어 있으면 장착 상태를 해제하고 종료합니다.
+         * HandPivot이 비었으면 장착 상태만 해제합니다.
+         * 슬롯 삭제는 Release/UseKey/PutOn에서
+         * InventoryData.RemoveBySource()로 처리합니다.
          */
         if (currentHeldObject == null)
         {
             inventoryData.SetEquipped(-1);
 
-            SyncSelectedItem();
+            SyncSelectedDisplayData();
             RefreshView();
             return;
         }
 
+        /*
+         * 같은 이름이더라도 실제 SourceObject가 다르면
+         * FindIndexBySource() 결과는 -1이므로 새 슬롯에 들어갑니다.
+         */
         int index =
             inventoryData.FindIndexBySource(
                 currentHeldObject
             );
 
-        /*
-         * HandPivot에 처음 들어온 물체라면 이름/설명/Mesh 정보를
-         * 수집하여 InventoryData에 등록합니다.
-         */
         if (index < 0)
         {
-            InventoryItemData newItem =
-                bringData != null
-                    ? bringData.Capture(
-                        currentHeldObject
-                    )
-                    : null;
-
+            /*
+             * InventoryData가 index 0부터 첫 빈 슬롯을 찾고,
+             * Object_Grabbable.objectName을 저장합니다.
+             */
             if (!inventoryData.TryAdd(
-                    newItem,
+                    currentHeldObject,
                     out index))
             {
-                SyncSelectedItem();
+                SyncSelectedDisplayData();
                 RefreshView();
                 return;
             }
         }
 
-        // 실제 HandPivot 물체의 슬롯을 선택 + 장착 상태로 맞춥니다.
-        inventoryData.SetSelectedAndEquipped(index);
+        inventoryData.SetSelectedAndEquipped(
+            index
+        );
 
-        SyncSelectedItem();
+        SyncSelectedDisplayData();
         RefreshView();
+
+        if (showDebugLog)
+        {
+            Debug.Log(
+                $"[InventoryUIManager] 장착 완료: " +
+                $"Index={index}, " +
+                $"SelectedIndex={inventoryData.SelectedIndex}, " +
+                $"EquippedIndex={inventoryData.EquippedIndex}, " +
+                $"ObjectName={inventoryData.GetObjectNameAt(index)}, " +
+                $"Source={currentHeldObject.gameObject.name}",
+                currentHeldObject
+            );
+        }
     }
 
     private void HandleInventoryChanged()
     {
-        SyncSelectedItem();
+        SyncSelectedDisplayData();
         RefreshView();
     }
 
     private void HandleInventoryFull()
     {
-        uiEffect?.PlayInventoryFull();
+        if (uiEffect != null)
+        {
+            uiEffect.PlayInventoryFull();
+        }
     }
 
-    private void SyncSelectedItem()
+    private void SyncSelectedDisplayData()
     {
-        selectedItem =
-            inventoryData != null
-                ? inventoryData.SelectedItem
-                : null;
+        if (inventoryData == null ||
+            bringData == null)
+        {
+            selectedDisplayData = null;
+            return;
+        }
+
+        selectedDisplayData =
+            bringData.BuildDisplayData(
+                inventoryData,
+                inventoryData.SelectedIndex
+            );
     }
 
     private void RefreshView()
     {
-        uiEffect?.Refresh(
+        if (uiEffect == null)
+        {
+            return;
+        }
+
+        uiEffect.Refresh(
             inventoryData,
-            selectedItem,
+            selectedDisplayData,
             isOpen
         );
+    }
+
+    private static string ResolveObjectName(
+        Object_Grabbable sourceObject)
+    {
+        if (sourceObject == null)
+        {
+            return "Unknown";
+        }
+
+        if (!string.IsNullOrWhiteSpace(
+                sourceObject.objectName))
+        {
+            return sourceObject.objectName;
+        }
+
+        return sourceObject.gameObject.name;
     }
 
     private void EnterInventoryControlMode()
     {
         if (inventoryControlModeApplied)
+        {
             return;
+        }
 
         inventoryControlModeApplied = true;
 
-        previousCursorLock = Cursor.lockState;
-        previousCursorVisible = Cursor.visible;
+        previousCursorLock =
+            Cursor.lockState;
 
-        Cursor.lockState = CursorLockMode.None;
+        previousCursorVisible =
+            Cursor.visible;
+
+        Cursor.lockState =
+            CursorLockMode.None;
+
         Cursor.visible = true;
 
         if (pauseGameWhileOpen)
         {
-            previousTimeScale = Time.timeScale;
+            previousTimeScale =
+                Time.timeScale;
+
             Time.timeScale = 0f;
         }
 
         if (disableWhileOpen == null)
+        {
             return;
+        }
 
         previousBehaviourStates =
             new bool[disableWhileOpen.Length];
@@ -313,22 +488,30 @@ public sealed class InventoryUIManager : MonoBehaviour
     private void ExitInventoryControlMode()
     {
         if (!inventoryControlModeApplied)
+        {
             return;
+        }
 
         inventoryControlModeApplied = false;
 
         if (pauseGameWhileOpen)
-            Time.timeScale = previousTimeScale;
+        {
+            Time.timeScale =
+                previousTimeScale;
+        }
 
         if (disableWhileOpen != null &&
             previousBehaviourStates != null)
         {
-            int count = Mathf.Min(
-                disableWhileOpen.Length,
-                previousBehaviourStates.Length
-            );
+            int count =
+                Mathf.Min(
+                    disableWhileOpen.Length,
+                    previousBehaviourStates.Length
+                );
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0;
+                 i < count;
+                 i++)
             {
                 MonoBehaviour behaviour =
                     disableWhileOpen[i];
@@ -346,7 +529,10 @@ public sealed class InventoryUIManager : MonoBehaviour
 
         previousBehaviourStates = null;
 
-        Cursor.lockState = previousCursorLock;
-        Cursor.visible = previousCursorVisible;
+        Cursor.lockState =
+            previousCursorLock;
+
+        Cursor.visible =
+            previousCursorVisible;
     }
 }
