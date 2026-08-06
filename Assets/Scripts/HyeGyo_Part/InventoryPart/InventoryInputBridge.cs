@@ -98,58 +98,62 @@ if (showDebugLog)
    private void HandleInventoryScroll(
     InputAction.CallbackContext context)
 {
-    if (showDebugLog)
-    {
-        Debug.Log(
-            $"[InventoryInputBridge] 스크롤 콜백 발생: " +
-            $"Phase={context.phase}, " +
-            $"Control=" +
-            $"{(context.control != null ? context.control.path : "null")}",
-            this
-        );
-    }
-
     if (inventoryUIManager == null)
     {
         Debug.LogError(
             "[InventoryInputBridge] " +
-            "InventoryUIManager가 없어서 스크롤을 처리할 수 없습니다.",
+            "InventoryUIManager가 없어 " +
+            "스크롤을 처리할 수 없습니다.",
             this
         );
 
         return;
     }
 
+    /*
+     * UI/ScrollWheel은 float가 아니라
+     * Vector2 값을 전달합니다.
+     *
+     * x: 가로 스크롤
+     * y: 세로 마우스 휠
+     */
+    Vector2 scrollValue =
+        context.ReadValue<Vector2>();
+
     float scrollY =
-        context.ReadValue<float>();
+        scrollValue.y;
 
     if (showDebugLog)
     {
+        string controlPath = "null";
+
+        if (context.control != null)
+        {
+            controlPath =
+                context.control.path;
+        }
+
         Debug.Log(
-            $"[InventoryInputBridge] 스크롤 입력값: " +
-            $"ScrollY={scrollY}",
+            "[InventoryInputBridge] 스크롤 입력 감지: " +
+            "X=" + scrollValue.x +
+            ", Y=" + scrollValue.y +
+            ", Control=" + controlPath,
             this
         );
     }
 
     /*
-     * Pass Through 액션은 휠 입력이 끝나면서
-     * 값 0도 전달될 수 있으므로 무시합니다.
+     * 입력이 끝날 때 전달되는 0 값은 무시합니다.
      */
     if (Mathf.Abs(scrollY) < 0.01f)
     {
-        if (showDebugLog)
-        {
-            Debug.Log(
-                "[InventoryInputBridge] " +
-                "스크롤 값이 0에 가까워 무시합니다.",
-                this
-            );
-        }
-
         return;
     }
 
+    /*
+     * 휠 위: 이전 아이템
+     * 휠 아래: 다음 아이템
+     */
     int direction =
         scrollY > 0f
             ? -1
@@ -158,8 +162,8 @@ if (showDebugLog)
     if (showDebugLog)
     {
         Debug.Log(
-            $"[InventoryInputBridge] 순환 요청 전달: " +
-            $"Direction={direction}",
+            "[InventoryInputBridge] 순환 요청 전달: " +
+            "Direction=" + direction,
             this
         );
     }
