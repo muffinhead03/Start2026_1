@@ -51,17 +51,17 @@ public sealed class PerceiveObjectHandPivot : MonoBehaviour
     Object_Grabbable detected =
         FindHandObject();
 
-    Debug.Log(
-        $"[HandPerception] Scan: " +
-        $"Pivot=" +
-        $"{(handPivot != null ? handPivot.name : "null")}, " +
-        $"ChildCount=" +
-        $"{(handPivot != null ? handPivot.childCount : 0)}, " +
-        $"Detected=" +
-        $"{(detected != null ? detected.name : "null")}, " +
-        $"Force={forceNotify}",
-        this
-    );
+    //Debug.Log(
+    //    $"[HandPerception] Scan: " +
+    //    $"Pivot=" +
+    //    $"{(handPivot != null ? handPivot.name : "null")}, " +
+    //    $"ChildCount=" +
+    //    $"{(handPivot != null ? handPivot.childCount : 0)}, " +
+    //    $"Detected=" +
+    //    $"{(detected != null ? detected.name : "null")}, " +
+    //    $"Force={forceNotify}",
+    //    this
+    //);
 
     if (!forceNotify &&
         detected == currentObject)
@@ -88,11 +88,11 @@ public sealed class PerceiveObjectHandPivot : MonoBehaviour
         Transform child =
             handPivot.GetChild(i);
 
-        Debug.Log(
-            $"[HandPerception] 자식 검사: " +
-            $"Index={i}, Name={child.name}",
-            child
-        );
+        //Debug.Log(
+        //    $"[HandPerception] 자식 검사: " +
+        //    $"Index={i}, Name={child.name}",
+        //    child
+        //);
 
         Object_Grabbable grabbable =
             child.GetComponent<Object_Grabbable>();
