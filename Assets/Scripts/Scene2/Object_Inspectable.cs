@@ -56,7 +56,7 @@ public class Object_Inspecatable : MonoBehaviour
             gameObject.SetActive(false);
             isInspecting = false;
 
-            SceneUI.SetActivePanel(1, false);
+            SceneUI.SetActivePanel(2, false);
             SceneUI.SetActiveCursor(true);
 
             player.SetMoveLock(false);
@@ -106,7 +106,7 @@ public class Object_Inspecatable : MonoBehaviour
         }
 
         SceneUI.ChangeText(0, disc);
-        SceneUI.SetActivePanel(1, true);
+        SceneUI.SetActivePanel(2, true);
         SceneUI.SetActiveCursor(false);
 
         col.isTrigger = false;
