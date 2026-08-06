@@ -5675,13 +5675,13 @@ MonoBehaviour:
   onEquipRequested:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 2099574901}
+        m_TargetAssemblyTypeName: Player_Grab, Assembly-CSharp
+        m_MethodName: Grab
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -10947,7 +10947,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1125256727}
-  - component: {fileID: 1125256728}
   m_Layer: 0
   m_Name: InventorySystem
   m_TagString: Untagged
@@ -10976,23 +10975,6 @@ Transform:
   - {fileID: 1916002707}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1125256728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125256726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00523dab984c94744ab9dd59ada33be7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  inventoryUIManager: {fileID: 496014598}
-  inventoryToggleAction: {fileID: 0}
-  inventoryCloseAction: {fileID: 0}
-  inventoryConfirmAction: {fileID: 0}
-  inventoryScrollAction: {fileID: 0}
 --- !u!1001 &1127358460
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11507,7 +11489,8 @@ MonoBehaviour:
   inventoryToggleAction: {fileID: 4799860970335907072, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
   inventoryCloseAction: {fileID: -1006787801548107997, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
   inventoryConfirmAction: {fileID: 4936313250796762816, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
-  inventoryScrollAction: {fileID: 0}
+  inventoryScrollAction: {fileID: 6240969308177333660, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  showDebugLog: 1
 --- !u!1 &1223797198 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5431522986502080885, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
@@ -13854,7 +13837,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e82b6420fd7849844b3ce1a8caef45e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BringData
-  showDebugLog: 1
+  showDebugLog: 0
 --- !u!4 &1538165177
 Transform:
   m_ObjectHideFlags: 0
@@ -17572,7 +17555,7 @@ MonoBehaviour:
   previewRotation: {x: 15, y: -25, z: 0}
   previewTargetSize: 0.3
   disablePreviewShadows: 1
-  showDebugLog: 1
+  showDebugLog: 0
 --- !u!43 &1923540454
 Mesh:
   m_ObjectHideFlags: 0
@@ -18578,6 +18561,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dba7f341dea80264083f4f9537049f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_FixCamera
+--- !u!114 &2099574901 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 743923335}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099574892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ee6140171ba3f7408ef7c047df25d35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Grab
 --- !u!1 &2106220055 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4625015624579238968, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
