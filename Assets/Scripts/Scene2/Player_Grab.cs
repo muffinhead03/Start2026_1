@@ -277,7 +277,7 @@ private void StoreCurrentObject()
                 continue;
             }
 
-            body.velocity =
+            body.linearVelocity =
                 Vector3.zero;
 
             body.angularVelocity =
