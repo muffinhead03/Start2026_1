@@ -5674,7 +5674,19 @@ MonoBehaviour:
   pauseGameWhileOpen: 0
   onEquipRequested:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   showDebugLog: 0
 --- !u!1001 &496945101
 PrefabInstance:
@@ -10980,6 +10992,7 @@ MonoBehaviour:
   inventoryToggleAction: {fileID: 0}
   inventoryCloseAction: {fileID: 0}
   inventoryConfirmAction: {fileID: 0}
+  inventoryScrollAction: {fileID: 0}
 --- !u!1001 &1127358460
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11494,6 +11507,7 @@ MonoBehaviour:
   inventoryToggleAction: {fileID: 4799860970335907072, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
   inventoryCloseAction: {fileID: -1006787801548107997, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
   inventoryConfirmAction: {fileID: 4936313250796762816, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
+  inventoryScrollAction: {fileID: 0}
 --- !u!1 &1223797198 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5431522986502080885, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
@@ -20302,6 +20316,10 @@ PrefabInstance:
       propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 676938599}
+    - target: {fileID: 3977124864353247325, guid: a0658ca24ab49a54c945639202d31493, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4705303938674736151, guid: a0658ca24ab49a54c945639202d31493, type: 3}
       propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
