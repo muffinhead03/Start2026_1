@@ -1,11 +1,16 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class Object_Pwd_State : MonoBehaviour
 {
     char[] input;
+
+    [Header("정답")]
     public string pwd;
-    public Object_Door obj;
+
+    [Header("해제 이벤트")]
+    public UnityEvent UnlockEvent;
 
     void Start()
     {
@@ -35,6 +40,6 @@ public class Object_Pwd_State : MonoBehaviour
     void CheckResult()
     {
         string input_str = new string(input);
-        if (input_str == pwd) obj.UnlockDoor();
+        if (input_str == pwd) UnlockEvent?.Invoke();
     }
 }

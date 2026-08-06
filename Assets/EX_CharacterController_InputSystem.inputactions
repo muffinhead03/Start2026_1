@@ -8,9 +8,9 @@
             "actions": [
                 {
                     "name": "Move",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "a14585f8-8efb-4edf-988f-10780f45dcf7",
-                    "expectedControlType": "Vector2",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -91,6 +91,33 @@
                     "name": "Click",
                     "type": "Button",
                     "id": "5c32b843-862d-4368-883c-99838f7d358d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InventoryToggleAction",
+                    "type": "Button",
+                    "id": "d47585d3-cd8c-4413-b09a-f4fd639e624a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InventoryCloseAction",
+                    "type": "Button",
+                    "id": "7adf8912-d6e1-411d-9ab3-80272821f867",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InventoryConfrimAction",
+                    "type": "Button",
+                    "id": "40c9d5f0-b294-40fd-9fea-d55171be62c0",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -315,6 +342,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "375bf5b7-7ae2-47fb-b39c-0c3dd3e96a83",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryToggleAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4b99fa73-0c64-4a6b-b151-243e2380176b",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryCloseAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "10fbabf3-84c7-43d9-936b-5856a00d2b7c",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryConfrimAction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
