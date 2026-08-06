@@ -256,11 +256,11 @@ public sealed class InventoryUIEffect : MonoBehaviour
         }
         else
         {
-            Debug.LogError(
-                "[InventoryUIEffect] " +
-                "Inventory Root가 연결되지 않았습니다.",
-                this
-            );
+            //Debug.LogError(
+            //    "[InventoryUIEffect] " +
+            //    "Inventory Root가 연결되지 않았습니다.",
+            //    this
+            //);
         }
 
         if (!open)
