@@ -535,4 +535,230 @@ public sealed class InventoryUIManager : MonoBehaviour
         Cursor.visible =
             previousCursorVisible;
     }
+
+    public void CycleSelectedItem(
+    int direction)
+{
+    if (inventoryData == null)
+    {
+        Debug.LogError(
+            "[InventoryScroll] InventoryData가 없습니다.",
+            this
+        );
+
+        return;
+    }
+
+    int beforeIndex =
+        inventoryData.SelectedIndex;
+
+    Debug.Log(
+        $"[InventoryScroll] 순환 요청 시작: " +
+        $"Direction={direction}, " +
+        $"BeforeIndex={beforeIndex}, " +
+        $"SlotCount={inventoryData.SlotCount}, " +
+        $"IsOpen={isOpen}",
+        this
+    );
+
+    if (direction == 0)
+    {
+        Debug.LogWarning(
+            "[InventoryScroll] Direction이 0이어서 중단합니다.",
+            this
+        );
+
+        return;
+    }
+
+    direction =
+        direction < 0
+            ? -1
+            : 1;
+
+    int nextIndex =
+        FindNextOccupiedIndex(
+            direction
+        );
+
+    Debug.Log(
+        $"[InventoryScroll] 다음 슬롯 검색 결과: " +
+        $"BeforeIndex={beforeIndex}, " +
+        $"NextIndex={nextIndex}",
+        this
+    );
+
+    if (nextIndex < 0)
+    {
+        Debug.LogWarning(
+            "[InventoryScroll] " +
+            "이동할 수 있는 아이템 슬롯을 찾지 못했습니다.",
+            this
+        );
+
+        return;
+    }
+
+    Object_Grabbable targetObject =
+        inventoryData.GetObjectAt(
+            nextIndex
+        );
+
+    if (targetObject == null)
+    {
+        Debug.LogError(
+            $"[InventoryScroll] " +
+            $"NextIndex={nextIndex}의 오브젝트가 null입니다.",
+            this
+        );
+
+        return;
+    }
+
+    inventoryData.Select(
+        nextIndex
+    );
+
+    int afterIndex =
+        inventoryData.SelectedIndex;
+
+    Debug.Log(
+        $"[InventoryScroll] SelectedIndex 변경 결과: " +
+        $"Before={beforeIndex}, " +
+        $"Requested={nextIndex}, " +
+        $"After={afterIndex}, " +
+        $"Object={targetObject.gameObject.name}",
+        targetObject
+    );
+
+    if (afterIndex != nextIndex)
+    {
+        Debug.LogError(
+            $"[InventoryScroll] SelectedIndex 변경 실패: " +
+            $"Expected={nextIndex}, " +
+            $"Actual={afterIndex}",
+            this
+        );
+
+        return;
+    }
+
+    if (currentHeldObject == targetObject)
+    {
+        Debug.Log(
+            "[InventoryScroll] " +
+            "선택된 아이템이 이미 손에 있으므로 Grab 요청을 생략합니다.",
+            targetObject
+        );
+
+        return;
+    }
+
+    int persistentListenerCount =
+        onEquipRequested != null
+            ? onEquipRequested.GetPersistentEventCount()
+            : 0;
+
+    Debug.Log(
+        $"[InventoryScroll] 장착 요청 발생: " +
+        $"Target={targetObject.gameObject.name}, " +
+        $"PersistentListeners={persistentListenerCount}",
+        targetObject
+    );
+
+    onEquipRequested?.Invoke(
+        targetObject
+    );
+}
+
+    private int FindNextOccupiedIndex(
+    int direction)
+{
+    if (inventoryData == null)
+    {
+        return -1;
+    }
+
+    int slotCount =
+        inventoryData.SlotCount;
+
+    if (slotCount <= 0)
+    {
+        Debug.LogWarning(
+            "[InventoryScroll] SlotCount가 0 이하입니다.",
+            this
+        );
+
+        return -1;
+    }
+
+    int currentIndex =
+        inventoryData.SelectedIndex;
+
+    if (currentIndex < 0 ||
+        currentIndex >= slotCount)
+    {
+        if (direction > 0)
+        {
+            currentIndex = -1;
+        }
+        else
+        {
+            currentIndex = 0;
+        }
+
+        Debug.Log(
+            "[InventoryScroll] 유효하지 않은 현재 인덱스 보정: " +
+            "Direction=" + direction +
+            ", SearchStart=" + currentIndex,
+            this
+        );
+    }
+
+    for (int step = 1;
+         step <= slotCount;
+         step++)
+    {
+        int candidateIndex =
+            currentIndex +
+            direction * step;
+
+        candidateIndex %=
+            slotCount;
+
+        if (candidateIndex < 0)
+        {
+            candidateIndex +=
+                slotCount;
+        }
+
+        Object_Grabbable candidateObject =
+            inventoryData.GetObjectAt(
+                candidateIndex
+            );
+
+        string candidateName = "null";
+
+        if (candidateObject != null)
+        {
+            candidateName =
+                candidateObject.gameObject.name;
+        }
+
+        Debug.Log(
+            "[InventoryScroll] 슬롯 검사: " +
+            "Step=" + step +
+            ", Index=" + candidateIndex +
+            ", Object=" + candidateName,
+            this
+        );
+
+        if (candidateObject != null)
+        {
+            return candidateIndex;
+        }
+    }
+
+    return -1;
+}
 }
