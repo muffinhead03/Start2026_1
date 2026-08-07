@@ -58,9 +58,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d8a716a520bf2a24887c0b7ffee329ba, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5083797140621345243}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d8a716a520bf2a24887c0b7ffee329ba, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 2306218490812879091}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d8a716a520bf2a24887c0b7ffee329ba, type: 3}
       insertIndex: -1
@@ -71,20 +68,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d8a716a520bf2a24887c0b7ffee329ba, type: 3}
   m_PrefabInstance: {fileID: 7194010081765017548}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5083797140621345243
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8004915087341255325}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efbea7ae4d2d14ed591e833cf8d74be7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Book
-  letter: 65
-  bookShelfPuzzle: {fileID: 0}
 --- !u!114 &2306218490812879091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,19 +91,7 @@ MonoBehaviour:
       m_Calls: []
   OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5083797140621345243}
-        m_TargetAssemblyTypeName: Book, Assembly-CSharp
-        m_MethodName: OnClickBook
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!65 &3730031967259221237
 BoxCollider:
   m_ObjectHideFlags: 0
