@@ -414,18 +414,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 50311039}
+      objectReference: {fileID: 50311044}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -491,6 +491,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 50311039}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 50311044}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &50311037 stripped
 Transform:
@@ -518,6 +521,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &50311044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50311038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 50311039}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &78835129
 GameObject:
   m_ObjectHideFlags: 0
@@ -667,18 +687,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 100534479}
+      objectReference: {fileID: 100534484}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -744,6 +764,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 100534479}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 100534484}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &100534477 stripped
 Transform:
@@ -771,6 +794,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &100534484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100534478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 100534479}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &103584225
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -790,18 +830,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 103584228}
+      objectReference: {fileID: 103584233}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -867,6 +907,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 103584228}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 103584233}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &103584226 stripped
 Transform:
@@ -894,6 +937,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &103584233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103584227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 103584228}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &121621140
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1891,18 +1951,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 306819074}
+      objectReference: {fileID: 306819079}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -1968,6 +2028,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 306819074}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 306819079}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &306819072 stripped
 Transform:
@@ -1995,6 +2058,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &306819079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306819073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 306819074}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &313126463
 GameObject:
   m_ObjectHideFlags: 0
@@ -2151,18 +2231,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 315310394}
+      objectReference: {fileID: 315310399}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -2228,6 +2308,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 315310394}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 315310399}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &315310392 stripped
 Transform:
@@ -2255,6 +2338,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &315310399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 315310393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 315310394}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!224 &327156770 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2097246207743343441, guid: 9a56fa7b38f3c6044a8c8750f7665e70, type: 3}
@@ -2279,18 +2379,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 337314244}
+      objectReference: {fileID: 337314249}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -2356,6 +2456,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 337314244}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 337314249}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &337314242 stripped
 Transform:
@@ -2383,6 +2486,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &337314249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337314243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 337314244}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &444591226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2402,18 +2522,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 444591229}
+      objectReference: {fileID: 444591234}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -2479,6 +2599,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 444591229}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 444591234}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &444591227 stripped
 Transform:
@@ -2506,6 +2629,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &444591234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444591228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 444591229}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &457443491
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2903,18 +3043,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 559473572}
+      objectReference: {fileID: 559473577}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -2980,6 +3120,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 559473572}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 559473577}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &559473570 stripped
 Transform:
@@ -3007,6 +3150,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &559473577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559473571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 559473572}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!114 &608053286 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1492189926301770154, guid: 526a940d1a22940d99731f8a511201de, type: 3}
@@ -3305,18 +3465,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 714873781}
+      objectReference: {fileID: 714873786}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -3382,6 +3542,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 714873781}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 714873786}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &714873779 stripped
 Transform:
@@ -3409,6 +3572,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &714873786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 714873780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 714873781}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &715157357
 GameObject:
   m_ObjectHideFlags: 0
@@ -3697,18 +3877,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 835960838}
+      objectReference: {fileID: 835960843}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -3774,6 +3954,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 835960838}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 835960843}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &835960836 stripped
 Transform:
@@ -3801,6 +3984,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &835960843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835960837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 835960838}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &837396936
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3932,18 +4132,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 840889630}
+      objectReference: {fileID: 840889635}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -4009,6 +4209,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 840889630}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 840889635}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &840889628 stripped
 Transform:
@@ -4036,6 +4239,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &840889635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840889629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 840889630}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!114 &850534001 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
@@ -4066,18 +4286,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 857697445}
+      objectReference: {fileID: 857697450}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -4143,6 +4363,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 857697445}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 857697450}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &857697443 stripped
 Transform:
@@ -4170,6 +4393,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &857697450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857697444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 857697445}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &890933979
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4189,18 +4429,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 890933982}
+      objectReference: {fileID: 890933987}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -4266,6 +4506,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 890933982}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 890933987}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &890933980 stripped
 Transform:
@@ -4293,6 +4536,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &890933987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890933981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 890933982}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &998013208
 GameObject:
   m_ObjectHideFlags: 0
@@ -4679,18 +4939,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1063875766}
+      objectReference: {fileID: 1063875771}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -4756,6 +5016,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1063875766}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1063875771}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1063875764 stripped
 Transform:
@@ -4783,6 +5046,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1063875771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063875765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1063875766}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!4 &1087343836 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 917864519793089442, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
@@ -4987,18 +5267,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1116443784}
+      objectReference: {fileID: 1116443789}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -5064,6 +5344,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1116443784}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1116443789}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1116443782 stripped
 Transform:
@@ -5091,6 +5374,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1116443789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116443783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1116443784}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &1161482358
 GameObject:
   m_ObjectHideFlags: 0
@@ -5709,18 +6009,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1218039844}
+      objectReference: {fileID: 1218039849}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -5732,11 +6032,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.328
+      value: 30.589
       objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.653
+      value: -4.261
       objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5786,6 +6086,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1218039844}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1218039849}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1218039842 stripped
 Transform:
@@ -5813,6 +6116,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1218039849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218039843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1218039844}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &1264487602
 GameObject:
   m_ObjectHideFlags: 0
@@ -6192,18 +6512,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1311159278}
+      objectReference: {fileID: 1311159283}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -6269,6 +6589,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1311159278}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1311159283}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1311159276 stripped
 Transform:
@@ -6296,6 +6619,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1311159283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311159277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1311159278}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &1318228001 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3760827721061636039, guid: 526a940d1a22940d99731f8a511201de, type: 3}
@@ -6730,18 +7070,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1373527268}
+      objectReference: {fileID: 1373527273}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -6807,6 +7147,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1373527268}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1373527273}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1373527266 stripped
 Transform:
@@ -6834,6 +7177,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1373527273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373527267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1373527268}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &1389270000
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6853,18 +7213,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1389270003}
+      objectReference: {fileID: 1389270008}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -6876,11 +7236,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.508
+      value: 30.722
       objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.653
+      value: -4.249
       objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6930,6 +7290,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1389270003}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1389270008}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1389270001 stripped
 Transform:
@@ -6957,6 +7320,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1389270008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389270002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1389270003}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &1441258045
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6976,18 +7356,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1441258048}
+      objectReference: {fileID: 1441258053}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -7053,6 +7433,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1441258048}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1441258053}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1441258046 stripped
 Transform:
@@ -7080,6 +7463,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1441258053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441258047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1441258048}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!114 &1443493740 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8650183700598960359, guid: 4aefb11e6c1b94dc88182725332f0f34, type: 3}
@@ -7110,18 +7510,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1480748753}
+      objectReference: {fileID: 1480748758}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -7187,6 +7587,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1480748753}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1480748758}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1480748751 stripped
 Transform:
@@ -7214,6 +7617,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1480748758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480748752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1480748753}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &1577366991
 GameObject:
   m_ObjectHideFlags: 0
@@ -7648,18 +8068,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1736868813}
+      objectReference: {fileID: 1736868818}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -7725,6 +8145,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1736868813}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1736868818}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1736868811 stripped
 Transform:
@@ -7752,6 +8175,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1736868818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736868812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1736868813}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!114 &1764747861 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8196042799476810799, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
@@ -8014,18 +8454,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1836552947}
+      objectReference: {fileID: 1836552952}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -8091,6 +8531,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1836552947}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1836552952}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1836552945 stripped
 Transform:
@@ -8118,6 +8561,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1836552952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836552946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1836552947}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!114 &1867657562 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3729065545402047977, guid: 526a940d1a22940d99731f8a511201de, type: 3}
@@ -8148,18 +8608,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1885933393}
+      objectReference: {fileID: 1885933398}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -8225,6 +8685,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1885933393}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1885933398}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1885933391 stripped
 Transform:
@@ -8252,6 +8715,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &1885933398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885933392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 1885933393}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!4 &1956693521 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5582392671180861771, guid: 481dd4b215c8cc94abbf40289b714b77, type: 3}
@@ -8486,18 +8966,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2036453610}
+      objectReference: {fileID: 2036453615}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
@@ -8563,6 +9043,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2036453610}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2036453615}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &2036453608 stripped
 Transform:
@@ -8590,6 +9073,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &2036453615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036453609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 2036453610}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1 &2043695996 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3665551173354865674, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
@@ -9913,18 +10413,18 @@ PrefabInstance:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 3524182413978194873}
+      objectReference: {fileID: 3524182413978194878}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnGrab
+      value: OnInspectOrGrab
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Object_Grabbable, Assembly-CSharp
+      value: BookInspectGrab, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9982,6 +10482,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3524182413978194873}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3524182413978194878}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &3524182413978194871 stripped
 Transform:
@@ -10009,6 +10512,23 @@ MonoBehaviour:
   description: 
   player: {fileID: 8387334}
   audio_grap: {fileID: 0}
+--- !u!114 &3524182413978194878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524182413978194872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
+  player: {fileID: 224039312}
+  grabbable: {fileID: 3524182413978194873}
+  targetTime: 0.5
+  inspectDistance: 0.6
+  SceneUI: {fileID: 1169160861}
 --- !u!1001 &4538252079024311401
 PrefabInstance:
   m_ObjectHideFlags: 0
