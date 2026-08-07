@@ -37,6 +37,10 @@ public class Player_Move : MonoBehaviour
     [Header("Head Bobbing")]
     public Animator cameraAnimator;
 
+    [Header("Audio")]
+    private Play_Audio audioSource;
+    public AudioClip[] walkSounds;
+
     [Header("UI Settings")]
     public Scene_UI_Manager SceneUI;    // UI 매니저
 
@@ -51,7 +55,9 @@ public class Player_Move : MonoBehaviour
     InputAction jumpAction;
     InputAction settingsAction;
 
-    bool moveLocked=false;
+    bool moveLocked = false;
+    bool isRunning = false;
+    bool isHiding = false;
 
     void Start()
     {
@@ -62,6 +68,8 @@ public class Player_Move : MonoBehaviour
         SceneUI.LockPointer();
 
         Character = GetComponent<CharacterController>();
+
+        audioSource = GetComponent<Play_Audio>();
 
         // 서 있을 때의 원래 높이와 카메라 위치 저장
         originalHeight = Character.height;
@@ -114,8 +122,8 @@ public class Player_Move : MonoBehaviour
 
     void Move()
     {
-        bool isRunning = (runAction != null && runAction.IsPressed());
-        bool isHiding = (hideAction != null && hideAction.IsPressed());
+        isRunning = (runAction != null && runAction.IsPressed());
+        isHiding = (hideAction != null && hideAction.IsPressed());
         bool isJumping = (jumpAction != null && jumpAction.triggered);
 
         float currentSpeed = walkSpeed;
@@ -203,6 +211,18 @@ public class Player_Move : MonoBehaviour
         if(cameraAnimator != null && locked)
         {
             cameraAnimator.SetFloat("MoveSpeed", 0);
+        }
+    }
+
+    public void PlayFootStepSound()
+    {
+        if (audioSource == null) return;
+        if (!Character.isGrounded || isHiding) return;
+
+        if(walkSounds.Length >0)
+        {
+            int random_id = Random.Range(0, walkSounds.Length);
+            audioSource.PlayAudio(walkSounds[random_id]);
         }
     }
 

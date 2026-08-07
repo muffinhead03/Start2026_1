@@ -33,6 +33,13 @@ public class Object_Door : MonoBehaviour
         if (animator == null) return;
         if (isLocked)
         {
+            Object_KeyLocked keylocked = GetComponent<Object_KeyLocked>();
+            if (keylocked != null)
+            {
+                keylocked.OnInteract();
+                return;
+            }
+
             audio_player?.PlayAudio(audio_locked);
             return;
         }
