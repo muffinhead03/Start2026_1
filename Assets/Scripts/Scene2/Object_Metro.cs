@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 
 public class Object_Metro : MonoBehaviour
 {
-    public Object_Door obj;
     public UnityEvent OnClick;
     public Transform pivot;
 
@@ -14,6 +13,9 @@ public class Object_Metro : MonoBehaviour
 
     [Header("애니메이션")]
     public Animator anim;
+
+    [Header("해제 이벤트")]
+    public UnityEvent UnlockEvent;
 
     int count;
 
@@ -37,7 +39,7 @@ public class Object_Metro : MonoBehaviour
         if (!active) return;
 
         OnClick?.Invoke();
-        if (pivot.rotation.eulerAngles.z >= 30)
+        if (pivot.localRotation.eulerAngles.x >= 320 && pivot.localRotation.eulerAngles.x <= 330)
         {
             if (count < 0) count = 1;
             else count++;
@@ -50,7 +52,7 @@ public class Object_Metro : MonoBehaviour
         if (count == -3) GetComponent<Object_FixCamera>().UnFixCamera();
         else if (count == 3)
         {
-            obj.UnlockDoor();
+            UnlockEvent?.Invoke();
             GetComponent<Object_FixCamera>().UnFixCamera();
         }
     }
