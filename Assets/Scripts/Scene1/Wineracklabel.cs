@@ -3,44 +3,39 @@ using TMPro;
 
 // 사용법:
 // 1. 와인랙 라벨 오브젝트에 이 스크립트 추가
-// 2. wineAlphabet, wineColor 입력 (ex. "a", "딥레드")
+// 2. vintageNumber, wineColor 입력 (ex. 18, "딥레드")
 // 3. Event_On_ 컴포넌트 OnClick → Collect() 연결
-// 4. hintManager 슬롯에 HintManager 오브젝트 연결
+// 4. hintManager, labelManager 슬롯 연결
 public class WineRackLabel : MonoBehaviour
 {
     [Header("와인 정보")]
-    public string wineAlphabet; // ex. "a"
-    public string wineColor;    // ex. "딥레드"
+    public int vintageNumber;   // 빈티지 뒤 두 자리 숫자 (시프트 값)
+    public string wineColor;
 
     [Header("UI 텍스트")]
     public TextMeshProUGUI infoText;
 
-    [Header("힌트 매니저 연결")]
+    [Header("연결")]
     public HintManager hintManager;
+    public WineLabelManager labelManager;
 
     bool collected = false;
 
     public void Collect()
     {
         if (infoText != null)
-            infoText.text = $"{wineAlphabet}와인 = {wineColor}";
+            infoText.text = $"{wineColor} 와인: {vintageNumber:D2}";
 
-            if (!collected)
+        if (!collected)
         {
             collected = true;
-            if (hintManager != null)
-            {
-                hintManager.currentPlayerState.foundClues.Add("clue_B");
-                if (!hintManager.currentPlayerState.completedSteps.Contains(2))
-                    hintManager.currentPlayerState.completedSteps.Add(2);
-            }
-            Debug.Log($"[WineRackLabel] 단서 B 수집 — {wineAlphabet}와인: {wineColor}");
+            hintManager?.AddLastAction("inspect_wine_label_" + wineColor);
+            labelManager?.OnLabelInspected(gameObject);
         }
     }
 
-        public void Hide()
+    public void Hide()
     {
-        if (infoText != null)
-            infoText.text = "";
+        if (infoText != null) infoText.text = "";
     }
 }
