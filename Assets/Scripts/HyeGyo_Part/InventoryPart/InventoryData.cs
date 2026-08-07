@@ -106,12 +106,13 @@ public sealed class InventoryData : MonoBehaviour
          */
         if (slot.SourceObject == null)
         {
+            /*
+             * 원본 오브젝트가 파괴된 경우 슬롯 데이터만 비웁니다.
+             *
+             * EquippedIndex는 "장착 슬롯 커서"이므로
+             * 해당 슬롯이 비어도 그대로 유지합니다.
+             */
             slots[slotIndex] = null;
-
-            if (equippedIndex == slotIndex)
-            {
-                equippedIndex = -1;
-            }
 
             return null;
         }
@@ -300,21 +301,29 @@ public sealed class InventoryData : MonoBehaviour
     public void SetEquipped(
         int slotIndex)
     {
-        if (slotIndex == -1)
+        /*
+         * -1:
+         * 장착 슬롯 커서가 없는 상태
+         *
+         * 0 ~ 7:
+         * 유효한 장착 슬롯 커서
+         *
+         * 중요:
+         * 슬롯에 실제 Object가 없어도 EquippedIndex로 허용합니다.
+         */
+        if (slotIndex < -1 ||
+            slotIndex >= Capacity)
         {
-            if (equippedIndex == -1)
+            if (showDebugLog)
             {
-                return;
+                Debug.LogWarning(
+                    "[InventoryData] 잘못된 장착 슬롯 index: " +
+                    $"Requested={slotIndex}, " +
+                    $"Capacity={Capacity}",
+                    this
+                );
             }
 
-            equippedIndex = -1;
-            NotifyChanged();
-            return;
-        }
-
-        if (!IsValidIndex(slotIndex) ||
-            GetObjectAt(slotIndex) == null)
-        {
             return;
         }
 
@@ -323,14 +332,20 @@ public sealed class InventoryData : MonoBehaviour
             return;
         }
 
-        equippedIndex = slotIndex;
+        equippedIndex =
+            slotIndex;
 
         if (showDebugLog)
         {
+            string objectName =
+                equippedIndex >= 0
+                    ? GetObjectNameAt(equippedIndex)
+                    : "—";
+
             Debug.Log(
-                $"[InventoryData] 장착 슬롯 변경: " +
+                "[InventoryData] 장착 슬롯 변경: " +
                 $"EquippedIndex={equippedIndex}, " +
-                $"ObjectName={GetObjectNameAt(equippedIndex)}",
+                $"ObjectName={objectName}",
                 this
             );
         }
@@ -387,14 +402,16 @@ public sealed class InventoryData : MonoBehaviour
 
         slots[slotIndex] = null;
 
-        if (equippedIndex == slotIndex)
-        {
-            equippedIndex = -1;
-        }
-
         /*
-         * selectedIndex는 빈 슬롯을 가리킬 수 있으므로
-         * 그대로 유지합니다.
+         * selectedIndex와 equippedIndex는
+         * 빈 슬롯을 가리킬 수 있으므로 그대로 유지합니다.
+         *
+         * 예:
+         * EquippedIndex = 3
+         * Slot 3의 아이템 삭제
+         * -> EquippedIndex는 3 유지
+         * -> EquippedFrame도 Slot 3 유지
+         * -> 실제 Hand는 빈손 처리
          */
         if (showDebugLog)
         {
@@ -534,11 +551,12 @@ public sealed class InventoryData : MonoBehaviour
             equippedIndex = -1;
         }
 
-        if (equippedIndex >= 0 &&
-            GetObjectAt(equippedIndex) == null)
-        {
-            equippedIndex = -1;
-        }
+        /*
+         * EquippedIndex는 빈 슬롯도 허용합니다.
+         *
+         * 따라서 GetObjectAt(equippedIndex)가 null이어도
+         * equippedIndex를 -1로 되돌리지 않습니다.
+         */
     }
 
     private void NotifyChanged()
