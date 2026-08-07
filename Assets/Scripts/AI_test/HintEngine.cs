@@ -77,10 +77,17 @@ public static class HintEngine
 
     static string DetermineStatus(PlayerState s, PuzzleConfig c)
     {
-        foreach (var clue in c.requiredClues)
-            if (!s.foundClues.Contains(clue)) return "단서 미발견";
-        if (s.failCount >= 5)        return "반복 실패";
-        if (s.hintCount >= 3)        return "포기 직전";
+        if (s.failCount >= 5) return "반복 실패";
+        if (s.hintCount >= 3) return "포기 직전";
+
+        var nextStep = GetNextStep(s, c);
+        if (nextStep == null) return "단서 연결 실패"; // 모든 스텝 완료된 경우 (힌트 요청 자체가 막히긴 함)
+
+        // 지금 안내해야 할 스텝의 "바로 전 단계"가 끝났는지로 판단
+        // 전 단계가 안 끝났으면 아직 탐색도 못 한 상태 → 단서 미발견
+        bool previousStepDone = nextStep.id == 1 || s.completedSteps.Contains(nextStep.id - 1);
+        if (!previousStepDone) return "단서 미발견";
+
         if (s.completedSteps.Count == 0) return "단서 미이해";
         return "단서 연결 실패";
     }
