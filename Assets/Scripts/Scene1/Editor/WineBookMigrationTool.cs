@@ -114,4 +114,62 @@ public static class WineBookMigrationTool
                 return kv.Value;
         return null;
     }
+<<<<<<< HEAD
+=======
+
+    [MenuItem("Tools/WineScene/2. Add Inspect-Grab Bridge to Books")]
+    static void AddInspectGrabBridge()
+    {
+        GameObject booksWine = GameObject.Find("books_wine");
+        if (booksWine == null)
+        {
+            Debug.LogError("[BookInspectGrab] 'books_wine' 오브젝트를 못 찾았어요.");
+            return;
+        }
+
+        Player_Move playerMove = Object.FindFirstObjectByType<Player_Move>();
+        if (playerMove == null)
+            Debug.LogWarning("[BookInspectGrab] 씬에서 Player_Move를 못 찾았어요. Player 필드를 수동으로 확인해주세요.");
+
+        Scene_UI_Manager sceneUI = Object.FindFirstObjectByType<Scene_UI_Manager>();
+
+        int converted = 0;
+
+        foreach (Transform child in booksWine.transform)
+        {
+            GameObject go = child.gameObject;
+
+            Object_Grabbable grabbable = go.GetComponent<Object_Grabbable>();
+            if (grabbable == null)
+            {
+                Debug.LogWarning($"[BookInspectGrab] {go.name}에 Object_Grabbable이 없어요, 건너뜁니다.", go);
+                continue;
+            }
+
+            BookInspectGrab inspectGrab = go.GetComponent<BookInspectGrab>();
+            if (inspectGrab == null)
+                inspectGrab = go.AddComponent<BookInspectGrab>();
+
+            inspectGrab.grabbable = grabbable;
+            if (playerMove != null) inspectGrab.player = playerMove;
+            if (sceneUI != null) inspectGrab.SceneUI = sceneUI;
+
+            Event_On_Ray ray = go.GetComponent<Event_On_Ray>();
+            if (ray != null)
+            {
+                for (int i = ray.OnClick.GetPersistentEventCount() - 1; i >= 0; i--)
+                    UnityEventTools.RemovePersistentListener(ray.OnClick, i);
+
+                UnityEventTools.AddVoidPersistentListener(ray.OnClick, inspectGrab.OnInspectOrGrab);
+
+                PrefabUtility.RecordPrefabInstancePropertyModifications(ray);
+            }
+
+            EditorUtility.SetDirty(go);
+            converted++;
+        }
+
+        Debug.Log($"[BookInspectGrab] 변환 완료: {converted}권에 조사→잡기 브릿지 연결");
+    }
+>>>>>>> origin/develop
 }
