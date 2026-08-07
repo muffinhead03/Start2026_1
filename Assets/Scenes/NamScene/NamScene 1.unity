@@ -179,9 +179,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player_InputSystem_V2
       objectReference: {fileID: 0}
+    - target: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: inventoryData
+      value: 
+      objectReference: {fileID: 1211179750}
+    - target: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: handPerception
+      value: 
+      objectReference: {fileID: 1211179749}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8334787724187479039, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 121621141}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
 --- !u!114 &8387332 stripped
@@ -189,12 +200,22 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1133352419626379065, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
   m_PrefabInstance: {fileID: 8387331}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 8387334}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dba7f341dea80264083f4f9537049f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_FixCamera
+--- !u!4 &8387333 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8334787724187479039, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 8387331}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8387334 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8573735766143835360, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 8387331}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &18074216
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,6 +403,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 50311039}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 83
@@ -389,7 +434,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.787
@@ -434,16 +479,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (18)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 50311039}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &50311037 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 50311036}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &50311038 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 50311036}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &50311039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50311038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_S
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1 &78835129
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,7 +608,7 @@ MonoBehaviour:
   Fixed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1117389191}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BookShelfPuzzle, Assembly-CSharp
         m_MethodName: OnBookshelfClicked
         m_Mode: 1
@@ -549,7 +623,7 @@ MonoBehaviour:
   UnFixed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1117389191}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BookShelfPuzzle, Assembly-CSharp
         m_MethodName: OnBookshelfUnfocused
         m_Mode: 1
@@ -582,6 +656,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 100534479}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 88
@@ -589,7 +687,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.468
@@ -634,16 +732,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (23)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 100534479}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &100534477 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 100534476}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &100534478 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 100534476}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &100534479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100534478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_X
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1001 &103584225
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -652,6 +779,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 103584228}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 81
@@ -659,7 +810,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.526
@@ -704,15 +855,116 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (16)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 103584228}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &103584226 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 103584225}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &103584227 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 103584225}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &103584228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103584227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_Q
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
+--- !u!1001 &121621140
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8387333}
+    m_Modifications:
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7059023811084473161, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+      propertyPath: m_Name
+      value: ObjectSelected
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+--- !u!4 &121621141 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4655527288926813347, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+  m_PrefabInstance: {fileID: 121621140}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &121621142 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5057167476150402244, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+  m_PrefabInstance: {fileID: 121621140}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &121621143 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7059023811084473161, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
+  m_PrefabInstance: {fileID: 121621140}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &148250733
 GameObject:
@@ -1064,7 +1316,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8226634641620429372, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
   m_PrefabInstance: {fileID: 8387331}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 8387334}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84393eca26bf9a345aa2ef3e33a5f712, type: 3}
@@ -1436,6 +1688,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 306819074}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 75
@@ -1443,7 +1719,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.669
@@ -1488,16 +1764,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (10)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 306819074}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &306819072 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 306819071}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &306819073 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 306819071}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &306819074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306819073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_K
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1 &313126463
 GameObject:
   m_ObjectHideFlags: 0
@@ -1643,6 +1948,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 315310394}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 85
@@ -1650,7 +1979,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 31.034
@@ -1695,16 +2024,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (20)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 315310394}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &315310392 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 315310391}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &315310393 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 315310391}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &315310394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 315310393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_U
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!224 &327156770 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2097246207743343441, guid: 9a56fa7b38f3c6044a8c8750f7665e70, type: 3}
@@ -1718,6 +2076,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 337314244}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 86
@@ -1725,7 +2107,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.28
@@ -1770,16 +2152,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (21)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 337314244}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &337314242 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 337314241}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &337314243 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 337314241}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &337314244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337314243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_V
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1001 &444591226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1788,6 +2199,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 444591229}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 87
@@ -1795,7 +2230,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.384
@@ -1840,16 +2275,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (22)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 444591229}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &444591227 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 444591226}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &444591228 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 444591226}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &444591229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444591228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_W
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1001 &457443491
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2236,6 +2700,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 559473572}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 67
@@ -2243,7 +2731,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.529
@@ -2288,16 +2776,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (2)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 559473572}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &559473570 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 559473569}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &559473571 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 559473569}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &559473572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559473571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_C
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!114 &608053286 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1492189926301770154, guid: 526a940d1a22940d99731f8a511201de, type: 3}
@@ -2318,13 +2835,93 @@ PrefabInstance:
     m_TransformParent: {fileID: 78835130}
     m_Modifications:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 612176733}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 612176733}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 612176733}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnEnter
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnInteract
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnEnter
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.298
@@ -2380,7 +2977,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 612176731}
+      addedObject: {fileID: 612176733}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 612176732}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &612176729 stripped
 Transform:
@@ -2392,7 +2992,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 612176728}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &612176731
+--- !u!23 &612176731 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8365391967010184008, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 612176728}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &612176732
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2401,15 +3006,58 @@ MonoBehaviour:
   m_GameObject: {fileID: 612176730}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62ec46a80b4244c7a99b3707a2acd94f, type: 3}
+  m_Script: {fileID: 11500000, guid: c40dd76bc546746808c84c8af75d19e6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BookSlot
-  slotIndex: 1
-  bookShelfPuzzle: {fileID: 1117389191}
-  ghostRenderer: {fileID: 0}
-  ghostMaterial: {fileID: 0}
-  filledMaterial: {fileID: 0}
-  placedLetter: 0
+  m_EditorClassIdentifier: Assembly-CSharp::WineBookPuzzlePiece
+  puzzle: {fileID: 2045240368}
+  putOn: {fileID: 612176733}
+  id: 1
+--- !u!114 &612176733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612176730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09ccaf7423d34ae4ac942c32fe8c6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WineBookPutOn
+  player: {fileID: 8387334}
+  mat_trans: {fileID: 2100000, guid: 8bf1de10e11a14fd584972e713b85b9d, type: 2}
+  mesh: {fileID: 612176731}
+  keyName: 
+  putDown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 612176732}
+        m_TargetAssemblyTypeName: WineBookPuzzlePiece, Assembly-CSharp
+        m_MethodName: PutDown
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  pickUp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 612176732}
+        m_TargetAssemblyTypeName: WineBookPuzzlePiece, Assembly-CSharp
+        m_MethodName: PickUp
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &614524931
 GameObject:
   m_ObjectHideFlags: 0
@@ -2454,6 +3102,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 714873781}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 79
@@ -2461,7 +3133,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.285
@@ -2506,16 +3178,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (14)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 714873781}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &714873779 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 714873778}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &714873780 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 714873778}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &714873781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 714873780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_O
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1 &715157357
 GameObject:
   m_ObjectHideFlags: 0
@@ -2701,50 +3402,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4238940208908398742, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
   m_PrefabInstance: {fileID: 2346332514211010972}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &765156180
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 765156182}
-  - component: {fileID: 765156181}
-  m_Layer: 0
-  m_Name: inventoryManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &765156181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 765156180}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 754d39f7b3179974db5d88b92b769276, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
---- !u!4 &765156182
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 765156180}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.36972, y: 0.48, z: 2.631}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &791496644
 GameObject:
   m_ObjectHideFlags: 0
@@ -2837,6 +3494,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 835960838}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 74
@@ -2844,7 +3525,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.539
@@ -2889,16 +3570,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (9)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 835960838}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &835960836 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 835960835}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &835960837 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 835960835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &835960838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835960837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_J
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1001 &837396936
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3019,6 +3729,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 840889630}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 72
@@ -3026,7 +3760,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.291
@@ -3071,16 +3805,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (7)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 840889630}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &840889628 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 840889627}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &840889629 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 840889627}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &840889630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840889629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_H
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!114 &850534001 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
@@ -3100,6 +3863,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 857697445}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 77
@@ -3107,7 +3894,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.923
@@ -3152,16 +3939,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (12)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 857697445}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &857697443 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 857697442}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &857697444 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 857697442}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &857697445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857697444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_M
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1001 &890933979
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3170,6 +3986,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 890933982}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 69
@@ -3177,7 +4017,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.803
@@ -3222,16 +4062,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (4)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 890933982}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &890933980 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 890933979}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &890933981 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 890933979}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &890933982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890933981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_E
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1 &998013208
 GameObject:
   m_ObjectHideFlags: 0
@@ -3421,6 +4290,184 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a7e2b282042f31439e8018a0e8e746b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: undream.llmunity.Runtime::LLMUnity.LLMCharacter
+--- !u!43 &1037183505
+Mesh:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: pb_Mesh-1512
+  serializedVersion: 12
+  m_SubMeshes:
+  - serializedVersion: 2
+    firstByte: 0
+    indexCount: 36
+    topology: 0
+    baseVertex: 0
+    firstVertex: 0
+    vertexCount: 24
+    localAABB:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+  m_Shapes:
+    vertices: []
+    shapes: []
+    channels: []
+    fullWeights: []
+  m_BindPose: []
+  m_BoneNameHashes: 
+  m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
+  m_MeshCompression: 0
+  m_IsReadable: 1
+  m_KeepVertices: 1
+  m_KeepIndices: 1
+  m_IndexFormat: 0
+  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00100011001200100012001300140015001600140016001700
+  m_VertexData:
+    serializedVersion: 3
+    m_VertexCount: 24
+    m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 3
+    - stream: 0
+      offset: 12
+      format: 0
+      dimension: 3
+    - stream: 0
+      offset: 24
+      format: 0
+      dimension: 4
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 40
+      format: 0
+      dimension: 2
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    m_DataSize: 1152
+    _typelessdata: 0000003f000000bf0000003f00000000000000000000803f000080bf0000000000000000000080bf00000000000000000000003f0000003f0000003f00000000000000000000803f000080bf0000000000000000000080bf000000000000803f000000bf0000003f0000003f00000000000000000000803f000080bf0000000000000000000080bf0000803f0000803f000000bf000000bf0000003f00000000000000000000803f000080bf0000000000000000000080bf0000803f000000000000003f0000003f0000003f000000000000803f00000000000080bf0000000000000000000080bf00000000000000000000003f0000003f000000bf000000000000803f00000000000080bf0000000000000000000080bf000000000000803f000000bf0000003f000000bf000000000000803f00000000000080bf0000000000000000000080bf0000803f0000803f000000bf0000003f0000003f000000000000803f00000000000080bf0000000000000000000080bf0000803f000000000000003f0000003f000000bf0000000000000000000080bf000080bf0000000000000000000080bf00000000000000000000003f000000bf000000bf0000000000000000000080bf000080bf0000000000000000000080bf000000000000803f000000bf000000bf000000bf0000000000000000000080bf000080bf0000000000000000000080bf0000803f0000803f000000bf0000003f000000bf0000000000000000000080bf000080bf0000000000000000000080bf0000803f000000000000003f000000bf000000bf00000000000080bf00000000000080bf0000000000000000000080bf00000000000000000000003f000000bf0000003f00000000000080bf00000000000080bf0000000000000000000080bf000000000000803f000000bf000000bf0000003f00000000000080bf00000000000080bf0000000000000000000080bf0000803f0000803f000000bf000000bf000000bf00000000000080bf00000000000080bf0000000000000000000080bf0000803f00000000000000bf000000bf0000003f000080bf00000000000000000000000000000000000080bf000080bf0000000000000000000000bf0000003f0000003f000080bf00000000000000000000000000000000000080bf000080bf000000000000803f000000bf0000003f000000bf000080bf00000000000000000000000000000000000080bf000080bf0000803f0000803f000000bf000000bf000000bf000080bf00000000000000000000000000000000000080bf000080bf0000803f000000000000003f000000bf000000bf0000803f000000000000000000000000000000000000803f000080bf00000000000000000000003f0000003f000000bf0000803f000000000000000000000000000000000000803f000080bf000000000000803f0000003f0000003f0000003f0000803f000000000000000000000000000000000000803f000080bf0000803f0000803f0000003f000000bf0000003f0000803f000000000000000000000000000000000000803f000080bf0000803f00000000
+  m_CompressedMesh:
+    m_Vertices:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_UV:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Normals:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Tangents:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Weights:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_NormalSigns:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_TangentSigns:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_FloatColors:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_BoneIndices:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Triangles:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_UVInfo: 0
+  m_LocalAABB:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+  m_MeshUsageFlags: 0
+  m_CookingOptions: 30
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: 1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0
 --- !u!1001 &1063875763
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3429,6 +4476,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1063875766}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 66
@@ -3436,7 +4507,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.404
@@ -3481,16 +4552,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1063875766}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1063875764 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1063875763}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1063875765 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1063875763}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1063875766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063875765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_B
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!4 &1087343836 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 917864519793089442, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
@@ -3684,6 +4784,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1116443784}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 70
@@ -3691,7 +4815,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.917
@@ -3736,27 +4860,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (5)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1116443784}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1116443782 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1116443781}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1117389191 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-  m_PrefabInstance: {fileID: 7251141755346317975}
+--- !u!1 &1116443783 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1116443781}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+--- !u!114 &1116443784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116443783}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c976f932044bb40709b8a354028bef05, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BookShelfPuzzle
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_F
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1 &1161482358
 GameObject:
   m_ObjectHideFlags: 0
@@ -3945,21 +5087,93 @@ PrefabInstance:
     m_TransformParent: {fileID: 78835130}
     m_Modifications:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1166160443}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1166160441}
+      objectReference: {fileID: 1166160443}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1166160443}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnExit
+      objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClickSlot
+      value: OnInteract
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnEnter
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: BookSlot, Assembly-CSharp
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.402
@@ -4015,7 +5229,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1166160441}
+      addedObject: {fileID: 1166160443}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1166160442}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1166160439 stripped
 Transform:
@@ -4027,7 +5244,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1166160438}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1166160441
+--- !u!23 &1166160441 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8365391967010184008, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1166160438}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1166160442
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4036,15 +5258,58 @@ MonoBehaviour:
   m_GameObject: {fileID: 1166160440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62ec46a80b4244c7a99b3707a2acd94f, type: 3}
+  m_Script: {fileID: 11500000, guid: c40dd76bc546746808c84c8af75d19e6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BookSlot
-  slotIndex: 0
-  bookShelfPuzzle: {fileID: 1117389191}
-  ghostRenderer: {fileID: 0}
-  ghostMaterial: {fileID: 0}
-  filledMaterial: {fileID: 0}
-  placedLetter: 0
+  m_EditorClassIdentifier: Assembly-CSharp::WineBookPuzzlePiece
+  puzzle: {fileID: 2045240368}
+  putOn: {fileID: 1166160443}
+  id: 0
+--- !u!114 &1166160443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166160440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09ccaf7423d34ae4ac942c32fe8c6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WineBookPutOn
+  player: {fileID: 8387334}
+  mat_trans: {fileID: 2100000, guid: 8bf1de10e11a14fd584972e713b85b9d, type: 2}
+  mesh: {fileID: 1166160441}
+  keyName: 
+  putDown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1166160442}
+        m_TargetAssemblyTypeName: WineBookPuzzlePiece, Assembly-CSharp
+        m_MethodName: PutDown
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  pickUp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1166160442}
+        m_TargetAssemblyTypeName: WineBookPuzzlePiece, Assembly-CSharp
+        m_MethodName: PickUp
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &1167475307 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8124890597826565058, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
@@ -4122,6 +5387,93 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a1d2d49c8a921540bbe75619b4deeeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Scene_UI_Manager
+--- !u!1001 &1211179748
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4878224329152794232, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: selectedRoot
+      value: 
+      objectReference: {fileID: 121621142}
+    - target: {fileID: 4878224329152794232, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: objectSelected
+      value: 
+      objectReference: {fileID: 121621143}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.54155
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.08187
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954759222913447062, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8428396826602872627, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+      propertyPath: m_Name
+      value: InventorySystem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+--- !u!114 &1211179749 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 513467523591281890, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+  m_PrefabInstance: {fileID: 1211179748}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aac8b8b3ae9e18f40a4ce5cc69d3fc02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PerceiveObjectHandPivot
+--- !u!114 &1211179750 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7485962364752423245, guid: 5164f0bdf4e579d468769a468be48acc, type: 3}
+  m_PrefabInstance: {fileID: 1211179748}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbb9560f54e79bf4e936bd69589df29f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryData
 --- !u!1001 &1218039841
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4130,6 +5482,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1218039844}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 89
@@ -4137,7 +5513,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.328
@@ -4182,16 +5558,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (24)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1218039844}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1218039842 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1218039841}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1218039843 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1218039841}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1218039844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218039843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_Y
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1 &1264487602
 GameObject:
   m_ObjectHideFlags: 0
@@ -4560,6 +5965,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1311159278}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 82
@@ -4567,7 +5996,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.643
@@ -4612,16 +6041,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (17)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1311159278}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1311159276 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1311159275}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1311159277 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1311159275}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1311159278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311159277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_R
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1 &1318228001 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3760827721061636039, guid: 526a940d1a22940d99731f8a511201de, type: 3}
@@ -4814,13 +6272,93 @@ PrefabInstance:
     m_TransformParent: {fileID: 78835130}
     m_Modifications:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1365861520}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 1365861520}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1365861520}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnExit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnInteract
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnEnter
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.194
@@ -4876,6 +6414,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1365861520}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1365861519}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1365861517 stripped
@@ -4897,15 +6438,63 @@ MonoBehaviour:
   m_GameObject: {fileID: 1365861518}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62ec46a80b4244c7a99b3707a2acd94f, type: 3}
+  m_Script: {fileID: 11500000, guid: c40dd76bc546746808c84c8af75d19e6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BookSlot
-  slotIndex: 2
-  bookShelfPuzzle: {fileID: 1117389191}
-  ghostRenderer: {fileID: 0}
-  ghostMaterial: {fileID: 0}
-  filledMaterial: {fileID: 0}
-  placedLetter: 0
+  m_EditorClassIdentifier: Assembly-CSharp::WineBookPuzzlePiece
+  puzzle: {fileID: 2045240368}
+  putOn: {fileID: 1365861520}
+  id: 2
+--- !u!114 &1365861520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365861518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09ccaf7423d34ae4ac942c32fe8c6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WineBookPutOn
+  player: {fileID: 8387334}
+  mat_trans: {fileID: 2100000, guid: 8bf1de10e11a14fd584972e713b85b9d, type: 2}
+  mesh: {fileID: 1365861521}
+  keyName: 
+  putDown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1365861519}
+        m_TargetAssemblyTypeName: WineBookPuzzlePiece, Assembly-CSharp
+        m_MethodName: PutDown
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  pickUp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1365861519}
+        m_TargetAssemblyTypeName: WineBookPuzzlePiece, Assembly-CSharp
+        m_MethodName: PickUp
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!23 &1365861521 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8365391967010184008, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1365861516}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1373527265
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4914,6 +6503,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1373527268}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 78
@@ -4921,7 +6534,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 31.041
@@ -4966,16 +6579,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (13)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1373527268}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1373527266 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1373527265}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1373527267 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1373527265}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1373527268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373527267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_N
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1001 &1389270000
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4984,6 +6626,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1389270003}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 90
@@ -4991,7 +6657,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.508
@@ -5036,16 +6702,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (25)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1389270003}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1389270001 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1389270000}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1389270002 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1389270000}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1389270003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389270002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_Z
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1001 &1441258045
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5054,6 +6749,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1441258048}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 80
@@ -5061,7 +6780,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.402
@@ -5106,16 +6825,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (15)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1441258048}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1441258046 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1441258045}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1441258047 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1441258045}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1441258048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441258047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_P
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!114 &1443493740 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8650183700598960359, guid: 4aefb11e6c1b94dc88182725332f0f34, type: 3}
@@ -5135,6 +6883,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1480748753}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 76
@@ -5142,7 +6914,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.807
@@ -5187,16 +6959,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (11)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1480748753}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1480748751 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1480748750}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1480748752 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1480748750}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1480748753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480748752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_L
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1 &1577366991
 GameObject:
   m_ObjectHideFlags: 0
@@ -5620,6 +7421,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1736868813}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 84
@@ -5627,7 +7452,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.916
@@ -5672,16 +7497,56 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (19)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1736868813}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1736868811 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1736868810}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1736868812 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1736868810}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1736868813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736868812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_T
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
+--- !u!114 &1764747861 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8196042799476810799, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+  m_PrefabInstance: {fileID: 335795168969031737}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad174821983d47b42836f4739a9646ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Door
 --- !u!1001 &1775227524
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5691,13 +7556,93 @@ PrefabInstance:
     m_TransformParent: {fileID: 78835130}
     m_Modifications:
     - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1775227528}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 1775227528}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1775227528}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnExit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnInteract
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnEnter
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WineBookPutOn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnExit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.07
@@ -5753,6 +7698,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1775227528}
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1775227527}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1775227525 stripped
@@ -5774,15 +7722,63 @@ MonoBehaviour:
   m_GameObject: {fileID: 1775227526}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62ec46a80b4244c7a99b3707a2acd94f, type: 3}
+  m_Script: {fileID: 11500000, guid: c40dd76bc546746808c84c8af75d19e6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BookSlot
-  slotIndex: 3
-  bookShelfPuzzle: {fileID: 1117389191}
-  ghostRenderer: {fileID: 0}
-  ghostMaterial: {fileID: 0}
-  filledMaterial: {fileID: 0}
-  placedLetter: 0
+  m_EditorClassIdentifier: Assembly-CSharp::WineBookPuzzlePiece
+  puzzle: {fileID: 2045240368}
+  putOn: {fileID: 1775227528}
+  id: 3
+--- !u!114 &1775227528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775227526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09ccaf7423d34ae4ac942c32fe8c6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WineBookPutOn
+  player: {fileID: 8387334}
+  mat_trans: {fileID: 2100000, guid: 8bf1de10e11a14fd584972e713b85b9d, type: 2}
+  mesh: {fileID: 1775227529}
+  keyName: 
+  putDown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1775227527}
+        m_TargetAssemblyTypeName: WineBookPuzzlePiece, Assembly-CSharp
+        m_MethodName: PutDown
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  pickUp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1775227527}
+        m_TargetAssemblyTypeName: WineBookPuzzlePiece, Assembly-CSharp
+        m_MethodName: PickUp
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!23 &1775227529 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8365391967010184008, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1775227524}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1836552944
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5791,6 +7787,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1836552947}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 71
@@ -5798,7 +7818,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 31.018
@@ -5843,16 +7863,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (6)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1836552947}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1836552945 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1836552944}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1836552946 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1836552944}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1836552947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836552946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_G
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!114 &1867657562 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3729065545402047977, guid: 526a940d1a22940d99731f8a511201de, type: 3}
@@ -5872,6 +7921,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1885933393}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 68
@@ -5879,7 +7952,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.658998
@@ -5924,194 +7997,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (3)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1885933393}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &1885933391 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 1885933390}
   m_PrefabAsset: {fileID: 0}
---- !u!43 &1911563041
-Mesh:
+--- !u!1 &1885933392 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 1885933390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1885933393
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh52226
-  serializedVersion: 12
-  m_SubMeshes:
-  - serializedVersion: 2
-    firstByte: 0
-    indexCount: 36
-    topology: 0
-    baseVertex: 0
-    firstVertex: 0
-    vertexCount: 24
-    localAABB:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
-  m_Shapes:
-    vertices: []
-    shapes: []
-    channels: []
-    fullWeights: []
-  m_BindPose: []
-  m_BoneNameHashes: 
-  m_RootBoneNameHash: 0
-  m_BonesAABB: []
-  m_VariableBoneCountWeights:
-    m_Data: 
-  m_MeshCompression: 0
-  m_IsReadable: 1
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00100011001200100012001300140015001600140016001700
-  m_VertexData:
-    serializedVersion: 3
-    m_VertexCount: 24
-    m_Channels:
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 3
-    - stream: 0
-      offset: 12
-      format: 0
-      dimension: 3
-    - stream: 0
-      offset: 24
-      format: 0
-      dimension: 4
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 40
-      format: 0
-      dimension: 2
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    m_DataSize: 1152
-    _typelessdata: 0000003f000000bf0000003f00000000000000000000803f000080bf0000000000000000000080bf00000000000000000000003f0000003f0000003f00000000000000000000803f000080bf0000000000000000000080bf000000000000803f000000bf0000003f0000003f00000000000000000000803f000080bf0000000000000000000080bf0000803f0000803f000000bf000000bf0000003f00000000000000000000803f000080bf0000000000000000000080bf0000803f000000000000003f0000003f0000003f000000000000803f00000000000080bf0000000000000000000080bf00000000000000000000003f0000003f000000bf000000000000803f00000000000080bf0000000000000000000080bf000000000000803f000000bf0000003f000000bf000000000000803f00000000000080bf0000000000000000000080bf0000803f0000803f000000bf0000003f0000003f000000000000803f00000000000080bf0000000000000000000080bf0000803f000000000000003f0000003f000000bf0000000000000000000080bf000080bf0000000000000000000080bf00000000000000000000003f000000bf000000bf0000000000000000000080bf000080bf0000000000000000000080bf000000000000803f000000bf000000bf000000bf0000000000000000000080bf000080bf0000000000000000000080bf0000803f0000803f000000bf0000003f000000bf0000000000000000000080bf000080bf0000000000000000000080bf0000803f000000000000003f000000bf000000bf00000000000080bf00000000000080bf0000000000000000000080bf00000000000000000000003f000000bf0000003f00000000000080bf00000000000080bf0000000000000000000080bf000000000000803f000000bf000000bf0000003f00000000000080bf00000000000080bf0000000000000000000080bf0000803f0000803f000000bf000000bf000000bf00000000000080bf00000000000080bf0000000000000000000080bf0000803f00000000000000bf000000bf0000003f000080bf00000000000000000000000000000000000080bf000080bf0000000000000000000000bf0000003f0000003f000080bf00000000000000000000000000000000000080bf000080bf000000000000803f000000bf0000003f000000bf000080bf00000000000000000000000000000000000080bf000080bf0000803f0000803f000000bf000000bf000000bf000080bf00000000000000000000000000000000000080bf000080bf0000803f000000000000003f000000bf000000bf0000803f000000000000000000000000000000000000803f000080bf00000000000000000000003f0000003f000000bf0000803f000000000000000000000000000000000000803f000080bf000000000000803f0000003f0000003f0000003f0000803f000000000000000000000000000000000000803f000080bf0000803f0000803f0000003f000000bf0000003f0000803f000000000000000000000000000000000000803f000080bf0000803f00000000
-  m_CompressedMesh:
-    m_Vertices:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_UV:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Tangents:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Weights:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_TangentSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_FloatColors:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_BoneIndices:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Triangles:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_UVInfo: 0
-  m_LocalAABB:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.5, y: 0.5, z: 0.5}
-  m_MeshUsageFlags: 0
-  m_CookingOptions: 30
-  m_BakedConvexCollisionMesh: 
-  m_BakedTriangleCollisionMesh: 
-  'm_MeshMetrics[0]': 1
-  'm_MeshMetrics[1]': 1
-  m_MeshOptimizationFlags: 1
-  m_StreamData:
-    serializedVersion: 2
-    offset: 0
-    size: 0
-    path: 
-  m_MeshLodInfo:
-    serializedVersion: 2
-    m_LodSelectionCurve:
-      serializedVersion: 1
-      m_LodSlope: 0
-      m_LodBias: 0
-    m_NumLevels: 1
-    m_SubMeshes:
-    - serializedVersion: 2
-      m_Levels:
-      - serializedVersion: 1
-        m_IndexStart: 0
-        m_IndexCount: 0
+  m_GameObject: {fileID: 1885933392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_D
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!4 &1956693521 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5582392671180861771, guid: 481dd4b215c8cc94abbf40289b714b77, type: 3}
@@ -6296,11 +8220,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2016267562 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7931578299275220073, guid: d8cb987f3d91f6345bdea8998522a509, type: 3}
-  m_PrefabInstance: {fileID: 8130009460588812324}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2029903264
 GameObject:
   m_ObjectHideFlags: 0
@@ -6340,6 +8259,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2036453610}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: letter
       value: 73
@@ -6347,7 +8290,7 @@ PrefabInstance:
     - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: bookShelfPuzzle
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.415
@@ -6392,16 +8335,66 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1 (8)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2036453610}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &2036453608 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 2036453607}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2036453609 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 2036453607}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2036453610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036453609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_I
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
+--- !u!1 &2043695996 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3665551173354865674, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
+  m_PrefabInstance: {fileID: 2346332514211010972}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2043695998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043695996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad174821983d47b42836f4739a9646ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Door
+  animator: {fileID: 699490814}
+  isLocked: 0
+  audio_open: {fileID: 0}
+  audio_locked: {fileID: 0}
 --- !u!1 &2045240365
 GameObject:
   m_ObjectHideFlags: 0
@@ -6412,8 +8405,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2045240369}
   - component: {fileID: 2045240368}
-  - component: {fileID: 2045240367}
   - component: {fileID: 2045240366}
+  - component: {fileID: 2045240370}
   m_Layer: 0
   m_Name: BookShelfPuzzleCore
   m_TagString: Untagged
@@ -6433,29 +8426,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b1eb94948a3a4f459ed1708e1a3fe00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookSlotSetup
-  puzzleSolver: {fileID: 0}
-  objectPuzzle: {fileID: 0}
+  puzzleSolver: {fileID: 100246507}
+  objectPuzzle: {fileID: 2045240368}
   slots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
---- !u!114 &2045240367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2045240365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1407b2ae860f41848d1247ac96bb4ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BookShelfComplete
-  puzzleSolver: {fileID: 0}
-  hintManager: {fileID: 0}
-  bookshelfAnimator: {fileID: 0}
-  hiddenKey: {fileID: 0}
+  - {fileID: 1166160443}
+  - {fileID: 612176733}
+  - {fileID: 1365861520}
+  - {fileID: 1775227528}
 --- !u!114 &2045240368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6471,7 +8448,19 @@ MonoBehaviour:
   pwd: 
   UnlockEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2045240370}
+        m_TargetAssemblyTypeName: BookShelfComplete, Assembly-CSharp
+        m_MethodName: OnBookshelfSolved
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &2045240369
 Transform:
   m_ObjectHideFlags: 0
@@ -6487,6 +8476,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2045240370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045240365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1407b2ae860f41848d1247ac96bb4ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookShelfComplete
+  puzzleSolver: {fileID: 100246507}
+  hintManager: {fileID: 850534001}
+  bookshelfAnimator: {fileID: 0}
+  hiddenKey: {fileID: 823252973}
 --- !u!1001 &2102109099
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6771,6 +8776,73 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2116349957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2116349958}
+  - component: {fileID: 2116349960}
+  - component: {fileID: 2116349959}
+  m_Layer: 0
+  m_Name: Exit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2116349958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116349957}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.98, y: 1.35, z: -0.12}
+  m_LocalScale: {x: 0.1, y: 2.5, z: 1.6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 732840334}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2116349959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116349957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f2d9e8328cd78a45933f750b2fda34e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Event_LoadScene
+  sceneName: Scene2
+--- !u!65 &2116349960
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116349957}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2119396151 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 464213790788308962, guid: 75daee9ed92314625999e0f35cc2c4bb, type: 3}
@@ -6795,9 +8867,65 @@ PrefabInstance:
       value: Box
       objectReference: {fileID: 0}
     - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 8387334}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
       propertyPath: animator
       value: 
       objectReference: {fileID: 699490814}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1764747861}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 2043695998}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UnlockDoor
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: UnlockDoor
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Door, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Object_Door, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515047302859578284, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
+      propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5342512274806518528, guid: 7fe9108398eb97e4ca996dadb2147645, type: 3}
       propertyPath: m_IsTrigger
       value: 0
@@ -6979,7 +9107,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3234826797206672586, guid: ed29470afa7abf3439a0be56f76c0e10, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239618114141935234, guid: ed29470afa7abf3439a0be56f76c0e10, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 8387334}
+    - target: {fileID: 5239618114141935234, guid: ed29470afa7abf3439a0be56f76c0e10, type: 3}
+      propertyPath: objectName
+      value: key1
       objectReference: {fileID: 0}
     - target: {fileID: 6542444009445978539, guid: ed29470afa7abf3439a0be56f76c0e10, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7035,12 +9171,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
+      propertyPath: wineEntries.Array.data[0].wineColor
+      value: "\uB178\uB780\uC0C9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
+      propertyPath: wineEntries.Array.data[1].wineColor
+      value: "\uBE68\uAC04\uC0C9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
+      propertyPath: wineEntries.Array.data[2].wineColor
+      value: "\uD30C\uB780\uC0C9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
       propertyPath: wineEntries.Array.data[0].shiftNumber
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
+      propertyPath: wineEntries.Array.data[1].shiftNumber
       value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
       propertyPath: wineEntries.Array.data[2].shiftNumber
-      value: 11
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
       propertyPath: wineEntries.Array.data[3].shiftNumber
@@ -7048,15 +9200,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
       propertyPath: wineEntries.Array.data[0].wineAlphabet
-      value: Y
+      value: H
       objectReference: {fileID: 0}
     - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
       propertyPath: wineEntries.Array.data[1].wineAlphabet
-      value: B
+      value: Y
       objectReference: {fileID: 0}
     - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
       propertyPath: wineEntries.Array.data[2].wineAlphabet
-      value: H
+      value: B
       objectReference: {fileID: 0}
     - target: {fileID: 48365465451230369, guid: 4a605539fed55435791da0222e95bf71, type: 3}
       propertyPath: wineEntries.Array.data[3].wineAlphabet
@@ -7195,7 +9347,7 @@ PrefabInstance:
     - target: {fileID: 130246179740528668, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1911563041}
+      objectReference: {fileID: 1037183505}
     - target: {fileID: 130246179740528668, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
       propertyPath: m_VersionIndex
       value: 7
@@ -7203,7 +9355,7 @@ PrefabInstance:
     - target: {fileID: 2888666809158632697, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1911563041}
+      objectReference: {fileID: 1037183505}
     - target: {fileID: 4238940208908398742, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10.96
@@ -7250,8 +9402,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4238940208908398742, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2116349958}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3665551173354865674, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2043695998}
   m_SourcePrefab: {fileID: 100100000, guid: 15a1462c70637af4bb6c919bdeacb32a, type: 3}
 --- !u!1001 &2614731262131411427
 PrefabInstance:
@@ -7494,10 +9652,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1577366992}
     m_Modifications:
-    - target: {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
-      propertyPath: bookShelfPuzzle
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1117389191}
+      objectReference: {fileID: 3524182413978194873}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGrab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306218490812879091, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Object_Grabbable, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
       propertyPath: m_LocalPosition.x
       value: 30.3
@@ -7542,16 +9720,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: book_sc1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5083797140621345243, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3524182413978194873}
   m_SourcePrefab: {fileID: 100100000, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
 --- !u!4 &3524182413978194871 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7231931563134656551, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
   m_PrefabInstance: {fileID: 3524182413978194870}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3524182413978194872 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8004915087341255325, guid: cf811f7f841b8443eb0c15af98fe1486, type: 3}
+  m_PrefabInstance: {fileID: 3524182413978194870}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3524182413978194873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524182413978194872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: book_A
+  description: 
+  player: {fileID: 8387334}
+  audio_grap: {fileID: 0}
 --- !u!1001 &4538252079024311401
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7674,99 +9881,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26ce4a623f48544ac8f80a6602c71a0a, type: 3}
---- !u!1001 &7251141755346317975
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 11.15641
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.98981
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 12.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2253048355779201343, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5691597055912322025, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: m_Name
-      value: BookShelfPuzzle
-      objectReference: {fileID: 0}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: hiddenKey
-      value: 
-      objectReference: {fileID: 2016267562}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: hintManager
-      value: 
-      objectReference: {fileID: 850534001}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: puzzleSolver
-      value: 
-      objectReference: {fileID: 100246507}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: placementBookPrefab
-      value: 
-      objectReference: {fileID: 7436397091434397272, guid: 9b77a834c2cda4e869f0d030a08c27b0, type: 3}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: placementSpawnPoints.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: 'placementSpawnPoints.Array.data[0]'
-      value: 
-      objectReference: {fileID: 1166160439}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: 'placementSpawnPoints.Array.data[1]'
-      value: 
-      objectReference: {fileID: 612176729}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: 'placementSpawnPoints.Array.data[2]'
-      value: 
-      objectReference: {fileID: 1365861517}
-    - target: {fileID: 8161421272513715138, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
-      propertyPath: 'placementSpawnPoints.Array.data[3]'
-      value: 
-      objectReference: {fileID: 1775227525}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d17c25f02f6754983bcd2c08a3b3a8f5, type: 3}
 --- !u!1001 &8130009460588812324
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7828,6 +9942,7 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1211179748}
   - {fileID: 8387331}
   - {fileID: 2102109099}
   - {fileID: 8130009460588812324}
@@ -7865,6 +9980,4 @@ SceneRoots:
   - {fileID: 4538252079024311401}
   - {fileID: 483873544472186330}
   - {fileID: 837396936}
-  - {fileID: 7251141755346317975}
-  - {fileID: 765156182}
   - {fileID: 2045240369}
