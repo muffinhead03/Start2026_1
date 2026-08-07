@@ -362,13 +362,13 @@ private void StoreCurrentObject()
             );
         }
 
-        releasePos =
-            transform.position +
-            new Vector3(0f, 1.5f, 0f) +
-            0.4f * transform.forward;
+        //releasePos =
+        //    transform.position +
+        //    new Vector3(0f, 1.5f, 0f) +
+        //    0.4f * transform.forward;
 
-        releasedObject.transform.position =
-            releasePos;
+        //releasedObject.transform.position =
+        //    releasePos;
 
         releasedObject.transform.SetParent(
             null,
