@@ -169,4 +169,65 @@ public static class WineBookMigrationTool
 
         Debug.Log($"[BookInspectGrab] 변환 완료: {converted}권에 조사→잡기 브릿지 연결");
     }
+
+    [MenuItem("Tools/WineScene/3. Apply Book Textures")]
+    static void ApplyBookTextures()
+    {
+        GameObject booksWine = GameObject.Find("books_wine");
+        if (booksWine == null)
+        {
+            Debug.LogError("[BookTexture] 'books_wine' 오브젝트를 못 찾았어요.");
+            return;
+        }
+
+        string matFolder = "Assets/Material/BookMats";
+        if (!AssetDatabase.IsValidFolder(matFolder))
+            AssetDatabase.CreateFolder("Assets/Material", "BookMats");
+
+        int applied = 0, skipped = 0;
+
+        foreach (Transform child in booksWine.transform)
+        {
+            Vector3 pos = child.localPosition;
+            string letter = FindClosestLetter(pos.x, pos.y);
+
+            if (letter == null)
+            {
+                Debug.LogWarning($"[BookTexture] {child.name} 위치 매칭 실패, 건너뜁니다.", child.gameObject);
+                skipped++;
+                continue;
+            }
+
+            string texPath = $"Assets/Material/Texture/book_{letter}.png";
+            Texture2D tex = AssetDatabase.LoadAssetAtPath<Texture2D>(texPath);
+            if (tex == null)
+            {
+                Debug.LogWarning($"[BookTexture] {texPath} 텍스처를 못 찾았어요.", child.gameObject);
+                skipped++;
+                continue;
+            }
+
+            string matPath = $"{matFolder}/Mat_book_{letter}.mat";
+            Material mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+
+            if (mat == null)
+            {
+                Shader urpLit = Shader.Find("Universal Render Pipeline/Lit");
+                mat = new Material(urpLit);
+                mat.SetTexture("_BaseMap", tex);
+                AssetDatabase.CreateAsset(mat, matPath);
+            }
+
+            MeshRenderer mr = child.GetComponent<MeshRenderer>();
+            if (mr != null)
+            {
+                mr.sharedMaterial = mat;
+                EditorUtility.SetDirty(mr);
+                applied++;
+            }
+        }
+
+        AssetDatabase.SaveAssets();
+        Debug.Log($"[BookTexture] 적용 완료: {applied}권 성공, {skipped}권 실패");
+    }
 }
