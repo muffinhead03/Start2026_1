@@ -7,6 +7,9 @@ public class WineBookPutOn : MonoBehaviour
     [Header("Player")]
     [SerializeField] GameObject player;
 
+    [Header("책장 (애니메이션되는 오브젝트) - 배치된 책을 여기 자식으로 붙임")]
+    [SerializeField] Transform shelfParent;
+
     [Header("투명 머터리얼")]
     [SerializeField] Material mat_trans;
 
@@ -47,6 +50,11 @@ public class WineBookPutOn : MonoBehaviour
         mesh.enabled = false;
         state = 1;
         putOn = player.GetComponent<Player_Grab>().PutOn(transform.position);
+
+        // 추가: 책장이 슬라이드될 때 같이 움직이도록 다시 부모 설정
+        // worldPositionStays=true 라서 지금 위치 그대로 유지되면서 부모만 바뀜
+        if (putOn != null && shelfParent != null)
+            putOn.transform.SetParent(shelfParent, true);
 
         StartCoroutine(AfterPutDown(0.5f));
     }

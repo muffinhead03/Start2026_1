@@ -2,23 +2,24 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// 책 조사(확대 + 마우스 회전 + 제목 표시) → 두 번째 상호작용 시 실제로 손에 잡히도록 처리
-// ESC를 누르면 잡지 않고 원위치로 취소됩니다.
-// 같은 오브젝트의 Object_Grabbable과 함께 사용합니다.
-public class BookInspectGrab : MonoBehaviour
+// 와인랙 라벨 확대 조사(줌인 + 마우스 드래그 회전)
+// Event_On_Ray.OnClick → OnInspect() 연결
+// ESC 누르면 원위치로 취소
+// 같은 오브젝트의 WineRackLabel과 함께 사용
+public class WineLabelInspect : MonoBehaviour
 {
     [Header("Player")]
     public Player_Move player;
 
-    [Header("연결 (같은 오브젝트의 Object_Grabbable)")]
-    public Object_Grabbable grabbable;
+    [Header("연결 (같은 오브젝트의 WineRackLabel)")]
+    public WineRackLabel wineLabel;
 
     [Header("Inspect Settings")]
     public float targetTime = 0.5f;
     public float inspectDistance = 0.6f;
 
     [Header("Rotate Settings")]
-    public float rotateSpeed = 150f;   // 추가
+    public float rotateSpeed = 150f; // 마우스 감도
 
     [Header("UI Settings")]
     public Scene_UI_Manager SceneUI;
@@ -44,13 +45,14 @@ public class BookInspectGrab : MonoBehaviour
     {
         if (!isInspecting) return;
 
+        // ESC로 취소
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             CancelInspect();
             return;
         }
 
-        // 추가: 마우스로 회전
+        // 마우스 움직임으로 회전
         if (Mouse.current != null)
         {
             Vector2 delta = Mouse.current.delta.ReadValue();
@@ -60,12 +62,10 @@ public class BookInspectGrab : MonoBehaviour
     }
 
     // Event_On_Ray.OnClick 에 연결할 함수
-    public void OnInspectOrGrab()
+    public void OnInspect()
     {
         if (!isInspecting)
             StartCoroutine(MoveToInspectPosition());
-        else
-            GrabNow();
     }
 
     IEnumerator MoveToInspectPosition()
@@ -100,35 +100,10 @@ public class BookInspectGrab : MonoBehaviour
 
         if (col != null) col.isTrigger = false;
 
-        if (SceneUI != null && grabbable != null)
-        {
-            string letter = grabbable.objectName.Replace("book_", "");
-            SceneUI.ChangeText(0, $"책 제목: {letter}");
-            SceneUI.SetActivePanel(2, true);
-            SceneUI.SetActiveCursor(false);
-        }
-    }
+        if (SceneUI != null) SceneUI.SetActiveCursor(false);
 
-    void GrabNow()
-    {
-        isInspecting = false;
-
-        if (SceneUI != null)
-        {
-            SceneUI.SetActivePanel(2, false);
-            SceneUI.SetActiveCursor(true);
-        }
-
-        if (player != null) player.SetMoveLock(false);
-
-        transform.position = originalPosition;
-        transform.rotation = originalRotation;
-
-        if (rigid != null) rigid.isKinematic = false;
-        if (col != null) col.isTrigger = false;
-
-        if (grabbable != null)
-            grabbable.OnGrab();
+        // 라벨 정보 수집 (텍스트 표시 + 진행상황 기록)
+        wineLabel?.Collect();
     }
 
     void CancelInspect()
@@ -137,7 +112,7 @@ public class BookInspectGrab : MonoBehaviour
 
         if (SceneUI != null)
         {
-            SceneUI.SetActivePanel(2, false);
+            wineLabel?.Hide();
             SceneUI.SetActiveCursor(true);
         }
 
