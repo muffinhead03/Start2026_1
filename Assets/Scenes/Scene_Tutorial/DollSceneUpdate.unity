@@ -566,6 +566,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1431585230}
   m_SourcePrefab: {fileID: 100100000, guid: c75206f0dfb332e41a41fd5c83538f48, type: 3}
+--- !u!1 &225117972 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4190666074436545850, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+  m_PrefabInstance: {fileID: 1056492226}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &250142519
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -746,6 +751,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 297807484}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &317486462
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 317486463}
+  m_Layer: 0
+  m_Name: ViewPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &317486463
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317486462}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1056492227}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &329873048
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1545,7 +1581,7 @@ Transform:
   m_GameObject: {fileID: 474266626}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.23153, y: 0.58131, z: 2.25754}
+  m_LocalPosition: {x: -2.23153, y: 0.58131, z: 1.622}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1745,6 +1781,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &509982535 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6524826869730498701, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+  m_PrefabInstance: {fileID: 1056492226}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &509982539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 509982535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c55a3c011c57e7c459bfffa52f3d2184, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
+  currentNumber: 0
+  correctNumber: 0
+  numberLockManager: {fileID: 0}
 --- !u!1001 &609556302
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1911,6 +1967,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DollScene_BrokenArmChange
   gameManager: {fileID: 940351272}
+--- !u!1 &645008921 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7647098651856647695, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+  m_PrefabInstance: {fileID: 1056492226}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &645388321
 GameObject:
   m_ObjectHideFlags: 0
@@ -2697,6 +2758,21 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &922346060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645008921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c55a3c011c57e7c459bfffa52f3d2184, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
+  currentNumber: 0
+  correctNumber: 0
+  numberLockManager: {fileID: 0}
 --- !u!1 &940351271
 GameObject:
   m_ObjectHideFlags: 0
@@ -2859,6 +2935,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1013784058}
   - component: {fileID: 1013784059}
+  - component: {fileID: 1013784060}
+  - component: {fileID: 1013784061}
   m_Layer: 0
   m_Name: Doll_BrokenLeg
   m_TagString: Untagged
@@ -2893,12 +2971,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ce4b4dbb080d5948a304b6259dc3e57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DollScene_ChangeBrokenLeg
+  numberLockMode: {fileID: 1013784060}
+  isCheckingNumberLock: 0
+  isNumberLockSolved: 0
   gameManager: {fileID: 940351272}
   playerFixCamera: {fileID: 743923336}
   sceneUI: {fileID: 676938599}
-  numberLockCameraPoint: {fileID: 1492053329}
-  numberLockObject: {fileID: 1056492228}
-  isCheckingNumberLock: 0
+--- !u!114 &1013784060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013784057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c404fac6eea0854fbb52d8878a1760f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoToNumberLockMode
+  mainCamera: {fileID: 0}
+  dial1: {fileID: 0}
+  dial2: {fileID: 0}
+  dial3: {fileID: 0}
+  dial4: {fileID: 0}
+  dial5: {fileID: 0}
+  dialLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  rayDistance: 2
+  isActive: 0
+--- !u!114 &1013784061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013784057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19a1b2bc484f3694481eda97ebcf276b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NumberLockManager
+  dials:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  isSolved: 0
+  OnSolved:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1022049689
 GameObject:
   m_ObjectHideFlags: 0
@@ -3147,6 +3270,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1188803375}
     m_Modifications:
+    - target: {fileID: 3926772785755536747, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_Name
+      value: Cylinder.007_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4190666074436545850, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_Name
+      value: Cylinder.007_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5684706744911761948, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_Name
+      value: Cylinder.007_5
+      objectReference: {fileID: 0}
     - target: {fileID: 6083644573605514190, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.2
@@ -3187,17 +3322,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6524826869730498701, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_Name
+      value: Cylinder.007_2
+      objectReference: {fileID: 0}
     - target: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
       propertyPath: m_Name
       value: FiveDial
       objectReference: {fileID: 0}
+    - target: {fileID: 7647098651856647695, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_Name
+      value: Cylinder.007_4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6083644573605514190, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1056492229}
+      addedObject: {fileID: 317486463}
+    m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1056492230}
@@ -3207,6 +3350,24 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1056492235}
+    - targetCorrespondingSourceObject: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1056492239}
+    - targetCorrespondingSourceObject: {fileID: 3926772785755536747, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1937047144}
+    - targetCorrespondingSourceObject: {fileID: 7647098651856647695, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 922346060}
+    - targetCorrespondingSourceObject: {fileID: 5684706744911761948, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1708089732}
+    - targetCorrespondingSourceObject: {fileID: 6524826869730498701, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 509982539}
+    - targetCorrespondingSourceObject: {fileID: 4190666074436545850, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1867703035}
   m_SourcePrefab: {fileID: 100100000, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
 --- !u!4 &1056492227 stripped
 Transform:
@@ -3218,22 +3379,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
   m_PrefabInstance: {fileID: 1056492226}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1056492229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1056492228}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aded7545bf9e1b44a0a36bdac073d13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FiveDial_FixCamera
-  playerFixCamera: {fileID: 743923336}
-  sceneUI: {fileID: 676938599}
-  cameraPoint: {fileID: 1492053329}
-  isCameraFixed: 0
 --- !u!114 &1056492230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3250,10 +3395,58 @@ MonoBehaviour:
   targetPos: {x: -1, y: -1.3, z: -0.55}
   Fixed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1013784060}
+        m_TargetAssemblyTypeName: GoToNumberLockMode, Assembly-CSharp
+        m_MethodName: EnterMode
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 676938599}
+        m_TargetAssemblyTypeName: Scene_UI_Manager, Assembly-CSharp
+        m_MethodName: UnlockPointer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   UnFixed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1013784060}
+        m_TargetAssemblyTypeName: GoToNumberLockMode, Assembly-CSharp
+        m_MethodName: ExitMode
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 676938599}
+        m_TargetAssemblyTypeName: Scene_UI_Manager, Assembly-CSharp
+        m_MethodName: LockPointer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   SceneUI: {fileID: 676938599}
   player: {fileID: 743923336}
 --- !u!114 &1056492234
@@ -3319,7 +3512,41 @@ MonoBehaviour:
         m_CallState: 2
   OnClick:
     m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1013784059}
+        m_TargetAssemblyTypeName: DollScene_ChangeBrokenLeg, Assembly-CSharp
+        m_MethodName: InteractNumberLock
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1056492239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1056492228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ef4f5845c5a2034aa97c8ec6c86af82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_FixCamera
+  pivot: {fileID: 0}
+  targetPos: {x: 0, y: 0, z: 0}
+  Fixed:
+    m_PersistentCalls:
       m_Calls: []
+  UnFixed:
+    m_PersistentCalls:
+      m_Calls: []
+  SceneUI: {fileID: 0}
+  player: {fileID: 0}
 --- !u!1 &1089815702 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2098923261433134708, guid: 9a56fa7b38f3c6044a8c8750f7665e70, type: 3}
@@ -3807,6 +4034,11 @@ MonoBehaviour:
   description: 
   player: {fileID: 0}
   audio_grap: {fileID: 0}
+--- !u!1 &1466337446 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5684706744911761948, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+  m_PrefabInstance: {fileID: 1056492226}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1492053328
 GameObject:
   m_ObjectHideFlags: 0
@@ -3832,7 +4064,7 @@ Transform:
   m_GameObject: {fileID: 1492053328}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.184, y: -1.305, z: -0.552}
+  m_LocalPosition: {x: -1.184, y: -1.305, z: -0.983}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4135,6 +4367,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e82b6420fd7849844b3ce1a8caef45e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BringData
+--- !u!114 &1708089732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466337446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c55a3c011c57e7c459bfffa52f3d2184, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
+  currentNumber: 0
+  correctNumber: 0
+  numberLockManager: {fileID: 0}
 --- !u!1001 &1716434749
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4406,6 +4653,41 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2117681861}
   m_SourcePrefab: {fileID: 100100000, guid: 018426fe930b5ff4da6d7050a023d8f2, type: 3}
+--- !u!114 &1867703035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225117972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c55a3c011c57e7c459bfffa52f3d2184, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
+  currentNumber: 0
+  correctNumber: 0
+  numberLockManager: {fileID: 0}
+--- !u!1 &1937047140 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3926772785755536747, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+  m_PrefabInstance: {fileID: 1056492226}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1937047144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937047140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c55a3c011c57e7c459bfffa52f3d2184, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
+  currentNumber: 0
+  correctNumber: 0
+  numberLockManager: {fileID: 0}
 --- !u!1 &1939678378
 GameObject:
   m_ObjectHideFlags: 0
