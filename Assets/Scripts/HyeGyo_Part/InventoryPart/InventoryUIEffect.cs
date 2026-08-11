@@ -363,15 +363,32 @@ public sealed class InventoryUIEffect : MonoBehaviour
                     : string.Empty;
         }
 
-        if (open &&
-            selectedDisplayData != null)
+        if (!open ||
+            selectedDisplayData == null)
+        {
+            HidePreview();
+            return;
+        }
+
+        /*
+         * Preview Mesh 생성 실패가 Inventory 입력 전체까지
+         * 끊어지지 않도록 여기서 복구합니다.
+         */
+        try
         {
             ShowPreview(
                 selectedDisplayData
             );
         }
-        else
+        catch (Exception exception)
         {
+            Debug.LogWarning(
+                "[InventoryUIEffect] Preview 갱신 중 예외를 복구했습니다. " +
+                exception.GetType().Name + ": " +
+                exception.Message,
+                this
+            );
+
             HidePreview();
         }
     }
@@ -771,28 +788,107 @@ public sealed class InventoryUIEffect : MonoBehaviour
     /// </summary>
     private void HidePreview()
     {
-        if (currentPreviewObject != null)
-        {
-            currentPreviewObject.SetActive(false);
+        /*
+         * Destroy는 프레임 끝에 실행되므로
+         * 제일 먼저 Preview 부모 전체를 비활성화합니다.
+         * 이렇게 하면 삭제 대기 중 Mesh도 화면에 남지 않습니다.
+         */
+        SetObjectSelectedActive(
+            false
+        );
 
+        GameObject trackedPreview =
+            currentPreviewObject;
+
+        if (trackedPreview != null)
+        {
+            trackedPreview.SetActive(
+                false
+            );
+        }
+
+        bool trackedWasUnderSelectedRoot =
+            trackedPreview != null &&
+            selectedRoot != null &&
+            trackedPreview.transform.IsChildOf(
+                selectedRoot
+            );
+
+        /*
+         * SelectedRoot 아래에서 이 스크립트가 만든 Preview_*만 정리합니다.
+         * 다른 수동 자식 오브젝트는 건드리지 않습니다.
+         */
+        if (selectedRoot != null)
+        {
+            for (int i = selectedRoot.childCount - 1;
+                 i >= 0;
+                 i--)
+            {
+                Transform child =
+                    selectedRoot.GetChild(i);
+
+                if (child == null)
+                {
+                    continue;
+                }
+
+                GameObject childObject =
+                    child.gameObject;
+
+                bool isGeneratedPreview =
+                    childObject == trackedPreview ||
+                    childObject.name.StartsWith(
+                        "Preview_",
+                        StringComparison.Ordinal
+                    );
+
+                if (!isGeneratedPreview)
+                {
+                    continue;
+                }
+
+                childObject.SetActive(
+                    false
+                );
+
+                if (Application.isPlaying)
+                {
+                    Destroy(
+                        childObject
+                    );
+                }
+                else
+                {
+                    DestroyImmediate(
+                        childObject
+                    );
+                }
+            }
+        }
+
+        /*
+         * 추적 중인 Preview가 Hierarchy 이상으로 SelectedRoot 밖에 있다면
+         * 그것도 따로 제거합니다.
+         */
+        if (trackedPreview != null &&
+            !trackedWasUnderSelectedRoot)
+        {
             if (Application.isPlaying)
             {
                 Destroy(
-                    currentPreviewObject
+                    trackedPreview
                 );
             }
             else
             {
                 DestroyImmediate(
-                    currentPreviewObject
+                    trackedPreview
                 );
             }
         }
 
         currentPreviewObject = null;
         currentPreviewSource = null;
-
-        SetObjectSelectedActive(false);
     }
 
     private void SetObjectSelectedActive(
