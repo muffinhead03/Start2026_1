@@ -15,17 +15,21 @@ public class Player_Interaction : MonoBehaviour
     [Header("물건 잡기")]
     public Player_Grab grab;
 
+    [Header("Inventory")]
+    [SerializeField]
+    private InventoryUIManager inventoryUIManager;
+
     InputAction interact;
 
     Event_On_Ray CurrentTarget;
     Event_On_Ray LastTarget;
 
-    void Start()
-    {
-        interact = InputSystem.actions.FindAction("Interact");
-        interact.performed += ctx => Interact();
-        CurrentTarget = null;
-    }
+void Start()
+{
+    interact = InputSystem.actions.FindAction("Interact");
+    interact.performed += ctx => Interact();
+    CurrentTarget = null;
+}
 
     void Update()
     {
@@ -93,4 +97,7 @@ public class Player_Interaction : MonoBehaviour
             grab.Release();
         }
     }
+
+
+
 }
