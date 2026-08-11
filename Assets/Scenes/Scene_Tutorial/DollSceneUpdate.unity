@@ -1800,7 +1800,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
   currentNumber: 0
   correctNumber: 0
-  numberLockManager: {fileID: 0}
+  rotationAxis: 1
+  defaultNumber: 2
+  defaultAngle: -93
+  angleStep: 36
+  recognitionHalfRange: 18
+  angleSettings: []
+  numberLockManager: {fileID: 1013784061}
 --- !u!1001 &609556302
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2772,7 +2778,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
   currentNumber: 0
   correctNumber: 0
-  numberLockManager: {fileID: 0}
+  rotationAxis: 1
+  defaultNumber: 2
+  defaultAngle: -93
+  angleStep: 36
+  recognitionHalfRange: 18
+  angleSettings: []
+  numberLockManager: {fileID: 1013784061}
 --- !u!1 &940351271
 GameObject:
   m_ObjectHideFlags: 0
@@ -2937,6 +2949,7 @@ GameObject:
   - component: {fileID: 1013784059}
   - component: {fileID: 1013784060}
   - component: {fileID: 1013784061}
+  - component: {fileID: 1013784062}
   m_Layer: 0
   m_Name: Doll_BrokenLeg
   m_TagString: Untagged
@@ -2989,16 +3002,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c404fac6eea0854fbb52d8878a1760f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoToNumberLockMode
-  mainCamera: {fileID: 0}
-  dial1: {fileID: 0}
-  dial2: {fileID: 0}
-  dial3: {fileID: 0}
-  dial4: {fileID: 0}
-  dial5: {fileID: 0}
-  dialLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  rayDistance: 2
+  fixCamera: {fileID: 1056492230}
+  inputController: {fileID: 1013784062}
   isActive: 0
 --- !u!114 &1013784061
 MonoBehaviour:
@@ -3022,6 +3027,21 @@ MonoBehaviour:
   OnSolved:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1013784062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013784057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37b1ebb6371e8ff4891d29edb94b9cba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FiveDial_InputController
+  inputType: 1
+  dials: []
+  isActive: 0
 --- !u!1 &1022049689
 GameObject:
   m_ObjectHideFlags: 0
@@ -3334,6 +3354,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cylinder.007_4
       objectReference: {fileID: 0}
+    - target: {fileID: 8882777709561910651, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6883546
+      objectReference: {fileID: 0}
+    - target: {fileID: 8882777709561910651, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8882777709561910651, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.72537434
+      objectReference: {fileID: 0}
+    - target: {fileID: 8882777709561910651, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8882777709561910651, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -93
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -3346,13 +3386,7 @@ PrefabInstance:
       addedObject: {fileID: 1056492230}
     - targetCorrespondingSourceObject: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1056492234}
-    - targetCorrespondingSourceObject: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1056492235}
-    - targetCorrespondingSourceObject: {fileID: 7423038670692800766, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1056492239}
     - targetCorrespondingSourceObject: {fileID: 3926772785755536747, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1937047144}
@@ -3391,7 +3425,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ef4f5845c5a2034aa97c8ec6c86af82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_FixCamera
-  pivot: {fileID: 1188803375}
+  pivot: {fileID: 1056492227}
   targetPos: {x: -1, y: -1.3, z: -0.55}
   Fixed:
     m_PersistentCalls:
@@ -3449,22 +3483,6 @@ MonoBehaviour:
         m_CallState: 2
   SceneUI: {fileID: 676938599}
   player: {fileID: 743923336}
---- !u!114 &1056492234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1056492228}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
-  objectName: 
-  description: 
-  player: {fileID: 0}
-  audio_grap: {fileID: 0}
 --- !u!114 &1056492235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3513,9 +3531,9 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1013784059}
-        m_TargetAssemblyTypeName: DollScene_ChangeBrokenLeg, Assembly-CSharp
-        m_MethodName: InteractNumberLock
+      - m_Target: {fileID: 1056492230}
+        m_TargetAssemblyTypeName: Object_FixCamera, Assembly-CSharp
+        m_MethodName: FixCamera
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3525,28 +3543,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1056492239
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1056492228}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ef4f5845c5a2034aa97c8ec6c86af82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Object_FixCamera
-  pivot: {fileID: 0}
-  targetPos: {x: 0, y: 0, z: 0}
-  Fixed:
-    m_PersistentCalls:
-      m_Calls: []
-  UnFixed:
-    m_PersistentCalls:
-      m_Calls: []
-  SceneUI: {fileID: 0}
-  player: {fileID: 0}
 --- !u!1 &1089815702 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2098923261433134708, guid: 9a56fa7b38f3c6044a8c8750f7665e70, type: 3}
@@ -4381,7 +4377,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
   currentNumber: 0
   correctNumber: 0
-  numberLockManager: {fileID: 0}
+  rotationAxis: 1
+  defaultNumber: 2
+  defaultAngle: -93
+  angleStep: 36
+  recognitionHalfRange: 18
+  angleSettings: []
+  numberLockManager: {fileID: 1013784061}
 --- !u!1001 &1716434749
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4667,7 +4669,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
   currentNumber: 0
   correctNumber: 0
-  numberLockManager: {fileID: 0}
+  rotationAxis: 1
+  defaultNumber: 2
+  defaultAngle: -93
+  angleStep: 36
+  recognitionHalfRange: 18
+  angleSettings: []
+  numberLockManager: {fileID: 1013784061}
 --- !u!1 &1937047140 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3926772785755536747, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
@@ -4687,7 +4695,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FiveDial_Number
   currentNumber: 0
   correctNumber: 0
-  numberLockManager: {fileID: 0}
+  rotationAxis: 1
+  defaultNumber: 2
+  defaultAngle: -93
+  angleStep: 36
+  recognitionHalfRange: 18
+  angleSettings: []
+  numberLockManager: {fileID: 1013784061}
 --- !u!1 &1939678378
 GameObject:
   m_ObjectHideFlags: 0
