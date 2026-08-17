@@ -53,6 +53,9 @@ public sealed class InventoryUIManager : MonoBehaviour
     private float previousTimeScale = 1f;
     private bool inventoryControlModeApplied;
 
+    // HandPivot 정리 중 발생하는 재귀 이벤트를 막습니다.
+    private bool isSynchronizingHand;
+
     public bool IsOpen => isOpen;
 
     public Object_Grabbable CurrentHeldObject =>
@@ -102,10 +105,7 @@ public sealed class InventoryUIManager : MonoBehaviour
             EnterInventoryControlMode();
         }
 
-        if (handPerception != null)
-        {
-            handPerception.ForceScan();
-        }
+        TryForceHandScan();
 
         SyncSelectedDisplayData();
         RefreshView();
@@ -113,6 +113,12 @@ public sealed class InventoryUIManager : MonoBehaviour
 
     private void LateUpdate()
     {
+        /*
+         * 외부 Grab 코드가 HandPivot 아래에 여러 Grabbable을
+         * 동시에 넣더라도 프레임 끝에서 1개만 남도록 정리합니다.
+         */
+        EnforceSingleHandObjectIfNeeded();
+
         if (!isOpen)
         {
             return;
@@ -179,10 +185,7 @@ public sealed class InventoryUIManager : MonoBehaviour
             uiEffect.SetOpen(true);
         }
 
-        if (handPerception != null)
-        {
-            handPerception.ForceScan();
-        }
+        TryForceHandScan();
 
         SyncSelectedDisplayData();
         RefreshView();
@@ -278,9 +281,21 @@ public sealed class InventoryUIManager : MonoBehaviour
     private void HandleHandObjectChanged(
         Object_Grabbable detectedObject)
     {
+        /*
+         * ForceScan()으로 인해 같은 이벤트가 다시 들어오는 동안에는
+         * 현재 감지값만 갱신하고 중복 정리는 하지 않습니다.
+         */
+        if (isSynchronizingHand)
+        {
+            currentHeldObject =
+                detectedObject;
+
+            return;
+        }
+
         if (inventoryData == null)
         {
-            Debug.LogError(
+            Debug.LogWarning(
                 "[InventoryUIManager] InventoryData가 없습니다.",
                 this
             );
@@ -288,117 +303,113 @@ public sealed class InventoryUIManager : MonoBehaviour
             return;
         }
 
-        /*
-         * 실제 HandPivot 상태만 기록합니다.
-         *
-         * EquippedIndex는 이제 HandPivot 자체가 아니라
-         * "장착 슬롯 커서"가 소유합니다.
-         *
-         * 따라서 HandPivot에서 기존 물건이 계속 감지되더라도
-         * 스크롤로 옮긴 EquippedIndex를 이전 슬롯으로 되돌리면 안 됩니다.
-         */
         currentHeldObject =
             detectedObject;
 
-        if (showDebugLog)
-        {
-            Debug.Log(
-                "[InventoryUIManager] HandObjectChanged: " +
-                $"Source=" +
-                $"{(detectedObject != null ? detectedObject.gameObject.name : "null")}, " +
-                $"ObjectName=" +
-                $"{(detectedObject != null ? ResolveObjectName(detectedObject) : "null")}, " +
-                $"EquippedIndex={inventoryData.EquippedIndex}",
-                this
-            );
-        }
-
         /*
-         * 빈손:
-         * EquippedIndex는 그대로 유지합니다.
+         * 빈손이면 UI만 갱신합니다.
          */
-        if (currentHeldObject == null)
+        if (detectedObject == null)
         {
+            SyncSelectedDisplayData();
             RefreshView();
             return;
         }
 
-        /*
-         * 손에 들어온 실제 물건이 Inventory에 있는지 찾습니다.
-         */
-        int index =
-            inventoryData.FindIndexBySource(
-                currentHeldObject
-            );
+        isSynchronizingHand = true;
 
-        bool newlyAdded = false;
-
-        /*
-         * 월드에서 처음 집은 물건이라면
-         * Inventory에 새로 등록합니다.
-         */
-        if (index < 0)
+        try
         {
-            if (!inventoryData.TryAdd(
-                    currentHeldObject,
-                    out index))
+            int index;
+            bool newlyAdded;
+
+            if (!TryEnsureInventoryRegistration(
+                    detectedObject,
+                    out index,
+                    out newlyAdded))
             {
-                RefreshView();
                 return;
             }
 
-            newlyAdded = true;
-        }
+            /*
+             * 새로 들어온/감지된 물체가 keepObject입니다.
+             * HandPivot 아래의 다른 Grabbable 루트는 모두
+             * 비활성 상태로 InventoryData 아래로 보냅니다.
+             */
+            StoreAllHandObjectsExcept(
+                detectedObject
+            );
 
-        /*
-         * EquippedIndex를 Hand 감지 때문에 무조건 덮어쓰지 않습니다.
-         *
-         * 새로 획득한 물건:
-         *   -> 그 물건이 들어간 슬롯을 Equip
-         *
-         * 아직 Equip 커서가 없는 상태(-1):
-         *   -> 현재 손 물건 슬롯으로 초기화
-         *
-         * 그 외:
-         *   -> Scroll이 정한 EquippedIndex를 그대로 유지
-         */
-        if (newlyAdded ||
-            inventoryData.EquippedIndex < 0)
+            /*
+             * 새로 주운 물건이면 그 슬롯을 Equipped로 맞춥니다.
+             * 기존에 Equip 커서가 없던 경우에도 초기화합니다.
+             */
+            if (newlyAdded ||
+                inventoryData.EquippedIndex < 0)
+            {
+                inventoryData.SetEquipped(
+                    index
+                );
+            }
+
+            TryForceHandScan();
+
+            if (handPerception != null)
+            {
+                currentHeldObject =
+                    handPerception.CurrentObject;
+            }
+            else
+            {
+                currentHeldObject =
+                    detectedObject;
+            }
+        }
+        catch (Exception exception)
         {
-            inventoryData.SetEquipped(
-                index
+            /*
+             * 이 콜백의 예외가 Input System까지 전파되어
+             * performed callback 에러가 되는 것을 막습니다.
+             */
+            Debug.LogWarning(
+                "[InventoryUIManager] Hand 동기화 중 예외를 복구했습니다. " +
+                exception.GetType().Name + ": " +
+                exception.Message,
+                this
             );
         }
+        finally
+        {
+            isSynchronizingHand = false;
+        }
 
+        SyncSelectedDisplayData();
         RefreshView();
 
         if (showDebugLog)
         {
-            if (inventoryData.EquippedIndex == index)
-            {
-                Debug.Log(
-                    "[InventoryUIManager] Hand/Equip 일치: " +
-                    $"HandIndex={index}, " +
-                    $"EquippedIndex={inventoryData.EquippedIndex}, " +
-                    $"Source={currentHeldObject.gameObject.name}",
-                    currentHeldObject
-                );
-            }
-            else
-            {
-                Debug.Log(
-                    "[InventoryUIManager] Equip 커서 유지: " +
-                    $"HandIndex={index}, " +
-                    $"EquippedIndex={inventoryData.EquippedIndex}, " +
-                    $"Hand={currentHeldObject.gameObject.name}",
-                    this
-                );
-            }
+            Debug.Log(
+                "[InventoryUIManager] Hand 동기화 완료: " +
+                $"Current=" +
+                $"{(currentHeldObject != null ? currentHeldObject.gameObject.name : "null")}, " +
+                $"EquippedIndex={inventoryData.EquippedIndex}",
+                this
+            );
         }
     }
 
     private void HandleInventoryChanged()
     {
+        /*
+         * Hand 이동 중에는 TryAdd/SetEquipped에서 Changed 이벤트가
+         * 여러 번 들어올 수 있습니다.
+         * 중간 상태의 Preview를 만들지 않고 마지막에 한 번만 갱신합니다.
+         */
+        if (isSynchronizingHand)
+        {
+            return;
+        }
+
         SyncSelectedDisplayData();
         RefreshView();
     }
@@ -684,7 +695,7 @@ public sealed class InventoryUIManager : MonoBehaviour
         if (handPerception == null ||
             handPerception.HandPivot == null)
         {
-            Debug.LogError(
+            Debug.LogWarning(
                 "[InventoryUIManager] " +
                 "PerceiveObjectHandPivot 또는 HandPivot이 없습니다.",
                 this
@@ -701,124 +712,376 @@ public sealed class InventoryUIManager : MonoBehaviour
                 slotIndex
             );
 
-        /*
-         * 현재 HandPivot에 실제로 있는 물체를 다시 확인합니다.
-         *
-         * currentHeldObject가 오래된 참조일 수 있으므로
-         * HandPivot 자식도 같이 확인합니다.
-         */
-        Object_Grabbable heldObject =
-            FindObjectUnderHandPivot(
-                handPivot
-            );
+        isSynchronizingHand = true;
 
-        if (heldObject != null)
+        try
         {
-            currentHeldObject =
-                heldObject;
-        }
-
-
-        /*
-         * =====================================================
-         * A. 빈 슬롯
-         * =====================================================
-         */
-        if (targetObject == null)
-        {
-            if (heldObject != null)
-            {
-                MoveObjectToInventoryStorage(
-                    heldObject
-                );
-            }
-
-            currentHeldObject = null;
-
-            if (showDebugLog)
-            {
-                Debug.Log(
-                    "[InventoryEquipScroll] 빈 슬롯 적용 완료: " +
-                    $"EquippedIndex={slotIndex}, " +
-                    "Hand=Empty",
-                    this
-                );
-            }
-
             /*
-             * 이미 실제로 HandPivot에서 빼낸 뒤이므로
-             * 이제 ForceScan해도 이전 물체가 다시 감지되지 않습니다.
+             * 빈 슬롯이면 HandPivot의 모든 Grabbable을
+             * 비활성 상태로 InventoryData 아래에 보관합니다.
              */
-            handPerception.ForceScan();
-
-            RefreshView();
-            return;
-        }
-
-
-        /*
-         * 이미 target이 손에 있다면 이동할 필요가 없습니다.
-         */
-        if (heldObject == targetObject &&
-            targetObject.transform.IsChildOf(handPivot))
-        {
-            currentHeldObject =
-                targetObject;
-
-            if (!targetObject.gameObject.activeSelf)
+            if (targetObject == null)
             {
-                targetObject.gameObject.SetActive(true);
+                StoreAllHandObjectsExcept(
+                    null
+                );
+
+                currentHeldObject = null;
+
+                TryForceHandScan();
             }
+            else
+            {
+                /*
+                 * target이 아닌 현재 Hand Object를 먼저 보관합니다.
+                 */
+                StoreAllHandObjectsExcept(
+                    targetObject
+                );
 
-            handPerception.ForceScan();
-            RefreshView();
-            return;
+                /*
+                 * target은 비활성 상태로 HandPivot에 이동한 뒤
+                 * Transform 정렬이 끝난 마지막에 활성화됩니다.
+                 */
+                MoveObjectToHandPivot(
+                    targetObject,
+                    handPivot
+                );
+
+                /*
+                 * 외부 코드가 같은 프레임에 다른 물체를 넣었더라도
+                 * 다시 한 번 target 하나만 남깁니다.
+                 */
+                StoreAllHandObjectsExcept(
+                    targetObject
+                );
+
+                currentHeldObject =
+                    targetObject;
+
+                TryForceHandScan();
+
+                if (handPerception.CurrentObject != null)
+                {
+                    currentHeldObject =
+                        handPerception.CurrentObject;
+                }
+            }
         }
-
-
-        /*
-         * =====================================================
-         * B. 다른 Object가 있는 슬롯
-         * =====================================================
-         *
-         * 기존에 들고 있던 물체가 있으면 먼저 보관합니다.
-         */
-        if (heldObject != null &&
-            heldObject != targetObject)
+        catch (Exception exception)
         {
-            MoveObjectToInventoryStorage(
-                heldObject
+            Debug.LogWarning(
+                "[InventoryUIManager] Equip 변경 중 예외를 복구했습니다. " +
+                exception.GetType().Name + ": " +
+                exception.Message,
+                this
             );
         }
+        finally
+        {
+            isSynchronizingHand = false;
+        }
 
-
-        /*
-         * target을 실제 HandPivot 아래로 이동합니다.
-         */
-        MoveObjectToHandPivot(
-            targetObject,
-            handPivot
-        );
-
-        currentHeldObject =
-            targetObject;
+        SyncSelectedDisplayData();
+        RefreshView();
 
         if (showDebugLog)
         {
             Debug.Log(
-                "[InventoryEquipScroll] 실제 Hand 교체 완료: " +
+                "[InventoryEquip] 적용 완료: " +
                 $"EquippedIndex={slotIndex}, " +
-                $"Hand={targetObject.gameObject.name}",
-                targetObject
+                $"Hand=" +
+                $"{(currentHeldObject != null ? currentHeldObject.gameObject.name : "Empty")}",
+                this
             );
+        }
+    }
+
+
+    /// <summary>
+    /// 월드 Grab 코드의 구현과 관계없이 HandPivot의 활성 Grabbable을
+    /// 최대 1개로 유지합니다.
+    /// </summary>
+    private void EnforceSingleHandObjectIfNeeded()
+    {
+        if (isSynchronizingHand ||
+            inventoryData == null ||
+            handPerception == null ||
+            handPerception.HandPivot == null)
+        {
+            return;
+        }
+
+        Transform handPivot =
+            handPerception.HandPivot;
+
+        Object_Grabbable[] handObjects =
+            handPivot.GetComponentsInChildren
+                <Object_Grabbable>(false);
+
+        if (handObjects == null ||
+            handObjects.Length <= 1)
+        {
+            return;
         }
 
         /*
-         * 물리적인 Parent 변경이 끝난 뒤 감지기를 동기화합니다.
+         * Perception이 현재 보고 있는 물체를 우선 유지합니다.
+         * 없으면 배열의 마지막 활성 Grabbable을 유지합니다.
          */
-        handPerception.ForceScan();
+        Object_Grabbable keepObject =
+            handPerception.CurrentObject;
 
+        if (keepObject == null ||
+            !keepObject.transform.IsChildOf(handPivot))
+        {
+            keepObject =
+                handObjects[handObjects.Length - 1];
+        }
+
+        isSynchronizingHand = true;
+
+        try
+        {
+            int keepIndex;
+            bool newlyAdded;
+
+            if (TryEnsureInventoryRegistration(
+                    keepObject,
+                    out keepIndex,
+                    out newlyAdded))
+            {
+                if (newlyAdded ||
+                    inventoryData.EquippedIndex < 0)
+                {
+                    inventoryData.SetEquipped(
+                        keepIndex
+                    );
+                }
+            }
+
+            StoreAllHandObjectsExcept(
+                keepObject
+            );
+
+            currentHeldObject =
+                keepObject;
+
+            TryForceHandScan();
+
+            if (handPerception.CurrentObject != null)
+            {
+                currentHeldObject =
+                    handPerception.CurrentObject;
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning(
+                "[InventoryUIManager] HandPivot 단일화 중 예외를 복구했습니다. " +
+                exception.GetType().Name + ": " +
+                exception.Message,
+                this
+            );
+        }
+        finally
+        {
+            isSynchronizingHand = false;
+        }
+
+        SyncSelectedDisplayData();
         RefreshView();
+    }
+
+
+    /// <summary>
+    /// keepObject가 포함된 Hand 루트만 남기고
+    /// 나머지 Grabbable 루트는 모두 InventoryData 아래에 보관합니다.
+    /// keepObject가 null이면 전부 보관합니다.
+    /// </summary>
+    private void StoreAllHandObjectsExcept(
+        Object_Grabbable keepObject)
+    {
+        if (inventoryData == null ||
+            handPerception == null ||
+            handPerception.HandPivot == null)
+        {
+            return;
+        }
+
+        Transform handPivot =
+            handPerception.HandPivot;
+
+        Object_Grabbable[] handObjects =
+            handPivot.GetComponentsInChildren
+                <Object_Grabbable>(true);
+
+        if (handObjects == null ||
+            handObjects.Length == 0)
+        {
+            return;
+        }
+
+        Transform keepRoot = null;
+
+        if (keepObject != null)
+        {
+            keepRoot =
+                FindDirectChildRoot(
+                    handPivot,
+                    keepObject.transform
+                );
+        }
+
+        for (int i = 0;
+             i < handObjects.Length;
+             i++)
+        {
+            Object_Grabbable handObject =
+                handObjects[i];
+
+            if (handObject == null)
+            {
+                continue;
+            }
+
+            Transform objectRoot =
+                FindDirectChildRoot(
+                    handPivot,
+                    handObject.transform
+                );
+
+            /*
+             * 이미 HandPivot 밖으로 이동한 Object는 무시합니다.
+             */
+            if (objectRoot == null)
+            {
+                continue;
+            }
+
+            /*
+             * keepObject와 같은 실제 Hand 루트에 포함된 component라면
+             * 그 루트는 그대로 유지합니다.
+             */
+            if (keepRoot != null &&
+                objectRoot == keepRoot)
+            {
+                continue;
+            }
+
+            int index;
+            bool newlyAdded;
+
+            if (!TryEnsureInventoryRegistration(
+                    handObject,
+                    out index,
+                    out newlyAdded))
+            {
+                continue;
+            }
+
+            MoveObjectToInventoryStorage(
+                handObject
+            );
+        }
+    }
+
+
+    /// <summary>
+    /// InventoryData에 Object가 없으면 등록합니다.
+    /// </summary>
+    private bool TryEnsureInventoryRegistration(
+        Object_Grabbable sourceObject,
+        out int index,
+        out bool newlyAdded)
+    {
+        index = -1;
+        newlyAdded = false;
+
+        if (inventoryData == null ||
+            sourceObject == null)
+        {
+            return false;
+        }
+
+        index =
+            inventoryData.FindIndexBySource(
+                sourceObject
+            );
+
+        if (index >= 0)
+        {
+            return true;
+        }
+
+        if (!inventoryData.TryAdd(
+                sourceObject,
+                out index))
+        {
+            return false;
+        }
+
+        newlyAdded = true;
+        return true;
+    }
+
+
+    /// <summary>
+    /// parent 아래에 descendant가 있을 때
+    /// parent의 바로 아래에 해당하는 루트를 반환합니다.
+    /// </summary>
+    private static Transform FindDirectChildRoot(
+        Transform parent,
+        Transform descendant)
+    {
+        if (parent == null ||
+            descendant == null ||
+            descendant == parent ||
+            !descendant.IsChildOf(parent))
+        {
+            return null;
+        }
+
+        Transform current =
+            descendant;
+
+        while (current.parent != null &&
+               current.parent != parent)
+        {
+            current =
+                current.parent;
+        }
+
+        return current.parent == parent
+            ? current
+            : null;
+    }
+
+
+    /// <summary>
+    /// ForceScan에서 외부 component 예외가 발생하더라도
+    /// Inventory 입력 콜백 밖으로 전파시키지 않습니다.
+    /// </summary>
+    private void TryForceHandScan()
+    {
+        if (handPerception == null)
+        {
+            return;
+        }
+
+        try
+        {
+            handPerception.ForceScan();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning(
+                "[InventoryUIManager] ForceScan 예외를 복구했습니다. " +
+                exception.GetType().Name + ": " +
+                exception.Message,
+                this
+            );
+        }
     }
 
 
@@ -885,33 +1148,72 @@ public sealed class InventoryUIManager : MonoBehaviour
             return;
         }
 
+        /*
+         * Object_Grabbable이 손 오브젝트의 자식에 붙어 있는 경우에도
+         * 실제 HandPivot 바로 아래 루트 전체를 이동해야
+         * Mesh/Collider가 남지 않습니다.
+         */
+        Transform handPivot =
+            handPerception != null
+                ? handPerception.HandPivot
+                : null;
+
         Transform sourceTransform =
             sourceObject.transform;
 
-        /*
-         * InventoryData 아래로 Parent 이동.
-         * worldPositionStays=true로 월드 Transform이 갑자기 깨지는 것을 막습니다.
-         */
-        sourceTransform.SetParent(
-            inventoryData.transform,
-            true
-        );
+        Transform storageRoot =
+            FindDirectChildRoot(
+                handPivot,
+                sourceTransform
+            );
+
+        if (storageRoot == null)
+        {
+            storageRoot =
+                FindDirectChildRoot(
+                    inventoryData.transform,
+                    sourceTransform
+                );
+        }
+
+        if (storageRoot == null)
+        {
+            storageRoot =
+                sourceTransform;
+        }
+
+        GameObject storageObject =
+            storageRoot.gameObject;
 
         /*
-         * 보관 중에는 Scene에 보이거나 충돌하지 않도록 비활성화합니다.
-         *
-         * InventoryData.GetObjectAt()은 비활성 GameObject 참조도
-         * 정상적인 SourceObject로 유지할 수 있습니다.
+         * 중요:
+         * Parent/Position을 바꾸기 전에 먼저 비활성화합니다.
+         * MeshRenderer, Collider, Behaviour가 보이지 않는 상태에서
+         * InventoryData 아래로 이동합니다.
          */
-        sourceObject.gameObject.SetActive(
-            false
-        );
+        if (storageObject.activeSelf)
+        {
+            storageObject.SetActive(
+                false
+            );
+        }
+
+        if (storageRoot.parent !=
+            inventoryData.transform)
+        {
+            storageRoot.SetParent(
+                inventoryData.transform,
+                true
+            );
+        }
 
         if (showDebugLog)
         {
             Debug.Log(
-                "[InventoryUIManager] Hand Object 보관: " +
+                "[InventoryUIManager] Object 보관 완료: " +
                 $"Object={sourceObject.gameObject.name}, " +
+                $"Root={storageObject.name}, " +
+                $"Active={storageObject.activeSelf}, " +
                 $"Parent={inventoryData.gameObject.name}",
                 this
             );
@@ -934,41 +1236,83 @@ public sealed class InventoryUIManager : MonoBehaviour
         }
 
         /*
-         * 먼저 활성화합니다.
+         * InventoryData 아래에 저장된 루트 전체를 찾아 이동합니다.
+         * Object_Grabbable이 nested component여도 Mesh 루트가 남지 않습니다.
          */
-        if (!targetObject.gameObject.activeSelf)
+        Transform targetTransform =
+            targetObject.transform;
+
+        Transform handRoot =
+            FindDirectChildRoot(
+                inventoryData != null
+                    ? inventoryData.transform
+                    : null,
+                targetTransform
+            );
+
+        if (handRoot == null)
         {
-            targetObject.gameObject.SetActive(
+            handRoot =
+                FindDirectChildRoot(
+                    handPivot,
+                    targetTransform
+                );
+        }
+
+        if (handRoot == null)
+        {
+            handRoot =
+                targetTransform;
+        }
+
+        GameObject handObject =
+            handRoot.gameObject;
+
+        bool alreadyInHand =
+            handRoot.parent == handPivot;
+
+        /*
+         * 이동 과정에서 Mesh가 순간적으로 보이지 않도록
+         * 먼저 비활성화합니다.
+         */
+        if (!alreadyInHand &&
+            handObject.activeSelf)
+        {
+            handObject.SetActive(
+                false
+            );
+        }
+
+        if (!alreadyInHand)
+        {
+            handRoot.SetParent(
+                handPivot,
+                true
+            );
+
+            handRoot.position =
+                handPivot.position;
+
+            handRoot.rotation =
+                handPivot.rotation;
+        }
+
+        /*
+         * 모든 Transform 변경이 끝난 마지막에 활성화합니다.
+         */
+        if (!handObject.activeSelf)
+        {
+            handObject.SetActive(
                 true
             );
         }
 
-        Transform targetTransform =
-            targetObject.transform;
-
-        /*
-         * worldPositionStays=true를 사용한 뒤
-         * HandPivot 위치/회전에 정확히 맞춥니다.
-         *
-         * 이렇게 하면 기존 Object의 world scale을 가능한 한 보존하면서
-         * 손 위치로 이동할 수 있습니다.
-         */
-        targetTransform.SetParent(
-            handPivot,
-            true
-        );
-
-        targetTransform.position =
-            handPivot.position;
-
-        targetTransform.rotation =
-            handPivot.rotation;
-
         if (showDebugLog)
         {
             Debug.Log(
-                "[InventoryUIManager] Inventory Object 장착: " +
+                "[InventoryUIManager] Object 장착 완료: " +
                 $"Object={targetObject.gameObject.name}, " +
+                $"Root={handObject.name}, " +
                 $"Parent={handPivot.gameObject.name}",
                 targetObject
             );
