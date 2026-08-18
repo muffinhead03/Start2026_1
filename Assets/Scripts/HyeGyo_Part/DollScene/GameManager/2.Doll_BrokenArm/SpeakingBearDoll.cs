@@ -15,9 +15,15 @@ public class SpeakingBearDoll : MonoBehaviour
     private bool isBroken = false;
 
 
-    [Header("Broken Bear")]
+    [Header("Bear Visual")]
     [SerializeField]
-    private GameObject brokenBearVisual;
+    private GameObject normalBear;
+
+    [SerializeField]
+    private GameObject brokenBear;
+
+    [SerializeField]
+    private GameObject brokenHead;
 
 
     [Header("Coin")]
@@ -41,6 +47,13 @@ public class SpeakingBearDoll : MonoBehaviour
     [SerializeField]
     private AudioClip hitVoice04;
 
+    [Header("파손 연출")]
+    [SerializeField]
+    private float breakForce = 2.5f;
+
+    [SerializeField]
+    private float breakUpForce = 1.2f;
+
 
     public int HitCount => hitCount;
     public bool IsBroken => isBroken;
@@ -55,14 +68,21 @@ public class SpeakingBearDoll : MonoBehaviour
         }
 
 
-        // 찢어진 곰은 처음에는 숨김
-        if (brokenBearVisual != null)
+        // 정상 곰 표시
+        if (normalBear != null)
         {
-            brokenBearVisual.SetActive(false);
+            normalBear.SetActive(true);
         }
 
 
-        // 동전도 처음에는 숨김
+        // 찢어진 곰 숨김
+        if (brokenBear != null)
+        {
+            brokenBear.SetActive(false);
+        }
+
+
+        // 동전 숨김
         if (coinObject != null)
         {
             coinObject.SetActive(false);
@@ -139,75 +159,184 @@ public class SpeakingBearDoll : MonoBehaviour
     // 곰 파손
     // =============================================
 
-    private void BreakBear()
+   private void BreakBear()
+{
+    if (isBroken)
+        return;
+
+    if (normalBear == null)
     {
-        if (isBroken)
-            return;
+        Debug.LogError(
+            "[SpeakingBear] Normal Bear가 연결되지 않았습니다."
+        );
+
+        return;
+    }
+
+    if (brokenBear == null)
+    {
+        Debug.LogError(
+            "[SpeakingBear] Broken Bear가 연결되지 않았습니다."
+        );
+
+        return;
+    }
 
 
-        isBroken = true;
+    isBroken = true;
+
+    Debug.Log(
+        "[SpeakingBear] 5번째 충돌! 곰 인형이 찢어졌습니다."
+    );
 
 
-        Debug.Log(
-            "[SpeakingBear] 곰 인형의 목이 찢어졌습니다."
+    // =========================================
+    // 정상 곰의 충돌 순간 위치 저장
+    // =========================================
+
+    Vector3 breakPosition =
+        normalBear.transform.position;
+
+    Quaternion breakRotation =
+        normalBear.transform.rotation;
+
+
+    // =========================================
+    // 파손된 곰을 충돌 위치로 이동
+    // =========================================
+
+    brokenBear.transform.position =
+        breakPosition;
+
+    brokenBear.transform.rotation =
+        breakRotation;
+
+    brokenBear.SetActive(true);
+
+
+    // =========================================
+    // 머리 분리
+    // =========================================
+
+    if (brokenHead != null)
+    {
+        brokenHead.SetActive(true);
+
+        brokenHead.transform.SetParent(
+            null,
+            true
         );
 
 
-        // 찢어진 곰 표시
-        if (brokenBearVisual != null)
+        Rigidbody headRb =
+            brokenHead.GetComponent<Rigidbody>();
+
+
+        if (headRb != null)
         {
-            brokenBearVisual.SetActive(true);
-        }
+            headRb.isKinematic = false;
+
+            headRb.linearVelocity =
+                Vector3.zero;
+
+            headRb.angularVelocity =
+                Vector3.zero;
 
 
-        // 동전 표시
-        if (coinObject != null)
-        {
-            coinObject.SetActive(true);
-        }
+            Vector3 headForce =
+                transform.right * breakForce +
+                Vector3.up * breakUpForce;
 
 
-        /*
-         * 현재 멀쩡한 TeddyBear는
-         * 바로 SetActive(false) 하면 안 됨.
-         *
-         * 이 스크립트 자체가 TeddyBear에 붙어있기 때문.
-         *
-         * 따라서 MeshRenderer만 끄거나,
-         * 나중에 비주얼을 자식 오브젝트로 분리하는 것이 좋음.
-         */
-
-        MeshRenderer renderer =
-            GetComponent<MeshRenderer>();
+            headRb.AddForce(
+                headForce,
+                ForceMode.Impulse
+            );
 
 
-        if (renderer != null)
-        {
-            renderer.enabled = false;
-        }
-
-
-        Collider col =
-            GetComponent<Collider>();
-
-
-        if (col != null)
-        {
-            col.enabled = false;
-        }
-
-
-        Rigidbody rb =
-            GetComponent<Rigidbody>();
-
-
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = true;
+            headRb.AddTorque(
+                Random.insideUnitSphere *
+                breakForce,
+                ForceMode.Impulse
+            );
         }
     }
+
+
+    // =========================================
+    // 동전 분리
+    // =========================================
+
+    if (coinObject != null)
+    {
+        coinObject.SetActive(true);
+
+        coinObject.transform.SetParent(
+            null,
+            true
+        );
+
+
+        Rigidbody coinRb =
+            coinObject.GetComponent<Rigidbody>();
+
+
+        if (coinRb != null)
+        {
+            coinRb.isKinematic = false;
+
+            coinRb.linearVelocity =
+                Vector3.zero;
+
+            coinRb.angularVelocity =
+                Vector3.zero;
+
+
+            Vector3 coinForce =
+                -transform.right * breakForce +
+                Vector3.up * breakUpForce;
+
+
+            coinRb.AddForce(
+                coinForce,
+                ForceMode.Impulse
+            );
+        }
+    }
+
+
+    // =========================================
+    // 파손 몸통
+    // =========================================
+
+    Rigidbody bodyRb =
+        brokenBear.GetComponent<Rigidbody>();
+
+
+    if (bodyRb != null)
+    {
+        bodyRb.isKinematic = false;
+
+        bodyRb.linearVelocity =
+            Vector3.zero;
+
+        bodyRb.angularVelocity =
+            Vector3.zero;
+
+
+        bodyRb.AddForce(
+            Vector3.up * 0.5f,
+            ForceMode.Impulse
+        );
+    }
+
+
+    // =========================================
+    // 마지막에 정상 곰 제거
+    // =========================================
+
+    normalBear.SetActive(false);
+}
 
 
     // =============================================
