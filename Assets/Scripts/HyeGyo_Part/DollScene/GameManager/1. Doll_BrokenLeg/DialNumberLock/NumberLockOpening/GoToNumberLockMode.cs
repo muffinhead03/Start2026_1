@@ -13,12 +13,27 @@ public class GoToNumberLockMode : MonoBehaviour
     private FiveDial_InputController inputController;
 
 
+    [Header("Mode Light Object")]
+    [SerializeField]
+    private GameObject modeLightObject;
+
+
     [Header("State")]
     [SerializeField]
     private bool isActive = false;
 
 
     private bool canExitWithE = false;
+
+
+    private void Start()
+    {
+        // 평상시에는 오브젝트 비활성화
+        if (modeLightObject != null)
+        {
+            modeLightObject.SetActive(false);
+        }
+    }
 
 
     private void Update()
@@ -74,9 +89,14 @@ public class GoToNumberLockMode : MonoBehaviour
         }
 
 
-        Debug.Log(
-            "[FiveDial] Dial Mode ON"
-        );
+        // NumberLock Mode 진입 시 오브젝트 활성화
+        if (modeLightObject != null)
+        {
+            modeLightObject.SetActive(true);
+        }
+
+
+        Debug.Log("[FiveDial] Dial Mode ON");
     }
 
 
@@ -100,9 +120,14 @@ public class GoToNumberLockMode : MonoBehaviour
         }
 
 
-        Debug.Log(
-            "[FiveDial] Dial Mode OFF"
-        );
+        // NumberLock Mode 해제 시 오브젝트 비활성화
+        if (modeLightObject != null)
+        {
+            modeLightObject.SetActive(false);
+        }
+
+
+        Debug.Log("[FiveDial] Dial Mode OFF");
     }
 
 
