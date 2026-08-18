@@ -1110,6 +1110,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 424231815600607962, guid: 44b336e127002024fa0a78226473b61d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 359126099}
+    - targetCorrespondingSourceObject: {fileID: 424231815600607962, guid: 44b336e127002024fa0a78226473b61d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 359126105}
   m_SourcePrefab: {fileID: 100100000, guid: 44b336e127002024fa0a78226473b61d, type: 3}
 --- !u!1 &359126093 stripped
 GameObject:
@@ -1182,7 +1185,36 @@ MonoBehaviour:
       m_Calls: []
   OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 359126099}
+        m_TargetAssemblyTypeName: Object_Grabbable, Assembly-CSharp
+        m_MethodName: OnGrab
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &359126105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359126093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 399c9eaa2d37a2340898e8a266452ada, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeddyBear_Grab
+  playerGrab: {fileID: 2099574905}
+  speakingBear: {fileID: 0}
+  wasHeld: 0
+  isThrown: 0
+  minImpactSpeed: 1.5
 --- !u!1 &364217601 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7059023811084473161, guid: 009d2cdf06b45f041a0115a6a8041af8, type: 3}
@@ -2110,6 +2142,8 @@ GameObject:
   m_Component:
   - component: {fileID: 642766319}
   - component: {fileID: 642766320}
+  - component: {fileID: 642766322}
+  - component: {fileID: 642766321}
   m_Layer: 0
   m_Name: Doll_BrokenArm
   m_TagString: Untagged
@@ -2145,6 +2179,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DollScene_BrokenArmChange
   gameManager: {fileID: 940351272}
+--- !u!114 &642766321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642766318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0f1ee8cb70fa3a4a80e5532f14759c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RetroGameManager
+  gameManager: {fileID: 940351272}
+  gameScreen: {fileID: 0}
+  dollArmObject: {fileID: 0}
+  isArmRewardUnlocked: 0
+  isPlaying: 0
+  isCoinInserted: 0
+--- !u!114 &642766322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642766318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba6bae837dcc2bc4a93c4f723a79585e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpeakingBearDoll
+  gameManager: {fileID: 940351272}
+  hitCount: 0
+  breakHitCount: 5
+  isBroken: 0
+  isCoinCollected: 0
+  normalBear: {fileID: 359126093}
+  brokenBear: {fileID: 0}
+  coinObject: {fileID: 0}
+  audioSource: {fileID: 0}
+  heartLaughClip: {fileID: 0}
+  hitVoice01: {fileID: 0}
+  hitVoice02: {fileID: 0}
+  hitVoice03: {fileID: 0}
+  hitVoice04: {fileID: 0}
 --- !u!1 &645008921 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7647098651856647695, guid: 3c257aa5cde296d45b92085eaac83770, type: 3}
@@ -2239,6 +2317,63 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.011638403, y: 0.008898675, z: 0.053566217}
   m_Center: {x: -0.0007506609, y: 0.47687635, z: 0.4732169}
+--- !u!1001 &674237450
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.29158
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.17169
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.40044
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672274834759097981, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7729469240839129005, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
+      propertyPath: m_Name
+      value: TeddyBear_body
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 794d6dfe123812c4b8c35b3ebefd2c68, type: 3}
 --- !u!1 &675791714
 GameObject:
   m_ObjectHideFlags: 0
@@ -3197,6 +3332,8 @@ MonoBehaviour:
   isBrokenArmChanged: 0
   isSpringFound: 0
   isDollRepaired: 0
+  isCoinFound: 0
+  isCoinOwned: 0
   isStageCleared: 0
 --- !u!4 &940351273
 Transform:
@@ -3603,7 +3740,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OpenTheGateLock
   lockCurve: {fileID: 927989692}
   doorCurve: {fileID: 975045105}
-  liftHeight: 0.2
+  liftHeight: 0.02
   liftDuration: 1
 --- !u!1 &1022049689
 GameObject:
@@ -7033,6 +7170,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2099574905 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 743923335}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099574892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ee6140171ba3f7408ef7c047df25d35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Grab
 --- !u!1 &2117681855 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 720377672849215408, guid: 018426fe930b5ff4da6d7050a023d8f2, type: 3}
@@ -7437,6 +7585,7 @@ SceneRoots:
   - {fileID: 474266627}
   - {fileID: 438602242}
   - {fileID: 1212572167}
+  - {fileID: 674237450}
   - {fileID: 951371932}
   - {fileID: 1541605630}
   - {fileID: 1188803375}
