@@ -2,71 +2,98 @@ using UnityEngine;
 
 public class DollScene_ChangeBrokenLeg : MonoBehaviour
 {
-    [Header("Number Lock Mode")]
-    [SerializeField] private GoToNumberLockMode numberLockMode;
-
-    [Header("Number Lock State")]
-    [SerializeField] private bool isCheckingNumberLock = false;
-    [SerializeField] private bool isNumberLockSolved = false;
-
-    private bool previousSolvedState;
-
-
     [Header("Doll Scene Game Manager")]
-    [SerializeField] private DollScene_GameManager gameManager;
+    [SerializeField]
+    private DollScene_GameManager gameManager;
 
-    [Header("Gate Lock")]
-    [SerializeField] private OpenTheGateLock openTheGateLock;
 
-    [Header("Player Camera")]
-    [SerializeField] private Player_FixCamera playerFixCamera;
+    [Header("Number Lock")]
+    [SerializeField]
+    private GoToNumberLockMode numberLockMode;
+
+    [SerializeField]
+    private OpenTheGateLock openTheGateLock;
+
+
+    [Header("Player")]
+    [SerializeField]
+    private Player_Grab playerGrab;
+
+    [SerializeField]
+    private Player_FixCamera playerFixCamera;
 
 
     [Header("Scene UI")]
-    [SerializeField] private Scene_UI_Manager sceneUI;
+    [SerializeField]
+    private Scene_UI_Manager sceneUI;
+
+
+    [Header("Number Lock State")]
+    [SerializeField]
+    private bool isCheckingNumberLock = false;
+
+    [SerializeField]
+    private bool isNumberLockSolved = false;
+
+
+    [Header("Leg Item State")]
+    [Tooltip("수리용 다리 Object_Grabbable의 objectName")]
+    [SerializeField]
+    private string repairedLegItemKey = "DollLeftLeg";
+
+    [SerializeField]
+    private bool isRepairedLegFound = false;
+
+
+    public bool IsNumberLockSolved =>
+        isNumberLockSolved;
+
+    public bool IsRepairedLegFound =>
+        isRepairedLegFound;
 
 
     private void Start()
     {
-        previousSolvedState = isNumberLockSolved;
         if (gameManager == null)
         {
             gameManager =
                 GetComponentInParent<DollScene_GameManager>();
         }
+
+
+        if (gameManager == null)
+        {
+            gameManager =
+                FindFirstObjectByType<DollScene_GameManager>();
+        }
+
+
+        if (playerGrab == null)
+        {
+            playerGrab =
+                FindFirstObjectByType<Player_Grab>();
+        }
     }
+
 
     private void Update()
     {
-        // false → true로 변한 순간만 실행
-        if (!previousSolvedState && isNumberLockSolved)
-        {
-            if (openTheGateLock != null)
-            {
-                openTheGateLock.OpenLock();
-            }
-            else
-            {
-                Debug.LogWarning("[BrokenLeg] OpenTheGateLock이 연결되지 않았습니다.");
-            }
-        }
-
-        previousSolvedState = isNumberLockSolved;
+        CheckRepairedLeg();
     }
 
-    // ================================================
+
+    // =============================================
     // 자물쇠 상호작용
-    // E키 입력 시 호출
-    // ================================================
+    // =============================================
 
     public void InteractNumberLock()
     {
-        // 이미 해결한 자물쇠
+        // 이미 해결된 자물쇠
         if (isNumberLockSolved)
             return;
 
 
-        // 이미 조사 중이라면 E를 다시 눌러 종료
+        // 이미 조사 중이면 종료
         if (isCheckingNumberLock)
         {
             ExitNumberLock();
@@ -87,17 +114,14 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
         isCheckingNumberLock = true;
 
 
-        // 중앙 조준 커서 숨김
+        // 중앙 조준점 숨기기 / 마우스 해제
         if (sceneUI != null)
         {
             sceneUI.SetActiveCursor(false);
-
-            // 실제 마우스를 사용할 경우
             sceneUI.UnlockPointer();
         }
 
 
-        // 자물쇠 조사 모드 진입
         numberLockMode.EnterMode();
 
 
@@ -107,9 +131,9 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
     }
 
 
-    // ================================================
+    // =============================================
     // 자물쇠 조사 종료
-    // ================================================
+    // =============================================
 
     public void ExitNumberLock()
     {
@@ -120,19 +144,21 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
         isCheckingNumberLock = false;
 
 
-        // 자물쇠 Mode 상태도 종료
-        if (numberLockMode != null) {numberLockMode.ExitMode();}
+        if (numberLockMode != null)
+        {
+            numberLockMode.ExitMode();
+        }
 
 
-        // 카메라 원래 위치로
-        if (playerFixCamera != null) {playerFixCamera.UnFixCamera();}
+        if (playerFixCamera != null)
+        {
+            playerFixCamera.UnFixCamera();
+        }
 
-        // Object_FixCamera.UnFixCamera와 같은 개념
+
         if (sceneUI != null)
         {
-            // 중앙 UI 커서 다시 표시
             sceneUI.SetActiveCursor(true);
-            // 실제 마우스를 다시 FPS 상태로
             sceneUI.LockPointer();
         }
 
@@ -143,58 +169,94 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
     }
 
 
-    // 자물쇠 정답 검사
-    public void CheckNumberLock()
-    {
-        /*
-         * NumberLockManager가 생겼으므로
-         * 추후 이 역할은 NumberLockManager로 이동 가능.
-         *
-         * 정답 : 3 - 4 - 1 - 5 - 2
-         */
-    }
-
+    // =============================================
     // 자물쇠 해결 완료
-    // 자물쇠 해결 완료
-public void CompleteNumberLock()
-{
-    if (isNumberLockSolved)    return;
-    isNumberLockSolved = true;
+    // NumberLock 쪽에서 호출
+    // =============================================
 
-    Debug.Log("[BrokenLeg] 자물쇠 해결 완료");
-
-    if (openTheGateLock != null)
+    public void CompleteNumberLock()
     {
-        openTheGateLock.OpenLock();
+        if (isNumberLockSolved)
+            return;
+
+
+        isNumberLockSolved = true;
+
+
+        Debug.Log(
+            "[BrokenLeg] 자물쇠 해결 완료"
+        );
+
+
+        // 울타리 / 문 열기
+        if (openTheGateLock != null)
+        {
+            openTheGateLock.OpenLock();
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[BrokenLeg] OpenTheGateLock이 연결되지 않았습니다."
+            );
+        }
+
+
+        ExitNumberLock();
     }
-    else
+
+
+    // =============================================
+    // 수리용 다리 획득 여부 확인
+    // =============================================
+
+    private void CheckRepairedLeg()
     {
-        Debug.LogWarning("[BrokenLeg] OpenTheGateLock이 연결되지 않았습니다.");
+        // 이미 획득했다고 보고했으면 끝
+        if (isRepairedLegFound)
+            return;
+
+
+        if (playerGrab == null)
+            return;
+
+
+        // 현재 플레이어가 들고 있는 아이템 확인
+        if (!playerGrab.hasKey(repairedLegItemKey))
+            return;
+
+
+        CompleteFindRepairedLeg();
     }
 
 
-    ExitNumberLock();
+    // =============================================
+    // 수리용 다리 획득 완료
+    // =============================================
 
-    UnlockHorseArea();
-}
-
-    // 목마 구역 해제
-    private void UnlockHorseArea()
+    private void CompleteFindRepairedLeg()
     {
-        /*
-         * TODO
-         *
-         * 울타리 자물쇠 해제
-         * 울타리 Open
-         */
-    }
+        if (isRepairedLegFound)
+            return;
 
 
-    public void CompleteLegChange()
-    {
+        isRepairedLegFound = true;
+
+
+        Debug.Log(
+            "[BrokenLeg] 수리용 인형 다리 획득 완료"
+        );
+
+
+        // DollScene_GameManager에 보고
         if (gameManager != null)
         {
             gameManager.CompleteBrokenLeg();
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[BrokenLeg] DollScene_GameManager가 없습니다."
+            );
         }
     }
 }
