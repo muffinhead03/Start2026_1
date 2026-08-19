@@ -3,7 +3,7 @@
     "name": "EX_CharacterController_InputSystem",
     "maps": [
         {
-            "name": "PC",
+            "name": "PC_Player",
             "id": "bef31bb2-d95b-4679-9ce5-e62997e8ea53",
             "actions": [
                 {
@@ -61,63 +61,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Settings",
-                    "type": "Button",
-                    "id": "ac30f32c-db28-439b-a26d-21fa6c857df9",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ControllLightLow",
-                    "type": "Button",
-                    "id": "00a4ff75-f0be-46b2-acba-eb10ba43c845",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ControllLightHigh",
-                    "type": "Button",
-                    "id": "94811e31-cae3-4940-a118-338d5c5f2c60",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Click",
                     "type": "Button",
                     "id": "5c32b843-862d-4368-883c-99838f7d358d",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "InventoryToggleAction",
-                    "type": "Button",
-                    "id": "d47585d3-cd8c-4413-b09a-f4fd639e624a",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "InventoryCloseAction",
-                    "type": "Button",
-                    "id": "7adf8912-d6e1-411d-9ab3-80272821f867",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "InventoryConfrimAction",
-                    "type": "Button",
-                    "id": "40c9d5f0-b294-40fd-9fea-d55171be62c0",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -303,39 +249,6 @@
                 },
                 {
                     "name": "",
-                    "id": "dfedccca-d24e-4e71-9c4d-0ca7add65dba",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Settings",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "69d3b8df-e4bb-4c86-823d-68e3dc8beb4d",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ControllLightLow",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "04efffd6-e807-4440-838b-7945fb6b0663",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ControllLightHigh",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "700164ae-dfd7-4210-91ca-5113e7e6882c",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
@@ -344,10 +257,54 @@
                     "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "PC_UI",
+            "id": "b0a42d3a-4a64-4a59-afca-b6341bf69a62",
+            "actions": [
+                {
+                    "name": "InventoryToggleAction",
+                    "type": "Button",
+                    "id": "2c86c644-84ff-4592-a5f5-42d3d2a326e1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
+                    "name": "Settings",
+                    "type": "Button",
+                    "id": "a958519b-615f-4da0-818f-360b739b9fbe",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InventoryConfrimAction",
+                    "type": "Button",
+                    "id": "382ba4f9-17ec-4ad1-bb3b-2d9ce2b47393",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InventoryCloseAction",
+                    "type": "Button",
+                    "id": "509f7f6c-0b0c-4fae-8506-2b73b85eb2d6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
                     "name": "",
-                    "id": "375bf5b7-7ae2-47fb-b39c-0c3dd3e96a83",
+                    "id": "b4c6f02c-5d9b-474c-8bf0-0087a9386f64",
                     "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
@@ -358,23 +315,34 @@
                 },
                 {
                     "name": "",
-                    "id": "4b99fa73-0c64-4a6b-b151-243e2380176b",
-                    "path": "<Keyboard>/escape",
+                    "id": "a8180360-4122-4a51-9009-c971d81162fb",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "InventoryCloseAction",
+                    "action": "Settings",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "10fbabf3-84c7-43d9-936b-5856a00d2b7c",
+                    "id": "99be5f27-819e-44f3-8f08-ea92a2d84472",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "InventoryConfrimAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "27f195cc-eeab-407b-8e7a-f78c74975542",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryCloseAction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

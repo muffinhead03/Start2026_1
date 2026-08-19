@@ -18,11 +18,14 @@ public class Scene_UI_Manager : MonoBehaviour
     [Header("텍스트")]
     public TextMeshProUGUI[] texts;
 
-    bool cursor_id;
+    GameManager gameManager;
 
-    void Start()
+    //bool cursor_id;
+
+    private void OnEnable()
     {
-        cursor_id = false;
+        LockPointer();
+        gameManager = GameManager.instance;
     }
 
     public void SetActivePanel(int id, bool active)
@@ -35,10 +38,9 @@ public class Scene_UI_Manager : MonoBehaviour
         cursor.SetActive(active);
     }
 
-    public void SwitchCursor()
+    public void SwitchCursor(bool on)
     {
-        cursor_id = !cursor_id;
-        if (cursor_id) cursor.GetComponent<Image>().sprite = cursor_imgs[1];
+        if (on) cursor.GetComponent<Image>().sprite = cursor_imgs[1];
         else cursor.GetComponent<Image>().sprite = cursor_imgs[0];
     }
 

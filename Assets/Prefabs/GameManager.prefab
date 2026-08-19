@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3648845011631416630
+--- !u!1 &2220374716881153873
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2885131027100684057}
-  - component: {fileID: 4082912021310373487}
+  - component: {fileID: 8244886979469879648}
+  - component: {fileID: 6061743324933788037}
   m_Layer: 0
-  m_Name: Scene_UI_Manager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2885131027100684057
+--- !u!4 &8244886979469879648
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3648845011631416630}
+  m_GameObject: {fileID: 2220374716881153873}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,25 +32,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4082912021310373487
+--- !u!114 &6061743324933788037
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3648845011631416630}
+  m_GameObject: {fileID: 2220374716881153873}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a1d2d49c8a921540bbe75619b4deeeb, type: 3}
+  m_Script: {fileID: 11500000, guid: ad30f88e7d7c2d047bfaf19a0ba61922, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Scene_UI_Manager
-  panels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  cursor: {fileID: 0}
-  cursor_imgs:
-  - {fileID: 21300000, guid: f4d9351c81249fb45848393d13112baf, type: 3}
-  - {fileID: 21300000, guid: 74bedf4001ee8854d9caeab295d94e6b, type: 3}
-  texts:
-  - {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  prefabs: []

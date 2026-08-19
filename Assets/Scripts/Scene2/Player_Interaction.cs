@@ -15,6 +15,8 @@ public class Player_Interaction : MonoBehaviour
     [Header("물건 잡기")]
     public Player_Grab grab;
 
+    private Scene_UI_Manager SceneUI;
+
     [Header("Inventory")]
     [SerializeField]
     private InventoryUIManager inventoryUIManager;
@@ -24,12 +26,14 @@ public class Player_Interaction : MonoBehaviour
     Event_On_Ray CurrentTarget;
     Event_On_Ray LastTarget;
 
-void Start()
-{
-    interact = InputSystem.actions.FindAction("Interact");
-    interact.performed += ctx => Interact();
-    CurrentTarget = null;
-}
+    void Start()
+    {
+        interact = InputSystem.actions.FindAction("Interact");
+        interact.performed += ctx => Interact();
+        CurrentTarget = null;
+
+        SceneUI = GameManager.instance.SceneUI;
+    }
 
     void Update()
     {
@@ -51,6 +55,7 @@ void Start()
 
                     CurrentTarget = Interactable;
                     CurrentTarget.OnRayEnter();
+                    SceneUI.SwitchCursor(true);
                 }
 
                 CurrentTarget.OnRayStay();
@@ -63,6 +68,7 @@ void Start()
                 {
                     CurrentTarget.OnRayExit();
                     CurrentTarget = null;
+                    SceneUI.SwitchCursor(false);
                 }
             }
         }
@@ -73,6 +79,7 @@ void Start()
             {
                 CurrentTarget.OnRayExit();
                 CurrentTarget = null;
+                SceneUI.SwitchCursor(false);
             }
         }
     }
