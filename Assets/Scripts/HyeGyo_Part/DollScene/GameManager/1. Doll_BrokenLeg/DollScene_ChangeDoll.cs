@@ -3,7 +3,29 @@ using UnityEngine;
 public class DollScene_ChangeDoll : MonoBehaviour
 {
     [Header("Doll Scene Game Manager")]
-    [SerializeField] private DollScene_GameManager gameManager;
+    [SerializeField]
+    private DollScene_GameManager gameManager;
+
+
+    // =========================================================
+    // 외부에서 상태 확인
+    // =========================================================
+
+    public bool IsBrokenLegFixed =>
+        gameManager != null &&
+        gameManager.IsBrokenLegChanged;
+
+    public bool IsBrokenArmFixed =>
+        gameManager != null &&
+        gameManager.IsBrokenArmChanged;
+
+    public bool IsSpringFixed =>
+        gameManager != null &&
+        gameManager.IsSpringFound;
+
+    public bool IsDollRepairCompleted =>
+        gameManager != null &&
+        gameManager.IsDollRepaired;
 
 
     private void Start()
@@ -13,70 +35,140 @@ public class DollScene_ChangeDoll : MonoBehaviour
             gameManager =
                 GetComponentInParent<DollScene_GameManager>();
         }
+
+
+        if (gameManager == null)
+        {
+            gameManager =
+                FindFirstObjectByType<DollScene_GameManager>();
+        }
+
+
+        if (gameManager == null)
+        {
+            Debug.LogError(
+                "[ChangeDoll] DollScene_GameManager를 찾을 수 없습니다.",
+                this
+            );
+        }
     }
 
 
-    /*
-     * =============================================
-     * TODO : 인형 수리
-     * =============================================
-     *
-     * 조건
-     *
-     * 1. 부러진 다리 교체 완료
-     * 2. 부러진 팔 교체 완료
-     * 3. 태엽 획득 완료
-     *
-     *
-     * 모든 조건 만족
-     *
-     * ↓
-     *
-     * 인형 수리 상호작용 활성화
-     *
-     * ↓
-     *
-     * 인형 수리 완료
-     *
-     * ↓
-     *
-     * 태엽 부분 상호작용 가능
-     *
-     * ↓
-     *
-     * 태엽 돌리기
-     *
-     * ↓
-     *
-     * 인형 Animation
-     *
-     * 팔을 벌림
-     * 다리를 들어올림
-     * 날아가는 자세
-     *
-     * ↓
-     *
-     * 인형이 들고 있던 열쇠 Drop
-     *
-     * ↓
-     *
-     * Exit Key 획득
-     *
-     * ↓
-     *
-     * 상자 사용
-     *
-     * ↓
-     *
-     * Stage Clear
-     *
-     */
+    // =========================================================
+    // 부러진 다리 교체 완료
+    //
+    // DollMoveManager에서 호출
+    // =========================================================
 
+    public void ReportBrokenLegFixed()
+    {
+        if (gameManager == null)
+            return;
+
+
+        gameManager.CompleteBrokenLeg();
+
+
+        Debug.Log(
+            "[ChangeDoll] 다리 교체 완료 → GameManager 전달"
+        );
+
+
+        CheckRepairComplete();
+    }
+
+
+    // =========================================================
+    // 부러진 팔 교체 완료
+    // =========================================================
+
+    public void ReportBrokenArmFixed()
+    {
+        if (gameManager == null)
+            return;
+
+
+        gameManager.CompleteBrokenArm();
+
+
+        Debug.Log(
+            "[ChangeDoll] 팔 교체 완료 → GameManager 전달"
+        );
+
+
+        CheckRepairComplete();
+    }
+
+
+    // =========================================================
+    // 태엽 고정 완료
+    // =========================================================
+
+    public void ReportSpringFixed()
+    {
+        if (gameManager == null)
+            return;
+
+
+        /*
+         * 현재 GameManager에서는
+         * isSpringFound라는 이름을 사용하고 있으므로
+         * 기존 CompleteFindSpring()을 그대로 사용합니다.
+         *
+         * 지금 게임 흐름에서는
+         * "태엽 설치까지 완료" 상태로 사용합니다.
+         */
+        gameManager.CompleteFindSpring();
+
+
+        Debug.Log(
+            "[ChangeDoll] 태엽 고정 완료 → GameManager 전달"
+        );
+
+
+        CheckRepairComplete();
+    }
+
+
+    // =========================================================
+    // 세 부품 완료 검사
+    // =========================================================
+
+    private void CheckRepairComplete()
+    {
+        if (gameManager == null)
+            return;
+
+
+        if (!gameManager.CanRepairDoll())
+        {
+            Debug.Log(
+                "[ChangeDoll] 아직 인형 수리 조건이 부족합니다."
+            );
+
+            return;
+        }
+
+
+        RepairDoll();
+    }
+
+
+    // =========================================================
+    // 인형 전체 수리 완료
+    // =========================================================
 
     public void RepairDoll()
     {
         if (gameManager == null)
             return;
+
+
+        if (gameManager.IsDollRepaired)
+        {
+            return;
+        }
+
 
         if (!gameManager.CanRepairDoll())
         {
@@ -87,31 +179,37 @@ public class DollScene_ChangeDoll : MonoBehaviour
             return;
         }
 
+
         gameManager.CompleteDollRepair();
 
 
+        Debug.Log(
+            "[ChangeDoll] 인형 전체 수리 완료 → GameManager 저장"
+        );
+
+
         /*
+         * =====================================================
          * TODO
          *
-         * Broken Doll Model 변경
-         * Fixed Doll Model 활성화
+         * 이후 DollMoveManager의
+         * 인형 자세 복구 연출과 연결할 예정
          *
-         * 태엽 Interaction 활성화
+         * =====================================================
          */
     }
 
 
+    // =========================================================
+    // 현재는 DollFixedCheckManager가 Key를 담당
+    // =========================================================
+
     public void DropExitKey()
     {
         /*
-         * TODO
+         * Key 낙하는 DollFixedCheckManager에서 담당합니다.
          *
-         * 인형 Animation 종료 시
-         *
-         * ExitKey Parent 해제
-         * Rigidbody 활성화
-         *
-         * 열쇠가 바닥에 떨어지도록 처리
+         * 이 함수는 기존 연결 호환성을 위해 남겨둡니다.
          */
     }
 }
