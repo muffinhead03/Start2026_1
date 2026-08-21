@@ -2,14 +2,31 @@ using UnityEngine;
 
 public class DollMoveManager : MonoBehaviour
 {
+    // =========================================================
+    // Player
+    // =========================================================
+
     [Header("Player")]
     [SerializeField]
     private Player_Grab playerGrab;
 
 
+    // =========================================================
+    // Change Doll
+    // =========================================================
+
     [Header("Change Doll")]
     [SerializeField]
     private DollScene_ChangeDoll changeDoll;
+
+
+    // =========================================================
+    // Key Drop Manager
+    // =========================================================
+
+    [Header("Key Drop Manager")]
+    [SerializeField]
+    private DollKeyDropManager keyDropManager;
 
 
     // =========================================================
@@ -55,6 +72,13 @@ public class DollMoveManager : MonoBehaviour
 
 
     // =========================================================
+    // State
+    // =========================================================
+
+    private bool repairCompletedSent = false;
+
+
+    // =========================================================
     // Start
     // =========================================================
 
@@ -72,11 +96,23 @@ public class DollMoveManager : MonoBehaviour
             changeDoll =
                 FindFirstObjectByType<DollScene_ChangeDoll>();
         }
+
+
+        if (keyDropManager == null)
+        {
+            keyDropManager =
+                FindFirstObjectByType<DollKeyDropManager>();
+        }
+
+
+        Debug.Log(
+            "[DollMove] DollMoveManager 초기화 완료"
+        );
     }
 
 
     // =========================================================
-    // 다리
+    // 다리 교체
     // =========================================================
 
     public void FixBrokenLeg()
@@ -88,6 +124,7 @@ public class DollMoveManager : MonoBehaviour
         }
 
 
+        // 이미 수리됨
         if (changeDoll.IsBrokenLegFixed)
         {
             Debug.Log(
@@ -98,6 +135,7 @@ public class DollMoveManager : MonoBehaviour
         }
 
 
+        // 필요한 다리를 들고 있는지 확인
         if (!playerGrab.hasKey(legItemName))
         {
             Debug.Log(
@@ -112,24 +150,29 @@ public class DollMoveManager : MonoBehaviour
         playerGrab.UseKey();
 
 
-        // 인형 내부 정상 다리 활성화
+        // 인형 몸에 붙어있는 정상 다리 활성화
         if (fixedLegObject != null)
         {
             fixedLegObject.SetActive(true);
         }
 
 
+        // ChangeDoll → GameManager에 완료 전달
         changeDoll.ReportBrokenLegFixed();
 
 
         Debug.Log(
             "[DollMove] 다리 교체 완료"
         );
+
+
+        // 전체 수리 상태 확인
+        CheckAllRepairCompleted();
     }
 
 
     // =========================================================
-    // 팔
+    // 팔 교체
     // =========================================================
 
     public void FixBrokenArm()
@@ -176,11 +219,14 @@ public class DollMoveManager : MonoBehaviour
         Debug.Log(
             "[DollMove] 팔 교체 완료"
         );
+
+
+        CheckAllRepairCompleted();
     }
 
 
     // =========================================================
-    // 태엽
+    // 태엽 설치
     // =========================================================
 
     public void FixSpring()
@@ -227,5 +273,83 @@ public class DollMoveManager : MonoBehaviour
         Debug.Log(
             "[DollMove] 태엽 설치 완료"
         );
+
+
+        CheckAllRepairCompleted();
+    }
+
+
+    // =========================================================
+    // 전체 수리 완료 체크
+    //
+    // 다리 + 팔 + 태엽
+    // 모두 완료되면 KeyDropManager에게 전달
+    // =========================================================
+
+    private void CheckAllRepairCompleted()
+    {
+        if (changeDoll == null)
+        {
+            return;
+        }
+
+
+        bool allCompleted =
+            changeDoll.IsBrokenLegFixed &&
+            changeDoll.IsBrokenArmFixed &&
+            changeDoll.IsSpringFixed;
+
+
+        Debug.Log(
+            $"[DollMove] 전체 수리 상태 체크 : {allCompleted}"
+        );
+
+
+        if (!allCompleted)
+        {
+            return;
+        }
+
+
+        // 중복 전달 방지
+        if (repairCompletedSent)
+        {
+            return;
+        }
+
+
+        repairCompletedSent =
+            true;
+
+
+        Debug.Log(
+            "[DollMove] 모든 부품 수리 완료 → KeyDropManager 전달"
+        );
+
+
+        // -----------------------------------------------------
+        // GameManager에도 인형 수리 완료 상태 저장
+        // -----------------------------------------------------
+
+        changeDoll.RepairDoll();
+
+
+        // -----------------------------------------------------
+        // Pose 복구 + Key Drop 시퀀스 시작
+        // -----------------------------------------------------
+
+        if (keyDropManager != null)
+        {
+            keyDropManager.SetRepairCompleted(
+                true
+            );
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[DollMove] DollKeyDropManager가 연결되지 않았습니다.",
+                this
+            );
+        }
     }
 }

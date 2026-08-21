@@ -8,7 +8,7 @@ public class DollScene_ChangeDoll : MonoBehaviour
 
 
     // =========================================================
-    // 외부에서 상태 확인
+    // 외부 상태 확인
     // =========================================================
 
     public bool IsBrokenLegFixed =>
@@ -55,9 +55,7 @@ public class DollScene_ChangeDoll : MonoBehaviour
 
 
     // =========================================================
-    // 부러진 다리 교체 완료
-    //
-    // DollMoveManager에서 호출
+    // 다리 교체 완료
     // =========================================================
 
     public void ReportBrokenLegFixed()
@@ -79,7 +77,7 @@ public class DollScene_ChangeDoll : MonoBehaviour
 
 
     // =========================================================
-    // 부러진 팔 교체 완료
+    // 팔 교체 완료
     // =========================================================
 
     public void ReportBrokenArmFixed()
@@ -101,7 +99,7 @@ public class DollScene_ChangeDoll : MonoBehaviour
 
 
     // =========================================================
-    // 태엽 고정 완료
+    // 태엽 설치 완료
     // =========================================================
 
     public void ReportSpringFixed()
@@ -110,14 +108,6 @@ public class DollScene_ChangeDoll : MonoBehaviour
             return;
 
 
-        /*
-         * 현재 GameManager에서는
-         * isSpringFound라는 이름을 사용하고 있으므로
-         * 기존 CompleteFindSpring()을 그대로 사용합니다.
-         *
-         * 지금 게임 흐름에서는
-         * "태엽 설치까지 완료" 상태로 사용합니다.
-         */
         gameManager.CompleteFindSpring();
 
 
@@ -131,7 +121,7 @@ public class DollScene_ChangeDoll : MonoBehaviour
 
 
     // =========================================================
-    // 세 부품 완료 검사
+    // 전체 수리 조건 확인
     // =========================================================
 
     private void CheckRepairComplete()
@@ -186,30 +176,43 @@ public class DollScene_ChangeDoll : MonoBehaviour
         Debug.Log(
             "[ChangeDoll] 인형 전체 수리 완료 → GameManager 저장"
         );
-
-
-        /*
-         * =====================================================
-         * TODO
-         *
-         * 이후 DollMoveManager의
-         * 인형 자세 복구 연출과 연결할 예정
-         *
-         * =====================================================
-         */
     }
 
 
     // =========================================================
-    // 현재는 DollFixedCheckManager가 Key를 담당
+    // Exit Key 낙하 완료
+    //
+    // DollKeyDropManager에서 호출
+    // =========================================================
+
+    public void ReportExitKeyDropped()
+    {
+        if (gameManager == null)
+        {
+            Debug.LogWarning(
+                "[ChangeDoll] GameManager가 없어 Key Drop 상태를 전달할 수 없습니다.",
+                this
+            );
+
+            return;
+        }
+
+
+        gameManager.CompleteExitKeyDrop();
+
+
+        Debug.Log(
+            "[ChangeDoll] Exit Key 낙하 완료 → GameManager 전달"
+        );
+    }
+
+
+    // =========================================================
+    // 기존 UnityEvent 연결 호환용
     // =========================================================
 
     public void DropExitKey()
     {
-        /*
-         * Key 낙하는 DollFixedCheckManager에서 담당합니다.
-         *
-         * 이 함수는 기존 연결 호환성을 위해 남겨둡니다.
-         */
+        ReportExitKeyDropped();
     }
 }

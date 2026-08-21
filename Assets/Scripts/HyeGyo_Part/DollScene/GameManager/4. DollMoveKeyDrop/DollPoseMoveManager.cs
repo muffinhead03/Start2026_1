@@ -1,5 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using System;
+using System.Collections;
+using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -80,6 +83,8 @@ public class DollPoseMoveManager : MonoBehaviour
     private bool isMoving = false;
 
     public bool IsMoving => isMoving;
+
+    public event System.Action OnFinalPoseCompleted;
 
 
     // =========================================================
@@ -477,13 +482,20 @@ public class DollPoseMoveManager : MonoBehaviour
         }
 
 
-        isMoving = false;
+isMoving = false;
+
+Debug.Log(
+    "[DollPose] Final Pose 이동 완료",
+    this
+);
 
 
-        Debug.Log(
-            "[DollPose] Final Pose 이동 완료",
-            this
-        );
+// =========================================================
+// Final Pose 이동 완료 알림
+// DollKeyDropManager가 이 이벤트를 받음
+// =========================================================
+
+OnFinalPoseCompleted?.Invoke();
     }
 
 
