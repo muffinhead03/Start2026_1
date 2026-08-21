@@ -9,10 +9,14 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
     [SerializeField] private bool isCheckingNumberLock = false;
     [SerializeField] private bool isNumberLockSolved = false;
 
+    private bool previousSolvedState;
+
 
     [Header("Doll Scene Game Manager")]
     [SerializeField] private DollScene_GameManager gameManager;
 
+    [Header("Gate Lock")]
+    [SerializeField] private OpenTheGateLock openTheGateLock;
 
     [Header("Player Camera")]
     [SerializeField] private Player_FixCamera playerFixCamera;
@@ -24,6 +28,7 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
 
     private void Start()
     {
+        previousSolvedState = isNumberLockSolved;
         if (gameManager == null)
         {
             gameManager =
@@ -31,6 +36,23 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        // false → true로 변한 순간만 실행
+        if (!previousSolvedState && isNumberLockSolved)
+        {
+            if (openTheGateLock != null)
+            {
+                openTheGateLock.OpenLock();
+            }
+            else
+            {
+                Debug.LogWarning("[BrokenLeg] OpenTheGateLock이 연결되지 않았습니다.");
+            }
+        }
+
+        previousSolvedState = isNumberLockSolved;
+    }
 
     // ================================================
     // 자물쇠 상호작용
@@ -133,24 +155,28 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
     }
 
     // 자물쇠 해결 완료
-    public void CompleteNumberLock()
+    // 자물쇠 해결 완료
+public void CompleteNumberLock()
+{
+    if (isNumberLockSolved)    return;
+    isNumberLockSolved = true;
+
+    Debug.Log("[BrokenLeg] 자물쇠 해결 완료");
+
+    if (openTheGateLock != null)
     {
-        if (isNumberLockSolved)
-            return;
-
-
-        isNumberLockSolved = true;
-
-
-        Debug.Log(
-            "[BrokenLeg] 자물쇠 해결 완료"
-        );
-
-
-        ExitNumberLock();
-
-        UnlockHorseArea();
+        openTheGateLock.OpenLock();
     }
+    else
+    {
+        Debug.LogWarning("[BrokenLeg] OpenTheGateLock이 연결되지 않았습니다.");
+    }
+
+
+    ExitNumberLock();
+
+    UnlockHorseArea();
+}
 
     // 목마 구역 해제
     private void UnlockHorseArea()
