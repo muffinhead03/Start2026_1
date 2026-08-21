@@ -15,7 +15,8 @@ public class Player_Interaction : MonoBehaviour
     [Header("물건 잡기")]
     public Player_Grab grab;
 
-    private Scene_UI_Manager SceneUI;
+    [Header("UI")]
+    public Scene_UI_Manager SceneUI;
 
     [Header("Inventory")]
     [SerializeField]
@@ -31,8 +32,6 @@ public class Player_Interaction : MonoBehaviour
         interact = InputSystem.actions.FindAction("Interact");
         interact.performed += ctx => Interact();
         CurrentTarget = null;
-
-        SceneUI = GameManager.instance.SceneUI;
     }
 
     void Update()

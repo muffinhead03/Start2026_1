@@ -11,7 +11,7 @@ public class Player_Move : MonoBehaviour
 
     [Header("Camera")]
     public Transform CameraPivot;
-    public float mouseSensitivity = 0.1f;
+    float mouseSensitivity;
     float yaw;
     float pitch;
 
@@ -87,7 +87,6 @@ public class Player_Move : MonoBehaviour
     private void OnEnable()
     {
         player_input.Enable();
-        GameManager.instance.OpenClosePanel += SwitchMoveLock;
     }
 
     private void OnDisable()
@@ -112,6 +111,7 @@ public class Player_Move : MonoBehaviour
 
     void Look()
     {
+        mouseSensitivity = Setting.mouseSensitivity;
         yaw += LookInput.x * mouseSensitivity;
         pitch -= LookInput.y * mouseSensitivity;
 

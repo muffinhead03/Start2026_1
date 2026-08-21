@@ -9,6 +9,12 @@ public class Scene_UI_Manager : MonoBehaviour
     [Header("판넬")]
     public GameObject[] panels;
 
+    [Header("버튼")]
+    public GameObject[] buttons;
+
+    [Header("슬라이더")]
+    public Slider[] sliders;
+
     [Header("커서 판넬")]
     public GameObject cursor;
 
@@ -18,19 +24,22 @@ public class Scene_UI_Manager : MonoBehaviour
     [Header("텍스트")]
     public TextMeshProUGUI[] texts;
 
-    GameManager gameManager;
 
     //bool cursor_id;
 
     private void OnEnable()
     {
         LockPointer();
-        gameManager = GameManager.instance;
     }
 
     public void SetActivePanel(int id, bool active)
     {
         panels[id].SetActive(active);
+    }
+
+    public void SetActiveButton(int id, bool active)
+    {
+        buttons[id].SetActive(active);
     }
 
     public void SetActiveCursor(bool active)
@@ -59,5 +68,10 @@ public class Scene_UI_Manager : MonoBehaviour
     public void ChangeText(int id, string text)
     {
         texts[id].text = text;
+    }
+
+    public void SetSlider(int id, float value)
+    {
+        sliders[id].value = value;
     }
 }

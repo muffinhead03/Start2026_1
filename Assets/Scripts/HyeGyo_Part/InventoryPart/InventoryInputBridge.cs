@@ -8,12 +8,28 @@ public sealed class InventoryInputBridge : MonoBehaviour
     [SerializeField]
     private InventoryUIManager inventoryUIManager;
 
-    InputAction worldInteractAction;
 
-    InputAction inventoryToggleAction;
-    InputAction inventoryCloseAction;
-    InputAction inventoryConfirmAction;
-    InputAction inventoryScrollAction;
+    [Header("World Interact")]
+    [Tooltip(
+        "기존 물건 집기/상호작용 액션입니다. " +
+        "PC/Interact를 연결하세요."
+    )]
+    [SerializeField]
+    private InputActionReference worldInteractAction;
+
+
+    [Header("Input Actions")]
+    [SerializeField]
+    private InputActionReference inventoryToggleAction;
+
+    [SerializeField]
+    private InputActionReference inventoryCloseAction;
+
+    [SerializeField]
+    private InputActionReference inventoryConfirmAction;
+
+    [SerializeField]
+    private InputActionReference inventoryScrollAction;
 
 
     [Header("Debug")]
@@ -50,13 +66,6 @@ public sealed class InventoryInputBridge : MonoBehaviour
 
             enabled = false;
         }
-
-        worldInteractAction = InputSystem.actions.FindAction("Interact");
-
-        inventoryToggleAction = InputSystem.actions.FindAction("InventoryToggleAction");
-        inventoryCloseAction = InputSystem.actions.FindAction("InventoryCloseAction");
-        inventoryConfirmAction = InputSystem.actions.FindAction("InventoryConfrimAction");
-        inventoryScrollAction = InputSystem.actions.FindAction("InventoryScrollAction");
     }
 
 
@@ -153,7 +162,6 @@ public sealed class InventoryInputBridge : MonoBehaviour
         }
 
         inventoryUIManager.ToggleInventory();
-        GameManager.instance.OpenCloseInventory();
 
         /*
          * Toggle 직후 바로 Interact 상태 변경.
