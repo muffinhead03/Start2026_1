@@ -16,6 +16,7 @@ public class Object_Inspecatable : MonoBehaviour
     public float inspectDistance = 1f;
 
     [Header("UI Settings")]
+    [TextArea(3, 8)]
     public string disc;
     public Scene_UI_Manager SceneUI;
 
