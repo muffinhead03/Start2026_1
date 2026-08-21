@@ -34879,33 +34879,9 @@ PrefabInstance:
       propertyPath: objectSelected
       value: 
       objectReference: {fileID: 957891619}
-    - target: {fileID: 3259761752432437621, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
-      propertyPath: worldInteractAction
-      value: 
-      objectReference: {fileID: 6205925344656455937, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
-    - target: {fileID: 3259761752432437621, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
-      propertyPath: inventoryCloseAction
-      value: 
-      objectReference: {fileID: -810672397248033433, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
-    - target: {fileID: 3259761752432437621, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
-      propertyPath: inventoryScrollAction
-      value: 
-      objectReference: {fileID: -2046958915744397592, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
-    - target: {fileID: 3259761752432437621, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
-      propertyPath: inventoryToggleAction
-      value: 
-      objectReference: {fileID: 3805975004992732290, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
-    - target: {fileID: 3259761752432437621, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
-      propertyPath: inventoryConfirmAction
-      value: 
-      objectReference: {fileID: 1974583845352551952, guid: 8ba933f998d30b24d800d07e4f184dee, type: 3}
     - target: {fileID: 3796058594434751798, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
       propertyPath: m_Name
       value: InventorySystem 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3796058594434751798, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7844463391572208574, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
       propertyPath: m_LocalPosition.x
@@ -52591,7 +52567,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2220374716881153873, guid: f201e0a5be81f1c488c8d3f41abad4a5, type: 3}
       propertyPath: m_Name
-      value: GameManager
+      value: GameSetting
       objectReference: {fileID: 0}
     - target: {fileID: 2220374716881153873, guid: f201e0a5be81f1c488c8d3f41abad4a5, type: 3}
       propertyPath: m_IsActive
@@ -56378,6 +56354,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Object_FixCamera
   pivot: {fileID: 5081023739371311771}
   targetPos: {x: 0, y: 0, z: -0.4}
+  useCameraPoint: 0
+  cameraPoint: {fileID: 0}
   Fixed:
     m_PersistentCalls:
       m_Calls:

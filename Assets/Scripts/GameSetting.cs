@@ -28,6 +28,9 @@ public class GameSetting : MonoBehaviour
     [Header("UI")]
     public Scene_UI_Manager SceneUI;
 
+    [Header("LockPointer")]
+    public bool lockPointer;
+
     private InputActionMap ui_input;
     private InputAction settingsAction;
     private bool isPanelOpen;
@@ -67,6 +70,27 @@ public class GameSetting : MonoBehaviour
         Setting.language = 0;
     }
 
+    public void OpenSetting()
+    {
+        isPanelOpen = true;
+        SceneUI.SetActivePanel(0, isPanelOpen);
+
+        ShowSettingPanel();
+        if(lockPointer) SceneUI.UnlockPointer();
+        SceneUI.SetActiveCursor(false);
+        player?.SetMoveLock(true);
+    }
+
+    public void CloseSetting()
+    {
+        isPanelOpen = false;
+        SceneUI.SetActivePanel(0, isPanelOpen);
+
+        if(lockPointer) SceneUI.LockPointer();
+        SceneUI.SetActiveCursor(true);
+        player?.SetMoveLock(false);
+    }
+
     private void OpenCloseSettings(InputAction.CallbackContext context)
     {
         isPanelOpen = !isPanelOpen;
@@ -75,13 +99,13 @@ public class GameSetting : MonoBehaviour
         if (isPanelOpen)
         {
             ShowSettingPanel();
-            SceneUI.UnlockPointer();
+            if(lockPointer) SceneUI.UnlockPointer();
             SceneUI.SetActiveCursor(false);
             player?.SetMoveLock(true);
         }
         else
         {
-            SceneUI.LockPointer();
+            if(lockPointer) SceneUI.LockPointer();
             SceneUI.SetActiveCursor(true);
             player?.SetMoveLock(false);
         }

@@ -24,12 +24,15 @@ public class Scene_UI_Manager : MonoBehaviour
     [Header("텍스트")]
     public TextMeshProUGUI[] texts;
 
+    [Header("포인터 잠금")]
+    public bool pointerInitState;
+
 
     //bool cursor_id;
 
     private void OnEnable()
     {
-        LockPointer();
+        if(pointerInitState) LockPointer();
     }
 
     public void SetActivePanel(int id, bool active)
@@ -44,7 +47,7 @@ public class Scene_UI_Manager : MonoBehaviour
 
     public void SetActiveCursor(bool active)
     {
-        cursor.SetActive(active);
+        if(cursor!=null) cursor.SetActive(active);
     }
 
     public void SwitchCursor(bool on)
