@@ -8,6 +8,10 @@ public class DollScene_GameManager : MonoBehaviour
     [SerializeField] private bool isSpringFound = false;
     [SerializeField] private bool isDollRepaired = false;
 
+    [Header("곰 인형 / 동전")]
+    [SerializeField] private bool isCoinFound = false;
+    [SerializeField] private bool isCoinOwned = false;
+
     [Header("게임 클리어")]
     [SerializeField] private bool isStageCleared = false;
 
@@ -21,6 +25,9 @@ public class DollScene_GameManager : MonoBehaviour
     public bool IsSpringFound => isSpringFound;
     public bool IsDollRepaired => isDollRepaired;
     public bool IsStageCleared => isStageCleared;
+
+    public bool IsCoinFound => isCoinFound;
+    public bool IsCoinOwned => isCoinOwned;
 
 
     // ================================
@@ -75,6 +82,57 @@ public class DollScene_GameManager : MonoBehaviour
 
 
     // ================================
+    // 곰 인형에서 동전 획득
+    // ================================
+
+    public void CompleteFindCoin()
+    {
+        if (isCoinFound)
+            return;
+
+        isCoinFound = true;
+        isCoinOwned = true;
+
+        Debug.Log("[DollScene] 동전 획득 완료");
+    }
+
+
+    // ================================
+    // 동전 사용
+    // ================================
+
+    public bool UseCoin()
+    {
+        if (!isCoinOwned)
+        {
+            Debug.LogWarning("[DollScene] 사용할 동전이 없습니다.");
+            return false;
+        }
+
+        isCoinOwned = false;
+
+        Debug.Log("[DollScene] 동전 사용");
+
+        return true;
+    }
+
+
+    // ================================
+    // 동전 반환
+    // ================================
+
+    public void ReturnCoin()
+    {
+        if (!isCoinFound)
+            return;
+
+        isCoinOwned = true;
+
+        Debug.Log("[DollScene] 동전 반환");
+    }
+
+
+    // ================================
     // 인형 수리 가능 여부
     // ================================
 
@@ -90,12 +148,9 @@ public class DollScene_GameManager : MonoBehaviour
     {
         if (CanRepairDoll())
         {
-            Debug.Log("[DollScene] 모든 부품 획득 완료 - 인형 수리 가능");
-
-            // TODO:
-            // ChangeDoll 오브젝트에게
-            // "이제 인형을 수리할 수 있다"는 상태를 전달하거나
-            // 상호작용을 활성화할 예정
+            Debug.Log(
+                "[DollScene] 모든 부품 획득 완료 - 인형 수리 가능"
+            );
         }
     }
 
@@ -121,10 +176,6 @@ public class DollScene_GameManager : MonoBehaviour
         isDollRepaired = true;
 
         Debug.Log("[DollScene] 인형 수리 완료");
-
-        // TODO:
-        // 인형 태엽 상호작용 활성화
-        // 최종 열쇠 획득 이벤트 활성화
     }
 
 
@@ -140,11 +191,5 @@ public class DollScene_GameManager : MonoBehaviour
         isStageCleared = true;
 
         Debug.Log("[DollScene] Stage Clear");
-
-        // TODO:
-        // 플레이어 입력 제한
-        // 클리어 연출
-        // 클리어 UI
-        // 다음 Scene 이동
     }
 }

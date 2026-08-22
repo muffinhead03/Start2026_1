@@ -7,6 +7,10 @@ public class Object_FixCamera : MonoBehaviour
     public Transform pivot;
     public Vector3 targetPos;
 
+    [Header("Optional Camera Point")]
+    public bool useCameraPoint;
+    public Transform cameraPoint;
+
     [Header("Fix Event")]
     public UnityEvent Fixed;
     public UnityEvent UnFixed;
@@ -29,7 +33,16 @@ public class Object_FixCamera : MonoBehaviour
         SceneUI.SetActiveCursor(false);
         Fixed?.Invoke();
 
-        player.FixCamera(pivot.position + targetPos, targetRot, this.gameObject);
+    if (useCameraPoint && cameraPoint != null)
+            {
+                // 직접 지정한 Camera Point 사용
+                player.FixCamera(cameraPoint.position,cameraPoint.forward,this.gameObject);
+            }
+    else
+            {
+                // 기존 Pivot + TargetPos 방식
+                player.FixCamera(pivot.position + targetPos,targetRot,this.gameObject);
+            }
     }
 
     public void UnFixCamera()
