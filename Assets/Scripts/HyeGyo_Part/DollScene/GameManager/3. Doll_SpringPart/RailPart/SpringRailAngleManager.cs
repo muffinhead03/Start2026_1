@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+#endif
+
 
 public class SpringRailAngleManager : MonoBehaviour
 {
@@ -23,20 +28,50 @@ public class SpringRailAngleManager : MonoBehaviour
         public SpringRailColor color;
 
 
-        [Header("초기 각도")]
-        [Tooltip("게임 시작 시 적용할 Z축 각도")]
-        public float initialAngle;
+        // =====================================================
+        // 초기 Rotation
+        // =====================================================
+
+        [Header("초기 Rotation")]
+        [Tooltip(
+            "게임 시작 시 적용할 Local Rotation입니다.\n" +
+            "X / Y / Z 값을 직접 입력하세요."
+        )]
+        public Vector3 initialRotation;
 
 
-        [Header("정답 각도")]
-        [Tooltip("이 선로가 정답일 때의 Z축 각도")]
-        public float correctAngle;
+        // =====================================================
+        // 정답 Rotation
+        // =====================================================
+
+        [Header("정답 Rotation")]
+        [Tooltip(
+            "정답 상태의 Local Rotation입니다.\n" +
+            "컴포넌트의 ⋮ 메뉴에서 현재 Rotation을 자동 저장할 수 있습니다."
+        )]
+        public Vector3 correctRotation;
 
 
-        [Header("버튼 1회 회전 각도")]
-        [Tooltip("예: -30 또는 +30")]
-        public float rotationStep = -30f;
+        // =====================================================
+        // 버튼 1회 회전량
+        // =====================================================
 
+        [Header("버튼 1회 회전량")]
+        [Tooltip(
+            "버튼 한 번 눌렀을 때 회전시킬 X / Y / Z 값입니다.\n" +
+            "예: Z축 시계방향 30도 = (0, 0, -30)"
+        )]
+        public Vector3 rotationStep =
+            new Vector3(
+                0f,
+                0f,
+                -30f
+            );
+
+
+        // =====================================================
+        // 현재 정답 여부
+        // =====================================================
 
         [HideInInspector]
         public bool isCorrect;
@@ -57,18 +92,24 @@ public class SpringRailAngleManager : MonoBehaviour
     // 정답 판정
     // =========================================================
 
-    [Header("각도 오차 허용 범위")]
+    [Header("정답 Rotation 허용 오차")]
+    [Tooltip(
+        "현재 Rotation과 정답 Rotation 사이의 전체 각도 차이입니다."
+    )]
     [SerializeField]
-    private float angleTolerance = 1f;
+    private float rotationTolerance = 1f;
 
 
     // =========================================================
     // 현재 상태
     // =========================================================
 
-    private bool isInteractionLocked = false;
+    private bool isInteractionLocked =
+        false;
 
-    private bool isRotationInProgress = false;
+
+    private bool isRotationInProgress =
+        false;
 
 
     // =========================================================
@@ -103,7 +144,9 @@ public class SpringRailAngleManager : MonoBehaviour
 
     private void Awake()
     {
-        ApplyInitialAngles();
+        // 게임 시작 시
+        // Inspector에 입력된 초기 Rotation 적용
+        ApplyInitialRotations();
     }
 
 
@@ -114,10 +157,13 @@ public class SpringRailAngleManager : MonoBehaviour
 
 
     // =========================================================
-    // 초기 각도 적용
+    // 초기 Rotation 적용
+    //
+    // Position / Scale은 건드리지 않음
+    // Rotation만 변경
     // =========================================================
 
-    private void ApplyInitialAngles()
+    private void ApplyInitialRotations()
     {
         if (rails == null)
         {
@@ -143,19 +189,160 @@ public class SpringRailAngleManager : MonoBehaviour
             }
 
 
-            Vector3 euler =
-                data.rail.localEulerAngles;
+            data.rail.localRotation =
+                Quaternion.Euler(
+                    data.initialRotation
+                );
+        }
+    }
 
 
-            euler.z =
-                NormalizeAngle(
-                    data.initialAngle
+    // =========================================================
+    // ⋮ 메뉴
+    //
+    // 입력한 Initial Rotation을
+    // 실제 선로에 적용
+    // =========================================================
+
+    [ContextMenu("입력한 초기 Rotation 적용")]
+    private void ApplyInitialRotationsFromMenu()
+    {
+        ApplyInitialRotations();
+
+
+        RefreshRailState();
+
+
+        Debug.Log(
+            "[SpringRail] 입력한 Initial Rotation을 적용했습니다."
+        );
+
+
+        MarkSceneDirty();
+    }
+
+
+    // =========================================================
+    // ⋮ 메뉴
+    //
+    // 현재 선로의 X / Y / Z Rotation 전체를
+    // Correct Rotation에 저장
+    // =========================================================
+
+    [ContextMenu("현재 Rotation을 정답 Rotation으로 저장")]
+    private void SaveCurrentRotationsAsCorrect()
+    {
+        if (rails == null)
+        {
+            return;
+        }
+
+
+        int savedCount =
+            0;
+
+
+        for (int i = 0; i < rails.Length; i++)
+        {
+            RailAngleData data =
+                rails[i];
+
+
+            if (data == null)
+            {
+                continue;
+            }
+
+
+            if (data.rail == null)
+            {
+                continue;
+            }
+
+
+            // 현재 Inspector에 표시되는
+            // Local Rotation X/Y/Z를 저장
+            data.correctRotation =
+                NormalizeEuler(
+                    data.rail.localEulerAngles
                 );
 
 
-            data.rail.localEulerAngles =
-                euler;
+            savedCount++;
         }
+
+
+        RefreshRailState();
+
+
+        Debug.Log(
+            "[SpringRail] 현재 Rotation을 정답으로 저장 완료. " +
+            "저장 개수 : " +
+            savedCount
+        );
+
+
+        MarkSceneDirty();
+    }
+
+
+    // =========================================================
+    // ⋮ 메뉴
+    //
+    // 현재 Rotation을 Initial Rotation으로 저장
+    //
+    // 필요할 때 편하게 사용
+    // =========================================================
+
+    [ContextMenu("현재 Rotation을 초기 Rotation으로 저장")]
+    private void SaveCurrentRotationsAsInitial()
+    {
+        if (rails == null)
+        {
+            return;
+        }
+
+
+        int savedCount =
+            0;
+
+
+        for (int i = 0; i < rails.Length; i++)
+        {
+            RailAngleData data =
+                rails[i];
+
+
+            if (data == null)
+            {
+                continue;
+            }
+
+
+            if (data.rail == null)
+            {
+                continue;
+            }
+
+
+            data.initialRotation =
+                NormalizeEuler(
+                    data.rail.localEulerAngles
+                );
+
+
+            savedCount++;
+        }
+
+
+        Debug.Log(
+            "[SpringRail] 현재 Rotation을 초기값으로 저장 완료. " +
+            "저장 개수 : " +
+            savedCount
+        );
+
+
+        MarkSceneDirty();
     }
 
 
@@ -185,28 +372,25 @@ public class SpringRailAngleManager : MonoBehaviour
 
     // =========================================================
     // 선로 회전 시작 요청
-    //
-    // SpringRailButtonMotion에서 사용
     // =========================================================
 
     public bool TryBeginRotation()
     {
-        // 기차 이동 중 등으로
-        // 퍼즐 전체 입력이 잠긴 상태
+        // 기차 이동 중
         if (isInteractionLocked)
         {
             return false;
         }
 
 
-        // 이미 다른 버튼의 선로가 회전 중
+        // 이미 다른 선로가 회전 중
         if (isRotationInProgress)
         {
             return false;
         }
 
 
-        // 이미 정답 완료
+        // 이미 퍼즐 정답
         if (IsAllRailsCorrect)
         {
             return false;
@@ -223,8 +407,6 @@ public class SpringRailAngleManager : MonoBehaviour
 
     // =========================================================
     // 선로 회전 종료
-    //
-    // 회전 Motion이 완전히 끝난 후 호출
     // =========================================================
 
     public void EndRotation()
@@ -239,16 +421,15 @@ public class SpringRailAngleManager : MonoBehaviour
             false;
 
 
-        // 회전이 끝난 순간에만
-        // 전체 정답 검사
+        // 회전 완료 후 정답 검사
         RefreshRailState();
     }
 
 
     // =========================================================
-    // 전체 선로 조작 잠금
+    // 선로 조작 잠금
     //
-    // 기차 이동 시작 직전에 호출
+    // 기차 이동 시작 시 사용
     // =========================================================
 
     public void LockInteraction()
@@ -265,8 +446,6 @@ public class SpringRailAngleManager : MonoBehaviour
 
     // =========================================================
     // 선로 조작 잠금 해제
-    //
-    // 테스트 / 실패 처리 등이 필요할 경우 사용
     // =========================================================
 
     public void UnlockInteraction()
@@ -308,7 +487,6 @@ public class SpringRailAngleManager : MonoBehaviour
                 rails[i];
 
 
-            // 데이터 자체가 없음
             if (data == null)
             {
                 allCorrect =
@@ -318,7 +496,6 @@ public class SpringRailAngleManager : MonoBehaviour
             }
 
 
-            // Transform 연결 안 됨
             if (data.rail == null)
             {
                 data.isCorrect =
@@ -332,33 +509,41 @@ public class SpringRailAngleManager : MonoBehaviour
             }
 
 
-            // 현재 각도
-            float currentAngle =
-                NormalizeAngle(
-                    data.rail.localEulerAngles.z
+            // =================================================
+            // 현재 Rotation
+            // =================================================
+
+            Quaternion currentRotation =
+                data.rail.localRotation;
+
+
+            // =================================================
+            // 정답 Rotation
+            // =================================================
+
+            Quaternion correctRotation =
+                Quaternion.Euler(
+                    data.correctRotation
                 );
 
 
-            // 정답 각도
-            float correctAngle =
-                NormalizeAngle(
-                    data.correctAngle
-                );
+            // =================================================
+            // 두 Rotation 사이의 실제 각도 차이
+            //
+            // Euler X/Y/Z를 각각 비교하는 것보다
+            // Quaternion.Angle이 훨씬 안전함
+            // =================================================
 
-
-            // 0 / 360 문제까지 처리해서
-            // 두 각도의 가장 짧은 차이 계산
             float difference =
-                Mathf.Abs(
-                    Mathf.DeltaAngle(
-                        currentAngle,
-                        correctAngle
-                    )
+                Quaternion.Angle(
+                    currentRotation,
+                    correctRotation
                 );
 
 
             data.isCorrect =
-                difference <= angleTolerance;
+                difference <=
+                rotationTolerance;
 
 
             if (!data.isCorrect)
@@ -376,7 +561,7 @@ public class SpringRailAngleManager : MonoBehaviour
 
 
     // =========================================================
-    // 전체 정답 상태 저장
+    // 전체 정답 상태 변경
     // =========================================================
 
     private void SetAllRailsCorrect(
@@ -384,7 +569,8 @@ public class SpringRailAngleManager : MonoBehaviour
     )
     {
         bool stateChanged =
-            IsAllRailsCorrect != value;
+            IsAllRailsCorrect !=
+            value;
 
 
         IsAllRailsCorrect =
@@ -403,7 +589,6 @@ public class SpringRailAngleManager : MonoBehaviour
         );
 
 
-        // 상태 변경을 다른 Manager에 전달
         OnRailStateChanged?.Invoke(
             IsAllRailsCorrect
         );
@@ -411,7 +596,7 @@ public class SpringRailAngleManager : MonoBehaviour
 
 
     // =========================================================
-    // 특정 선로 현재 정답 여부 확인
+    // 특정 선로 정답 여부
     // =========================================================
 
     public bool IsRailCorrect(
@@ -443,38 +628,97 @@ public class SpringRailAngleManager : MonoBehaviour
 
 
     // =========================================================
-    // 각도 0 ~ 360 정규화
+    // Euler 정리
+    //
+    // Unity의 0~360 값을 보기 편하게
+    // -180 ~ 180 범위로 변경
+    //
+    // 예:
+    // 330 → -30
+    // 270 → -90
     // =========================================================
 
-    private float NormalizeAngle(
-        float angle
+    private Vector3 NormalizeEuler(
+        Vector3 euler
     )
     {
-        return Mathf.Repeat(
-            angle,
-            360f
+        return new Vector3(
+            NormalizeSingleAngle(
+                euler.x
+            ),
+            NormalizeSingleAngle(
+                euler.y
+            ),
+            NormalizeSingleAngle(
+                euler.z
+            )
         );
     }
 
 
-    // =========================================================
-    // Inspector 검사
-    // =========================================================
-
-    private void OnValidate()
+    private float NormalizeSingleAngle(
+        float angle
+    )
     {
-        if (angleTolerance < 0f)
+        angle =
+            Mathf.Repeat(
+                angle + 180f,
+                360f
+            ) - 180f;
+
+
+        // -0 방지
+        if (Mathf.Abs(angle) < 0.001f)
         {
-            angleTolerance =
+            angle =
                 0f;
         }
 
 
-        if (rails != null &&
-            rails.Length != 12)
+        return angle;
+    }
+
+
+    // =========================================================
+    // Editor 변경 저장
+    // =========================================================
+
+    private void MarkSceneDirty()
+    {
+#if UNITY_EDITOR
+
+        if (Application.isPlaying)
         {
-            // 반드시 12개여야 실행이 막히는 것은 아니지만
-            // 현재 기획상 12개이므로 확인용
+            return;
+        }
+
+
+        EditorUtility.SetDirty(
+            this
+        );
+
+
+        if (gameObject.scene.IsValid())
+        {
+            EditorSceneManager.MarkSceneDirty(
+                gameObject.scene
+            );
+        }
+
+#endif
+    }
+
+
+    // =========================================================
+    // Inspector 값 검사
+    // =========================================================
+
+    private void OnValidate()
+    {
+        if (rotationTolerance < 0f)
+        {
+            rotationTolerance =
+                0f;
         }
     }
 }

@@ -2,74 +2,108 @@ using System.Collections;
 using UnityEngine;
 
 
-public class SpringRailButtonMotion : MonoBehaviour
+public class SpringRailRotationController : MonoBehaviour
 {
-    [Header("버튼 종류")]
-    [SerializeField]
-    private SpringRailColor railColor;
+    // =========================================================
+    // Manager
+    // =========================================================
 
+    [Header("선로 데이터 Manager")]
+    [SerializeField]
+    private SpringRailDataManager railDataManager;
+
+
+    [Header("선로 상태 Manager")]
+    [SerializeField]
+    private SpringRailStateManager railStateManager;
+
+
+    // =========================================================
+    // Motion
+    // =========================================================
 
     [Header("회전 시간")]
     [SerializeField]
     private float rotationDuration = 0.2f;
 
 
-    [Header("선로 상태 Manager")]
-    [SerializeField]
-    private SpringRailAngleManager railAngleManager;
-
-
-    private bool isRotating = false;
-
-
     // =========================================================
-    // 버튼 입력
+    // 버튼에서 호출
     // =========================================================
 
-    public void PressButton()
+    public void PressRed()
     {
-        if (isRotating)
+        RotateColor(
+            SpringRailColor.Red
+        );
+    }
+
+
+    public void PressYellow()
+    {
+        RotateColor(
+            SpringRailColor.Yellow
+        );
+    }
+
+
+    public void PressGreen()
+    {
+        RotateColor(
+            SpringRailColor.Green
+        );
+    }
+
+
+    // =========================================================
+    // 색깔 회전 요청
+    // =========================================================
+
+    public void RotateColor(
+        SpringRailColor color
+    )
+    {
+        if (railDataManager == null ||
+            railStateManager == null)
         {
             return;
         }
 
 
-        if (railAngleManager == null)
-        {
-            Debug.LogWarning(
-                "[SpringRailButtonMotion] RailAngleManager가 연결되지 않았습니다."
-            );
-
-            return;
-        }
-
-
-        if (railAngleManager.IsAllRailsCorrect)
+        if (!railStateManager.TryBeginRotation())
         {
             return;
         }
 
 
         StartCoroutine(
-            RotateRails()
+            RotateRails(
+                color
+            )
         );
     }
 
 
     // =========================================================
-    // 선로 회전
+    // 실제 Motion
     // =========================================================
 
-    private IEnumerator RotateRails()
+    private IEnumerator RotateRails(
+        SpringRailColor color
+    )
     {
-        isRotating =
-            true;
-
-
-        SpringRailAngleManager.RailAngleData[] rails =
-            railAngleManager.GetRailsByColor(
-                railColor
+        SpringRailDataManager.RailData[] rails =
+            railDataManager.GetRailsByColor(
+                color
             );
+
+
+        if (rails.Length == 0)
+        {
+            railStateManager.EndRotation();
+
+            yield break;
+        }
 
 
         Quaternion[] startRotations =
@@ -81,31 +115,33 @@ public class SpringRailButtonMotion : MonoBehaviour
 
 
         // =====================================================
-        // 목표 각도 계산
+        // 시작 / 목표 Rotation 저장
         // =====================================================
 
         for (int i = 0; i < rails.Length; i++)
         {
-            Transform rail =
-                rails[i].rail;
-
-
-            if (rail == null)
+            if (rails[i].rail == null)
             {
                 continue;
             }
 
 
             startRotations[i] =
-                rail.localRotation;
+                rails[i].rail.localRotation;
+
+
+            Vector3 currentEuler =
+                rails[i].rail.localEulerAngles;
+
+
+            Vector3 targetEuler =
+                currentEuler +
+                rails[i].rotationStep;
 
 
             targetRotations[i] =
-                startRotations[i] *
                 Quaternion.Euler(
-                    0f,
-                    0f,
-                    rails[i].rotationStep
+                    targetEuler
                 );
         }
 
@@ -153,7 +189,7 @@ public class SpringRailButtonMotion : MonoBehaviour
 
 
         // =====================================================
-        // 최종 각도 고정
+        // 최종값 고정
         // =====================================================
 
         for (int i = 0; i < rails.Length; i++)
@@ -169,14 +205,10 @@ public class SpringRailButtonMotion : MonoBehaviour
         }
 
 
-        isRotating =
-            false;
-
-
         // =====================================================
-        // 선로 정답 검사
+        // 정답 확인
         // =====================================================
 
-        railAngleManager.RefreshRailState();
+        railStateManager.EndRotation();
     }
 }
