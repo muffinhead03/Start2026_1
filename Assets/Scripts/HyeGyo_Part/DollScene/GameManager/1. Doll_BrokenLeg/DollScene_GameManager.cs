@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class DollScene_GameManager : MonoBehaviour
 {
     // =========================================================
@@ -135,6 +136,9 @@ public class DollScene_GameManager : MonoBehaviour
 
     // =========================================================
     // 태엽
+    //
+    // SpringProgressManager에서
+    // 최종 완료 후 호출
     // =========================================================
 
     public void CompleteFindSpring()
@@ -150,7 +154,7 @@ public class DollScene_GameManager : MonoBehaviour
 
 
         Debug.Log(
-            "[DollScene] 태엽 설치 완료"
+            "[DollScene] 태엽 획득 완료"
         );
 
 
@@ -223,12 +227,6 @@ public class DollScene_GameManager : MonoBehaviour
 
     // =========================================================
     // Exit Key 낙하 완료
-    //
-    // DollKeyDropManager
-    //      ↓
-    // DollScene_ChangeDoll
-    //      ↓
-    // 여기로 전달
     // =========================================================
 
     public void CompleteExitKeyDrop()
@@ -239,7 +237,6 @@ public class DollScene_GameManager : MonoBehaviour
         }
 
 
-        // 인형이 수리되지 않았다면 Key Drop 처리 X
         if (!isDollRepaired)
         {
             Debug.LogWarning(
@@ -296,6 +293,7 @@ public class DollScene_GameManager : MonoBehaviour
             Debug.LogWarning(
                 "[DollScene] 사용할 동전이 없습니다."
             );
+
 
             return false;
         }
