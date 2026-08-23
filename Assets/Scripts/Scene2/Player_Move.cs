@@ -11,7 +11,7 @@ public class Player_Move : MonoBehaviour
 
     [Header("Camera")]
     public Transform CameraPivot;
-    public float mouseSensitivity = 0.1f;
+    float mouseSensitivity;
     float yaw;
     float pitch;
 
@@ -41,31 +41,24 @@ public class Player_Move : MonoBehaviour
     private Play_Audio audioSource;
     public AudioClip[] walkSounds;
 
-    [Header("UI Settings")]
-    public Scene_UI_Manager SceneUI;    // UI 매니저
-
     Vector3 Velocity;
     Vector2 MoveInput;
     Vector2 LookInput;
 
+    InputActionMap player_input;
     InputAction lookAction;
     InputAction moveAction;
     InputAction runAction;
     InputAction hideAction;
     InputAction jumpAction;
-    InputAction settingsAction;
 
     bool moveLocked = false;
     bool isRunning = false;
     bool isHiding = false;
 
-    void Start()
+    void Awake()
     {
         yaw = 90;
-
-        SceneUI.SetActivePanel(0, false); // 설정 창 끄기
-        
-        SceneUI.LockPointer();
 
         Character = GetComponent<CharacterController>();
 
@@ -83,14 +76,22 @@ public class Player_Move : MonoBehaviour
         if (bodyMesh != null)
             originalMeshScale = bodyMesh.localScale;
 
+        player_input = InputSystem.actions.FindActionMap("PC_Player");
         lookAction = InputSystem.actions.FindAction("Look");
         moveAction = InputSystem.actions.FindAction("Move");
         runAction = InputSystem.actions.FindAction("Run");
         hideAction = InputSystem.actions.FindAction("Hide");
         jumpAction = InputSystem.actions.FindAction("Jump");
-        settingsAction = InputSystem.actions.FindAction("Settings");
+    }
 
-        settingsAction.performed += OpenCloseSettings;
+    private void OnEnable()
+    {
+        player_input.Enable();
+    }
+
+    private void OnDisable()
+    {
+        player_input.Disable();
     }
 
     void Update()
@@ -110,6 +111,7 @@ public class Player_Move : MonoBehaviour
 
     void Look()
     {
+        mouseSensitivity = Setting.mouseSensitivity;
         yaw += LookInput.x * mouseSensitivity;
         pitch -= LookInput.y * mouseSensitivity;
 
@@ -204,6 +206,12 @@ public class Player_Move : MonoBehaviour
         }
     }
 
+    public void SwitchMoveLock()
+    {
+        if (moveLocked) SetMoveLock(false);
+        else SetMoveLock(true);
+    }
+
     public void SetMoveLock(bool locked)
     {
         moveLocked = locked;
@@ -226,12 +234,12 @@ public class Player_Move : MonoBehaviour
         }
     }
 
-    void OpenCloseSettings(InputAction.CallbackContext context)
-    {
-        moveLocked = !moveLocked;
-        SceneUI.SetActivePanel(0, moveLocked);
+    //void OpenCloseSettings(InputAction.CallbackContext context)
+    //{
+    //    moveLocked = !moveLocked;
+    //    SceneUI.SetActivePanel(0, moveLocked);
 
-        if (moveLocked) SceneUI.UnlockPointer();
-        else SceneUI.LockPointer();
-    }
+    //    if (moveLocked) SceneUI.UnlockPointer();
+    //    else SceneUI.LockPointer();
+    //}
 }
