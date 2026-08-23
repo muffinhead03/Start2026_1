@@ -10,8 +10,8 @@ public class SpringTrainSequenceManager : MonoBehaviour
     // =========================================================
 
     [Header("선로 정답 Manager")]
-    [SerializeField]
-    private SpringRailAngleManager railAngleManager;
+[SerializeField]
+private SpringRailStateManager railStateManager;
 
 
     // =========================================================
@@ -100,9 +100,9 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
     private void OnEnable()
     {
-        if (railAngleManager != null)
+        if (railStateManager != null)
         {
-            railAngleManager.OnRailStateChanged +=
+            railStateManager.OnRailStateChanged +=
                 HandleRailStateChanged;
         }
     }
@@ -110,9 +110,9 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
     private void OnDisable()
     {
-        if (railAngleManager != null)
+        if (railStateManager != null)
         {
-            railAngleManager.OnRailStateChanged -=
+            railStateManager.OnRailStateChanged -=
                 HandleRailStateChanged;
         }
     }
@@ -160,7 +160,7 @@ public class SpringTrainSequenceManager : MonoBehaviour
         }
 
 
-        if (railAngleManager == null)
+        if (railStateManager == null)
         {
             return;
         }
@@ -171,7 +171,7 @@ public class SpringTrainSequenceManager : MonoBehaviour
         // 모든 선로가 정답일 때만 기차 이동
         // =============================================
 
-        if (!railAngleManager.IsAllRailsCorrect)
+        if (!railStateManager.IsAllRailsCorrect)
         {
             return;
         }
@@ -193,7 +193,7 @@ public class SpringTrainSequenceManager : MonoBehaviour
         // 기차 움직이는 동안 선로 완전 잠금
         // =============================================
 
-        railAngleManager.LockInteraction();
+        railStateManager.LockInteraction();
 
 
         StartCoroutine(

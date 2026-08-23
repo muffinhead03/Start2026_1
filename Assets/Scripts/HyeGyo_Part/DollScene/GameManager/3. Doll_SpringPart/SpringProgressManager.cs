@@ -18,7 +18,7 @@ public class SpringProgressManager : MonoBehaviour
 
     [Header("선로")]
     [SerializeField]
-    private SpringRailAngleManager railAngleManager;
+    private SpringRailStateManager railStateManager;
 
 
     [Header("기차 Sequence")]
@@ -45,9 +45,9 @@ public class SpringProgressManager : MonoBehaviour
 
     private void OnEnable()
     {
-        if (railAngleManager != null)
+        if (railStateManager != null)
         {
-            railAngleManager.OnRailStateChanged +=
+            railStateManager.OnRailStateChanged +=
                 HandleRailStateChanged;
         }
 
@@ -69,9 +69,9 @@ public class SpringProgressManager : MonoBehaviour
 
     private void OnDisable()
     {
-        if (railAngleManager != null)
+        if (railStateManager != null)
         {
-            railAngleManager.OnRailStateChanged -=
+            railStateManager.OnRailStateChanged -=
                 HandleRailStateChanged;
         }
 
@@ -137,7 +137,7 @@ public class SpringProgressManager : MonoBehaviour
         }
 
 
-        if (railAngleManager == null)
+        if (railStateManager == null)
         {
             return;
         }
@@ -156,7 +156,7 @@ public class SpringProgressManager : MonoBehaviour
 
 
         // 선로 정답
-        if (!railAngleManager.IsAllRailsCorrect)
+        if (!railStateManager.IsAllRailsCorrect)
         {
             return;
         }
