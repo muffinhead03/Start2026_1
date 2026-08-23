@@ -11,6 +11,10 @@ public class SpringRailAngleManager : MonoBehaviour
     [Serializable]
     public class RailAngleData
     {
+        [Header("구분용 이름")]
+        public string railName;
+
+
         [Header("선로 오브젝트")]
         public Transform rail;
 
@@ -20,14 +24,17 @@ public class SpringRailAngleManager : MonoBehaviour
 
 
         [Header("초기 각도")]
+        [Tooltip("게임 시작 시 적용할 Z축 각도")]
         public float initialAngle;
 
 
         [Header("정답 각도")]
+        [Tooltip("이 선로가 정답일 때의 Z축 각도")]
         public float correctAngle;
 
 
         [Header("버튼 1회 회전 각도")]
+        [Tooltip("예: -30 또는 +30")]
         public float rotationStep = -30f;
 
 
@@ -42,11 +49,12 @@ public class SpringRailAngleManager : MonoBehaviour
 
     [Header("전체 선로 12개")]
     [SerializeField]
-    private RailAngleData[] rails;
+    private RailAngleData[] rails =
+        new RailAngleData[12];
 
 
     // =========================================================
-    // 정답 판정 설정
+    // 정답 판정
     // =========================================================
 
     [Header("각도 오차 허용 범위")]
@@ -55,7 +63,16 @@ public class SpringRailAngleManager : MonoBehaviour
 
 
     // =========================================================
-    // 현재 퍼즐 정답 여부
+    // 현재 상태
+    // =========================================================
+
+    private bool isInteractionLocked = false;
+
+    private bool isRotationInProgress = false;
+
+
+    // =========================================================
+    // 외부 확인 Property
     // =========================================================
 
     public bool IsAllRailsCorrect
@@ -65,21 +82,33 @@ public class SpringRailAngleManager : MonoBehaviour
     }
 
 
+    public bool IsInteractionLocked =>
+        isInteractionLocked;
+
+
+    public bool IsRotationInProgress =>
+        isRotationInProgress;
+
+
     // =========================================================
-    // 상태 변경 Event
+    // Event
     // =========================================================
 
     public event Action<bool> OnRailStateChanged;
 
 
     // =========================================================
-    // Start
+    // Unity
     // =========================================================
+
+    private void Awake()
+    {
+        ApplyInitialAngles();
+    }
+
 
     private void Start()
     {
-        ApplyInitialAngles();
-
         RefreshRailState();
     }
 
@@ -90,8 +119,24 @@ public class SpringRailAngleManager : MonoBehaviour
 
     private void ApplyInitialAngles()
     {
-        foreach (RailAngleData data in rails)
+        if (rails == null)
         {
+            return;
+        }
+
+
+        for (int i = 0; i < rails.Length; i++)
+        {
+            RailAngleData data =
+                rails[i];
+
+
+            if (data == null)
+            {
+                continue;
+            }
+
+
             if (data.rail == null)
             {
                 continue;
@@ -122,9 +167,116 @@ public class SpringRailAngleManager : MonoBehaviour
         SpringRailColor color
     )
     {
+        if (rails == null)
+        {
+            return
+                Array.Empty<RailAngleData>();
+        }
+
+
         return Array.FindAll(
             rails,
-            data => data.color == color
+            data =>
+                data != null &&
+                data.color == color
+        );
+    }
+
+
+    // =========================================================
+    // 선로 회전 시작 요청
+    //
+    // SpringRailButtonMotion에서 사용
+    // =========================================================
+
+    public bool TryBeginRotation()
+    {
+        // 기차 이동 중 등으로
+        // 퍼즐 전체 입력이 잠긴 상태
+        if (isInteractionLocked)
+        {
+            return false;
+        }
+
+
+        // 이미 다른 버튼의 선로가 회전 중
+        if (isRotationInProgress)
+        {
+            return false;
+        }
+
+
+        // 이미 정답 완료
+        if (IsAllRailsCorrect)
+        {
+            return false;
+        }
+
+
+        isRotationInProgress =
+            true;
+
+
+        return true;
+    }
+
+
+    // =========================================================
+    // 선로 회전 종료
+    //
+    // 회전 Motion이 완전히 끝난 후 호출
+    // =========================================================
+
+    public void EndRotation()
+    {
+        if (!isRotationInProgress)
+        {
+            return;
+        }
+
+
+        isRotationInProgress =
+            false;
+
+
+        // 회전이 끝난 순간에만
+        // 전체 정답 검사
+        RefreshRailState();
+    }
+
+
+    // =========================================================
+    // 전체 선로 조작 잠금
+    //
+    // 기차 이동 시작 직전에 호출
+    // =========================================================
+
+    public void LockInteraction()
+    {
+        isInteractionLocked =
+            true;
+
+
+        Debug.Log(
+            "[SpringRail] 선로 조작 잠금"
+        );
+    }
+
+
+    // =========================================================
+    // 선로 조작 잠금 해제
+    //
+    // 테스트 / 실패 처리 등이 필요할 경우 사용
+    // =========================================================
+
+    public void UnlockInteraction()
+    {
+        isInteractionLocked =
+            false;
+
+
+        Debug.Log(
+            "[SpringRail] 선로 조작 잠금 해제"
         );
     }
 
@@ -135,13 +287,29 @@ public class SpringRailAngleManager : MonoBehaviour
 
     public void RefreshRailState()
     {
+        if (rails == null ||
+            rails.Length == 0)
+        {
+            SetAllRailsCorrect(
+                false
+            );
+
+            return;
+        }
+
+
         bool allCorrect =
             true;
 
 
-        foreach (RailAngleData data in rails)
+        for (int i = 0; i < rails.Length; i++)
         {
-            if (data.rail == null)
+            RailAngleData data =
+                rails[i];
+
+
+            // 데이터 자체가 없음
+            if (data == null)
             {
                 allCorrect =
                     false;
@@ -150,18 +318,36 @@ public class SpringRailAngleManager : MonoBehaviour
             }
 
 
+            // Transform 연결 안 됨
+            if (data.rail == null)
+            {
+                data.isCorrect =
+                    false;
+
+
+                allCorrect =
+                    false;
+
+                continue;
+            }
+
+
+            // 현재 각도
             float currentAngle =
                 NormalizeAngle(
                     data.rail.localEulerAngles.z
                 );
 
 
+            // 정답 각도
             float correctAngle =
                 NormalizeAngle(
                     data.correctAngle
                 );
 
 
+            // 0 / 360 문제까지 처리해서
+            // 두 각도의 가장 짧은 차이 계산
             float difference =
                 Mathf.Abs(
                     Mathf.DeltaAngle(
@@ -183,20 +369,76 @@ public class SpringRailAngleManager : MonoBehaviour
         }
 
 
+        SetAllRailsCorrect(
+            allCorrect
+        );
+    }
+
+
+    // =========================================================
+    // 전체 정답 상태 저장
+    // =========================================================
+
+    private void SetAllRailsCorrect(
+        bool value
+    )
+    {
         bool stateChanged =
-            IsAllRailsCorrect != allCorrect;
+            IsAllRailsCorrect != value;
 
 
         IsAllRailsCorrect =
-            allCorrect;
+            value;
 
 
-        if (stateChanged)
+        if (!stateChanged)
         {
-            OnRailStateChanged?.Invoke(
-                IsAllRailsCorrect
-            );
+            return;
         }
+
+
+        Debug.Log(
+            "[SpringRail] 전체 선로 정답 상태 : " +
+            IsAllRailsCorrect
+        );
+
+
+        // 상태 변경을 다른 Manager에 전달
+        OnRailStateChanged?.Invoke(
+            IsAllRailsCorrect
+        );
+    }
+
+
+    // =========================================================
+    // 특정 선로 현재 정답 여부 확인
+    // =========================================================
+
+    public bool IsRailCorrect(
+        int index
+    )
+    {
+        if (rails == null)
+        {
+            return false;
+        }
+
+
+        if (index < 0 ||
+            index >= rails.Length)
+        {
+            return false;
+        }
+
+
+        if (rails[index] == null)
+        {
+            return false;
+        }
+
+
+        return
+            rails[index].isCorrect;
     }
 
 
@@ -208,17 +450,31 @@ public class SpringRailAngleManager : MonoBehaviour
         float angle
     )
     {
-        angle %=
-            360f;
+        return Mathf.Repeat(
+            angle,
+            360f
+        );
+    }
 
 
-        if (angle < 0f)
+    // =========================================================
+    // Inspector 검사
+    // =========================================================
+
+    private void OnValidate()
+    {
+        if (angleTolerance < 0f)
         {
-            angle +=
-                360f;
+            angleTolerance =
+                0f;
         }
 
 
-        return angle;
+        if (rails != null &&
+            rails.Length != 12)
+        {
+            // 반드시 12개여야 실행이 막히는 것은 아니지만
+            // 현재 기획상 12개이므로 확인용
+        }
     }
 }
