@@ -3,140 +3,203 @@ using System.Collections;
 
 public class DollScene_GameMachine : MonoBehaviour
 {
-    [Header("Doll Scene Game Manager")]
-    [SerializeField] private DollScene_GameManager gameManager;
+    [Header("Retro Game Manager")]
+    [SerializeField]
+    private RetroGameManager retroGameManager;
 
 
-    [Header("Game Machine")]
-    [SerializeField] private GameObject gameScreen;
-    [SerializeField] private GameObject dollArm;
+    [Header("Coin Manager")]
+    [SerializeField]
+    private GameMachineCoinManager coinManager;
+
+
+    [Header("Game Screen")]
+    [SerializeField]
+    private GameObject gameScreen;
 
 
     [Header("Game State")]
-    [SerializeField] private bool isCoinInserted = false;
-    [SerializeField] private bool isGamePlaying = false;
-    [SerializeField] private bool isGameCleared = false;
+    [SerializeField]
+    private bool isGamePlaying = false;
+
+    [SerializeField]
+    private bool isGameCleared = false;
+
+
+    public bool IsGamePlaying => isGamePlaying;
+    public bool IsGameCleared => isGameCleared;
 
 
     private void Start()
     {
-        if (gameManager == null)
+        if (retroGameManager == null)
         {
-            gameManager =
-                GetComponentInParent<DollScene_GameManager>();
+            retroGameManager =
+                FindFirstObjectByType<RetroGameManager>();
         }
 
-        if (gameScreen != null)
-            gameScreen.SetActive(false);
 
-        if (dollArm != null)
-            dollArm.SetActive(false);
-    }
+        if (coinManager == null)
+        {
+            coinManager =
+                FindFirstObjectByType<GameMachineCoinManager>();
+        }
 
-
-    // ================================
-    // 동전 투입
-    // ================================
-
-    public void InsertCoin()
-    {
-        if (isCoinInserted)
-            return;
-
-        if (isGameCleared)
-            return;
 
         /*
-         * TODO
-         *
-         * Player Inventory에
-         * Coin이 있는지 확인
-         *
-         * Coin이 있다면
-         * Inventory에서 Coin 제거
-         *
-         * 현재는 인벤토리 코드 확인 후 연결
+         * GameScreen의 초기 ON/OFF는
+         * 가능하면 Inspector에서 설정하는 것을 추천.
          */
-
-        isCoinInserted = true;
-
-        Debug.Log("[GameMachine] Coin Inserted");
-
-        StartGame();
     }
 
 
-    // ================================
-    // 게임 시작
-    // ================================
+    // =============================================
+    // GameMachineCoinManager에서 호출
+    // =============================================
 
-    private void StartGame()
+    public void StartGame()
     {
         if (isGamePlaying)
             return;
 
+
         isGamePlaying = true;
 
-        if (gameScreen != null)
-            gameScreen.SetActive(true);
 
-        Debug.Log("[GameMachine] Game Start");
+        if (retroGameManager != null)
+        {
+            retroGameManager.StartRetroGame();
+        }
+
+
+        if (gameScreen != null)
+        {
+            gameScreen.SetActive(true);
+        }
+
+
+        Debug.Log(
+            "[GameMachine] Game Start"
+        );
 
 
         /*
+         * =============================================
+         *
+         *              철권게임파트
+         *
+         * =============================================
+         *
          * TODO
          *
-         * 추후 철권 스타일 미니게임 구현
+         * - 플레이어 이동 제한
+         * - 게임 전용 카메라
+         * - 캐릭터 입력
+         * - 적 AI
+         * - 체력
+         * - 공격
+         * - 승/패 판정
          *
-         * 현재 프로토타입에서는
-         * 일정 시간 뒤 자동 승리 처리 가능
          */
 
-        StartCoroutine(PrototypeGame());
+
+        // 현재 임시 구현
+        StartCoroutine(
+            PrototypeGame()
+        );
     }
 
+
+    // =============================================
+    // 임시 게임
+    // =============================================
 
     private IEnumerator PrototypeGame()
     {
         yield return new WaitForSeconds(2f);
 
+
         GameWin();
     }
 
 
-    // ================================
+    // =============================================
     // 게임 승리
-    // ================================
+    // =============================================
 
     public void GameWin()
     {
         if (!isGamePlaying)
             return;
 
+
         isGamePlaying = false;
         isGameCleared = true;
 
-        Debug.Log("[GameMachine] YOU WIN");
 
-        OpenReward();
+        Debug.Log(
+            "[GameMachine] YOU WIN"
+        );
+
+
+        if (retroGameManager != null)
+        {
+            retroGameManager.GameWin();
+        }
+
+
+        if (coinManager != null)
+        {
+            coinManager.GameWin();
+        }
+
+
+        EndGame();
     }
 
 
-    // ================================
-    // 보상
-    // ================================
+    // =============================================
+    // 게임 패배
+    // =============================================
 
-    private void OpenReward()
+    public void GameLose()
     {
-        /*
-         * TODO
-         *
-         * 오락기 하단 작은 문 Open Animation
-         */
+        if (!isGamePlaying)
+            return;
 
-        if (dollArm != null)
-            dollArm.SetActive(true);
 
-        Debug.Log("[GameMachine] Doll Arm Open");
+        isGamePlaying = false;
+
+
+        Debug.Log(
+            "[GameMachine] YOU LOSE"
+        );
+
+
+        if (retroGameManager != null)
+        {
+            retroGameManager.GameLose();
+        }
+
+
+        EndGame();
+    }
+
+
+    // =============================================
+    // 게임 종료
+    // =============================================
+
+    private void EndGame()
+    {
+        if (gameScreen != null)
+        {
+            gameScreen.SetActive(false);
+        }
+
+
+        Debug.Log(
+            "[GameMachine] Game End"
+        );
     }
 }
