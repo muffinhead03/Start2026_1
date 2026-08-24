@@ -1,6 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// HintEngine.Calculate()의 결과물. 어떤 레벨의 힌트를, 어떤 스텝에 대해,
+/// 어떤 톤(direct/indirect)으로 보여줄지에 대한 판단 결과를 담는다.
+/// LLM은 이 결과를 자연어로 옮기기만 할 뿐, 이 판단 자체에는 관여하지 않는다.
+/// </summary>
 public class HintResult
 {
     public int hintLevel;        // 1~4
@@ -10,8 +15,18 @@ public class HintResult
     public string puzzleId;      // 현재 씬 퍼즐 ID — PromptBuilder 씬 컨텍스트 조회용
 }
 
+/// <summary>
+/// 힌트 레벨/상태/다음 스텝을 코드로 결정하는 판단 엔진.
+/// "판단은 로직, 표현은 AI" 원칙의 로직 쪽 절반을 담당한다 — LLM이나 Unity 특정 기능에
+/// 의존하지 않는 순수 계산 로직이라, PlayerState/PuzzleConfig만 맞춰주면 어느 프로젝트에도 그대로 재사용 가능하다.
+/// </summary>
 public static class HintEngine
 {
+    /// <summary>
+    /// 플레이어 상태와 퍼즐 설정을 기반으로 힌트 레벨(1~4), 플레이어 상태, 다음 안내 스텝을 계산한다.
+    /// 5개 가중치 요소(감정상태 35%, 요청강도 25%, 정체시간 20%, 퍼즐진행 15%, 반복조사 5%)를 합산해
+    /// 점수를 내고, 그 점수를 4단계로 환산한다.
+    /// </summary>
     public static HintResult Calculate(PlayerState state, PuzzleConfig config)
     {
         float score = 0f;

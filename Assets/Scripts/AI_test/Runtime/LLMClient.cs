@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using LLMUnity;
 
-public class LLMClient : MonoBehaviour
+public class LLMClient : MonoBehaviour, IHintLLMClient
 {
     [SerializeField] LLMCharacter llmCharacter;
     public LLMCharacter LlmCharacter => llmCharacter;
+
+    public string ModelName => llmCharacter.llm.model;
 
     // LoadingSceneController가 이 이벤트를 구독해서 워밍업 완료 시점에 씬 전환
     public event Action OnWarmupComplete;

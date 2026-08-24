@@ -1,6 +1,6 @@
-public static class PuzzleConfigData
+public class PuzzleConfigData : IPuzzleDataProvider
 {
-    public static PuzzleConfig GetConfig(string puzzleId)
+    public PuzzleConfig GetConfig(string puzzleId)
     {
         switch (puzzleId)
         {
