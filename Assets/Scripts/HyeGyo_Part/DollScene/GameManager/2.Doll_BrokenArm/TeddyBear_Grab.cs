@@ -5,7 +5,10 @@ public class TeddyBear_Grab : MonoBehaviour
     [Header("Player")]
     [SerializeField] private Player_Grab playerGrab;
 
-    [Header("Bear")]
+    [Header("Bear Object")]
+    [SerializeField] private Transform normalBearObject;
+
+    [Header("Bear Logic")]
     [SerializeField] private SpeakingBearDoll speakingBear;
 
     [Header("State")]
@@ -29,42 +32,51 @@ public class TeddyBear_Grab : MonoBehaviour
             speakingBear =
                 GetComponent<SpeakingBearDoll>();
         }
+
+        // 자기 자신이 실제 정상 곰이라면 자동 등록
+        if (normalBearObject == null)
+        {
+            normalBearObject = transform;
+        }
     }
 
 
     private void Update()
     {
-        /*
-         * 부모가 Player_Grab의 Hand인지 확인하는 방식.
-         *
-         * 기존 Player_Grab은 물건을 집으면
-         * Hand의 자식으로 넣고,
-         *
-         * Release()하면
-         * SetParent(null) 처리함.
-         */
+        if (normalBearObject == null)
+            return;
 
-        bool isCurrentlyHeld = IsHeldByPlayer();
+        bool isCurrentlyHeld =
+            IsHeldByPlayer();
 
 
-        // 방금 집힌 상태
+        // ================================
+        // 곰을 집었을 때
+        // ================================
+
         if (isCurrentlyHeld && !wasHeld)
         {
             wasHeld = true;
             isThrown = false;
 
-            Debug.Log("[TeddyBear] 곰 인형을 들었습니다.");
+            Debug.Log(
+                "[TeddyBear] 곰 인형을 들었습니다."
+            );
         }
 
 
-        // 이전 프레임까지 들고 있었는데
-        // 현재 손에서 빠졌다면 던져진 것으로 판정
+        // ================================
+        // 손에서 빠짐 = 던짐
+        // ================================
+
         if (!isCurrentlyHeld && wasHeld)
         {
             wasHeld = false;
             isThrown = true;
 
-            Debug.Log("[TeddyBear] 곰 인형이 던져졌습니다.");
+            Debug.Log(
+                "[TeddyBear] 곰 인형이 던져졌습니다."
+            );
         }
     }
 
@@ -77,38 +89,84 @@ public class TeddyBear_Grab : MonoBehaviour
         if (playerGrab.Hand == null)
             return false;
 
+        if (normalBearObject == null)
+            return false;
 
-        return transform.parent == playerGrab.Hand;
+
+        return normalBearObject.parent ==
+               playerGrab.Hand;
     }
 
 
+    // =============================================
+    // ★ 실제 Unity 충돌 이벤트
+    // =============================================
+
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(
+            $"[TeddyBear] 실제 충돌 발생 : " +
+            $"{collision.gameObject.name}"
+        );
+
+        RegisterCollision(collision);
+    }
+
+
+    // =============================================
+    // 던진 뒤 충돌 판정
+    // =============================================
+
+    public void RegisterCollision(
+        Collision collision)
+    {
         if (!isThrown)
+        {
+            Debug.Log(
+                "[TeddyBear] 던진 상태가 아니므로 충돌 무시"
+            );
+
             return;
+        }
 
 
-        // 너무 약한 충돌은 무시
-        if (collision.relativeVelocity.magnitude < minImpactSpeed)
+        float impactSpeed =
+            collision.relativeVelocity.magnitude;
+
+
+        Debug.Log(
+            $"[TeddyBear] 충돌 속도 : {impactSpeed}"
+        );
+
+
+        if (impactSpeed < minImpactSpeed)
+        {
+            Debug.Log(
+                "[TeddyBear] 충돌 속도가 너무 낮아서 무시"
+            );
+
             return;
+        }
 
 
-        /*
-         * 한 번 던졌을 때
-         * 최초 충돌 하나만 인정.
-         */
+        // 한 번 던질 때 최초 충돌만 인정
         isThrown = false;
 
 
         Debug.Log(
-            $"[TeddyBear] 던진 후 충돌 감지 / " +
-            $"속도 : {collision.relativeVelocity.magnitude}"
+            "[TeddyBear] 유효한 던지기 충돌!"
         );
 
 
         if (speakingBear != null)
         {
             speakingBear.RegisterThrowHit();
+        }
+        else
+        {
+            Debug.LogError(
+                "[TeddyBear] SpeakingBearDoll이 없습니다."
+            );
         }
     }
 }
