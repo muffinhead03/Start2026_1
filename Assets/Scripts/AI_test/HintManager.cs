@@ -40,6 +40,20 @@ public class HintManager : MonoBehaviour
 
     void Start()
     {
+        // LLMClient는 이제 이 씬이 아니라 LoadingScene의 LLMSingleton 프리팹에 있음
+        // (씬이 다르므로 Inspector로 미리 연결 불가 → 런타임에 싱글톤에서 가져옴)
+        Debug.Log("[HintManager] Start 호출됨, LLMSingleton.Instance 확인 중...");
+
+        if (LLMSingleton.Instance == null)
+        {
+            Debug.LogError("[HintManager] LLMSingleton.Instance가 null입니다! LoadingScene을 거쳐 진입했는지, LLM 프리팹이 DontDestroyOnLoad로 살아있는지 확인하세요.");
+        }
+        else
+        {
+            llmClient = LLMSingleton.Instance.LlmClient;
+            Debug.Log($"[HintManager] llmClient 연결됨? {(llmClient != null)}");
+        }
+
         currentPlayerState = new PlayerState
         {
             staySeconds         = 0f,
@@ -128,6 +142,13 @@ public class HintManager : MonoBehaviour
         if (result.nextStep == null)
         {
             SetHintText("이미 모든 단서를 찾았어.");
+            return;
+        }
+
+        if (llmClient == null)
+        {
+            Debug.LogError("[HintManager] llmClient가 null입니다. LLMSingleton 연결을 확인하세요.");
+            SetHintText("치지직... 지금은 응답할 수 없어.");
             return;
         }
 
