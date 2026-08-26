@@ -1,0 +1,22 @@
+name: Request Unity License Activation File (1회용)
+
+# 이 워크플로우는 Personal 라이선스를 CI에서 쓰기 위한 활성화 요청 파일(.alf)을
+# 딱 한 번 생성하는 용도. UNITY_LICENSE 시크릿 등록 후에는 이 파일을 실행할 일이 없음
+# (실행해도 무해하지만, 지워도 됨).
+
+on: workflow_dispatch
+
+jobs:
+  request-activation-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: game-ci/unity-request-activation-file@v2
+        id: getActivationFile
+        with:
+          unityVersion: 6000.3.11f1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Activation_File
+          path: ${{ steps.getActivationFile.outputs.filePath }}
+          retention-days: 7
