@@ -23,6 +23,9 @@ public class WineBookPutOn : MonoBehaviour
     public UnityEvent putDown;
     public UnityEvent pickUp;
 
+    [Header("힌트 매니저 연결")]
+    [SerializeField] HintManager hintManager;
+
     int state;
     GameObject putOn;
 
@@ -39,10 +42,21 @@ public class WineBookPutOn : MonoBehaviour
 
     public void OnInteract()
     {
-        if (state == 0 && player.GetComponent<Player_Grab>().hasKey(keyName))
+        var grab = player.GetComponent<Player_Grab>();
+
+        if (state == 0 && grab.hasKey(keyName))
+        {
             PutOn();
-        else if (state == 1 && !player.GetComponent<Player_Grab>().isGrab())
+        }
+        else if (state == 0 && grab.isGrab())
+        {
+            // 책을 들고 있지만 이 슬롯 정답이 아님 → 실패
+            hintManager?.RegisterFail();
+        }
+        else if (state == 1 && !grab.isGrab())
+        {
             TakeOff();
+        }
     }
 
     void PutOn()
