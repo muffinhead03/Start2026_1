@@ -9,12 +9,33 @@ public class LLMClient : MonoBehaviour
     [SerializeField] LLMCharacter llmCharacter;
     public LLMCharacter LlmCharacter => llmCharacter;
 
+    // LoadingSceneController가 이 이벤트를 구독해서 워밍업 완료 시점에 씬 전환
+    public event Action OnWarmupComplete;
+    public bool IsWarmedUp { get; private set; } = false;
+
     async void Start()
     {
+        Debug.Log($"[LLMClient] Start 호출됨. llmCharacter 연결됨? {(llmCharacter != null)}");
+
+        if (llmCharacter == null)
+        {
+            Debug.LogError("[LLMClient] llmCharacter가 연결 안 되어 있음! Warmup 진행 불가.");
+            return;
+        }
+
+        Debug.Log("[LLMClient] Warmup 시작...");
         await llmCharacter.Warmup(WarmupCompleted);
+        Debug.Log("[LLMClient] Warmup await 완료 (WarmupCompleted 콜백 호출 이후 시점)");
     }
 
-    void WarmupCompleted() => Debug.Log("[LLMUnity] 모델 워밍업 완료");
+    void WarmupCompleted()
+    {
+        Debug.Log("[LLMUnity] 모델 워밍업 완료 콜백 실행됨");
+        IsWarmedUp = true;
+        Debug.Log($"[LLMClient] OnWarmupComplete 구독자 수: {(OnWarmupComplete?.GetInvocationList().Length ?? 0)}");
+        OnWarmupComplete?.Invoke();
+        Debug.Log("[LLMClient] OnWarmupComplete 이벤트 Invoke 완료");
+    }
 
     // 스트리밍: onChunk는 생성되는 동안 누적 텍스트로 여러 번 호출, onComplete는 끝나면 한 번
     public async void RequestHintStream(string systemPrompt, string userPrompt,
