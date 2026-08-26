@@ -35,6 +35,10 @@ public class HintManager : MonoBehaviour
     [SerializeField] float typingSpeed = 0.03f;
     [SerializeField] float loadingDotInterval = 0.4f;
 
+    [Header("실패 쿨다운")]
+    [SerializeField] float failCooldown = 2f;
+    float lastFailTime = -999f;
+
     [HideInInspector]
     public PlayerState currentPlayerState;
 
@@ -246,5 +250,13 @@ public class HintManager : MonoBehaviour
         currentPuzzleId = newPuzzleId;
         currentPlayerState.hintCount = 0;
         UpdateUsageUI();
+    }
+
+    public void RegisterFail()
+    {
+        if (Time.time - lastFailTime < failCooldown) return;
+        lastFailTime = Time.time;
+        currentPlayerState.failCount++;
+        Debug.Log($"[HintManager] failCount 증가 → {currentPlayerState.failCount}");
     }
 }
