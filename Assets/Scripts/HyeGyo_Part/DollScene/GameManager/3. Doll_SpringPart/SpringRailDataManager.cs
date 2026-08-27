@@ -56,7 +56,7 @@ public class SpringRailDataManager : MonoBehaviour
             );
 
 
-        // 런타임에서 계산되는 값
+        // 런타임에서만 사용하는 정답 여부
         [NonSerialized]
         public bool isCorrect;
     }
@@ -182,8 +182,8 @@ public class SpringRailDataManager : MonoBehaviour
 
 
     // =========================================================
-    // 모든 선로 Rotation Step
-    // Y -30으로 설정
+    // 모든 선로 Rotation Step을
+    // Y축 -30도로 설정
     // =========================================================
 
     [ContextMenu(
@@ -197,8 +197,7 @@ public class SpringRailDataManager : MonoBehaviour
         }
 
 
-        int changedCount =
-            0;
+        int changedCount = 0;
 
 
         for (int i = 0; i < rails.Length; i++)
@@ -247,8 +246,7 @@ public class SpringRailDataManager : MonoBehaviour
         }
 
 
-        int savedCount =
-            0;
+        int savedCount = 0;
 
 
         for (int i = 0; i < rails.Length; i++)
@@ -288,17 +286,13 @@ public class SpringRailDataManager : MonoBehaviour
 
 
     // =========================================================
-    // 정답 Rotation 기준으로
-    // 자동으로 초기 퍼즐 상태 생성
+    // 정답 기준으로 초기 상태 자동 생성
     //
-    // Red    : 3회
-    // Green  : 2회
-    // Yellow : 5회
+    // Red    : 3번
+    // Green  : 2번
+    // Yellow : 5번
     //
-    // initial + step * 횟수 = correct
-    //
-    // 따라서
-    // initial = correct - step * 횟수
+    // initial + rotationStep * pressCount = correct
     // =========================================================
 
     [ContextMenu(
@@ -312,8 +306,7 @@ public class SpringRailDataManager : MonoBehaviour
         }
 
 
-        int changedCount =
-            0;
+        int changedCount = 0;
 
 
         for (int i = 0; i < rails.Length; i++)
@@ -349,7 +342,7 @@ public class SpringRailDataManager : MonoBehaviour
                 );
 
 
-            // Scene에서도 바로 초기 상태 확인
+            // Scene에서도 바로 초기 상태 적용
             data.rail.localRotation =
                 Quaternion.Euler(
                     data.initialRotation
@@ -391,10 +384,8 @@ public class SpringRailDataManager : MonoBehaviour
             case SpringRailColor.Red:
                 return redPressCount;
 
-
             case SpringRailColor.Green:
                 return greenPressCount;
-
 
             case SpringRailColor.Yellow:
                 return yellowPressCount;
@@ -407,8 +398,6 @@ public class SpringRailDataManager : MonoBehaviour
 
     // =========================================================
     // 현재 Rotation을 초기 Rotation으로 직접 저장
-    //
-    // 수동으로 초기 배치를 만들고 싶을 때 사용
     // =========================================================
 
     [ContextMenu(
@@ -422,8 +411,7 @@ public class SpringRailDataManager : MonoBehaviour
         }
 
 
-        int savedCount =
-            0;
+        int savedCount = 0;
 
 
         for (int i = 0; i < rails.Length; i++)
@@ -463,7 +451,7 @@ public class SpringRailDataManager : MonoBehaviour
 
 
     // =========================================================
-    // 저장되어 있는 초기 상태 적용
+    // 저장된 초기 Rotation 적용
     // =========================================================
 
     [ContextMenu(
@@ -480,6 +468,60 @@ public class SpringRailDataManager : MonoBehaviour
 
 
         MarkSceneDirty();
+    }
+
+
+    // =========================================================
+    // 모든 선로를 정답 Rotation으로 정확하게 보정
+    //
+    // SpringTrainSequenceManager가
+    // 기차 출발 직전에 호출함
+    // =========================================================
+
+    public void SnapAllRailsToCorrectRotation()
+    {
+        if (rails == null)
+        {
+            return;
+        }
+
+
+        int snappedCount = 0;
+
+
+        for (int i = 0; i < rails.Length; i++)
+        {
+            RailData data =
+                rails[i];
+
+
+            if (
+                data == null ||
+                data.rail == null
+            )
+            {
+                continue;
+            }
+
+
+            data.rail.localRotation =
+                Quaternion.Euler(
+                    data.correctRotation
+                );
+
+
+            data.isCorrect = true;
+
+
+            snappedCount++;
+        }
+
+
+        Debug.Log(
+            "[SpringRailData] 모든 선로 정답 위치 보정 완료 : " +
+            snappedCount +
+            "개"
+        );
     }
 
 
@@ -524,8 +566,7 @@ public class SpringRailDataManager : MonoBehaviour
             0.001f
         )
         {
-            angle =
-                0f;
+            angle = 0f;
         }
 
 
