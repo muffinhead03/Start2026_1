@@ -607,7 +607,6 @@ Transform:
   - {fileID: 199786529}
   - {fileID: 620240946}
   - {fileID: 1424429631}
-  - {fileID: 2132631656}
   - {fileID: 651592969}
   m_Father: {fileID: 940351273}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1050,7 +1049,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpringTrainCollisionDetector
   formationController: {fileID: 190693362}
-  collisionRadius: 0.5
+  collisionRadius: 0.7
 --- !u!114 &190693362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4039,7 +4038,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!54 &509044151
 Rigidbody:
@@ -4066,7 +4065,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!65 &509044152
 BoxCollider:
@@ -4135,7 +4134,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &509044156
 MonoBehaviour:
@@ -11021,8 +11020,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e469b246e51ab44f8e43ac356f74a72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpringRailRotationController
-  railDataManager: {fileID: 0}
-  railStateManager: {fileID: 0}
+  railDataManager: {fileID: 681806961}
+  railStateManager: {fileID: 199786530}
   rotationDuration: 0.2
 --- !u!4 &1431585225 stripped
 Transform:
@@ -13026,7 +13025,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!1001 &1932855856
 PrefabInstance:
@@ -13231,7 +13230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpringTrainSequenceManager
   railStateManager: {fileID: 199786530}
-  railDataManager: {fileID: 0}
+  railDataManager: {fileID: 681806961}
   movingTrain: {fileID: 2071336385}
   blackTrain: {fileID: 190693360}
   springPickupState: {fileID: 620240947}
@@ -14359,7 +14358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpringTrainCollisionDetector
   formationController: {fileID: 2071336384}
-  collisionRadius: 0.5
+  collisionRadius: 0.7
 --- !u!114 &2071336384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14919,37 +14918,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0077290535, y: 0.048747063, z: 0.00978303}
   m_Center: {x: -0.0007379055, y: 0.19782525, z: -0.30940664}
---- !u!1 &2132631655
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2132631656}
-  m_Layer: 0
-  m_Name: SpringTrainFormationController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2132631656
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2132631655}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 104915611}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2132684095
 GameObject:
   m_ObjectHideFlags: 0
@@ -15590,7 +15558,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!33 &7411310039373772691
 MeshFilter:
@@ -15667,7 +15635,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!1001 &8757716409559420993
 PrefabInstance:

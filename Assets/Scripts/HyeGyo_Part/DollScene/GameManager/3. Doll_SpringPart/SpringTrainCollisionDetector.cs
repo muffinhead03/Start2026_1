@@ -4,24 +4,19 @@ using UnityEngine;
 public class SpringTrainCollisionDetector : MonoBehaviour
 {
     // =========================================================
-    // 기차 구성
+    // Formation
     // =========================================================
 
-    [Header("기차 3칸 배치 Controller")]
+    [Header("기차 Formation")]
     [SerializeField]
     private SpringTrainFormationController formationController;
 
 
     // =========================================================
-    // 충돌
+    // Collision
     // =========================================================
 
-    [Header("기차 충돌 반경")]
-    [Tooltip(
-        "두 기차의 각 칸 중심 사이 거리가 " +
-        "두 기차 Collision Radius의 합 이하가 되면 " +
-        "충돌로 판단합니다."
-    )]
+    [Header("기차 칸 충돌 반경")]
     [SerializeField]
     private float collisionRadius = 0.5f;
 
@@ -40,161 +35,67 @@ public class SpringTrainCollisionDetector : MonoBehaviour
 
     // =========================================================
     // 다른 기차와 충돌 검사
-    //
-    // Front / Middle / Rear
-    // 총 3 x 3 = 9가지 조합을 검사
     // =========================================================
 
     public bool IsCollidingWith(
-        SpringTrainCollisionDetector otherDetector
+        SpringTrainCollisionDetector other
     )
     {
-        if (otherDetector == null)
-        {
-            return false;
-        }
-
-
         if (
+            other == null ||
             formationController == null ||
-            otherDetector.formationController == null
+            other.formationController == null
         )
         {
             return false;
         }
 
 
-        float collisionDistance =
-            collisionRadius +
-            otherDetector.collisionRadius;
-
-
-        float collisionDistanceSqr =
-            collisionDistance *
-            collisionDistance;
-
-
-        SpringTrainFormationController otherFormation =
-            otherDetector.formationController;
-
-
-        // =====================================================
-        // 내 Front
-        // =====================================================
-
-        if (
-            IsCarPairColliding(
-                formationController.FrontCar,
-                otherFormation.FrontCar,
-                collisionDistanceSqr
-            )
-        )
+        SpringTrainCarFollower[] myCars =
         {
-            return true;
-        }
+            formationController.FrontCar,
+            formationController.MiddleCar,
+            formationController.RearCar
+        };
 
 
-        if (
-            IsCarPairColliding(
-                formationController.FrontCar,
-                otherFormation.MiddleCar,
-                collisionDistanceSqr
-            )
-        )
+        SpringTrainCarFollower[] otherCars =
         {
-            return true;
-        }
+            other.formationController.FrontCar,
+            other.formationController.MiddleCar,
+            other.formationController.RearCar
+        };
 
 
-        if (
-            IsCarPairColliding(
-                formationController.FrontCar,
-                otherFormation.RearCar,
-                collisionDistanceSqr
-            )
-        )
+        // 3 x 3
+        for (int i = 0; i < myCars.Length; i++)
         {
-            return true;
-        }
+            if (myCars[i] == null)
+            {
+                continue;
+            }
 
 
-        // =====================================================
-        // 내 Middle
-        // =====================================================
-
-        if (
-            IsCarPairColliding(
-                formationController.MiddleCar,
-                otherFormation.FrontCar,
-                collisionDistanceSqr
-            )
-        )
-        {
-            return true;
-        }
+            for (int j = 0; j < otherCars.Length; j++)
+            {
+                if (otherCars[j] == null)
+                {
+                    continue;
+                }
 
 
-        if (
-            IsCarPairColliding(
-                formationController.MiddleCar,
-                otherFormation.MiddleCar,
-                collisionDistanceSqr
-            )
-        )
-        {
-            return true;
-        }
-
-
-        if (
-            IsCarPairColliding(
-                formationController.MiddleCar,
-                otherFormation.RearCar,
-                collisionDistanceSqr
-            )
-        )
-        {
-            return true;
-        }
-
-
-        // =====================================================
-        // 내 Rear
-        // =====================================================
-
-        if (
-            IsCarPairColliding(
-                formationController.RearCar,
-                otherFormation.FrontCar,
-                collisionDistanceSqr
-            )
-        )
-        {
-            return true;
-        }
-
-
-        if (
-            IsCarPairColliding(
-                formationController.RearCar,
-                otherFormation.MiddleCar,
-                collisionDistanceSqr
-            )
-        )
-        {
-            return true;
-        }
-
-
-        if (
-            IsCarPairColliding(
-                formationController.RearCar,
-                otherFormation.RearCar,
-                collisionDistanceSqr
-            )
-        )
-        {
-            return true;
+                if (
+                    IsCarPairColliding(
+                        myCars[i],
+                        otherCars[j],
+                        collisionRadius,
+                        other.collisionRadius
+                    )
+                )
+                {
+                    return true;
+                }
+            }
         }
 
 
@@ -203,37 +104,42 @@ public class SpringTrainCollisionDetector : MonoBehaviour
 
 
     // =========================================================
-    // 기차 칸 두 개 거리 검사
+    // 기차 한 칸끼리 거리 검사
     // =========================================================
 
     private bool IsCarPairColliding(
-        SpringTrainCarFollower firstCar,
-        SpringTrainCarFollower secondCar,
-        float collisionDistanceSqr
+        SpringTrainCarFollower first,
+        SpringTrainCarFollower second,
+        float firstRadius,
+        float secondRadius
     )
     {
-        if (
-            firstCar == null ||
-            secondCar == null
-        )
-        {
-            return false;
-        }
+        Vector3 firstPosition =
+            first.WorldPosition;
 
 
-        Vector3 difference =
-            firstCar.Position -
-            secondCar.Position;
+        Vector3 secondPosition =
+            second.WorldPosition;
+
+
+        float totalRadius =
+            firstRadius +
+            secondRadius;
 
 
         return
-            difference.sqrMagnitude <=
-            collisionDistanceSqr;
+            (
+                firstPosition -
+                secondPosition
+            ).sqrMagnitude
+            <=
+            totalRadius *
+            totalRadius;
     }
 
 
     // =========================================================
-    // Inspector 검사
+    // Inspector
     // =========================================================
 
     private void OnValidate()
