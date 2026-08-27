@@ -666,4 +666,188 @@ public class SpringTrainPathMover : MonoBehaviour
             arriveDistance = 0f;
         }
     }
+
+    // =========================================================
+// 완성된 선로 Path에 기차를 정확하게 맞춤
+//
+// 퍼즐 진행 중에는 호출하지 않는다.
+// 전체 선로 정답 이후 SequenceManager가 호출한다.
+// =========================================================
+
+public bool SnapTrainToCurrentPath()
+{
+    if (
+        track == null ||
+        formationController == null
+    )
+    {
+        return false;
+    }
+
+
+    pathSnapshot =
+        track.BuildPathSnapshot();
+
+
+    if (pathSnapshot == null)
+    {
+        return false;
+    }
+
+
+    Vector3 middlePosition =
+        formationController.MiddlePosition;
+
+
+    centerPathDistance =
+        pathSnapshot.GetNearestDistance(
+            middlePosition
+        );
+
+
+    CurrentRailIndex =
+        track.GetNearestSectionIndex(
+            middlePosition
+        );
+
+
+    formationController.ApplyFormation(
+        pathSnapshot,
+        centerPathDistance,
+        true
+    );
+
+
+    Debug.Log(
+        "[SpringTrainPathMover] 기차를 완성된 Path에 맞춤",
+        this
+    );
+
+
+    return true;
+}
+
+// =========================================================
+// 일정 시간 동안 Path를 따라 이동하면서
+// 다른 기차와 충돌 검사
+//
+// duration은 최대 이동 시간.
+// 그 전에 충돌하면 즉시 정지.
+// =========================================================
+
+public IEnumerator MoveUntilCollisionForDuration(
+    SpringTrainDirection direction,
+    SpringTrainPathMover otherTrain,
+    float duration
+)
+{
+    if (IsMoving)
+    {
+        yield break;
+    }
+
+
+    if (
+        otherTrain == null ||
+        duration <= 0f
+    )
+    {
+        yield break;
+    }
+
+
+    if (!PrepareMovement())
+    {
+        yield break;
+    }
+
+
+    if (
+        collisionDetector == null ||
+        otherTrain.CollisionDetector == null
+    )
+    {
+        Debug.LogWarning(
+            "[SpringTrainPathMover] CollisionDetector 연결을 확인하세요.",
+            this
+        );
+
+        yield break;
+    }
+
+
+    IsMoving =
+        true;
+
+
+    DidCollide =
+        false;
+
+
+    float elapsed =
+        0f;
+
+
+    float moveSign =
+        direction ==
+        SpringTrainDirection.Clockwise
+            ? 1f
+            : -1f;
+
+
+    while (elapsed < duration)
+    {
+        // 이동 전 충돌 검사
+        if (IsCollidingWith(otherTrain))
+        {
+            HandleCollisionStop();
+
+            break;
+        }
+
+
+        float deltaTime =
+            Time.deltaTime;
+
+
+        centerPathDistance +=
+            moveSign *
+            moveSpeed *
+            deltaTime;
+
+
+        ApplyFormation(
+            false
+        );
+
+
+        // 이동 후 충돌 검사
+        if (IsCollidingWith(otherTrain))
+        {
+            HandleCollisionStop();
+
+            break;
+        }
+
+
+        elapsed +=
+            deltaTime;
+
+
+        yield return null;
+    }
+
+
+    IsMoving =
+        false;
+
+
+    if (!DidCollide)
+    {
+        Debug.LogWarning(
+            "[SpringTrainPathMover] 설정된 시간 안에 충돌하지 않았습니다.",
+            this
+        );
+    }
+}
 }
