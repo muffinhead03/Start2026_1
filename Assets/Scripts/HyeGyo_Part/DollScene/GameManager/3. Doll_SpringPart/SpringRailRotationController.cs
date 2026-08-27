@@ -211,4 +211,16 @@ public class SpringRailRotationController : MonoBehaviour
 
         railStateManager.EndRotation();
     }
+
+    // =========================================================
+    // Inspector 검사
+    // =========================================================
+
+    private void OnValidate()
+    {
+        if (rotationDuration < 0f)
+        {
+            rotationDuration = 0f;
+        }
+    }
 }

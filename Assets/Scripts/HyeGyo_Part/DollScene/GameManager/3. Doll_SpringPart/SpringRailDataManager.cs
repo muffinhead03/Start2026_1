@@ -46,12 +46,12 @@ public class SpringRailDataManager : MonoBehaviour
         public Vector3 rotationStep =
             new Vector3(
                 0f,
-                0f,
-                -30f
+                -30f,
+                0f
             );
 
 
-        [HideInInspector]
+        [NonSerialized]
         public bool isCorrect;
     }
 

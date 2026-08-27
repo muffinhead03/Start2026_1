@@ -10,8 +10,8 @@ public class SpringTrainSequenceManager : MonoBehaviour
     // =========================================================
 
     [Header("선로 정답 Manager")]
-[SerializeField]
-private SpringRailStateManager railStateManager;
+    [SerializeField]
+    private SpringRailStateManager railStateManager;
 
 
     // =========================================================
@@ -56,12 +56,12 @@ private SpringRailStateManager railStateManager;
     // 충돌 후
     // =========================================================
 
-    [Header("충돌 후 움직이던 기차 이동 칸")]
+    [Header("충돌 후 움직이던 기차 반동 칸")]
     [SerializeField]
     private int movingTrainReactionSteps = 1;
 
 
-    [Header("충돌 후 다른 기차 반동 칸")]
+    [Header("충돌 후 검은 기차 밀려나는 칸")]
     [SerializeField]
     private int blackTrainReactionSteps = 2;
 
@@ -166,11 +166,6 @@ private SpringRailStateManager railStateManager;
         }
 
 
-        // =============================================
-        // 요구사항 4
-        // 모든 선로가 정답일 때만 기차 이동
-        // =============================================
-
         if (!railStateManager.IsAllRailsCorrect)
         {
             return;
@@ -188,11 +183,7 @@ private SpringRailStateManager railStateManager;
         }
 
 
-        // =============================================
-        // 요구사항 5
-        // 기차 움직이는 동안 선로 완전 잠금
-        // =============================================
-
+        // 기차 연출 중 선로 입력 잠금
         railStateManager.LockInteraction();
 
 
@@ -224,7 +215,7 @@ private SpringRailStateManager railStateManager;
 
         // =====================================================
         // 1.
-        // 움직이는 기차가 충돌할 때까지 진행
+        // 색깔 기차가 검은 기차와 충돌할 때까지 이동
         // =====================================================
 
         yield return movingTrain.MoveUntilCollision(
@@ -240,6 +231,10 @@ private SpringRailStateManager railStateManager;
                 "[SpringTrainSequence] 한 바퀴 안에 기차 충돌이 발생하지 않았습니다. " +
                 "Train Center / Collision Radius / Track 순서를 확인하세요."
             );
+
+
+            isSequenceStarted =
+                false;
 
 
             yield break;
@@ -261,44 +256,63 @@ private SpringRailStateManager railStateManager;
 
         // =====================================================
         // 2.
-        // 충돌 후 두 기차가 동시에 반대 방향으로 움직임
+        // 충돌 후 두 기차가 서로 벌어짐
         //
-        // 움직이던 기차:
-        // 원래 방향으로 1칸
+        // 색깔 기차:
+        // 원래 진행 방향의 반대로 1칸
         //
-        // 맞은 기차:
-        // 반대 방향으로 2칸
+        // 검은 기차:
+        // 색깔 기차가 진행하던 방향으로 2칸
+        //
+        //
+        // 예:
+        //
+        // 충돌 전
+        //
+        // [색깔] ---> [검은]
+        //
+        //
+        // 충돌 후
+        //
+        // <--- [색깔]     [검은] --->
         // =====================================================
 
-        SpringTrainDirection blackDirection =
+        SpringTrainDirection movingReactionDirection =
             GetOppositeDirection(
                 movingDirection
             );
 
 
+        SpringTrainDirection blackReactionDirection =
+            movingDirection;
+
+
         bool movingTrainDone =
             false;
+
 
         bool blackTrainDone =
             false;
 
 
+        // 색깔 기차 반동
         StartCoroutine(
             MoveReaction(
                 movingTrain,
                 movingTrainReactionSteps,
-                movingDirection,
+                movingReactionDirection,
                 () =>
                     movingTrainDone = true
             )
         );
 
 
+        // 검은 기차 밀려남
         StartCoroutine(
             MoveReaction(
                 blackTrain,
                 blackTrainReactionSteps,
-                blackDirection,
+                blackReactionDirection,
                 () =>
                     blackTrainDone = true
             )
