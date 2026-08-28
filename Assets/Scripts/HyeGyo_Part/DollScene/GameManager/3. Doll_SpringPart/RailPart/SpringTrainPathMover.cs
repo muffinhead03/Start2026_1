@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpringTrainPathMover : MonoBehaviour
 {
     // =========================================================
-    // 선로
+    // Track
     // =========================================================
 
     [Header("전체 선로")]
@@ -14,92 +14,39 @@ public class SpringTrainPathMover : MonoBehaviour
 
 
     // =========================================================
-    // 기차 3칸
+    // Formation
     // =========================================================
 
-    [Header("앞 칸")]
+    [Header("기차 Formation")]
     [SerializeField]
-    private SpringTrainCarFollower frontCar;
-
-
-    [Header("중간 칸 - 기차 전체 기준점")]
-    [SerializeField]
-    private SpringTrainCarFollower middleCar;
-
-
-    [Header("뒤 칸")]
-    [SerializeField]
-    private SpringTrainCarFollower rearCar;
-
-
-    // =========================================================
-    // 칸 간격
-    // =========================================================
-
-    [Header("기차 칸 중심 사이 거리")]
-    [SerializeField]
-    private float carSpacing =
-        0.8f;
-
-
-    [Header("앞 칸이 시계방향 쪽에 위치")]
-    [Tooltip(
-        "현재 배치에서 Front Car가 Middle Car보다 " +
-        "시계방향 쪽에 있으면 체크합니다."
-    )]
-    [SerializeField]
-    private bool frontIsClockwiseSide =
-        true;
+    private SpringTrainFormationController formationController;
 
 
     // =========================================================
     // 이동
     // =========================================================
 
-    [Header("전체 기차 이동 속도")]
+    [Header("기차 이동 속도")]
     [SerializeField]
-    private float moveSpeed =
-        2f;
-
-
-    [Header("선로 Center 도착 오차")]
-    [SerializeField]
-    private float arriveDistance =
-        0.005f;
-
-
-    [Header("회전 방향 확인 거리")]
-    [Tooltip(
-        "현재 위치보다 조금 앞의 경로를 확인해서 기차 방향을 계산합니다."
-    )]
-    [SerializeField]
-    private float tangentLookAhead =
-        0.05f;
+    private float moveSpeed = 2f;
 
 
     // =========================================================
-    // 충돌
+    // Runtime
     // =========================================================
 
-    [Header("기차 충돌 반경")]
-    [Tooltip(
-        "두 기차의 Middle Car 사이 거리로 충돌을 판단합니다."
-    )]
-    [SerializeField]
-    private float collisionRadius =
-        0.5f;
+    private SpringTrainTrack.PathSnapshot pathSnapshot;
+
+
+    private float middlePathDistance;
+
+
+    private bool stopRequested;
 
 
     // =========================================================
     // 상태
     // =========================================================
-
-    public int CurrentRailIndex
-    {
-        get;
-        private set;
-    } = -1;
-
 
     public bool IsMoving
     {
@@ -115,66 +62,50 @@ public class SpringTrainPathMover : MonoBehaviour
     }
 
 
+    public Vector3 CurrentTravelWorldDirection
+    {
+        get;
+        private set;
+    }
+
+
     public Transform TrainCenter
     {
         get
         {
-            if (middleCar == null)
+            if (formationController == null)
             {
                 return null;
             }
 
 
-            return
-                middleCar.CarRoot;
+            return formationController.TrainCenter;
         }
     }
 
 
     // =========================================================
-    // Runtime Path
-    // =========================================================
-
-    private SpringTrainTrack.PathSnapshot
-        pathSnapshot;
-
-
-    // 중간칸의 현재 Path 거리
+    // 현재 기차 위치를 Path 시작점으로 등록
     //
-    // 이 값 하나만 움직인다.
-    // 앞/뒤칸은 이 값 ± carSpacing
-    private float centerPathDistance;
-
-
-    // =========================================================
-    // Unity
+    // 여기서만 GetNearestDistance를 사용한다.
+    // 이동 중에는 다시 계산하지 않는다.
     // =========================================================
 
-    private void Start()
-    {
-        RefreshCurrentRailIndex();
-    }
-
-
-    // =========================================================
-    // 현재 위치 기준 Path 다시 생성
-    //
-    // Rail이 퍼즐로 회전한 뒤 호출되므로
-    // 회전된 HelpPoint 위치를 다시 읽음
-    // =========================================================
-
-    public int RefreshCurrentRailIndex()
+    public bool SnapTrainToCurrentPath()
     {
         if (
             track == null ||
-            middleCar == null
+            formationController == null ||
+            !formationController.HasAllCars
         )
         {
-            CurrentRailIndex =
-                -1;
+            Debug.LogWarning(
+                "[SpringTrainPathMover] Track / Formation 연결 확인",
+                this
+            );
 
 
-            return -1;
+            return false;
         }
 
 
@@ -184,204 +115,31 @@ public class SpringTrainPathMover : MonoBehaviour
 
         if (pathSnapshot == null)
         {
-            CurrentRailIndex =
-                -1;
-
-
-            return -1;
+            return false;
         }
 
 
-        Vector3 middlePosition =
-            middleCar.Position;
+        Vector3 currentMiddlePosition =
+            formationController.MiddlePosition;
 
 
-        // 현재 Middle Car와 가장 가까운
-        // Path 거리
-        centerPathDistance =
+        middlePathDistance =
             pathSnapshot.GetNearestDistance(
-                middlePosition
+                currentMiddlePosition
             );
 
 
-        // 현재 가장 가까운 Rail
-        CurrentRailIndex =
-            track.GetNearestSectionIndex(
-                middlePosition
-            );
+        formationController.ApplyFormation(
+            pathSnapshot,
+            middlePathDistance,
+            true
+        );
 
 
-        return
-            CurrentRailIndex;
-    }
-
-
-    // =========================================================
-    // 여러 Rail 이동
-    // =========================================================
-
-    public IEnumerator MoveRailSteps(
-        int stepCount,
-        SpringTrainDirection direction
-    )
-    {
-        if (IsMoving)
-        {
-            yield break;
-        }
-
-
-        if (stepCount <= 0)
-        {
-            yield break;
-        }
-
-
-        if (!PrepareMovement())
-        {
-            yield break;
-        }
-
-
-        IsMoving =
-            true;
-
-
-        DidCollide =
-            false;
-
-
-        for (
-            int i = 0;
-            i < stepCount;
-            i++
-        )
-        {
-            yield return
-                MoveToNextSection(
-                    direction,
-                    null,
-                    false
-                );
-
-
-            if (DidCollide)
-            {
-                break;
-            }
-        }
-
-
-        IsMoving =
-            false;
-    }
-
-
-    // =========================================================
-    // 다른 기차와 충돌할 때까지 이동
-    // =========================================================
-
-    public IEnumerator MoveUntilCollision(
-        SpringTrainDirection direction,
-        SpringTrainPathMover otherTrain,
-        int maximumRailSteps
-    )
-    {
-        if (IsMoving)
-        {
-            yield break;
-        }
-
-
-        if (otherTrain == null)
-        {
-            yield break;
-        }
-
-
-        if (
-            maximumRailSteps <= 0
-        )
-        {
-            yield break;
-        }
-
-
-        if (!PrepareMovement())
-        {
-            yield break;
-        }
-
-
-        IsMoving =
-            true;
-
-
-        DidCollide =
-            false;
-
-
-        for (
-            int i = 0;
-            i < maximumRailSteps;
-            i++
-        )
-        {
-            yield return
-                MoveToNextSection(
-                    direction,
-                    otherTrain,
-                    true
-                );
-
-
-            if (DidCollide)
-            {
-                break;
-            }
-        }
-
-
-        IsMoving =
-            false;
-    }
-
-
-    // =========================================================
-    // 이동 준비
-    // =========================================================
-
-    private bool PrepareMovement()
-    {
-        if (
-            track == null ||
-            frontCar == null ||
-            middleCar == null ||
-            rearCar == null
-        )
-        {
-            Debug.LogWarning(
-                "[SpringTrainPathMover] Track 또는 기차 3칸 연결이 안 되어 있습니다."
-            );
-
-
-            return false;
-        }
-
-
-        int railIndex =
-            RefreshCurrentRailIndex();
-
-
-        if (railIndex < 0)
-        {
-            Debug.LogWarning(
-                "[SpringTrainPathMover] 현재 선로를 찾지 못했습니다."
-            );
-
-
-            return false;
-        }
+        Debug.Log(
+            "[SpringTrainPathMover] 현재 기차 위치를 Path에 등록 완료",
+            this
+        );
 
 
         return true;
@@ -389,416 +147,154 @@ public class SpringTrainPathMover : MonoBehaviour
 
 
     // =========================================================
-    // 다음 Section Center까지 이동
+    // 실제 물리 충돌이 발생할 때까지 이동
     // =========================================================
 
-    private IEnumerator MoveToNextSection(
+    public IEnumerator MoveUntilPhysicalCollision(
         SpringTrainDirection direction,
-        SpringTrainPathMover otherTrain,
-        bool stopOnCollision
+        float maximumTravelTime
     )
     {
-        if (
-            pathSnapshot == null ||
-            CurrentRailIndex < 0
-        )
+        if (IsMoving)
         {
             yield break;
         }
 
 
-        int nextIndex =
-            track.GetNextIndex(
-                CurrentRailIndex,
-                direction
-            );
-
-
-        if (nextIndex < 0)
-        {
-            yield break;
-        }
-
-
-        float targetDistance =
-            GetTargetPathDistance(
-                nextIndex,
-                direction
-            );
-
-
-        while (
-            Mathf.Abs(
-                targetDistance -
-                centerPathDistance
-            ) >
-            arriveDistance
-        )
-        {
-            // =================================================
-            // 이동 전 충돌 검사
-            // =================================================
-
-            if (
-                stopOnCollision &&
-                otherTrain != null &&
-                IsCollidingWith(
-                    otherTrain
-                )
-            )
-            {
-                HandleCollisionStop();
-
-
-                yield break;
-            }
-
-
-            // =================================================
-            // Middle 기준 거리 하나만 이동
-            // =================================================
-
-            centerPathDistance =
-                Mathf.MoveTowards(
-                    centerPathDistance,
-                    targetDistance,
-                    moveSpeed *
-                    Time.deltaTime
-                );
-
-
-            // =================================================
-            // 3칸 전부 같은 경로에 배치
-            // =================================================
-
-            ApplyCarPositions(
-                false
-            );
-
-
-            // =================================================
-            // 이동 후 충돌 검사
-            // =================================================
-
-            if (
-                stopOnCollision &&
-                otherTrain != null &&
-                IsCollidingWith(
-                    otherTrain
-                )
-            )
-            {
-                HandleCollisionStop();
-
-
-                yield break;
-            }
-
-
-            yield return null;
-        }
-
-
-        // =====================================================
-        // 정확히 Section Center에 도착
-        // =====================================================
-
-        centerPathDistance =
-            targetDistance;
-
-
-        ApplyCarPositions(
-            false
-        );
-
-
-        CurrentRailIndex =
-            nextIndex;
-
-
-        // =====================================================
-        // 도착 직후 충돌
-        // =====================================================
-
-        if (
-            stopOnCollision &&
-            otherTrain != null &&
-            IsCollidingWith(
-                otherTrain
-            )
-        )
-        {
-            HandleCollisionStop();
-        }
-    }
-
-
-    // =========================================================
-    // 다음 Rail Center의 Unwrapped 거리 구하기
-    //
-    // centerPathDistance는 계속 증가/감소 가능
-    // Snapshot 내부에서 실제 위치 계산 시 원형 Wrap
-    // =========================================================
-
-    private float GetTargetPathDistance(
-        int targetSectionIndex,
-        SpringTrainDirection direction
-    )
-    {
-        float totalLength =
-            pathSnapshot.TotalLength;
-
-
-        float currentWrapped =
-            pathSnapshot.WrapDistance(
-                centerPathDistance
-            );
-
-
-        float targetWrapped =
-            pathSnapshot.GetSectionDistance(
-                targetSectionIndex
-            );
-
-
-        if (
-            direction ==
-            SpringTrainDirection.Clockwise
-        )
-        {
-            float delta =
-                Mathf.Repeat(
-                    targetWrapped -
-                    currentWrapped,
-                    totalLength
-                );
-
-
-            return
-                centerPathDistance +
-                delta;
-        }
-
-
-        float reverseDelta =
-            Mathf.Repeat(
-                currentWrapped -
-                targetWrapped,
-                totalLength
-            );
-
-
-        return
-            centerPathDistance -
-            reverseDelta;
-    }
-
-
-    // =========================================================
-    // 기차 3칸 위치 적용
-    // =========================================================
-
-    private void ApplyCarPositions(
-        bool snapRotation
-    )
-    {
         if (pathSnapshot == null)
         {
-            return;
+            if (!SnapTrainToCurrentPath())
+            {
+                yield break;
+            }
         }
 
 
-        float frontSideSign =
-            frontIsClockwiseSide
+        IsMoving =
+            true;
+
+
+        DidCollide =
+            false;
+
+
+        stopRequested =
+            false;
+
+
+        float elapsed =
+            0f;
+
+
+        float sign =
+            direction ==
+            SpringTrainDirection.Clockwise
                 ? 1f
                 : -1f;
 
 
-        // =====================================================
-        // Middle은 기준 거리 그대로
-        // =====================================================
-
-        ApplySingleCar(
-            middleCar,
-            centerPathDistance,
-            snapRotation
-        );
-
-
-        // =====================================================
-        // Front
-        // =====================================================
-
-        ApplySingleCar(
-            frontCar,
-            centerPathDistance +
-            carSpacing *
-            frontSideSign,
-            snapRotation
-        );
-
-
-        // =====================================================
-        // Rear
-        // =====================================================
-
-        ApplySingleCar(
-            rearCar,
-            centerPathDistance -
-            carSpacing *
-            frontSideSign,
-            snapRotation
-        );
-    }
-
-
-    // =========================================================
-    // 한 칸 위치 + 방향 계산
-    // =========================================================
-
-    private void ApplySingleCar(
-        SpringTrainCarFollower car,
-        float pathDistance,
-        bool snapRotation
-    )
-    {
-        if (car == null)
-        {
-            return;
-        }
-
-
-        Vector3 position =
-            pathSnapshot.EvaluatePosition(
-                pathDistance
-            );
-
-
-        // 기차의 물리적인 앞 방향
-        //
-        // 반동으로 뒤로 움직여도
-        // 기차 자체가 갑자기 180도 뒤집히지 않게 함
-        SpringTrainDirection visualDirection =
-            frontIsClockwiseSide
-                ? SpringTrainDirection.Clockwise
-                : SpringTrainDirection.CounterClockwise;
-
-
-        Vector3 direction =
-            pathSnapshot.EvaluateDirection(
-                pathDistance,
-                visualDirection,
-                tangentLookAhead
-            );
-
-
-        car.ApplyPathPose(
-            position,
-            direction,
-            snapRotation
-        );
-    }
-
-
-    // =========================================================
-    // 충돌
-    // =========================================================
-
-    public bool IsCollidingWith(
-        SpringTrainPathMover otherTrain
-    )
-    {
-        if (
-            otherTrain == null ||
-            TrainCenter == null ||
-            otherTrain.TrainCenter == null
+        while (
+            !stopRequested &&
+            elapsed < maximumTravelTime
         )
         {
-            return false;
-        }
+            // Physics Timing에 맞춤
+            yield return new WaitForFixedUpdate();
 
 
-        float collisionDistance =
-            collisionRadius +
-            otherTrain.collisionRadius;
+            if (stopRequested)
+            {
+                break;
+            }
 
 
-        float currentDistance =
-            Vector3.Distance(
-                TrainCenter.position,
-                otherTrain
-                    .TrainCenter
-                    .position
+            float moveDistance =
+                moveSpeed *
+                Time.fixedDeltaTime;
+
+
+            middlePathDistance +=
+                sign *
+                moveDistance;
+
+
+            // -----------------------------------------
+            // 지정 Point 사이 직선 위치 계산
+            // -----------------------------------------
+
+            formationController.ApplyFormation(
+                pathSnapshot,
+                middlePathDistance,
+                false
             );
 
 
-        return
-            currentDistance <=
-            collisionDistance;
+            CurrentTravelWorldDirection =
+                pathSnapshot.EvaluateDirection(
+                    middlePathDistance,
+                    direction
+                );
+
+
+            // Transform으로 움직이는 Compound Collider를
+            // Physics에 즉시 반영
+            Physics.SyncTransforms();
+
+
+            elapsed +=
+                Time.fixedDeltaTime;
+        }
+
+
+        IsMoving =
+            false;
+
+
+        if (!DidCollide)
+        {
+            Debug.LogWarning(
+                "[SpringTrainPathMover] 제한 시간 안에 물리 충돌이 발생하지 않았습니다.",
+                this
+            );
+        }
     }
 
 
     // =========================================================
-    // 충돌 시 현재 상태 갱신
+    // PhysicsController가 호출
     // =========================================================
 
-    private void HandleCollisionStop()
+    public void StopMovementForCollision()
     {
         DidCollide =
             true;
 
 
-        if (
-            track != null &&
-            TrainCenter != null
-        )
-        {
-            CurrentRailIndex =
-                track.GetNearestSectionIndex(
-                    TrainCenter.position
-                );
-        }
+        stopRequested =
+            true;
     }
 
 
     // =========================================================
-    // Inspector
+    // 강제 정지
     // =========================================================
+
+    public void StopMovementImmediately()
+    {
+        stopRequested =
+            true;
+
+
+        IsMoving =
+            false;
+    }
+
 
     private void OnValidate()
     {
         if (moveSpeed < 0f)
         {
-            moveSpeed =
-                0f;
-        }
-
-
-        if (carSpacing < 0f)
-        {
-            carSpacing =
-                0f;
-        }
-
-
-        if (arriveDistance < 0f)
-        {
-            arriveDistance =
-                0f;
-        }
-
-
-        if (tangentLookAhead < 0.001f)
-        {
-            tangentLookAhead =
-                0.001f;
-        }
-
-
-        if (collisionRadius < 0f)
-        {
-            collisionRadius =
-                0f;
+            moveSpeed = 0f;
         }
     }
 }
