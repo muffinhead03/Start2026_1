@@ -12,12 +12,22 @@ public class Door_OpenClose : MonoBehaviour
 
 
     // ================================================
-    // Rotation Setting
+    // Lock State
+    // ================================================
+
+    [Header("Lock State")]
+
+    [Tooltip("게임 시작 시 문이 잠겨있는지")]
+    [SerializeField]
+    private bool isLocked = true;
+
+
+    // ================================================
+    // Door Rotation
     // ================================================
 
     [Header("Door Rotation")]
 
-    [Tooltip("문 회전축")]
     [SerializeField]
     private RotationAxis rotationAxis =
         RotationAxis.Y;
@@ -28,11 +38,7 @@ public class Door_OpenClose : MonoBehaviour
     private float openAngle = 60f;
 
 
-    [Tooltip(
-        "열리는 방향\n" +
-        "1 = 한 방향\n" +
-        "-1 = 반대 방향"
-    )]
+    [Tooltip("열리는 방향. 1 또는 -1")]
     [SerializeField]
     private float openDirection = 1f;
 
@@ -43,12 +49,10 @@ public class Door_OpenClose : MonoBehaviour
 
     [Header("Animation")]
 
-    [Tooltip("문 여닫는 시간")]
     [SerializeField]
     private float rotationDuration = 0.8f;
 
 
-    [Tooltip("문 회전 애니메이션")]
     [SerializeField]
     private AnimationCurve rotationCurve =
         AnimationCurve.EaseInOut(
@@ -73,14 +77,9 @@ public class Door_OpenClose : MonoBehaviour
     private bool isMoving = false;
 
 
-    // ================================================
-    // Rotation
-    // ================================================
-
     private Quaternion closedRotation;
 
     private Quaternion openedRotation;
-
 
     private Coroutine moveCoroutine;
 
@@ -89,12 +88,11 @@ public class Door_OpenClose : MonoBehaviour
     // Property
     // ================================================
 
-    public bool IsOpen =>
-        isOpen;
+    public bool IsLocked => isLocked;
 
+    public bool IsOpen => isOpen;
 
-    public bool IsMoving =>
-        isMoving;
+    public bool IsMoving => isMoving;
 
 
     // ================================================
@@ -103,15 +101,137 @@ public class Door_OpenClose : MonoBehaviour
 
     private void Start()
     {
-        // 현재 Scene에서 배치된 상태를
-        // 닫힌 상태로 기억
+        // 현재 DoorPivot 방향을 닫힌 상태로 기억
         closedRotation =
             transform.localRotation;
 
 
-        // 열린 상태 각도 계산
         openedRotation =
             CalculateOpenRotation();
+
+
+        Debug.Log(
+            $"[Door] 초기화 / " +
+            $"Locked = {isLocked} / " +
+            $"Open = {isOpen}"
+        );
+    }
+
+
+    // ================================================
+    // 자물쇠 퍼즐 해결 시 호출
+    // ================================================
+
+    public void UnlockDoor()
+    {
+        isLocked = false;
+
+
+        Debug.Log(
+            $"[Door] {gameObject.name} 잠금 해제 / " +
+            $"IsLocked = {isLocked}"
+        );
+    }
+
+
+    // ================================================
+    // 필요하면 다시 잠그기
+    // ================================================
+
+    public void LockDoor()
+    {
+        isLocked = true;
+
+
+        Debug.Log(
+            $"[Door] {gameObject.name} 잠금"
+        );
+    }
+
+
+    // ================================================
+    // E 상호작용
+    // ================================================
+
+    public void ToggleDoor()
+    {
+        Debug.Log(
+            $"[Door] ToggleDoor 호출 / " +
+            $"Locked = {isLocked} / " +
+            $"Open = {isOpen} / " +
+            $"Moving = {isMoving}"
+        );
+
+
+        // 잠겨있으면 열 수 없음
+        if (isLocked)
+        {
+            Debug.Log(
+                $"[Door] {gameObject.name} 문이 잠겨있습니다."
+            );
+
+            return;
+        }
+
+
+        if (isMoving)
+            return;
+
+
+        if (isOpen)
+        {
+            CloseDoor();
+        }
+        else
+        {
+            OpenDoor();
+        }
+    }
+
+
+    // ================================================
+    // Open
+    // ================================================
+
+    public void OpenDoor()
+    {
+        if (isLocked)
+            return;
+
+
+        if (isMoving)
+            return;
+
+
+        if (isOpen)
+            return;
+
+
+        StartRotation(
+            openedRotation,
+            true
+        );
+    }
+
+
+    // ================================================
+    // Close
+    // ================================================
+
+    public void CloseDoor()
+    {
+        if (isMoving)
+            return;
+
+
+        if (!isOpen)
+            return;
+
+
+        StartRotation(
+            closedRotation,
+            false
+        );
     }
 
 
@@ -161,73 +281,6 @@ public class Door_OpenClose : MonoBehaviour
 
 
     // ================================================
-    // ★ E 상호작용에서 호출
-    //
-    // 닫혀 있으면 → 열기
-    // 열려 있으면 → 닫기
-    // ================================================
-
-    public void ToggleDoor()
-    {
-        // 움직이는 중에는 추가 입력 무시
-        if (isMoving)
-            return;
-
-
-        if (isOpen)
-        {
-            CloseDoor();
-        }
-        else
-        {
-            OpenDoor();
-        }
-    }
-
-
-    // ================================================
-    // 문 열기
-    // ================================================
-
-    public void OpenDoor()
-    {
-        if (isMoving)
-            return;
-
-
-        if (isOpen)
-            return;
-
-
-        StartRotation(
-            openedRotation,
-            true
-        );
-    }
-
-
-    // ================================================
-    // 문 닫기
-    // ================================================
-
-    public void CloseDoor()
-    {
-        if (isMoving)
-            return;
-
-
-        if (!isOpen)
-            return;
-
-
-        StartRotation(
-            closedRotation,
-            false
-        );
-    }
-
-
-    // ================================================
     // Rotation 시작
     // ================================================
 
@@ -254,7 +307,7 @@ public class Door_OpenClose : MonoBehaviour
 
 
     // ================================================
-    // 실제 문 회전
+    // 실제 회전
     // ================================================
 
     private IEnumerator RotateDoor(
@@ -271,7 +324,6 @@ public class Door_OpenClose : MonoBehaviour
         float elapsedTime = 0f;
 
 
-        // 즉시 이동
         if (rotationDuration <= 0f)
         {
             transform.localRotation =
@@ -285,7 +337,6 @@ public class Door_OpenClose : MonoBehaviour
             isMoving = false;
 
             moveCoroutine = null;
-
 
             yield break;
         }

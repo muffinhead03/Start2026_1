@@ -8389,6 +8389,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OpenTheGateLock
   lockCurve: {fileID: 3424267999084442886}
   doorCurveToDisable: {fileID: 975045105}
+  lockHolderToDisable: {fileID: 671226535}
+  lockRigidbody: {fileID: 1056492239}
+  dropLockAfterOpen: 1
+  dropDelay: 0.15
+  door: {fileID: 1700665866}
   liftHeight: 0.02
   liftDuration: 1
   isOpened: 0
@@ -9092,7 +9097,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -12836,7 +12841,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1700665865}
   - component: {fileID: 1700665866}
-  - component: {fileID: 1700665867}
   m_Layer: 0
   m_Name: DoorPivot
   m_TagString: Untagged
@@ -12872,8 +12876,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c14fc1979fd1fcc43b1909973310b38c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door_OpenClose
+  isLocked: 1
   rotationAxis: 1
-  openAngle: 60
+  openAngle: -90
   openDirection: 1
   rotationDuration: 0.8
   rotationCurve:
@@ -12902,42 +12907,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   isOpen: 0
   isMoving: 0
---- !u!114 &1700665867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1700665864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 769669703f5d3034da924e8f0b65d1eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Event_On_Ray
-  OnEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  OnStay:
-    m_PersistentCalls:
-      m_Calls: []
-  OnExit:
-    m_PersistentCalls:
-      m_Calls: []
-  OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1700665866}
-        m_TargetAssemblyTypeName: Door_OpenClose, Assembly-CSharp
-        m_MethodName: ToggleDoor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1708089732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14184,6 +14153,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa37eff93a0bc1045b3d5baf8cb08d00, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1932855860}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa37eff93a0bc1045b3d5baf8cb08d00, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1932855863}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa37eff93a0bc1045b3d5baf8cb08d00, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1932855864}
   m_SourcePrefab: {fileID: 100100000, guid: aa37eff93a0bc1045b3d5baf8cb08d00, type: 3}
 --- !u!4 &1932855857 stripped
 Transform:
@@ -14211,6 +14186,55 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0076092733, y: 0.0007268083, z: 0.007109629}
   m_Center: {x: 0.000026329071, y: 0.000013630311, z: 0.000036205623}
+--- !u!114 &1932855863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459296921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24b90f8710461a74b8ee5dfb6b1f3a93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door_Interaction
+  door: {fileID: 1700665866}
+--- !u!114 &1932855864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459296921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 769669703f5d3034da924e8f0b65d1eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Event_On_Ray
+  OnEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStay:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExit:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1700665866}
+        m_TargetAssemblyTypeName: Door_OpenClose, Assembly-CSharp
+        m_MethodName: ToggleDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &1933357963
 PrefabInstance:
   m_ObjectHideFlags: 0
