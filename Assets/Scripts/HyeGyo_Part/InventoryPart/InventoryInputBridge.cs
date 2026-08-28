@@ -357,7 +357,7 @@ public sealed class InventoryInputBridge : MonoBehaviour
 
 
         InputAction action =
-            worldInteractAction.action;
+            worldInteractAction;
 
 
         if (action == null)
@@ -403,10 +403,10 @@ public sealed class InventoryInputBridge : MonoBehaviour
 
 
     private void RegisterAction(
-        InputActionReference actionReference,
+        InputAction action,
         System.Action<InputAction.CallbackContext> callback)
     {
-        if (actionReference == null)
+        if (action == null)
         {
             Debug.LogError(
                 "[InventoryInputBridge] " +
@@ -418,7 +418,7 @@ public sealed class InventoryInputBridge : MonoBehaviour
         }
 
 
-        if (actionReference.action == null)
+        if (action == null)
         {
             Debug.LogError(
                 "[InventoryInputBridge] " +
@@ -428,10 +428,6 @@ public sealed class InventoryInputBridge : MonoBehaviour
 
             return;
         }
-
-
-        InputAction action =
-            actionReference.action;
 
 
         action.performed -= callback;
@@ -458,18 +454,13 @@ public sealed class InventoryInputBridge : MonoBehaviour
 
 
     private void UnregisterAction(
-        InputActionReference actionReference,
+        InputAction action,
         System.Action<InputAction.CallbackContext> callback)
     {
-        if (actionReference == null ||
-            actionReference.action == null)
+        if (action == null)
         {
             return;
         }
-
-
-        InputAction action =
-            actionReference.action;
 
 
         action.performed -= callback;
