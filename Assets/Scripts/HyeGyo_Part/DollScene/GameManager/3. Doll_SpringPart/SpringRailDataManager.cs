@@ -29,29 +29,35 @@ public class SpringRailDataManager : MonoBehaviour
 
 
         [Header("초기 Rotation")]
-        [Tooltip("게임 시작 시 적용할 X / Y / Z Rotation")]
+        [Tooltip(
+            "게임 시작 시 적용할 Local Rotation입니다."
+        )]
         public Vector3 initialRotation;
 
 
         [Header("정답 Rotation")]
-        [Tooltip("정답 상태의 X / Y / Z Rotation")]
+        [Tooltip(
+            "퍼즐 정답 상태의 Local Rotation입니다."
+        )]
         public Vector3 correctRotation;
 
 
         [Header("버튼 1회 회전량")]
         [Tooltip(
-            "버튼 한 번 눌렀을 때 변경되는 Rotation\n" +
-            "예: Z축 -30도 = (0, 0, -30)"
+            "버튼 한 번 눌렀을 때 변경되는 Local Rotation입니다.\n" +
+            "현재 기본 설정은 Y축 -30도입니다.\n" +
+            "예: (0, -30, 0)"
         )]
         public Vector3 rotationStep =
             new Vector3(
                 0f,
-                0f,
-                -30f
+                -30f,
+                0f
             );
 
 
-        [HideInInspector]
+        // 런타임에서만 사용하는 정답 여부
+        [NonSerialized]
         public bool isCorrect;
     }
 
@@ -64,6 +70,39 @@ public class SpringRailDataManager : MonoBehaviour
     [SerializeField]
     private RailData[] rails =
         new RailData[12];
+
+
+    // =========================================================
+    // 버튼 정답 횟수
+    // =========================================================
+
+    [Header("정답까지 필요한 버튼 횟수")]
+
+    [Tooltip("빨강 버튼을 몇 번 눌러야 정답이 되는지")]
+    [SerializeField]
+    private int redPressCount = 3;
+
+
+    [Tooltip("초록 버튼을 몇 번 눌러야 정답이 되는지")]
+    [SerializeField]
+    private int greenPressCount = 2;
+
+
+    [Tooltip("노랑 버튼을 몇 번 눌러야 정답이 되는지")]
+    [SerializeField]
+    private int yellowPressCount = 5;
+
+
+    // =========================================================
+    // 기본 Rotation Step
+    // =========================================================
+
+    private static readonly Vector3 DefaultRotationStep =
+        new Vector3(
+            0f,
+            -30f,
+            0f
+        );
 
 
     // =========================================================
@@ -109,8 +148,6 @@ public class SpringRailDataManager : MonoBehaviour
 
     // =========================================================
     // 초기 Rotation 적용
-    //
-    // Position / Scale은 변경하지 않음
     // =========================================================
 
     public void ApplyInitialRotations()
@@ -127,13 +164,10 @@ public class SpringRailDataManager : MonoBehaviour
                 rails[i];
 
 
-            if (data == null)
-            {
-                continue;
-            }
-
-
-            if (data.rail == null)
+            if (
+                data == null ||
+                data.rail == null
+            )
             {
                 continue;
             }
@@ -148,11 +182,14 @@ public class SpringRailDataManager : MonoBehaviour
 
 
     // =========================================================
-    // 현재 Rotation을 정답 Rotation으로 저장
+    // 모든 선로 Rotation Step을
+    // Y축 -30도로 설정
     // =========================================================
 
-    [ContextMenu("현재 Rotation을 정답 Rotation으로 저장")]
-    private void SaveCurrentRotationAsCorrect()
+    [ContextMenu(
+        "모든 선로 Rotation Step을 Y -30으로 설정"
+    )]
+    private void SetAllRotationStepsToDefault()
     {
         if (rails == null)
         {
@@ -160,8 +197,7 @@ public class SpringRailDataManager : MonoBehaviour
         }
 
 
-        int savedCount =
-            0;
+        int changedCount = 0;
 
 
         for (int i = 0; i < rails.Length; i++)
@@ -170,8 +206,59 @@ public class SpringRailDataManager : MonoBehaviour
                 rails[i];
 
 
-            if (data == null ||
-                data.rail == null)
+            if (data == null)
+            {
+                continue;
+            }
+
+
+            data.rotationStep =
+                DefaultRotationStep;
+
+
+            changedCount++;
+        }
+
+
+        Debug.Log(
+            "[SpringRailData] Rotation Step 설정 완료 : " +
+            changedCount +
+            "개 / (0, -30, 0)"
+        );
+
+
+        MarkSceneDirty();
+    }
+
+
+    // =========================================================
+    // 현재 Scene 상태를 정답 Rotation으로 저장
+    // =========================================================
+
+    [ContextMenu(
+        "현재 Rotation을 정답 Rotation으로 저장"
+    )]
+    private void SaveCurrentRotationAsCorrect()
+    {
+        if (rails == null)
+        {
+            return;
+        }
+
+
+        int savedCount = 0;
+
+
+        for (int i = 0; i < rails.Length; i++)
+        {
+            RailData data =
+                rails[i];
+
+
+            if (
+                data == null ||
+                data.rail == null
+            )
             {
                 continue;
             }
@@ -199,11 +286,19 @@ public class SpringRailDataManager : MonoBehaviour
 
 
     // =========================================================
-    // 현재 Rotation을 초기 Rotation으로 저장
+    // 정답 기준으로 초기 상태 자동 생성
+    //
+    // Red    : 3번
+    // Green  : 2번
+    // Yellow : 5번
+    //
+    // initial + rotationStep * pressCount = correct
     // =========================================================
 
-    [ContextMenu("현재 Rotation을 초기 Rotation으로 저장")]
-    private void SaveCurrentRotationAsInitial()
+    [ContextMenu(
+        "정답 기준 초기 상태 자동 생성"
+    )]
+    private void CreateInitialRotationsFromCorrect()
     {
         if (rails == null)
         {
@@ -211,8 +306,7 @@ public class SpringRailDataManager : MonoBehaviour
         }
 
 
-        int savedCount =
-            0;
+        int changedCount = 0;
 
 
         for (int i = 0; i < rails.Length; i++)
@@ -221,8 +315,115 @@ public class SpringRailDataManager : MonoBehaviour
                 rails[i];
 
 
-            if (data == null ||
-                data.rail == null)
+            if (
+                data == null ||
+                data.rail == null
+            )
+            {
+                continue;
+            }
+
+
+            int pressCount =
+                GetRequiredPressCount(
+                    data.color
+                );
+
+
+            Vector3 initialRotation =
+                data.correctRotation -
+                data.rotationStep *
+                pressCount;
+
+
+            data.initialRotation =
+                NormalizeEuler(
+                    initialRotation
+                );
+
+
+            // Scene에서도 바로 초기 상태 적용
+            data.rail.localRotation =
+                Quaternion.Euler(
+                    data.initialRotation
+                );
+
+
+            changedCount++;
+        }
+
+
+        Debug.Log(
+            "[SpringRailData] 초기 상태 자동 생성 완료 : " +
+            changedCount +
+            "개 / " +
+            "Red " +
+            redPressCount +
+            "회, Green " +
+            greenPressCount +
+            "회, Yellow " +
+            yellowPressCount +
+            "회"
+        );
+
+
+        MarkSceneDirty();
+    }
+
+
+    // =========================================================
+    // 색상별 필요한 버튼 횟수
+    // =========================================================
+
+    private int GetRequiredPressCount(
+        SpringRailColor color
+    )
+    {
+        switch (color)
+        {
+            case SpringRailColor.Red:
+                return redPressCount;
+
+            case SpringRailColor.Green:
+                return greenPressCount;
+
+            case SpringRailColor.Yellow:
+                return yellowPressCount;
+        }
+
+
+        return 0;
+    }
+
+
+    // =========================================================
+    // 현재 Rotation을 초기 Rotation으로 직접 저장
+    // =========================================================
+
+    [ContextMenu(
+        "현재 Rotation을 초기 Rotation으로 저장"
+    )]
+    private void SaveCurrentRotationAsInitial()
+    {
+        if (rails == null)
+        {
+            return;
+        }
+
+
+        int savedCount = 0;
+
+
+        for (int i = 0; i < rails.Length; i++)
+        {
+            RailData data =
+                rails[i];
+
+
+            if (
+                data == null ||
+                data.rail == null
+            )
             {
                 continue;
             }
@@ -250,10 +451,12 @@ public class SpringRailDataManager : MonoBehaviour
 
 
     // =========================================================
-    // Inspector에 입력한 초기 Rotation 적용
+    // 저장된 초기 Rotation 적용
     // =========================================================
 
-    [ContextMenu("입력한 초기 Rotation 적용")]
+    [ContextMenu(
+        "입력한 초기 Rotation 적용"
+    )]
     private void ApplyInitialRotationFromMenu()
     {
         ApplyInitialRotations();
@@ -269,6 +472,60 @@ public class SpringRailDataManager : MonoBehaviour
 
 
     // =========================================================
+    // 모든 선로를 정답 Rotation으로 정확하게 보정
+    //
+    // SpringTrainSequenceManager가
+    // 기차 출발 직전에 호출함
+    // =========================================================
+
+    public void SnapAllRailsToCorrectRotation()
+    {
+        if (rails == null)
+        {
+            return;
+        }
+
+
+        int snappedCount = 0;
+
+
+        for (int i = 0; i < rails.Length; i++)
+        {
+            RailData data =
+                rails[i];
+
+
+            if (
+                data == null ||
+                data.rail == null
+            )
+            {
+                continue;
+            }
+
+
+            data.rail.localRotation =
+                Quaternion.Euler(
+                    data.correctRotation
+                );
+
+
+            data.isCorrect = true;
+
+
+            snappedCount++;
+        }
+
+
+        Debug.Log(
+            "[SpringRailData] 모든 선로 정답 위치 보정 완료 : " +
+            snappedCount +
+            "개"
+        );
+    }
+
+
+    // =========================================================
     // Euler 정리
     //
     // 330 → -30
@@ -280,9 +537,15 @@ public class SpringRailDataManager : MonoBehaviour
     )
     {
         return new Vector3(
-            NormalizeAngle(euler.x),
-            NormalizeAngle(euler.y),
-            NormalizeAngle(euler.z)
+            NormalizeAngle(
+                euler.x
+            ),
+            NormalizeAngle(
+                euler.y
+            ),
+            NormalizeAngle(
+                euler.z
+            )
         );
     }
 
@@ -298,10 +561,12 @@ public class SpringRailDataManager : MonoBehaviour
             ) - 180f;
 
 
-        if (Mathf.Abs(angle) < 0.001f)
+        if (
+            Mathf.Abs(angle) <
+            0.001f
+        )
         {
-            angle =
-                0f;
+            angle = 0f;
         }
 
 
@@ -310,7 +575,7 @@ public class SpringRailDataManager : MonoBehaviour
 
 
     // =========================================================
-    // Editor에서 변경사항 저장 처리
+    // Editor 변경사항 저장
     // =========================================================
 
     private void MarkSceneDirty()
@@ -349,6 +614,37 @@ public class SpringRailDataManager : MonoBehaviour
         {
             rails =
                 new RailData[12];
+
+            return;
+        }
+
+
+        if (rails.Length != 12)
+        {
+            Debug.LogWarning(
+                "[SpringRailData] 선로는 12개를 사용합니다. " +
+                "현재 등록 개수 : " +
+                rails.Length,
+                this
+            );
+        }
+
+
+        if (redPressCount < 0)
+        {
+            redPressCount = 0;
+        }
+
+
+        if (greenPressCount < 0)
+        {
+            greenPressCount = 0;
+        }
+
+
+        if (yellowPressCount < 0)
+        {
+            yellowPressCount = 0;
         }
     }
 }

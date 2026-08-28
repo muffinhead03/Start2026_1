@@ -12,7 +12,9 @@ public class HintManager : MonoBehaviour
     [SerializeField] WalkieTalkieExamine walkieExamine;   // 무전기 3d
 
     [Header("연결 필요")]
-    [SerializeField] LLMClient           llmClient;
+    // LLMClient(구체 타입) 대신 IHintLLMClient(인터페이스)를 참조.
+    // 항상 런타임에 LLMSingleton에서 주입되므로 Inspector 직렬화는 필요 없음 (SerializeField 제거)
+    IHintLLMClient llmClient;
     [SerializeField] GameObject          hintPanel;
     [SerializeField] TextMeshProUGUI     hintText;
     [SerializeField] TextMeshProUGUI     usageCountText;
@@ -23,9 +25,19 @@ public class HintManager : MonoBehaviour
     [Header("현재 퍼즐 ID (씬마다 변경)")]
     public string currentPuzzleId = "wine_glass_room";
 
+    // 기본값은 기존과 동일한 PuzzleConfigData. 테스트 등에서 외부에서 교체 가능하도록 set 공개
+    public IPuzzleDataProvider PuzzleDataProvider { get; set; } = new PuzzleConfigData();
+
+    [Header("씬 컨텍스트 데이터 (선택 — 비워두면 기존 하드코딩 데이터로 자동 동작)")]
+    [SerializeField] SceneContextData[] sceneContexts;
+
     [Header("타이핑 연출")]
-    [SerializeField] float typingSpeed = 0.03f;         // 고정 멘트 글자당 간격
-    [SerializeField] float loadingDotInterval = 0.4f;   // 로딩 점 애니메이션 간격
+    [SerializeField] float typingSpeed = 0.03f;
+    [SerializeField] float loadingDotInterval = 0.4f;
+
+    [Header("실패 쿨다운")]
+    [SerializeField] float failCooldown = 2f;
+    float lastFailTime = -999f;
 
     [HideInInspector]
     public PlayerState currentPlayerState;
@@ -40,8 +52,6 @@ public class HintManager : MonoBehaviour
 
     void Start()
     {
-        // LLMClient는 이제 이 씬이 아니라 LoadingScene의 LLMSingleton 프리팹에 있음
-        // (씬이 다르므로 Inspector로 미리 연결 불가 → 런타임에 싱글톤에서 가져옴)
         Debug.Log("[HintManager] Start 호출됨, LLMSingleton.Instance 확인 중...");
 
         if (LLMSingleton.Instance == null)
@@ -70,6 +80,15 @@ public class HintManager : MonoBehaviour
 
         hintPanel.SetActive(false);
         UpdateUsageUI();
+
+        PromptBuilder.SceneContextProvider = new DefaultSceneContextProvider();
+        // sceneContexts를 Inspector에 연결했을 때만 ScriptableObject 기반으로 교체.
+        // 비워두면 PromptBuilder.SceneContextProvider는 기본값(DefaultSceneContextProvider) 그대로 사용됨 → 안전.
+        if (sceneContexts != null && sceneContexts.Length > 0)
+        {
+            PromptBuilder.SceneContextProvider = new ScriptableObjectSceneContextProvider(sceneContexts);
+            Debug.Log($"[HintManager] SceneContextData 에셋 {sceneContexts.Length}개 연결됨 — ScriptableObject 기반으로 동작");
+        }
 
         puzzleHintButton.onClick.AddListener(OnHintButtonClicked);
     }
@@ -131,7 +150,7 @@ public class HintManager : MonoBehaviour
             return;
         }
 
-        var config = PuzzleConfigData.GetConfig(currentPuzzleId);
+        var config = PuzzleDataProvider.GetConfig(currentPuzzleId);
         if (config == null)
         {
             Debug.LogError("[HintManager] 퍼즐 설정을 찾을 수 없음: " + currentPuzzleId);
@@ -160,7 +179,6 @@ public class HintManager : MonoBehaviour
         string lastReply = "";
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-        // 고정 멘트 타이핑 정지하고 로딩 애니메이션 시작
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         loadingCoroutine = StartCoroutine(LoadingDots());
 
@@ -174,7 +192,7 @@ public class HintManager : MonoBehaviour
                     firstChunkReceived = true;
                     if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
                 }
-                hintText.text = partial;   // 스트리밍은 직접 대입 — 타이핑 효과 걸지 않음
+                hintText.text = partial;
                 lastReply = partial;
             },
             onComplete: () =>
@@ -182,7 +200,7 @@ public class HintManager : MonoBehaviour
                 stopwatch.Stop();
                 isRequesting = false;
                 if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
-                Debug.Log($"[힌트 결과] 모델: {llmClient.LlmCharacter.llm.model} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {lastReply}");   // ← lastReply 추가
+                Debug.Log($"[힌트 결과] 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {lastReply}");
             },
             hintDirection: PromptBuilder.GetStepHint(result.nextStep, result.hintLevel)
         );
@@ -191,7 +209,6 @@ public class HintManager : MonoBehaviour
         UpdateUsageUI();
     }
 
-    // ─── 타이핑 효과 (고정 멘트 전용) ───
     IEnumerator TypeText(string message)
     {
         hintText.text = "";
@@ -208,7 +225,6 @@ public class HintManager : MonoBehaviour
         typingCoroutine = StartCoroutine(TypeText(message));
     }
 
-    // ─── 로딩 애니메이션 (스트리밍 대기 중) ───
     IEnumerator LoadingDots()
     {
         string baseText = "치지직.. 교신 중";
@@ -234,5 +250,13 @@ public class HintManager : MonoBehaviour
         currentPuzzleId = newPuzzleId;
         currentPlayerState.hintCount = 0;
         UpdateUsageUI();
+    }
+
+    public void RegisterFail()
+    {
+        if (Time.time - lastFailTime < failCooldown) return;
+        lastFailTime = Time.time;
+        currentPlayerState.failCount++;
+        Debug.Log($"[HintManager] failCount 증가 → {currentPlayerState.failCount}");
     }
 }
