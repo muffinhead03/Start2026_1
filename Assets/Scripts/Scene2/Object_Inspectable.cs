@@ -23,6 +23,9 @@ public class Object_Inspecatable : MonoBehaviour
     [Header("사운드")]
     public AudioClip audio_inspect;
 
+    [Header("애니메이션")]
+    public Animator animator;
+
     private Vector3 originalPosition;
     private Quaternion originalRotation;
 
@@ -50,6 +53,7 @@ public class Object_Inspecatable : MonoBehaviour
         if (!isInspecting)
         {
             StartCoroutine(MoveToInspectPosition());
+            animator?.SetTrigger("On");
         }
         else
         {
@@ -57,6 +61,7 @@ public class Object_Inspecatable : MonoBehaviour
 
             //Player_Inventory.AddItem(objectName);
             StartCoroutine(ReturnToOriginalPosition());
+            animator?.SetTrigger("Off");
         }
     }
 
