@@ -7,6 +7,7 @@ public class Object_Grabbable : MonoBehaviour
 {
     [Header("이름")]
     public string objectName;
+    public string InventoryObjectName;
 
     [Header("설명")]
     [TextArea(3, 8)]
