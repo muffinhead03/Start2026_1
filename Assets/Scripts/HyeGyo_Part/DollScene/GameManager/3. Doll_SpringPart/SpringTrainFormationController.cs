@@ -1,10 +1,18 @@
 using UnityEngine;
 
 
+public enum SpringTrainCarSlot
+{
+    Front,
+    Middle,
+    Rear
+}
+
+
 public class SpringTrainFormationController : MonoBehaviour
 {
     // =========================================================
-    // 기차 3칸
+    // Cars
     // =========================================================
 
     [Header("앞 칸")]
@@ -23,17 +31,28 @@ public class SpringTrainFormationController : MonoBehaviour
 
 
     // =========================================================
-    // 간격
+    // Spacing
     // =========================================================
 
     [Header("기차 칸 사이 Path 거리")]
     [SerializeField]
-    private float carSpacing = 0.8f;
+    private float carSpacing =
+        0.8f;
 
 
-    [Header("Front가 시계방향 앞쪽인가")]
+    // =========================================================
+    // Model Rotation 보정
+    // =========================================================
+
+    [Header("모델 Rotation 보정")]
+
+    [Tooltip(
+        "Point Rotation과 실제 기차 모델 방향이 다를 때 사용합니다.\n" +
+        "예: 모델이 반대로 보이면 Y = 180"
+    )]
+
     [SerializeField]
-    private bool frontIsClockwiseSide = true;
+    private Vector3 modelRotationOffset;
 
 
     // =========================================================
@@ -50,6 +69,10 @@ public class SpringTrainFormationController : MonoBehaviour
 
     public SpringTrainCarFollower RearCar =>
         rearCar;
+
+
+    public float CarSpacing =>
+        carSpacing;
 
 
     public bool HasAllCars =>
@@ -77,25 +100,29 @@ public class SpringTrainFormationController : MonoBehaviour
     {
         get
         {
-            if (middleCar == null)
+            if (
+                middleCar == null ||
+                middleCar.CarRoot == null
+            )
             {
                 return transform.position;
             }
 
 
-            return middleCar.WorldPosition;
+            return middleCar
+                .CarRoot
+                .position;
         }
     }
 
 
     // =========================================================
-    // 세 칸을 동일 Path 위에 배치
+    // Formation
     // =========================================================
 
     public void ApplyFormation(
-        SpringTrainTrack.PathSnapshot path,
-        float middleDistance,
-        bool snapRotation
+        SpringTrainTrack path,
+        float middleDistance
     )
     {
         if (
@@ -107,92 +134,104 @@ public class SpringTrainFormationController : MonoBehaviour
         }
 
 
-        float sign =
-            frontIsClockwiseSide
-                ? 1f
-                : -1f;
-
-
-        float frontDistance =
-            middleDistance +
-            carSpacing *
-            sign;
-
-
-        float rearDistance =
-            middleDistance -
-            carSpacing *
-            sign;
-
-
         ApplySingleCar(
             frontCar,
             path,
-            frontDistance,
-            snapRotation
+            middleDistance +
+            carSpacing
         );
 
 
         ApplySingleCar(
             middleCar,
             path,
-            middleDistance,
-            snapRotation
+            middleDistance
         );
 
 
         ApplySingleCar(
             rearCar,
             path,
-            rearDistance,
-            snapRotation
+            middleDistance -
+            carSpacing
         );
     }
 
 
     // =========================================================
-    // 한 칸
+    // 각 Car의 Distance Offset
+    // =========================================================
+
+    public float GetDistanceOffset(
+        SpringTrainCarSlot slot
+    )
+    {
+        switch (slot)
+        {
+            case SpringTrainCarSlot.Front:
+
+                return carSpacing;
+
+
+            case SpringTrainCarSlot.Rear:
+
+                return -carSpacing;
+        }
+
+
+        return 0f;
+    }
+
+
+    // =========================================================
+    // Single Car
     // =========================================================
 
     private void ApplySingleCar(
         SpringTrainCarFollower car,
-        SpringTrainTrack.PathSnapshot path,
-        float distance,
-        bool snapRotation
+        SpringTrainTrack path,
+        float distance
     )
     {
-        Vector3 position =
-            path.EvaluatePosition(
+        if (
+            car == null ||
+            car.CarRoot == null
+        )
+        {
+            return;
+        }
+
+
+        Pose pose =
+            path.EvaluatePose(
                 distance
             );
 
 
-        SpringTrainDirection directionType =
-            frontIsClockwiseSide
-                ? SpringTrainDirection.Clockwise
-                : SpringTrainDirection.CounterClockwise;
-
-
-        Vector3 direction =
-            path.EvaluateDirection(
-                distance,
-                directionType
+        Quaternion rotation =
+            pose.rotation *
+            Quaternion.Euler(
+                modelRotationOffset
             );
 
 
-        car.ApplyPathPose(
-            position,
-            direction,
-            snapRotation
+        car.CarRoot.SetPositionAndRotation(
+            pose.position,
+            rotation
         );
     }
 
+
+    // =========================================================
+    // Inspector
+    // =========================================================
 
     private void OnValidate()
     {
         if (carSpacing < 0f)
         {
-            carSpacing = 0f;
+            carSpacing =
+                0f;
         }
     }
 }

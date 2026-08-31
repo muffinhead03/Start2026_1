@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -5,10 +6,10 @@ using UnityEngine;
 public class SpringTrainPathMover : MonoBehaviour
 {
     // =========================================================
-    // Track
+    // Path
     // =========================================================
 
-    [Header("전체 선로")]
+    [Header("수동 기차 Path")]
     [SerializeField]
     private SpringTrainTrack track;
 
@@ -17,36 +18,34 @@ public class SpringTrainPathMover : MonoBehaviour
     // Formation
     // =========================================================
 
-    [Header("기차 Formation")]
+    [Header("기차 3칸 Formation")]
     [SerializeField]
     private SpringTrainFormationController formationController;
 
 
     // =========================================================
-    // 이동
+    // Movement
     // =========================================================
 
-    [Header("기차 이동 속도")]
+    [Header("이동 속도")]
     [SerializeField]
-    private float moveSpeed = 2f;
+    private float moveSpeed =
+        2f;
 
 
     // =========================================================
     // Runtime
     // =========================================================
 
-    private SpringTrainTrack.PathSnapshot pathSnapshot;
+    private Coroutine moveCoroutine;
 
 
-    private float middlePathDistance;
+    public float CurrentMiddleDistance
+    {
+        get;
+        private set;
+    }
 
-
-    private bool stopRequested;
-
-
-    // =========================================================
-    // 상태
-    // =========================================================
 
     public bool IsMoving
     {
@@ -55,18 +54,15 @@ public class SpringTrainPathMover : MonoBehaviour
     }
 
 
-    public bool DidCollide
+    public bool IsRouteComplete
     {
         get;
         private set;
     }
 
 
-    public Vector3 CurrentTravelWorldDirection
-    {
-        get;
-        private set;
-    }
+    public SpringTrainTrack Track =>
+        track;
 
 
     public Transform TrainCenter
@@ -84,14 +80,38 @@ public class SpringTrainPathMover : MonoBehaviour
     }
 
 
+    public event Action OnRouteCompleted;
+
+
     // =========================================================
-    // 현재 기차 위치를 Path 시작점으로 등록
-    //
-    // 여기서만 GetNearestDistance를 사용한다.
-    // 이동 중에는 다시 계산하지 않는다.
+    // 준비 여부
     // =========================================================
 
-    public bool SnapTrainToCurrentPath()
+    public bool CanStartRoute
+    {
+        get
+        {
+            if (
+                track == null ||
+                formationController == null ||
+                !formationController.HasAllCars ||
+                moveSpeed <= 0f
+            )
+            {
+                return false;
+            }
+
+
+            return track.RebuildCache();
+        }
+    }
+
+
+    // =========================================================
+    // 시작 위치
+    // =========================================================
+
+    public bool SnapTrainToStart()
     {
         if (
             track == null ||
@@ -100,7 +120,8 @@ public class SpringTrainPathMover : MonoBehaviour
         )
         {
             Debug.LogWarning(
-                "[SpringTrainPathMover] Track / Formation 연결 확인",
+                "[SpringTrainPathMover] " +
+                "Track / Formation 연결을 확인하세요.",
                 this
             );
 
@@ -109,37 +130,28 @@ public class SpringTrainPathMover : MonoBehaviour
         }
 
 
-        pathSnapshot =
-            track.BuildPathSnapshot();
-
-
-        if (pathSnapshot == null)
+        if (!track.RebuildCache())
         {
             return false;
         }
 
 
-        Vector3 currentMiddlePosition =
-            formationController.MiddlePosition;
-
-
-        middlePathDistance =
-            pathSnapshot.GetNearestDistance(
-                currentMiddlePosition
-            );
+        CurrentMiddleDistance =
+            0f;
 
 
         formationController.ApplyFormation(
-            pathSnapshot,
-            middlePathDistance,
-            true
+            track,
+            CurrentMiddleDistance
         );
 
 
-        Debug.Log(
-            "[SpringTrainPathMover] 현재 기차 위치를 Path에 등록 완료",
-            this
-        );
+        IsMoving =
+            false;
+
+
+        IsRouteComplete =
+            false;
 
 
         return true;
@@ -147,154 +159,206 @@ public class SpringTrainPathMover : MonoBehaviour
 
 
     // =========================================================
-    // 실제 물리 충돌이 발생할 때까지 이동
+    // 처음부터 이동 시작
     // =========================================================
 
-    public IEnumerator MoveUntilPhysicalCollision(
-        SpringTrainDirection direction,
-        float maximumTravelTime
-    )
+    public bool StartRouteFromStart()
     {
-        if (IsMoving)
+        if (!CanStartRoute)
         {
-            yield break;
+            Debug.LogWarning(
+                "[SpringTrainPathMover] " +
+                "Route를 시작할 수 없습니다.",
+                this
+            );
+
+
+            return false;
         }
 
 
-        if (pathSnapshot == null)
+        if (moveCoroutine != null)
         {
-            if (!SnapTrainToCurrentPath())
-            {
-                yield break;
-            }
+            StopCoroutine(
+                moveCoroutine
+            );
+
+
+            moveCoroutine =
+                null;
         }
 
 
-        IsMoving =
-            true;
-
-
-        DidCollide =
-            false;
-
-
-        stopRequested =
-            false;
-
-
-        float elapsed =
+        CurrentMiddleDistance =
             0f;
 
 
-        float sign =
-            direction ==
-            SpringTrainDirection.Clockwise
-                ? 1f
-                : -1f;
+        formationController.ApplyFormation(
+            track,
+            CurrentMiddleDistance
+        );
 
 
-        while (
-            !stopRequested &&
-            elapsed < maximumTravelTime
-        )
-        {
-            // Physics Timing에 맞춤
-            yield return new WaitForFixedUpdate();
+        IsRouteComplete =
+            false;
 
 
-            if (stopRequested)
-            {
-                break;
-            }
-
-
-            float moveDistance =
-                moveSpeed *
-                Time.fixedDeltaTime;
-
-
-            middlePathDistance +=
-                sign *
-                moveDistance;
-
-
-            // -----------------------------------------
-            // 지정 Point 사이 직선 위치 계산
-            // -----------------------------------------
-
-            formationController.ApplyFormation(
-                pathSnapshot,
-                middlePathDistance,
-                false
+        moveCoroutine =
+            StartCoroutine(
+                MoveRoute()
             );
 
 
-            CurrentTravelWorldDirection =
-                pathSnapshot.EvaluateDirection(
-                    middlePathDistance,
-                    direction
+        return true;
+    }
+
+
+    // =========================================================
+    // Route 이동
+    // =========================================================
+
+    private IEnumerator MoveRoute()
+    {
+        IsMoving =
+            true;
+
+
+        float targetDistance =
+            track.TotalLength;
+
+
+        Debug.Log(
+            "[SpringTrainPathMover] Route 시작",
+            this
+        );
+
+
+        while (
+            CurrentMiddleDistance <
+            targetDistance
+        )
+        {
+            float moveDistance =
+                moveSpeed *
+                Time.deltaTime;
+
+
+            CurrentMiddleDistance =
+                Mathf.Min(
+                    CurrentMiddleDistance +
+                    moveDistance,
+                    targetDistance
                 );
 
 
-            // Transform으로 움직이는 Compound Collider를
-            // Physics에 즉시 반영
-            Physics.SyncTransforms();
+            formationController.ApplyFormation(
+                track,
+                CurrentMiddleDistance
+            );
 
 
-            elapsed +=
-                Time.fixedDeltaTime;
+            yield return null;
         }
+
+
+        formationController.ApplyFormation(
+            track,
+            targetDistance
+        );
 
 
         IsMoving =
             false;
 
 
-        if (!DidCollide)
-        {
-            Debug.LogWarning(
-                "[SpringTrainPathMover] 제한 시간 안에 물리 충돌이 발생하지 않았습니다.",
-                this
-            );
-        }
+        IsRouteComplete =
+            true;
+
+
+        moveCoroutine =
+            null;
+
+
+        Debug.Log(
+            "[SpringTrainPathMover] Route 완료",
+            this
+        );
+
+
+        OnRouteCompleted?.Invoke();
     }
 
 
     // =========================================================
-    // PhysicsController가 호출
+    // 지정 Point를 Car가 통과했는가
     // =========================================================
 
-    public void StopMovementForCollision()
+    public bool HasCarReachedPoint(
+        int pointIndex,
+        SpringTrainCarSlot carSlot
+    )
     {
-        DidCollide =
-            true;
+        if (
+            track == null ||
+            formationController == null
+        )
+        {
+            return false;
+        }
 
 
-        stopRequested =
-            true;
+        float pointDistance =
+            track.GetDistanceAtPoint(
+                pointIndex
+            );
+
+
+        float carDistance =
+            CurrentMiddleDistance +
+            formationController
+                .GetDistanceOffset(
+                    carSlot
+                );
+
+
+        return carDistance >=
+            pointDistance;
     }
 
 
     // =========================================================
-    // 강제 정지
+    // 즉시 정지
     // =========================================================
 
     public void StopMovementImmediately()
     {
-        stopRequested =
-            true;
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(
+                moveCoroutine
+            );
+
+
+            moveCoroutine =
+                null;
+        }
 
 
         IsMoving =
             false;
     }
 
+
+    // =========================================================
+    // Inspector
+    // =========================================================
 
     private void OnValidate()
     {
         if (moveSpeed < 0f)
         {
-            moveSpeed = 0f;
+            moveSpeed =
+                0f;
         }
     }
 }
