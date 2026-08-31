@@ -25,13 +25,13 @@ public class SpringTrainTrack : MonoBehaviour
         "예: 30이면 Point 0 ~ Point 30 사용"
     )]
 
-    [Range(1, 100)]
+    [Range(1, 90)]
     [SerializeField]
     private int lastPointIndex =
         20;
 
 
-    [Header("기차 이동 Point 0 ~ 100")]
+    [Header("기차 이동 Point 0 ~ 90")]
 
     [Tooltip(
         "각 Transform의 Position과 Rotation을 " +
@@ -610,7 +610,7 @@ public class SpringTrainTrack : MonoBehaviour
             Mathf.Clamp(
                 lastPointIndex,
                 1,
-                100
+                90
             );
 
 
@@ -673,7 +673,7 @@ public class SpringTrainTrack : MonoBehaviour
             Mathf.Clamp(
                 lastPointIndex,
                 1,
-                100
+                90
             );
 
 
