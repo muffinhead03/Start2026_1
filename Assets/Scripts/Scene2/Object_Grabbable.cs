@@ -7,6 +7,7 @@ public class Object_Grabbable : MonoBehaviour
 {
     [Header("이름")]
     public string objectName;
+    public string InventoryObjectName;
 
     [Header("설명")]
     [TextArea(3, 8)]
@@ -16,7 +17,7 @@ public class Object_Grabbable : MonoBehaviour
     public GameObject player;
 
     [Header("사운드")]
-    public AudioClip audio_grap;
+    public AudioClip[] audio_grap;
 
     private Play_Audio audio_player;
 
@@ -31,6 +32,9 @@ public class Object_Grabbable : MonoBehaviour
         player.GetComponent<Player_Grab>().Grab(this);
 
         if (audio_player != null)
-            audio_player.PlayAudio(audio_grap);
+        {
+            int random_id = Random.Range(0, audio_grap.Length);
+            audio_player.PlayAudio(audio_grap[random_id]);
+        }
     }
 }

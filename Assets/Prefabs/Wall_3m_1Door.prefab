@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 6427299490824829235}
   - component: {fileID: 3434824048130137763}
   - component: {fileID: 5135936086169239982}
+  - component: {fileID: 1626410332775499425}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -426,6 +427,42 @@ MonoBehaviour:
   isLocked: 0
   audio_open: {fileID: 8300000, guid: e88bb406222252b448b9ad48d6d80328, type: 3}
   audio_locked: {fileID: 8300000, guid: 58c40df1c778ff94d8eb0dac09b89c3b, type: 3}
+--- !u!114 &1626410332775499425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3811290670797355717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 769669703f5d3034da924e8f0b65d1eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Event_On_Ray
+  OnEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStay:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExit:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5135936086169239982}
+        m_TargetAssemblyTypeName: Object_Door, Assembly-CSharp
+        m_MethodName: OpenCloseDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4283978937386169418
 GameObject:
   m_ObjectHideFlags: 0

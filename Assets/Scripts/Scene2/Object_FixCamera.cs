@@ -41,7 +41,8 @@ public class Object_FixCamera : MonoBehaviour
     else
             {
                 // 기존 Pivot + TargetPos 방식
-                player.FixCamera(pivot.position + targetPos,targetRot,this.gameObject);
+                if(pivot!=null) player.FixCamera(pivot.position + targetPos,targetRot,this.gameObject);
+                else player.FixCamera(transform.position + targetPos,targetRot,this.gameObject);
             }
     }
 

@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class HintResult
 {
-    public int hintLevel;        // 1~4
+    public int hintLevel;        // 1~5
     public string playerStatus;  // 상태명
     public PuzzleStep nextStep;  // 다음 안내할 단계
     public string hintType;      // direct / indirect
@@ -23,14 +23,14 @@ public class HintResult
 public static class HintEngine
 {
     /// <summary>
-    /// 플레이어 상태와 퍼즐 설정을 기반으로 힌트 레벨(1~4), 플레이어 상태, 다음 안내 스텝을 계산한다.
-    /// 5개 가중치 요소(감정상태 35%, 요청강도 25%, 정체시간 20%, 퍼즐진행 15%, 반복조사 5%)를 합산해
-    /// 점수를 내고, 그 점수를 4단계로 환산한다.
+    /// 플레이어 상태와 퍼즐 설정을 기반으로 힌트 레벨(1~5), 플레이어 상태, 다음 안내 스텝을 계산한다.
+    /// 5개 가중치 요소(체류·힌트 요청 이력 35%, 요청강도 25%, 정체시간 20%, 퍼즐진행 15%, 반복조사 5%)를 합산해
+    /// 점수를 내고, 그 점수를 5단계로 환산한다.
     /// </summary>
     public static HintResult Calculate(PlayerState state, PuzzleConfig config)
     {
         float score = 0f;
-        score += CalcEmotionScore(state)      * 0.35f;
+        score += CalcHintHistoryScore(state)  * 0.35f;
         score += CalcRequestScore(state)      * 0.25f;
         score += CalcStagnationScore(state)   * 0.20f;
         score += CalcProgressScore(state, config) * 0.15f;
@@ -46,7 +46,7 @@ public static class HintEngine
         };
     }
 
-    static float CalcEmotionScore(PlayerState s)
+    static float CalcHintHistoryScore(PlayerState s)
     {
         float score = 0f;
 
@@ -83,11 +83,12 @@ public static class HintEngine
 
     static int ScoreToLevel(float score)
     {
-        // 0~8점을 2점 간격으로 4등분 (5단계 → 4단계, 0719 기획 반영)
+        // 힌트 요청 이력 기반 점수를 1점 내외 간격으로 5등분 (제작설계서 기준 재정렬)
         if (score < 2f) return 1;
-        if (score < 4f) return 2;
-        if (score < 6f) return 3;
-        return 4;
+        if (score < 3f) return 2;
+        if (score < 4f) return 3;
+        if (score < 5f) return 4;
+        return 5;
     }
 
     static string DetermineStatus(PlayerState s, PuzzleConfig c)
