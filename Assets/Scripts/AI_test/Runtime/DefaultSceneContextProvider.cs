@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class DefaultSceneContextProvider : ISceneContextProvider
 {
     // 씬별, 레벨별 누적 배경 정보 — 레벨이 낮으면 정답 로직 자체를 LLM에 전달하지 않음
-    // 엔티티 삭제 + 4단계 기준, 0719 기획 반영. 씬이 바뀌면 여기에 추가
+    // 엔티티 삭제 + 5단계 기준(0901 재정렬)으로 반영. 씬이 바뀌면 여기에 추가
     static readonly Dictionary<string, string[]> SceneContextByLevel = new Dictionary<string, string[]>
     {
         { "wine_glass_room", new[]
