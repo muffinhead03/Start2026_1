@@ -15,7 +15,7 @@ public class StartingScene : MonoBehaviour
     [SerializeField] private float introTargetScale = 1.3f;
 
     [Header("Setting Panel")]
-    [SerializeField] private GameObject settingPanel;
+    [SerializeField] private GameSetting gameSetting;
 
     private void Start()
     {
@@ -27,11 +27,6 @@ public class StartingScene : MonoBehaviour
 
             introScreen.rectTransform.localScale = Vector3.one;
             introScreen.gameObject.SetActive(false);
-        }
-
-        if (settingPanel != null)
-        {
-            settingPanel.SetActive(false);
         }
     }
     
@@ -107,9 +102,9 @@ public class StartingScene : MonoBehaviour
     {
         Debug.Log("Setting Button Clicked");
 
-        if (settingPanel != null)
+        if (gameSetting != null)
         {
-            settingPanel.SetActive(true);
+            gameSetting.OpenSetting();
         }
         else
         {

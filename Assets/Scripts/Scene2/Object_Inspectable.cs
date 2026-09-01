@@ -16,15 +16,18 @@ public class Object_Inspecatable : MonoBehaviour
     public float inspectDistance = 1f;
 
     [Header("UI Settings")]
+    [TextArea(3, 8)]
     public string disc;
     public Scene_UI_Manager SceneUI;
 
     [Header("사운드")]
     public AudioClip audio_inspect;
 
+    [Header("애니메이션")]
+    public Animator animator;
+
     private Vector3 originalPosition;
     private Quaternion originalRotation;
-    private Transform originalParent;
 
     private Collider col;
     private Rigidbody rigid;
@@ -50,19 +53,15 @@ public class Object_Inspecatable : MonoBehaviour
         if (!isInspecting)
         {
             StartCoroutine(MoveToInspectPosition());
+            animator?.SetTrigger("On");
         }
         else
-        { 
-            gameObject.SetActive(false);
-            isInspecting = false;
+        {
+            //gameObject.SetActive(false);
 
-            SceneUI.SetActivePanel(1, false);
-            SceneUI.SetActiveCursor(true);
-
-            player.SetMoveLock(false);
-
-            Player_Inventory.AddItem(objectName);
-            //StartCoroutine(ReturnToOriginalPosition());
+            //Player_Inventory.AddItem(objectName);
+            StartCoroutine(ReturnToOriginalPosition());
+            animator?.SetTrigger("Off");
         }
     }
 
@@ -73,7 +72,6 @@ public class Object_Inspecatable : MonoBehaviour
         // 원래 상태 저장
         originalPosition = transform.position;
         originalRotation = transform.rotation;
-        originalParent = transform.parent;
 
         col.isTrigger = true;
         if (rigid != null) rigid.isKinematic = true;
@@ -86,8 +84,11 @@ public class Object_Inspecatable : MonoBehaviour
             mainCamera.transform.position +
             mainCamera.transform.forward * inspectDistance;
 
-        Quaternion targetRotation =
-            Quaternion.LookRotation(mainCamera.transform.forward);
+        Vector3 startPos = originalPosition;
+        Quaternion startRot = originalRotation;
+
+        Vector3 targetPos = mainCamera.transform.position + mainCamera.transform.forward * inspectDistance;
+        Quaternion targetRot = Quaternion.LookRotation(mainCamera.transform.forward);
 
         float t = 0f;
 
@@ -97,20 +98,58 @@ public class Object_Inspecatable : MonoBehaviour
             float tp = t / targetTime;
 
             transform.position =
-                Vector3.Lerp(transform.position, targetPosition, tp);
+                Vector3.Lerp(startPos, targetPos, tp);
 
             transform.rotation =
-                Quaternion.Lerp(transform.rotation, targetRotation, tp);
+                Quaternion.Lerp(startRot, targetRot, tp);
 
             yield return null;
         }
 
+        // 조사 UI 활성화
         SceneUI.ChangeText(0, disc);
-        SceneUI.SetActivePanel(1, true);
+        SceneUI.SetActivePanel(2, true);
         SceneUI.SetActiveCursor(false);
 
         col.isTrigger = false;
 
         audio_player?.PlayAudio(audio_inspect);
+    }
+
+    IEnumerator ReturnToOriginalPosition()
+    {
+        col.isTrigger = true;
+        if (rigid != null) rigid.isKinematic = false;
+
+        // 조사 UI 비활성화
+        SceneUI.SetActivePanel(2, false);
+        SceneUI.SetActiveCursor(true);
+
+        Vector3 startPos = transform.position;
+        Quaternion startRot = transform.rotation;
+
+        Vector3 targetPos = originalPosition;
+        Quaternion targetRot = originalRotation;
+
+        float t = 0f;
+
+        while (t < targetTime)
+        {
+            t += Time.deltaTime;
+            float tp = t / targetTime;
+
+            transform.position =
+                Vector3.Lerp(startPos, targetPos, tp);
+
+            transform.rotation =
+                Quaternion.Lerp(startRot, targetRot, tp);
+
+            yield return null;
+        }
+
+        col.isTrigger = false;
+
+        isInspecting = false;
+        player.SetMoveLock(false);
     }
 }

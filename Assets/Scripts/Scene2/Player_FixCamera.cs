@@ -8,6 +8,9 @@ public class Player_FixCamera : MonoBehaviour
     public Transform CameraPivot;
     public float targetTime;
 
+    [Header("Player Hand")]
+    public GameObject hand;
+
     [Header("UI Settings")]
     public Scene_UI_Manager SceneUI;    // UI 매니저
 
@@ -58,6 +61,7 @@ public class Player_FixCamera : MonoBehaviour
         // 플레이어 이동 잠금
         GetComponent<Player_Move>().SetMoveLock(true);
 
+        if (hand != null) hand.GetComponent<Collider>().isTrigger = true;
 
         originalPos = CameraPivot.position;
         originalRot = CameraPivot.forward;
@@ -98,5 +102,7 @@ public class Player_FixCamera : MonoBehaviour
         }
 
         GetComponent<Player_Move>().SetMoveLock(false);
+
+        if (hand != null) hand.GetComponent<Collider>().isTrigger = false;
     }
 }

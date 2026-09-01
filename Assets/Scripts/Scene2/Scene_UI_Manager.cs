@@ -9,6 +9,12 @@ public class Scene_UI_Manager : MonoBehaviour
     [Header("판넬")]
     public GameObject[] panels;
 
+    [Header("버튼")]
+    public GameObject[] buttons;
+
+    [Header("슬라이더")]
+    public Slider[] sliders;
+
     [Header("커서 판넬")]
     public GameObject cursor;
 
@@ -18,11 +24,15 @@ public class Scene_UI_Manager : MonoBehaviour
     [Header("텍스트")]
     public TextMeshProUGUI[] texts;
 
-    bool cursor_id;
+    [Header("포인터 잠금")]
+    public bool pointerInitState;
 
-    void Start()
+
+    //bool cursor_id;
+
+    private void OnEnable()
     {
-        cursor_id = false;
+        if(pointerInitState) LockPointer();
     }
 
     public void SetActivePanel(int id, bool active)
@@ -30,15 +40,19 @@ public class Scene_UI_Manager : MonoBehaviour
         panels[id].SetActive(active);
     }
 
-    public void SetActiveCursor(bool active)
+    public void SetActiveButton(int id, bool active)
     {
-        cursor.SetActive(active);
+        buttons[id].SetActive(active);
     }
 
-    public void SwitchCursor()
+    public void SetActiveCursor(bool active)
     {
-        cursor_id = !cursor_id;
-        if (cursor_id) cursor.GetComponent<Image>().sprite = cursor_imgs[1];
+        if(cursor!=null) cursor.SetActive(active);
+    }
+
+    public void SwitchCursor(bool on)
+    {
+        if (on) cursor.GetComponent<Image>().sprite = cursor_imgs[1];
         else cursor.GetComponent<Image>().sprite = cursor_imgs[0];
     }
 
@@ -57,5 +71,10 @@ public class Scene_UI_Manager : MonoBehaviour
     public void ChangeText(int id, string text)
     {
         texts[id].text = text;
+    }
+
+    public void SetSlider(int id, float value)
+    {
+        sliders[id].value = value;
     }
 }

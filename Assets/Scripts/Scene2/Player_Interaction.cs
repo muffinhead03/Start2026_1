@@ -15,6 +15,13 @@ public class Player_Interaction : MonoBehaviour
     [Header("물건 잡기")]
     public Player_Grab grab;
 
+    [Header("UI")]
+    public Scene_UI_Manager SceneUI;
+
+    [Header("Inventory")]
+    [SerializeField]
+    private InventoryUIManager inventoryUIManager;
+
     InputAction interact;
 
     Event_On_Ray CurrentTarget;
@@ -47,6 +54,7 @@ public class Player_Interaction : MonoBehaviour
 
                     CurrentTarget = Interactable;
                     CurrentTarget.OnRayEnter();
+                    SceneUI.SwitchCursor(true);
                 }
 
                 CurrentTarget.OnRayStay();
@@ -59,6 +67,7 @@ public class Player_Interaction : MonoBehaviour
                 {
                     CurrentTarget.OnRayExit();
                     CurrentTarget = null;
+                    SceneUI.SwitchCursor(false);
                 }
             }
         }
@@ -69,6 +78,7 @@ public class Player_Interaction : MonoBehaviour
             {
                 CurrentTarget.OnRayExit();
                 CurrentTarget = null;
+                SceneUI.SwitchCursor(false);
             }
         }
     }
@@ -93,4 +103,7 @@ public class Player_Interaction : MonoBehaviour
             grab.Release();
         }
     }
+
+
+
 }

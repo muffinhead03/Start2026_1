@@ -27,7 +27,7 @@ public class Object_PutOn : MonoBehaviour
     private Play_Audio audio_player;
 
     int state;
-    GameObject putOn;
+    public GameObject putOn;
 
     void Start()
     {
