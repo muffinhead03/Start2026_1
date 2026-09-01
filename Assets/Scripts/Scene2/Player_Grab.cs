@@ -198,7 +198,6 @@ public class Player_Grab : MonoBehaviour
 
     StopMoveCoroutine();
     
-    //윤민주 기존 코루틴
     moveCoroutine =StartCoroutine(MoveToTargetPosition(Hand.position,newObject));
 
     /*
