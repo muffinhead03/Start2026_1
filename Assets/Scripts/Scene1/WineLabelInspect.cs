@@ -17,6 +17,7 @@ public class WineLabelInspect : MonoBehaviour
     [Header("Inspect Settings")]
     public float targetTime = 0.5f;
     public float inspectDistance = 0.6f;
+    public float verticalOffset = 0.15f; // ← 새로 추가: 확대 시 화면상 세로 위치 보정 (+ 값 = 아래로, 라벨 잘림 방지)
 
     [Header("Rotate Settings")]
     public float rotateSpeed = 150f; // 마우스 감도
@@ -80,6 +81,7 @@ public class WineLabelInspect : MonoBehaviour
         if (player != null) player.SetMoveLock(true);
 
         Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * inspectDistance;
+        targetPosition -= mainCamera.transform.up * verticalOffset; // ← 새로 추가: 병 전체를 화면에서 살짝 아래로 내려서 윗부분(라벨) 여백 확보
         Quaternion targetRotation = Quaternion.LookRotation(mainCamera.transform.forward);
 
         Vector3 startPos = transform.position;

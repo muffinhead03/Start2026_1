@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 18074217}
   - component: {fileID: 18074223}
   m_Layer: 0
-  m_Name: WineRack_Blue
+  m_Name: WineRack_TawnyBrown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -530,7 +530,7 @@ Transform:
   m_GameObject: {fileID: 18074216}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.95, y: 0.9, z: 12.8}
+  m_LocalPosition: {x: 0.796, y: 0.9, z: 12.681}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -552,6 +552,7 @@ MonoBehaviour:
   wineLabel: {fileID: 18074218}
   targetTime: 0.5
   inspectDistance: 0.6
+  verticalOffset: 0.15
   rotateSpeed: 150
   SceneUI: {fileID: 1169160861}
 --- !u!4 &18327695 stripped
@@ -866,9 +867,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_S
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &50311044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1301,9 +1304,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_X
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &100534484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1449,9 +1454,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_Q
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &103584233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2527,7 +2534,7 @@ GameObject:
   - component: {fileID: 219046411}
   - component: {fileID: 219046417}
   m_Layer: 0
-  m_Name: WineRack_Green
+  m_Name: WineRack_Maroon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2594,7 +2601,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineRackLabel
   vintageNumber: 7
-  wineColor: Burgundy
+  wineColor: Maroon
   infoText: {fileID: 313126464}
   hintManager: {fileID: 850534001}
   labelManager: {fileID: 1443493740}
@@ -2685,7 +2692,7 @@ Transform:
   m_GameObject: {fileID: 219046410}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.69, y: 0.9, z: 12.8}
+  m_LocalPosition: {x: -2.847, y: 0.9, z: 12.652}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2707,6 +2714,7 @@ MonoBehaviour:
   wineLabel: {fileID: 219046412}
   targetTime: 0.5
   inspectDistance: 0.6
+  verticalOffset: 0.15
   rotateSpeed: 150
   SceneUI: {fileID: 1169160861}
 --- !u!1 &222782777
@@ -3342,7 +3350,7 @@ GameObject:
   - component: {fileID: 291123589}
   - component: {fileID: 291123588}
   m_Layer: 0
-  m_Name: Cross_Blue
+  m_Name: Cross_TawnyBrown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3520,7 +3528,7 @@ GameObject:
   - component: {fileID: 294200535}
   - component: {fileID: 294200541}
   m_Layer: 0
-  m_Name: WineGlass_Red_1
+  m_Name: WineGlass_RubyRed_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3810,9 +3818,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_K
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &306819079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4334,9 +4344,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_U
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &315310399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4599,9 +4611,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_V
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &337314249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5531,9 +5545,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_W
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &444591234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5552,6 +5568,63 @@ MonoBehaviour:
   inspectDistance: 0.6
   rotateSpeed: 150
   SceneUI: {fileID: 1169160861}
+--- !u!1001 &450418002
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 14.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.0019065856
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.9999982
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180.218
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4177276290534768741, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_Name
+      value: DisplayModularBGold
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
 --- !u!1 &452060114 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5491215496940095042, guid: f42d99a972d212741bef3bbdae94bb36, type: 3}
@@ -5973,7 +6046,7 @@ GameObject:
   - component: {fileID: 492459405}
   - component: {fileID: 492459411}
   m_Layer: 0
-  m_Name: WineGlass_Green_2
+  m_Name: WineGlass_Burgundy_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6834,9 +6907,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_C
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &559473577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8474,9 +8549,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_O
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &714873786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8510,7 +8587,7 @@ GameObject:
   - component: {fileID: 715157358}
   - component: {fileID: 715157364}
   m_Layer: 0
-  m_Name: WineGlass_Yellow_1
+  m_Name: WineGlass_Maroon_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10156,9 +10233,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_J
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &835960843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10419,9 +10498,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_H
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &840889635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10704,9 +10785,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_M
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &857697450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10852,9 +10935,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_E
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &890933987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11945,7 +12030,7 @@ GameObject:
   - component: {fileID: 998013210}
   - component: {fileID: 998013209}
   m_Layer: 0
-  m_Name: Cross_Yellow
+  m_Name: Cross_Maroon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12011,7 +12096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09008e9f6fcf247be869b261fbd80b30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StainIntersection
-  letter: 72
+  letter: 84
   infoText: {fileID: 313126464}
   hintManager: {fileID: 850534001}
   stainManager: {fileID: 2119396151}
@@ -12736,9 +12821,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_B
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1063875771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12890,7 +12977,7 @@ GameObject:
   - component: {fileID: 1113080032}
   - component: {fileID: 1113080038}
   m_Layer: 0
-  m_Name: WineGlass_Blue_1
+  m_Name: WineGlass_TawnyBrown_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13180,9 +13267,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_F
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1116443789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13441,7 +13530,7 @@ GameObject:
   - component: {fileID: 1161482359}
   - component: {fileID: 1161482365}
   m_Layer: 0
-  m_Name: WineRack_Red
+  m_Name: WineRack_Burgundy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13508,7 +13597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineRackLabel
   vintageNumber: 16
-  wineColor: Ruby Red
+  wineColor: Burgundy
   infoText: {fileID: 313126464}
   hintManager: {fileID: 850534001}
   labelManager: {fileID: 1443493740}
@@ -13599,7 +13688,7 @@ Transform:
   m_GameObject: {fileID: 1161482358}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.81, y: 0.9, z: 12.8}
+  m_LocalPosition: {x: 2.81, y: 0.9, z: 12.691}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13621,6 +13710,7 @@ MonoBehaviour:
   wineLabel: {fileID: 1161482360}
   targetTime: 0.5
   inspectDistance: 0.6
+  verticalOffset: 0.15
   rotateSpeed: 150
   SceneUI: {fileID: 1169160861}
 --- !u!1001 &1166160438
@@ -14486,9 +14576,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_Y
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1218039849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14768,7 +14860,7 @@ GameObject:
   - component: {fileID: 1264487603}
   - component: {fileID: 1264487609}
   m_Layer: 0
-  m_Name: WineGlass_Yellow_2
+  m_Name: WineGlass_Maroon_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14946,7 +15038,7 @@ GameObject:
   - component: {fileID: 1279093632}
   - component: {fileID: 1279093638}
   m_Layer: 0
-  m_Name: WineGlass_Green_1
+  m_Name: WineGlass_Burgundy_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15573,9 +15665,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_R
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1311159283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15614,7 +15708,7 @@ GameObject:
   - component: {fileID: 1323357003}
   - component: {fileID: 1323357002}
   m_Layer: 0
-  m_Name: Cross_Red
+  m_Name: Cross_RubyRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15680,7 +15774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09008e9f6fcf247be869b261fbd80b30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StainIntersection
-  letter: 89
+  letter: 72
   infoText: {fileID: 313126464}
   hintManager: {fileID: 850534001}
   stainManager: {fileID: 2119396151}
@@ -16303,9 +16397,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_N
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1373527273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16338,7 +16434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1045889542625033600, guid: a84c75812c87adf46bcffa5abcc9aeee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.3000004
+      value: -4.096
       objectReference: {fileID: 0}
     - target: {fileID: 1045889542625033600, guid: a84c75812c87adf46bcffa5abcc9aeee, type: 3}
       propertyPath: m_LocalPosition.y
@@ -16346,7 +16442,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1045889542625033600, guid: a84c75812c87adf46bcffa5abcc9aeee, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.168537
+      value: 11.17
       objectReference: {fileID: 0}
     - target: {fileID: 1045889542625033600, guid: a84c75812c87adf46bcffa5abcc9aeee, type: 3}
       propertyPath: m_LocalRotation.w
@@ -16981,9 +17077,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_Z
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1389270008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17241,9 +17339,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_P
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1441258053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17535,11 +17635,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7284224383794976952, guid: 34f030bab1fe7457ea416bb544d356df, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.774
+      value: -4.391
       objectReference: {fileID: 0}
     - target: {fileID: 7284224383794976952, guid: 34f030bab1fe7457ea416bb544d356df, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.7140949
+      value: 1.726
       objectReference: {fileID: 0}
     - target: {fileID: 7284224383794976952, guid: 34f030bab1fe7457ea416bb544d356df, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17710,9 +17810,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_L
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1480748758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19050,7 +19152,7 @@ GameObject:
   - component: {fileID: 1587027084}
   - component: {fileID: 1587027083}
   m_Layer: 0
-  m_Name: Cross_Green
+  m_Name: Cross_Burgundy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19116,7 +19218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09008e9f6fcf247be869b261fbd80b30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StainIntersection
-  letter: 84
+  letter: 89
   infoText: {fileID: 313126464}
   hintManager: {fileID: 850534001}
   stainManager: {fileID: 2119396151}
@@ -19345,6 +19447,63 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1001 &1662164118
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 14.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.0019065856
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.9999982
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180.218
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4177276290534768741, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_Name
+      value: DisplayModularBGold (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
 --- !u!1 &1676099303
 GameObject:
   m_ObjectHideFlags: 0
@@ -19451,6 +19610,63 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 2.8999999, z: 0.10088396}
   m_Center: {x: -1.5, y: 1.4499999, z: -0.05044198}
+--- !u!1001 &1692836974
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 14.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.0019065856
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.9999982
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180.218
+      objectReference: {fileID: 0}
+    - target: {fileID: 298625890261646500, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4177276290534768741, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+      propertyPath: m_Name
+      value: DisplayModularBGold (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
 --- !u!1 &1704569216
 GameObject:
   m_ObjectHideFlags: 0
@@ -19466,7 +19682,7 @@ GameObject:
   - component: {fileID: 1704569217}
   - component: {fileID: 1704569223}
   m_Layer: 0
-  m_Name: WineGlass_Blue_2
+  m_Name: WineGlass_TawnyBrown_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19868,9 +20084,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_T
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1736868818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20528,9 +20746,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_G
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1836552952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20856,9 +21076,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_D
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &1885933398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21194,7 +21416,7 @@ GameObject:
   - component: {fileID: 1985416730}
   - component: {fileID: 1985416736}
   m_Layer: 0
-  m_Name: WineRack_Yellow
+  m_Name: WineRack_RubyRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21261,7 +21483,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineRackLabel
   vintageNumber: 11
-  wineColor: Maroon
+  wineColor: Ruby Red
   infoText: {fileID: 313126464}
   hintManager: {fileID: 850534001}
   labelManager: {fileID: 1443493740}
@@ -21352,7 +21574,7 @@ Transform:
   m_GameObject: {fileID: 1985416729}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.12, y: 0.9, z: 12.8}
+  m_LocalPosition: {x: -1.037, y: 0.9, z: 12.665}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -21374,6 +21596,7 @@ MonoBehaviour:
   wineLabel: {fileID: 1985416731}
   targetTime: 0.5
   inspectDistance: 0.6
+  verticalOffset: 0.15
   rotateSpeed: 150
   SceneUI: {fileID: 1169160861}
 --- !u!1 &1986819831
@@ -22233,9 +22456,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_I
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &2036453615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23202,7 +23427,7 @@ GameObject:
   - component: {fileID: 2111598395}
   - component: {fileID: 2111598401}
   m_Layer: 0
-  m_Name: WineGlass_Red_2
+  m_Name: WineGlass_RubyRed_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24698,9 +24923,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
   objectName: book_A
+  InventoryObjectName: 
   description: 
   player: {fileID: 8387334}
-  audio_grap: {fileID: 0}
+  audio_grap:
+  - {fileID: 0}
 --- !u!114 &3524182413978194878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24889,3 +25116,6 @@ SceneRoots:
   - {fileID: 1995428464}
   - {fileID: 471529718}
   - {fileID: 1477976844}
+  - {fileID: 450418002}
+  - {fileID: 1662164118}
+  - {fileID: 1692836974}
