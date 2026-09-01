@@ -20,6 +20,9 @@ public static class PromptBuilder
 
         { 4, "Clearly name the hidden item and describe the specific action the player should take with it to solve the puzzle." },
         // 해석: 숨겨진 아이템 이름을 명확히 말하고, 그걸로 퍼즐을 풀기 위해 플레이어가 취해야 할 구체적인 행동까지 설명해.
+
+        { 5, "Clearly name the hidden item, describe exactly what to do with it, and if needed, walk through the solution step by step." },
+        // 해석: 숨겨진 아이템 이름과 행동을 명확히 말하고, 필요하면 해결 과정을 단계별로 짚어줘.
     };
 
     static readonly Dictionary<string, string> StatusGuide = new Dictionary<string, string>
@@ -70,7 +73,7 @@ public static class PromptBuilder
         return
             $"[Scene context]\n{sceneCtx}\n\n" +
             $"[Player state]\n" +
-            $"Hint level: {result.hintLevel} out of 4 ({levelGuide})\n" +
+            $"Hint level: {result.hintLevel} out of 5 ({levelGuide})\n" +
             $"Hint style: {typeEn}\n" +
             $"Player status: {statusGuide}\n" +
             $"Hint direction: {stepHint}\n\n" +

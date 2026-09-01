@@ -19,7 +19,7 @@
 플레이어 행동/상태 (PlayerState)
         │
         ▼
-  HintEngine.Calculate()   ← 순수 로직, 5개 가중치 요소로 힌트 레벨(1~4) 판단
+  HintEngine.Calculate()   ← 순수 로직, 5개 가중치 요소로 힌트 레벨(1~5) 판단
         │
         ▼
   PromptBuilder.Build()    ← 판단 결과를 프롬프트 문자열로 조립
