@@ -1,5 +1,7 @@
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class Object_KeyLocked : MonoBehaviour
 {
@@ -29,6 +31,19 @@ public class Object_KeyLocked : MonoBehaviour
             {
                 Debug.Log("문이 잠겨있습니다. 열쇠가 필요합니다.");
             }
+        }
+    }
+
+    public void UseKey(string keyName)
+    {
+        if(Regex.IsMatch(this.keyName, keyName))
+        {
+            Debug.Log("열쇠로 문을 열었습니다.");
+            UnlockEvent?.Invoke();
+        }
+        else
+        {
+            Debug.Log("문이 잠겨있습니다. 열쇠가 필요합니다.");
         }
     }
 }

@@ -22,6 +22,8 @@
 
 **해결**: `RegisterFail()` 메서드를 `HintManager`, 퍼즐 관련 스크립트(`WineBookPutOn`, `Room3Keypad`, `Object_Pwd`)에 2초 쿨다운과 함께 추가.
 
+> 참고: 이후 힌트 레벨 체계가 4단계 → 5단계로 재정렬됨(v0.2.0). `failCount` 연동 수정 덕분에 최대 도달 점수가 충분히 올라가 있어, 5단계 임계값(5점)도 정상적으로 도달 가능함을 확인함.
+
 ---
 
 ## Ollama 실험용 대안 구현체 잔존
@@ -34,3 +36,8 @@
 
 - `OnSceneChanged`가 실제 씬 전환 시 호출되지 않아, 퍼즐 ID/힌트 카운트가 씬을 넘어가도 리셋되지 않는 문제 (진행 중)
 - `Scene2.unity`(오르간룸)가 아직 싱글톤 이전 방식의 LLMClient 연결을 사용 중이고, `currentPuzzleId` 기본값도 `wine_glass_room`으로 잘못 설정되어 있음 (진행 중)
+
+## 해결됨 (재확인 완료, 0901)
+
+- `OnSceneChanged` 미호출 문제: `HintManager`가 `DontDestroyOnLoad` 없이 씬마다 `Start()`로 완전히 재초기화되는 구조로 바뀌어 구조적으로 해소됨
+- `currentPuzzleId` 오설정 문제: `HintManager.prefab` 기본값이 `organ_room`으로 수정됐고, 와인잔 방 씬은 `wine_glass_room`으로 명시적 override돼 있음을 씬 파일에서 직접 확인함
