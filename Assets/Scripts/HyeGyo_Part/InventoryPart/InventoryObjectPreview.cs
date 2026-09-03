@@ -93,71 +93,61 @@ public sealed class InventoryObjectPreview : MonoBehaviour
     }
 
 
-    private void SetupPreviewCamera()
+   private void SetupPreviewCamera()
+{
+    if (previewCamera == null)
     {
-        if (previewCamera == null)
-        {
-            Debug.LogError(
-                "[InventoryObjectPreview] " +
-                "PreviewCamera가 연결되지 않았습니다.",
-                this
-            );
-
-            return;
-        }
-
-        if (previewRawImage == null)
-        {
-            Debug.LogError(
-                "[InventoryObjectPreview] " +
-                "PreviewRawImage가 연결되지 않았습니다.",
-                this
-            );
-
-            return;
-        }
-
-        /*
-         * RenderTexture 연결 전에는
-         * Display 1을 렌더하지 않도록 끕니다.
-         */
-        previewCamera.enabled = false;
-
-        previewTexture =
-            new RenderTexture(
-                textureSize,
-                textureSize,
-                24,
-                RenderTextureFormat.ARGB32
-            );
-
-        previewTexture.name =
-            "InventoryPreview_Runtime";
-
-        previewTexture.Create();
-
-        /*
-         * 투명 배경.
-         */
-        previewCamera.clearFlags =
-            CameraClearFlags.SolidColor;
-
-        previewCamera.backgroundColor =
-            new Color(
-                0f,
-                0f,
-                0f,
-                0f
-            );
-
-        previewCamera.targetTexture =
-            previewTexture;
-
-        previewRawImage.texture =
-            previewTexture;
-
-        previewCamera.enabled = true;
+        Debug.LogError(
+            "[InventoryObjectPreview] PreviewCamera가 없습니다.",
+            this
+        );
+        return;
     }
+
+    if (previewRawImage == null)
+    {
+        Debug.LogError(
+            "[InventoryObjectPreview] PreviewRawImage가 없습니다.",
+            this
+        );
+        return;
+    }
+
+    previewCamera.enabled = false;
+
+    previewTexture =
+        new RenderTexture(
+            textureSize,
+            textureSize,
+            24,
+            RenderTextureFormat.ARGB32
+        );
+
+    previewTexture.name =
+        "InventoryPreview_Runtime";
+
+    previewTexture.Create();
+
+    previewCamera.clearFlags =
+        CameraClearFlags.SolidColor;
+
+    previewCamera.backgroundColor =
+        new Color(0f, 0f, 0f, 0f);
+
+    previewCamera.targetTexture =
+        previewTexture;
+
+    previewRawImage.texture =
+        previewTexture;
+
+    previewCamera.enabled = true;
+
+    Debug.Log(
+        "[InventoryObjectPreview] RenderTexture 연결 완료: " +
+        previewTexture.name,
+        this
+    );
+}
 
 
     /// <summary>
