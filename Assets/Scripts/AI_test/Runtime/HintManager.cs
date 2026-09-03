@@ -81,6 +81,10 @@ public class HintManager : MonoBehaviour
         hintPanel.SetActive(false);
         UpdateUsageUI();
 
+        GameData.LoadLanguage();
+        PromptBuilder.Config.language = GameData.CurrentLanguage;
+        Debug.Log($"[HintManager] 힌트 AI 응답 언어: {PromptBuilder.Config.language}");
+
         PromptBuilder.SceneContextProvider = new DefaultSceneContextProvider();
         // sceneContexts를 Inspector에 연결했을 때만 ScriptableObject 기반으로 교체.
         // 비워두면 PromptBuilder.SceneContextProvider는 기본값(DefaultSceneContextProvider) 그대로 사용됨 → 안전.
