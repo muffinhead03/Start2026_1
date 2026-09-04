@@ -32,6 +32,10 @@ public class DollFixedCheckManager : MonoBehaviour
     [SerializeField]
     private float maximumSettleWait = 5f;
 
+    [Header("Key Drop Delay")]
+    [SerializeField]
+    private float keyDropDelayAfterAnimation = 4f;
+
 
     // =========================================================
     // State
@@ -79,50 +83,6 @@ public class DollFixedCheckManager : MonoBehaviour
     // 인형 수리 완료 확인
     // =========================================================
 
-    private void Update()
-    {
-        // 이미 Key Drop이 시작됐다면
-        // 다시 실행하지 않음
-        if (repairSequenceStarted)
-        {
-            return;
-        }
-
-
-        if (changeDoll == null)
-        {
-            return;
-        }
-
-
-        /*
-         * DollScene_ChangeDoll
-         *      ↓
-         * DollScene_GameManager
-         *      ↓
-         * IsDollRepaired
-         *
-         * 최종 수리 완료 상태 확인
-         */
-        if (!changeDoll.IsDollRepairCompleted)
-        {
-            return;
-        }
-
-
-        repairSequenceStarted =
-            true;
-
-
-        Debug.Log(
-            "[DollFixedCheck] 인형 전체 수리 완료 감지 → Key Drop 시작"
-        );
-
-
-        StartCoroutine(
-            ReleaseKeySequence()
-        );
-    }
 
 
     // =========================================================
@@ -605,4 +565,38 @@ public class DollFixedCheckManager : MonoBehaviour
             );
         }
     }
+
+    public void StartKeyDropAfterAnimation()
+{
+    if (repairSequenceStarted)
+    {
+        return;
+    }
+
+    repairSequenceStarted = true;
+
+    Debug.Log(
+        "[DollFixedCheck] 인형 모션 종료 → Key Drop 대기 시작"
+    );
+
+    StartCoroutine(
+        DelayedKeyDrop()
+    );
+}
+
+
+private IEnumerator DelayedKeyDrop()
+{
+    yield return new WaitForSeconds(
+        keyDropDelayAfterAnimation
+    );
+
+    Debug.Log(
+        "[DollFixedCheck] 4초 대기 완료 → Key Drop 시작"
+    );
+
+    yield return StartCoroutine(
+        ReleaseKeySequence()
+    );
+}
 }

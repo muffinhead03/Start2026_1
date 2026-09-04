@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -13,697 +11,673 @@ public enum SpringTrainDirection
 public class SpringTrainTrack : MonoBehaviour
 {
     // =========================================================
-    // Section
+    // Point
     // =========================================================
 
-    [Serializable]
-    public class RailSection
-    {
-        [Header("구분용 이름")]
-        public string sectionName;
+    private const int MaxPointCount =
+        101;
 
 
-        [Header("이 선로의 중심점")]
-        public Transform centerPoint;
+    [Header("사용할 마지막 Point Index")]
 
+    [Tooltip(
+        "0부터 이 번호까지 사용합니다.\n" +
+        "예: 30이면 Point 0 ~ Point 30 사용"
+    )]
 
-        [Header("시계방향으로 다음 선로까지 가는 보조 경로")]
-        public Transform[] clockwisePathPoints;
-    }
-
-
-    // =========================================================
-    // 전체 Section
-    // =========================================================
-
-    [Header("시계 방향 순서로 선로 12개")]
+    [Range(1, 90)]
     [SerializeField]
-    private RailSection[] sections =
-        new RailSection[12];
+    private int lastPointIndex =
+        20;
 
 
-    public int SectionCount
+    [Header("기차 이동 Point 0 ~ 90")]
+
+    [Tooltip(
+        "각 Transform의 Position과 Rotation을 " +
+        "기차 경로로 사용합니다."
+    )]
+
+    [SerializeField]
+    private Transform[] points =
+        new Transform[MaxPointCount];
+
+
+    // =========================================================
+    // Runtime Cache
+    // =========================================================
+
+    private float[] cumulativeDistances =
+        new float[MaxPointCount];
+
+
+    private float totalLength;
+
+
+    private bool isCacheValid;
+
+
+    // =========================================================
+    // 외부 접근
+    // =========================================================
+
+    public int LastPointIndex =>
+        lastPointIndex;
+
+
+    public float TotalLength
     {
         get
         {
-            if (sections == null)
-            {
-                return 0;
-            }
+            EnsureCache();
 
-
-            return sections.Length;
+            return totalLength;
         }
     }
 
 
     // =========================================================
-    // Runtime Path
+    // Unity
     // =========================================================
 
-    public class PathSnapshot
+    private void Awake()
     {
-        private readonly Vector3[] points;
-
-        private readonly float[] segmentLengths;
-
-        private readonly float[] cumulativeDistances;
-
-        private readonly float totalLength;
-
-
-        public float TotalLength =>
-            totalLength;
-
-
-        public int PointCount
-        {
-            get
-            {
-                if (points == null)
-                {
-                    return 0;
-                }
-
-
-                return points.Length;
-            }
-        }
-
-
-        // =====================================================
-        // 생성
-        // =====================================================
-
-        public PathSnapshot(
-            List<Vector3> sourcePoints
-        )
-        {
-            if (
-                sourcePoints == null ||
-                sourcePoints.Count < 2
-            )
-            {
-                points =
-                    Array.Empty<Vector3>();
-
-                segmentLengths =
-                    Array.Empty<float>();
-
-                cumulativeDistances =
-                    Array.Empty<float>();
-
-                totalLength = 0f;
-
-                return;
-            }
-
-
-            points =
-                sourcePoints.ToArray();
-
-
-            segmentLengths =
-                new float[points.Length];
-
-
-            cumulativeDistances =
-                new float[points.Length];
-
-
-            float distance = 0f;
-
-
-            for (int i = 0; i < points.Length; i++)
-            {
-                cumulativeDistances[i] =
-                    distance;
-
-
-                int nextIndex =
-                    (i + 1) %
-                    points.Length;
-
-
-                float segmentLength =
-                    Vector3.Distance(
-                        points[i],
-                        points[nextIndex]
-                    );
-
-
-                segmentLengths[i] =
-                    segmentLength;
-
-
-                distance +=
-                    segmentLength;
-            }
-
-
-            totalLength =
-                distance;
-        }
-
-
-        // =====================================================
-        // 거리 Wrap
-        // =====================================================
-
-        public float WrapDistance(
-            float distance
-        )
-        {
-            if (totalLength <= 0.0001f)
-            {
-                return 0f;
-            }
-
-
-            return Mathf.Repeat(
-                distance,
-                totalLength
-            );
-        }
-
-
-        // =====================================================
-        // 지정 거리의 World Position
-        //
-        // Point A -> Point B는 무조건 직선
-        // =====================================================
-
-        public Vector3 EvaluatePosition(
-            float distance
-        )
-        {
-            if (
-                points == null ||
-                points.Length == 0
-            )
-            {
-                return Vector3.zero;
-            }
-
-
-            if (points.Length == 1)
-            {
-                return points[0];
-            }
-
-
-            float wrapped =
-                WrapDistance(
-                    distance
-                );
-
-
-            for (int i = 0; i < points.Length; i++)
-            {
-                float startDistance =
-                    cumulativeDistances[i];
-
-
-                float length =
-                    segmentLengths[i];
-
-
-                float endDistance =
-                    startDistance +
-                    length;
-
-
-                if (
-                    wrapped <= endDistance ||
-                    i == points.Length - 1
-                )
-                {
-                    if (length <= 0.0001f)
-                    {
-                        return points[i];
-                    }
-
-
-                    float t =
-                        Mathf.Clamp01(
-                            (
-                                wrapped -
-                                startDistance
-                            ) /
-                            length
-                        );
-
-
-                    int nextIndex =
-                        (i + 1) %
-                        points.Length;
-
-
-                    return Vector3.Lerp(
-                        points[i],
-                        points[nextIndex],
-                        t
-                    );
-                }
-            }
-
-
-            return points[0];
-        }
-
-
-        // =====================================================
-        // 현재 직선 Segment 방향
-        // =====================================================
-
-        public Vector3 EvaluateDirection(
-            float distance,
-            SpringTrainDirection direction
-        )
-        {
-            if (
-                points == null ||
-                points.Length < 2
-            )
-            {
-                return Vector3.forward;
-            }
-
-
-            float wrapped =
-                WrapDistance(
-                    distance
-                );
-
-
-            for (int i = 0; i < points.Length; i++)
-            {
-                float start =
-                    cumulativeDistances[i];
-
-
-                float end =
-                    start +
-                    segmentLengths[i];
-
-
-                if (
-                    wrapped <= end ||
-                    i == points.Length - 1
-                )
-                {
-                    int next =
-                        (i + 1) %
-                        points.Length;
-
-
-                    Vector3 result =
-                        points[next] -
-                        points[i];
-
-
-                    if (
-                        direction ==
-                        SpringTrainDirection.CounterClockwise
-                    )
-                    {
-                        result =
-                            -result;
-                    }
-
-
-                    if (
-                        result.sqrMagnitude <
-                        0.000001f
-                    )
-                    {
-                        return Vector3.forward;
-                    }
-
-
-                    return result.normalized;
-                }
-            }
-
-
-            return Vector3.forward;
-        }
-
-
-        // 기존 코드 호환용
-        public Vector3 EvaluateDirection(
-            float distance,
-            SpringTrainDirection direction,
-            float lookAheadDistance
-        )
-        {
-            return EvaluateDirection(
-                distance,
-                direction
-            );
-        }
-
-
-        // =====================================================
-        // 현재 World Position에서
-        // 가장 가까운 Path 거리
-        //
-        // 이것은 시작할 때 딱 한 번만 사용
-        // =====================================================
-
-        public float GetNearestDistance(
-            Vector3 worldPosition
-        )
-        {
-            if (
-                points == null ||
-                points.Length < 2
-            )
-            {
-                return 0f;
-            }
-
-
-            float nearestSqr =
-                float.MaxValue;
-
-
-            float nearestDistance =
-                0f;
-
-
-            for (int i = 0; i < points.Length; i++)
-            {
-                int next =
-                    (i + 1) %
-                    points.Length;
-
-
-                Vector3 start =
-                    points[i];
-
-
-                Vector3 end =
-                    points[next];
-
-
-                Vector3 segment =
-                    end -
-                    start;
-
-
-                float sqrLength =
-                    segment.sqrMagnitude;
-
-
-                if (sqrLength <= 0.000001f)
-                {
-                    continue;
-                }
-
-
-                float t =
-                    Vector3.Dot(
-                        worldPosition - start,
-                        segment
-                    ) /
-                    sqrLength;
-
-
-                t =
-                    Mathf.Clamp01(
-                        t
-                    );
-
-
-                Vector3 nearest =
-                    start +
-                    segment * t;
-
-
-                float sqrDistance =
-                    (
-                        worldPosition -
-                        nearest
-                    ).sqrMagnitude;
-
-
-                if (sqrDistance < nearestSqr)
-                {
-                    nearestSqr =
-                        sqrDistance;
-
-
-                    nearestDistance =
-                        cumulativeDistances[i] +
-                        segmentLengths[i] *
-                        t;
-                }
-            }
-
-
-            return WrapDistance(
-                nearestDistance
-            );
-        }
+        RebuildCache();
     }
 
 
     // =========================================================
-    // Path 생성
+    // Cache
     // =========================================================
 
-    public PathSnapshot BuildPathSnapshot()
+    public bool RebuildCache()
     {
-        List<Vector3> points =
-            new List<Vector3>();
+        EnsurePointArraySize();
 
 
-        if (sections == null)
+        isCacheValid =
+            false;
+
+
+        totalLength =
+            0f;
+
+
+        if (
+            lastPointIndex < 1 ||
+            lastPointIndex >= MaxPointCount
+        )
         {
-            return null;
+            return false;
         }
 
 
-        for (int i = 0; i < sections.Length; i++)
+        // -----------------------------------------------------
+        // Null 검사
+        // -----------------------------------------------------
+
+        for (
+            int i = 0;
+            i <= lastPointIndex;
+            i++
+        )
         {
-            RailSection section =
-                sections[i];
-
-
-            if (section == null)
+            if (points[i] != null)
             {
                 continue;
             }
 
 
-            // -----------------------------------------
-            // TrainCenter
-            // -----------------------------------------
-
-            if (section.centerPoint != null)
-            {
-                AddPointIfNeeded(
-                    points,
-                    section.centerPoint.position
-                );
-            }
-
-
-            // -----------------------------------------
-            // Element 0 -> Element 1 -> ...
-            // -----------------------------------------
-
-            if (
-                section.clockwisePathPoints ==
-                null
-            )
-            {
-                continue;
-            }
-
-
-            for (
-                int p = 0;
-                p < section.clockwisePathPoints.Length;
-                p++
-            )
-            {
-                Transform point =
-                    section.clockwisePathPoints[p];
-
-
-                if (point == null)
-                {
-                    continue;
-                }
-
-
-                AddPointIfNeeded(
-                    points,
-                    point.position
-                );
-            }
-        }
-
-
-        if (points.Count < 2)
-        {
             Debug.LogWarning(
-                "[SpringTrainTrack] Path Point가 부족합니다.",
+                "[SpringTrainTrack] " +
+                $"Point {i}가 비어 있습니다.",
                 this
             );
 
 
+            return false;
+        }
+
+
+        // -----------------------------------------------------
+        // 누적 거리 생성
+        // -----------------------------------------------------
+
+        cumulativeDistances[0] =
+            0f;
+
+
+        for (
+            int i = 1;
+            i <= lastPointIndex;
+            i++
+        )
+        {
+            float segmentLength =
+                Vector3.Distance(
+                    points[i - 1].position,
+                    points[i].position
+                );
+
+
+            totalLength +=
+                segmentLength;
+
+
+            cumulativeDistances[i] =
+                totalLength;
+        }
+
+
+        if (totalLength <= 0.0001f)
+        {
+            Debug.LogWarning(
+                "[SpringTrainTrack] Path 길이가 너무 짧습니다.",
+                this
+            );
+
+
+            return false;
+        }
+
+
+        isCacheValid =
+            true;
+
+
+        return true;
+    }
+
+
+    private void EnsureCache()
+    {
+        if (isCacheValid)
+        {
+            return;
+        }
+
+
+        RebuildCache();
+    }
+
+
+    // =========================================================
+    // 지정 Path Distance의 Pose
+    //
+    // Position + Rotation 둘 다 계산
+    // =========================================================
+
+    public Pose EvaluatePose(
+        float distance
+    )
+    {
+        EnsureCache();
+
+
+        if (!isCacheValid)
+        {
+            return new Pose(
+                transform.position,
+                transform.rotation
+            );
+        }
+
+
+        // =====================================================
+        // Point 0 이전
+        //
+        // Rear Car가 Point 0보다 뒤에 있을 수 있으므로
+        // 첫 Segment 방향으로 연장
+        // =====================================================
+
+        if (distance <= 0f)
+        {
+            Transform first =
+                points[0];
+
+
+            Transform second =
+                points[1];
+
+
+            Vector3 direction =
+                second.position -
+                first.position;
+
+
+            if (
+                direction.sqrMagnitude >
+                0.000001f
+            )
+            {
+                direction.Normalize();
+            }
+            else
+            {
+                direction =
+                    first.forward;
+            }
+
+
+            Vector3 position =
+                first.position +
+                direction *
+                distance;
+
+
+            return new Pose(
+                position,
+                first.rotation
+            );
+        }
+
+
+        // =====================================================
+        // 마지막 Point 이후
+        //
+        // Front Car가 마지막 Point보다 앞에 있을 수 있으므로
+        // 마지막 Segment 방향으로 연장
+        // =====================================================
+
+        if (distance >= totalLength)
+        {
+            Transform previous =
+                points[
+                    lastPointIndex - 1
+                ];
+
+
+            Transform last =
+                points[
+                    lastPointIndex
+                ];
+
+
+            Vector3 direction =
+                last.position -
+                previous.position;
+
+
+            if (
+                direction.sqrMagnitude >
+                0.000001f
+            )
+            {
+                direction.Normalize();
+            }
+            else
+            {
+                direction =
+                    last.forward;
+            }
+
+
+            float extraDistance =
+                distance -
+                totalLength;
+
+
+            Vector3 position =
+                last.position +
+                direction *
+                extraDistance;
+
+
+            return new Pose(
+                position,
+                last.rotation
+            );
+        }
+
+
+        // =====================================================
+        // 일반 Segment
+        // =====================================================
+
+        for (
+            int i = 0;
+            i < lastPointIndex;
+            i++
+        )
+        {
+            float segmentStart =
+                cumulativeDistances[i];
+
+
+            float segmentEnd =
+                cumulativeDistances[i + 1];
+
+
+            if (distance > segmentEnd)
+            {
+                continue;
+            }
+
+
+            float segmentLength =
+                segmentEnd -
+                segmentStart;
+
+
+            float t =
+                0f;
+
+
+            if (segmentLength > 0.0001f)
+            {
+                t =
+                    Mathf.Clamp01(
+                        (
+                            distance -
+                            segmentStart
+                        ) /
+                        segmentLength
+                    );
+            }
+
+
+            Transform start =
+                points[i];
+
+
+            Transform end =
+                points[i + 1];
+
+
+            Vector3 position =
+                Vector3.Lerp(
+                    start.position,
+                    end.position,
+                    t
+                );
+
+
+            Quaternion rotation =
+                Quaternion.Slerp(
+                    start.rotation,
+                    end.rotation,
+                    t
+                );
+
+
+            return new Pose(
+                position,
+                rotation
+            );
+        }
+
+
+        Transform finalPoint =
+            points[lastPointIndex];
+
+
+        return new Pose(
+            finalPoint.position,
+            finalPoint.rotation
+        );
+    }
+
+
+    // =========================================================
+    // Point Index → Path Distance
+    // =========================================================
+
+    public float GetDistanceAtPoint(
+        int pointIndex
+    )
+    {
+        EnsureCache();
+
+
+        if (!isCacheValid)
+        {
+            return 0f;
+        }
+
+
+        pointIndex =
+            Mathf.Clamp(
+                pointIndex,
+                0,
+                lastPointIndex
+            );
+
+
+        return cumulativeDistances[
+            pointIndex
+        ];
+    }
+
+
+    // =========================================================
+    // Point 접근
+    // =========================================================
+
+    public Transform GetPoint(
+        int pointIndex
+    )
+    {
+        if (
+            pointIndex < 0 ||
+            pointIndex > lastPointIndex
+        )
+        {
             return null;
         }
 
 
-        return new PathSnapshot(
-            points
-        );
+        return points[
+            pointIndex
+        ];
     }
 
 
     // =========================================================
-    // 같은 좌표 중복 방지
+    // 자식 Transform 자동 등록
+    //
+    // Hierarchy 순서대로
+    // Point 0, 1, 2...
     // =========================================================
 
-    private void AddPointIfNeeded(
-        List<Vector3> points,
-        Vector3 position
-    )
+    [ContextMenu(
+        "자식 순서대로 Point 자동 등록"
+    )]
+    private void AutoAssignFromChildren()
     {
-        if (points.Count == 0)
-        {
-            points.Add(
-                position
+        EnsurePointArraySize();
+
+
+        int childCount =
+            Mathf.Min(
+                transform.childCount,
+                MaxPointCount
             );
+
+
+        if (childCount < 2)
+        {
+            Debug.LogWarning(
+                "[SpringTrainTrack] 자식 Point가 2개 이상 필요합니다.",
+                this
+            );
+
 
             return;
         }
 
 
-        Vector3 previous =
-            points[
-                points.Count - 1
+        for (
+            int i = 0;
+            i < MaxPointCount;
+            i++
+        )
+        {
+            points[i] =
+                null;
+        }
+
+
+        for (
+            int i = 0;
+            i < childCount;
+            i++
+        )
+        {
+            points[i] =
+                transform.GetChild(
+                    i
+                );
+        }
+
+
+        lastPointIndex =
+            childCount - 1;
+
+
+        isCacheValid =
+            false;
+
+
+        RebuildCache();
+
+
+        Debug.Log(
+            "[SpringTrainTrack] " +
+            $"Point 0 ~ {lastPointIndex} 자동 등록 완료",
+            this
+        );
+    }
+
+
+    // =========================================================
+    // Array 크기 보정
+    // =========================================================
+
+    private void EnsurePointArraySize()
+    {
+        if (
+            points != null &&
+            points.Length ==
+            MaxPointCount
+        )
+        {
+            return;
+        }
+
+
+        Transform[] newPoints =
+            new Transform[
+                MaxPointCount
             ];
 
 
-        if (
-            Vector3.SqrMagnitude(
-                previous -
-                position
-            ) <
-            0.000001f
-        )
+        if (points != null)
         {
-            return;
+            int copyCount =
+                Mathf.Min(
+                    points.Length,
+                    MaxPointCount
+                );
+
+
+            for (
+                int i = 0;
+                i < copyCount;
+                i++
+            )
+            {
+                newPoints[i] =
+                    points[i];
+            }
         }
 
 
-        points.Add(
-            position
-        );
+        points =
+            newPoints;
     }
 
 
     // =========================================================
-    // 가장 가까운 Section
+    // Scene View
     // =========================================================
 
-    public int GetNearestSectionIndex(
-        Vector3 worldPosition
-    )
+    private void OnDrawGizmosSelected()
     {
-        if (
-            sections == null ||
-            sections.Length == 0
+        EnsurePointArraySize();
+
+
+        int last =
+            Mathf.Clamp(
+                lastPointIndex,
+                1,
+                90
+            );
+
+
+        for (
+            int i = 0;
+            i <= last;
+            i++
         )
         {
-            return -1;
-        }
+            Transform point =
+                points[i];
 
 
-        float nearest =
-            float.MaxValue;
+            if (point == null)
+            {
+                continue;
+            }
 
 
-        int result =
-            -1;
+            Gizmos.DrawSphere(
+                point.position,
+                0.06f
+            );
 
 
-        for (int i = 0; i < sections.Length; i++)
-        {
-            RailSection section =
-                sections[i];
+            Gizmos.DrawRay(
+                point.position,
+                point.forward *
+                0.35f
+            );
 
 
             if (
-                section == null ||
-                section.centerPoint == null
+                i >= last ||
+                points[i + 1] == null
             )
             {
                 continue;
             }
 
 
-            float sqr =
-                (
-                    section.centerPoint.position -
-                    worldPosition
-                ).sqrMagnitude;
-
-
-            if (sqr < nearest)
-            {
-                nearest = sqr;
-
-                result = i;
-            }
+            Gizmos.DrawLine(
+                point.position,
+                points[i + 1].position
+            );
         }
-
-
-        return result;
     }
 
 
     // =========================================================
-    // 다음 Section
+    // Inspector
     // =========================================================
 
-    public int GetNextIndex(
-        int index,
-        SpringTrainDirection direction
-    )
+    private void OnValidate()
     {
-        if (SectionCount <= 0)
-        {
-            return -1;
-        }
+        EnsurePointArraySize();
 
 
-        int result =
-            index +
-            (
-                direction ==
-                SpringTrainDirection.Clockwise
-                    ? 1
-                    : -1
+        lastPointIndex =
+            Mathf.Clamp(
+                lastPointIndex,
+                1,
+                90
             );
 
 
-        result %=
-            SectionCount;
-
-
-        if (result < 0)
-        {
-            result +=
-                SectionCount;
-        }
-
-
-        return result;
+        isCacheValid =
+            false;
     }
 }

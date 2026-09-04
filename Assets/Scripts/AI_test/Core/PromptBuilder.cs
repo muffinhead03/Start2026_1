@@ -67,7 +67,7 @@ public static class PromptBuilder
         string typeEn      = result.hintType == "direct" ? "direct" : "indirect and atmospheric";
         string levelGuide  = LevelGuide.ContainsKey(result.hintLevel)    ? LevelGuide[result.hintLevel]    : "";
         string statusGuide = StatusGuide.ContainsKey(result.playerStatus) ? StatusGuide[result.playerStatus] : "";
-        string sceneCtx    = SceneContextProvider.GetSceneContext(result.puzzleId, result.hintLevel);
+        string sceneCtx    = SceneContextProvider.GetSceneContext(result.puzzleId);
         string stepHint    = GetStepHint(result.nextStep, result.hintLevel);
 
         return
@@ -77,6 +77,9 @@ public static class PromptBuilder
             $"Hint style: {typeEn}\n" +
             $"Player status: {statusGuide}\n" +
             $"Hint direction: {stepHint}\n\n" +
+            $"IMPORTANT: Base your hint ONLY on the [Hint direction] above. " +
+            $"Do NOT mention any other puzzle mechanic, object, or step that isn't part of it — " +
+            $"the player has already moved past earlier parts of the puzzle.\n\n" +
             $"{Config.language} hint ({Config.language} language only, no other language):";
     }
 
