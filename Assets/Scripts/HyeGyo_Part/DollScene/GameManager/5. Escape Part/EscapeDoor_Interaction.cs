@@ -3,16 +3,6 @@ using UnityEngine;
 public class EscapeDoor_Interaction : MonoBehaviour
 {
     // =========================================================
-    // Target Door
-    // =========================================================
-
-    [Header("Target Door")]
-
-    [SerializeField]
-    private Door_OpenClose door;
-
-
-    // =========================================================
     // Player
     // =========================================================
 
@@ -23,20 +13,31 @@ public class EscapeDoor_Interaction : MonoBehaviour
 
 
     // =========================================================
-    // Required Item
-    //
-    // Player_Grab.hasKey()가 Regex.IsMatch()를 사용하므로
-    // ^ $를 사용해서 정확히 "Key"만 인식
+    // Door
     // =========================================================
 
-    [Header("Required Item")]
+    [Header("Escape Door")]
+
+    [SerializeField]
+    private Object_Door door;
+
+
+    [SerializeField]
+    private BoxCollider doorBoxCollider;
+
+
+    // =========================================================
+    // Required Key
+    // =========================================================
+
+    [Header("Required Key")]
 
     [SerializeField]
     private string keyItemName = "^Key$";
 
 
     // =========================================================
-    // Door State
+    // State
     // =========================================================
 
     private bool isOpened = false;
@@ -48,21 +49,7 @@ public class EscapeDoor_Interaction : MonoBehaviour
 
     private void Awake()
     {
-        // -----------------------------------------------------
-        // Door 자동 탐색
-        // -----------------------------------------------------
-
-        if (door == null)
-        {
-            door =
-                GetComponentInParent<Door_OpenClose>();
-        }
-
-
-        // -----------------------------------------------------
-        // Player_Grab 자동 탐색
-        // -----------------------------------------------------
-
+        // Player 자동 탐색
         if (playerGrab == null)
         {
             playerGrab =
@@ -70,20 +57,24 @@ public class EscapeDoor_Interaction : MonoBehaviour
         }
 
 
-        // -----------------------------------------------------
-        // Error Check
-        // -----------------------------------------------------
-
+        // Object_Door 자동 탐색
         if (door == null)
         {
-            Debug.LogWarning(
-                $"[EscapeDoor_Interaction] {gameObject.name} / " +
-                $"부모에서 Door_OpenClose를 찾지 못했습니다.",
-                this
-            );
+            door =
+                GetComponentInParent<Object_Door>();
         }
 
 
+        // Door BoxCollider 자동 탐색
+        if (doorBoxCollider == null &&
+            door != null)
+        {
+            doorBoxCollider =
+                door.GetComponent<BoxCollider>();
+        }
+
+
+        // Error Check
         if (playerGrab == null)
         {
             Debug.LogError(
@@ -91,26 +82,42 @@ public class EscapeDoor_Interaction : MonoBehaviour
                 this
             );
         }
+
+
+        if (door == null)
+        {
+            Debug.LogError(
+                "[EscapeDoor_Interaction] Object_Door를 찾을 수 없습니다.",
+                this
+            );
+        }
+
+
+        if (doorBoxCollider == null)
+        {
+            Debug.LogWarning(
+                "[EscapeDoor_Interaction] Door의 BoxCollider를 찾을 수 없습니다.",
+                this
+            );
+        }
     }
 
 
     // =========================================================
-    // E 상호작용에서 호출
+    // E 상호작용
     // =========================================================
 
     public void Interact()
     {
         Debug.Log(
-            $"[EscapeDoor_Interaction] E 상호작용 : {gameObject.name}"
+            "[EscapeDoor_Interaction] E 상호작용",
+            this
         );
 
 
-        // -----------------------------------------------------
-        // 필요한 참조 확인
-        // -----------------------------------------------------
-
-        if (door == null ||
-            playerGrab == null)
+        // 참조 확인
+        if (playerGrab == null ||
+            door == null)
         {
             Debug.LogWarning(
                 "[EscapeDoor_Interaction] 필요한 참조가 없습니다.",
@@ -121,51 +128,84 @@ public class EscapeDoor_Interaction : MonoBehaviour
         }
 
 
-        // -----------------------------------------------------
-        // 이미 한 번 열린 문
-        //
-        // 이후에는 어떤 상호작용을 해도 ToggleDoor를 호출하지 않음
-        // -----------------------------------------------------
-
+        // 이미 열린 문이면 무시
         if (isOpened)
         {
             Debug.Log(
-                "[EscapeDoor_Interaction] 이미 열린 문입니다."
+                "[EscapeDoor_Interaction] 이미 열린 탈출문입니다.",
+                this
             );
 
             return;
         }
 
 
-        // -----------------------------------------------------
-        // Key를 들고 있는지 확인
-        // -----------------------------------------------------
-
+        // Key 확인
         if (!playerGrab.hasKey(keyItemName))
         {
             Debug.Log(
-                "[EscapeDoor_Interaction] Key를 들고 있지 않습니다."
+                "[EscapeDoor_Interaction] Key를 들고 있지 않습니다.",
+                this
             );
 
             return;
         }
 
 
-        // -----------------------------------------------------
-        // Key 보유 → 문 열기
-        // -----------------------------------------------------
+        // Animator 확인
+        if (door.animator == null)
+        {
+            Debug.LogWarning(
+                "[EscapeDoor_Interaction] Object_Door의 Animator가 없습니다.",
+                this
+            );
 
+            return;
+        }
+
+
+        // 이미 Animator상 열린 상태
+        if (door.animator.GetInteger("Open") != 0)
+        {
+            isOpened = true;
+
+            if (doorBoxCollider != null)
+            {
+                doorBoxCollider.enabled = false;
+            }
+
+            Debug.Log(
+                "[EscapeDoor_Interaction] 문이 이미 열린 상태입니다.",
+                this
+            );
+
+            return;
+        }
+
+
+        // Key 확인 성공
         Debug.Log(
-            "[EscapeDoor_Interaction] Key 확인 → 탈출문을 엽니다."
+            "[EscapeDoor_Interaction] Key 확인 → 탈출문 잠금 해제",
+            this
         );
 
 
-        // 먼저 상태를 잠금
-        // 연속 입력으로 ToggleDoor가 두 번 실행되는 것을 방지
         isOpened = true;
 
 
-        // 기존 Door_OpenClose는 수정하지 않고 그대로 사용
-        door.ToggleDoor();
+        // 기존 Object_Door 애니메이션 실행
+        door.UnlockDoor();
+
+
+        // Door BoxCollider 비활성화
+        if (doorBoxCollider != null)
+        {
+            doorBoxCollider.enabled = false;
+
+            Debug.Log(
+                "[EscapeDoor_Interaction] Door BoxCollider 비활성화",
+                this
+            );
+        }
     }
 }

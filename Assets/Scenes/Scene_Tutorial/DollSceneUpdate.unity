@@ -7472,7 +7472,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.887
+      value: -5.41
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7480,11 +7480,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.737
+      value: 1.43
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.92734295
+      value: 0.19496164
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalRotation.x
@@ -7492,7 +7492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.3742127
+      value: -0.98081094
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalRotation.z
@@ -7504,7 +7504,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 43.951
+      value: -157.515
       objectReference: {fileID: 0}
     - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -11068,7 +11068,7 @@ MonoBehaviour:
     finalLocalEulerAngles: {x: -0, y: -0, z: -0}
   moveDuration: 2
   applyInitialPoseOnStart: 1
-  testMoveToFinalOnStart: 0
+  testMoveToFinalOnStart: 1
   testDelay: 1
 --- !u!114 &1118158349
 MonoBehaviour:
@@ -12373,6 +12373,64 @@ Transform:
   - {fileID: 1116511709}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1260892019 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9022709958988046418, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+  m_PrefabInstance: {fileID: 1416220924}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1260892020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260892019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 769669703f5d3034da924e8f0b65d1eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Event_On_Ray
+  OnEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStay:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExit:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1260892021}
+        m_TargetAssemblyTypeName: Object_Grabbable, Assembly-CSharp
+        m_MethodName: OnGrab
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1260892021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260892019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c064d9dcd079504087ed66d7c4d9580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Grabbable
+  objectName: Key
+  InventoryObjectName: Mysterious Key
+  description: 
+  player: {fileID: 2099574892}
+  audio_grap: []
 --- !u!1 &1266249559
 GameObject:
   m_ObjectHideFlags: 0
@@ -13927,6 +13985,73 @@ Transform:
   - {fileID: 6873608}
   m_Father: {fileID: 1369504063}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1416220924
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.429
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.398
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.042
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.93699765
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.00000004470348
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.34933588
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4178688656627335323, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -40.893
+      objectReference: {fileID: 0}
+    - target: {fileID: 9022709958988046418, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_Name
+      value: box_key (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9022709958988046418, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9022709958988046418, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1260892021}
+    - targetCorrespondingSourceObject: {fileID: 9022709958988046418, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1260892020}
+  m_SourcePrefab: {fileID: 100100000, guid: b10f2f104a0311a4094968ca8c09af65, type: 3}
 --- !u!1 &1423742507
 GameObject:
   m_ObjectHideFlags: 0
@@ -14373,14 +14498,14 @@ PrefabInstance:
     - target: {fileID: 1935769444540427456, guid: 3fbb6956d79a80646a08cb41836997f2, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1492252239}
+      objectReference: {fileID: 1492252238}
     - target: {fileID: 1935769444540427456, guid: 3fbb6956d79a80646a08cb41836997f2, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ToggleDoor
+      value: Interact
       objectReference: {fileID: 0}
     - target: {fileID: 1935769444540427456, guid: 3fbb6956d79a80646a08cb41836997f2, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Door_OpenClose, Assembly-CSharp
+      value: EscapeDoor_Interaction, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2017768259551439138, guid: 3fbb6956d79a80646a08cb41836997f2, type: 3}
       propertyPath: m_Size.x
@@ -14717,9 +14842,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4083492955046416548, guid: 3fbb6956d79a80646a08cb41836997f2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1492252238}
-    - targetCorrespondingSourceObject: {fileID: 4083492955046416548, guid: 3fbb6956d79a80646a08cb41836997f2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1492252239}
   m_SourcePrefab: {fileID: 100100000, guid: 3fbb6956d79a80646a08cb41836997f2, type: 3}
 --- !u!1 &1492252237 stripped
 GameObject:
@@ -14738,52 +14860,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a5859f0e2dbaf47a97af426a7e69f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EscapeDoor_Interaction
-  door: {fileID: 1492252239}
   playerGrab: {fileID: 2099574905}
+  door: {fileID: 1492252242}
+  doorBoxCollider: {fileID: 0}
   keyItemName: Key
---- !u!114 &1492252239
+--- !u!114 &1492252242 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 5407016868169034703, guid: 3fbb6956d79a80646a08cb41836997f2, type: 3}
+  m_PrefabInstance: {fileID: 1492252236}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1492252237}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c14fc1979fd1fcc43b1909973310b38c, type: 3}
+  m_Script: {fileID: 11500000, guid: ad174821983d47b42836f4739a9646ce, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Door_OpenClose
-  isLocked: 0
-  rotationAxis: 1
-  openAngle: 90
-  openDirection: 1
-  rotationDuration: 0.8
-  rotationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  isOpen: 0
-  isMoving: 0
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Door
 --- !u!1 &1518062529
 GameObject:
   m_ObjectHideFlags: 0
@@ -22035,3 +22126,4 @@ SceneRoots:
   - {fileID: 1866972110}
   - {fileID: 5818568}
   - {fileID: 1492252236}
+  - {fileID: 1416220924}
