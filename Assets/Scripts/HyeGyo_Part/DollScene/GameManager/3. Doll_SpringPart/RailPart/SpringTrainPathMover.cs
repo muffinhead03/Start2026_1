@@ -29,8 +29,7 @@ public class SpringTrainPathMover : MonoBehaviour
 
     [Header("이동 속도")]
     [SerializeField]
-    private float moveSpeed =
-        2f;
+    private float moveSpeed = 2f;
 
 
     // =========================================================
@@ -38,6 +37,9 @@ public class SpringTrainPathMover : MonoBehaviour
     // =========================================================
 
     private Coroutine moveCoroutine;
+
+
+    private float targetDistance;
 
 
     public float CurrentMiddleDistance
@@ -53,6 +55,10 @@ public class SpringTrainPathMover : MonoBehaviour
         private set;
     }
 
+
+    // =========================================================
+    // 기존 API 유지
+    // =========================================================
 
     public bool IsRouteComplete
     {
@@ -84,7 +90,7 @@ public class SpringTrainPathMover : MonoBehaviour
 
 
     // =========================================================
-    // 준비 여부
+    // 이동 가능 여부
     // =========================================================
 
     public bool CanStartRoute
@@ -107,21 +113,22 @@ public class SpringTrainPathMover : MonoBehaviour
     }
 
 
+    // 새 이름도 사용 가능
+    public bool CanMove =>
+        CanStartRoute;
+
+
     // =========================================================
     // 시작 위치
     // =========================================================
 
     public bool SnapTrainToStart()
     {
-        if (
-            track == null ||
-            formationController == null ||
-            !formationController.HasAllCars
-        )
+        if (!CanStartRoute)
         {
             Debug.LogWarning(
                 "[SpringTrainPathMover] " +
-                "Track / Formation 연결을 확인하세요.",
+                "Track / Formation 설정을 확인하세요.",
                 this
             );
 
@@ -130,14 +137,12 @@ public class SpringTrainPathMover : MonoBehaviour
         }
 
 
-        if (!track.RebuildCache())
-        {
-            return false;
-        }
+        StopMovementImmediately();
 
 
-        CurrentMiddleDistance =
-            0f;
+        CurrentMiddleDistance = 0f;
+
+        targetDistance = 0f;
 
 
         formationController.ApplyFormation(
@@ -146,12 +151,9 @@ public class SpringTrainPathMover : MonoBehaviour
         );
 
 
-        IsMoving =
-            false;
+        IsMoving = false;
 
-
-        IsRouteComplete =
-            false;
+        IsRouteComplete = false;
 
 
         return true;
@@ -159,16 +161,116 @@ public class SpringTrainPathMover : MonoBehaviour
 
 
     // =========================================================
-    // 처음부터 이동 시작
+    // 기존 방식
+    //
+    // 처음부터 Track 마지막까지 이동
     // =========================================================
 
     public bool StartRouteFromStart()
     {
+        if (!SnapTrainToStart())
+        {
+            return false;
+        }
+
+
+        return MoveToDistance(
+            track.TotalLength
+        );
+    }
+
+
+    // =========================================================
+    // 현재 위치에서 특정 Point까지 이동
+    // =========================================================
+
+    public bool MoveToPoint(
+        int pointIndex
+    )
+    {
         if (!CanStartRoute)
+        {
+            return false;
+        }
+
+
+        if (
+            pointIndex < 0 ||
+            pointIndex > track.LastPointIndex
+        )
+        {
+            Debug.LogError(
+                "[SpringTrainPathMover] " +
+                $"Point Index 범위 오류 : {pointIndex}",
+                this
+            );
+
+
+            return false;
+        }
+
+
+        float distance =
+            track.GetDistanceAtPoint(
+                pointIndex
+            );
+
+
+        return MoveToDistance(
+            distance
+        );
+    }
+
+
+    // =========================================================
+    // 현재 위치에서 Track 마지막까지 이동
+    // =========================================================
+
+    public bool MoveToEnd()
+    {
+        if (track == null)
+        {
+            return false;
+        }
+
+
+        return MoveToPoint(
+            track.LastPointIndex
+        );
+    }
+
+
+    // =========================================================
+    // 현재 위치 → 지정 Distance
+    // =========================================================
+
+    public bool MoveToDistance(
+        float distance
+    )
+    {
+        if (!CanStartRoute)
+        {
+            return false;
+        }
+
+
+        distance =
+            Mathf.Clamp(
+                distance,
+                0f,
+                track.TotalLength
+            );
+
+
+        // 현재보다 뒤쪽으로 이동시키는 상황 방지
+        if (
+            distance <
+            CurrentMiddleDistance - 0.001f
+        )
         {
             Debug.LogWarning(
                 "[SpringTrainPathMover] " +
-                "Route를 시작할 수 없습니다.",
+                "현재 위치보다 이전 Distance로는 이동하지 않습니다.",
                 this
             );
 
@@ -184,28 +286,47 @@ public class SpringTrainPathMover : MonoBehaviour
             );
 
 
-            moveCoroutine =
-                null;
+            moveCoroutine = null;
         }
 
 
-        CurrentMiddleDistance =
-            0f;
-
-
-        formationController.ApplyFormation(
-            track,
-            CurrentMiddleDistance
-        );
+        targetDistance =
+            distance;
 
 
         IsRouteComplete =
             false;
 
 
+        // 이미 목표점에 있음
+        if (
+            Mathf.Abs(
+                CurrentMiddleDistance -
+                targetDistance
+            ) <= 0.001f
+        )
+        {
+            formationController.ApplyFormation(
+                track,
+                CurrentMiddleDistance
+            );
+
+
+            IsMoving = false;
+
+            IsRouteComplete = true;
+
+
+            OnRouteCompleted?.Invoke();
+
+
+            return true;
+        }
+
+
         moveCoroutine =
             StartCoroutine(
-                MoveRoute()
+                MoveRoutine()
             );
 
 
@@ -214,23 +335,12 @@ public class SpringTrainPathMover : MonoBehaviour
 
 
     // =========================================================
-    // Route 이동
+    // 실제 이동
     // =========================================================
 
-    private IEnumerator MoveRoute()
+    private IEnumerator MoveRoutine()
     {
-        IsMoving =
-            true;
-
-
-        float targetDistance =
-            track.TotalLength;
-
-
-        Debug.Log(
-            "[SpringTrainPathMover] Route 시작",
-            this
-        );
+        IsMoving = true;
 
 
         while (
@@ -238,18 +348,25 @@ public class SpringTrainPathMover : MonoBehaviour
             targetDistance
         )
         {
-            float moveDistance =
-                moveSpeed *
-                Time.deltaTime;
-
-
             CurrentMiddleDistance =
-                Mathf.Min(
-                    CurrentMiddleDistance +
-                    moveDistance,
-                    targetDistance
+                Mathf.MoveTowards(
+                    CurrentMiddleDistance,
+                    targetDistance,
+                    moveSpeed * Time.deltaTime
                 );
 
+
+            // =================================================
+            // Middle Distance 하나만 관리
+            //
+            // FormationController에서
+            //
+            // Front  = Middle + spacing
+            // Middle = Middle
+            // Rear   = Middle - spacing
+            //
+            // 으로 각각 독립 Pose 계산
+            // =================================================
 
             formationController.ApplyFormation(
                 track,
@@ -261,9 +378,13 @@ public class SpringTrainPathMover : MonoBehaviour
         }
 
 
+        CurrentMiddleDistance =
+            targetDistance;
+
+
         formationController.ApplyFormation(
             track,
-            targetDistance
+            CurrentMiddleDistance
         );
 
 
@@ -280,7 +401,8 @@ public class SpringTrainPathMover : MonoBehaviour
 
 
         Debug.Log(
-            "[SpringTrainPathMover] Route 완료",
+            "[SpringTrainPathMover] " +
+            $"목표 Distance 도착 : {targetDistance}",
             this
         );
 
@@ -290,7 +412,9 @@ public class SpringTrainPathMover : MonoBehaviour
 
 
     // =========================================================
-    // 지정 Point를 Car가 통과했는가
+    // 특정 Point를 Car가 통과했는지
+    //
+    // 기존 API 유지
     // =========================================================
 
     public bool HasCarReachedPoint(
@@ -315,14 +439,28 @@ public class SpringTrainPathMover : MonoBehaviour
 
         float carDistance =
             CurrentMiddleDistance +
-            formationController
-                .GetDistanceOffset(
-                    carSlot
-                );
+            formationController.GetDistanceOffset(
+                carSlot
+            );
 
 
         return carDistance >=
             pointDistance;
+    }
+
+
+    // =========================================================
+    // Middle 기준 Point 도달
+    // =========================================================
+
+    public bool HasMiddleReachedPoint(
+        int pointIndex
+    )
+    {
+        return HasCarReachedPoint(
+            pointIndex,
+            SpringTrainCarSlot.Middle
+        );
     }
 
 
@@ -339,8 +477,7 @@ public class SpringTrainPathMover : MonoBehaviour
             );
 
 
-            moveCoroutine =
-                null;
+            moveCoroutine = null;
         }
 
 
