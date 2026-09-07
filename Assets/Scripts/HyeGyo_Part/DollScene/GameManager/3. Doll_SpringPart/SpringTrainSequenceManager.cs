@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 public class SpringTrainSequenceManager : MonoBehaviour
@@ -34,44 +35,51 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
 
     // =========================================================
-    // Collision A
+    // Color Train Points
     // =========================================================
 
-    [Header("컬러 기차 Collision A Point")]
-
-    [Tooltip(
-        "기존 blackTrainStartPointIndex 값을 그대로 사용합니다.\n" +
-        "이제는 컬러 기차 Middle이 충돌 위치에 도달하는 Point입니다."
-    )]
-
+    [Header("컬러 기차 - 시작 Point")]
+    [Tooltip("정답 상태가 되면 컬러 기차 Middle을 이 Point에 맞춘 뒤 출발합니다.")]
     [Range(0, 100)]
     [SerializeField]
-    private int blackTrainStartPointIndex =
-        30;
+    private int colorStartPointIndex = 0;
 
 
-    [Header("흑백 기차 Collision A Point")]
-
+    [Header("컬러 기차 - A Point (흑백 기차 출발 Trigger)")]
     [Tooltip(
-        "흑백 기차 Middle이 충돌 위치에 도달하는 Point입니다."
+        "컬러 기차 Middle이 이 Point를 지나면 흑백 기차가 출발합니다.\n" +
+        "Color Start < A < Color End 순서여야 합니다."
     )]
-
     [Range(0, 100)]
     [SerializeField]
-    private int blackCollisionPointIndex =
-        10;
+    [FormerlySerializedAs("blackStartTriggerPointIndex")]
+    [FormerlySerializedAs("blackTrainStartPointIndex")]
+    private int colorTriggerPointIndex = 10;
 
 
-    // =========================================================
-    // 기존 Inspector 데이터 유지
-    //
-    // 더 이상 실제 판정에는 사용하지 않음
-    // =========================================================
-
-    [Header("기존 Car Trigger 설정 - 호환용")]
+    [Header("컬러 기차 - 마지막 Point")]
+    [Tooltip("컬러 기차가 최종적으로 멈출 Point입니다.")]
+    [Range(0, 100)]
     [SerializeField]
-    private SpringTrainCarSlot triggerCar =
-        SpringTrainCarSlot.Front;
+    private int colorEndPointIndex = 30;
+
+
+    // =========================================================
+    // Black Train Points
+    // =========================================================
+
+    [Header("흑백 기차 - 시작 Point")]
+    [Tooltip("정답 상태가 되면 흑백 기차 Middle을 이 Point에 맞춰 대기시킵니다.")]
+    [Range(0, 100)]
+    [SerializeField]
+    private int blackStartPointIndex = 0;
+
+
+    [Header("흑백 기차 - 마지막 Point")]
+    [Tooltip("컬러 기차가 A Point를 지나면 흑백 기차가 이 Point까지 이동합니다.")]
+    [Range(0, 100)]
+    [SerializeField]
+    private int blackEndPointIndex = 30;
 
 
     // =========================================================
@@ -85,8 +93,7 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
     [Header("기차 정지 후 태엽 등장 대기")]
     [SerializeField]
-    private float springRevealDelay =
-        0f;
+    private float springRevealDelay = 0f;
 
 
     // =========================================================
@@ -132,7 +139,8 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
     private void Start()
     {
-
+        // 게임 시작 시 기차 Transform은 건드리지 않습니다.
+        // 이미 정답 상태로 시작하는 경우만 Sequence 시작을 시도합니다.
         TryStartTrainSequence();
     }
 
@@ -177,17 +185,14 @@ public class SpringTrainSequenceManager : MonoBehaviour
         )
         {
             Debug.LogWarning(
-                "[SpringTrainSequence] " +
-                "Inspector 연결을 확인하세요.",
+                "[SpringTrainSequence] Inspector 연결을 확인하세요.",
                 this
             );
-
 
             return;
         }
 
 
-        // 아직 정답이 아님
         if (!railStateManager.IsAllRailsCorrect)
         {
             return;
@@ -197,11 +202,9 @@ public class SpringTrainSequenceManager : MonoBehaviour
         if (!movingTrain.CanStartRoute)
         {
             Debug.LogError(
-                "[SpringTrainSequence] " +
-                "컬러 기차 Path 설정 오류",
+                "[SpringTrainSequence] 컬러 기차 Path 설정 오류",
                 this
             );
-
 
             return;
         }
@@ -210,11 +213,9 @@ public class SpringTrainSequenceManager : MonoBehaviour
         if (!blackTrain.CanStartRoute)
         {
             Debug.LogError(
-                "[SpringTrainSequence] " +
-                "흑백 기차 Path 설정 오류",
+                "[SpringTrainSequence] 흑백 기차 Path 설정 오류",
                 this
             );
-
 
             return;
         }
@@ -226,19 +227,11 @@ public class SpringTrainSequenceManager : MonoBehaviour
         }
 
 
-        // =====================================================
-        // 여기서 바로 잠금
-        //
-        // 정답 이후에는 인형을 눌러도
-        // 선로가 더 이상 움직이지 않음
-        // =====================================================
-
-        railStateManager
-            .LockInteraction();
+        // 정답이 된 즉시 레일 조작 잠금
+        railStateManager.LockInteraction();
 
 
-        isSequenceStarted =
-            true;
+        isSequenceStarted = true;
 
 
         StartCoroutine(
@@ -258,47 +251,150 @@ public class SpringTrainSequenceManager : MonoBehaviour
             blackTrain.Track == null
         )
         {
-            return false;
-        }
-
-
-        // 컬러 Collision A
-        if (
-            blackTrainStartPointIndex < 0 ||
-            blackTrainStartPointIndex >=
-            movingTrain.Track.LastPointIndex
-        )
-        {
             Debug.LogError(
-                "[SpringTrainSequence] " +
-                "컬러 기차 Collision A Point를 확인하세요.",
+                "[SpringTrainSequence] Train Track 연결을 확인하세요.",
                 this
             );
-
 
             return false;
         }
 
 
-        // 흑백 Collision A
-        if (
-            blackCollisionPointIndex < 0 ||
-            blackCollisionPointIndex >=
-            blackTrain.Track.LastPointIndex
-        )
+        int colorLast =
+            movingTrain.Track.LastPointIndex;
+
+        int blackLast =
+            blackTrain.Track.LastPointIndex;
+
+
+        // -----------------------------------------------------
+        // 범위 검사
+        // -----------------------------------------------------
+
+        if (!IsPointInRange(colorStartPointIndex, colorLast))
+        {
+            LogPointError(
+                "컬러 Start",
+                colorStartPointIndex,
+                colorLast
+            );
+
+            return false;
+        }
+
+
+        if (!IsPointInRange(colorTriggerPointIndex, colorLast))
+        {
+            LogPointError(
+                "컬러 A Trigger",
+                colorTriggerPointIndex,
+                colorLast
+            );
+
+            return false;
+        }
+
+
+        if (!IsPointInRange(colorEndPointIndex, colorLast))
+        {
+            LogPointError(
+                "컬러 End",
+                colorEndPointIndex,
+                colorLast
+            );
+
+            return false;
+        }
+
+
+        if (!IsPointInRange(blackStartPointIndex, blackLast))
+        {
+            LogPointError(
+                "흑백 Start",
+                blackStartPointIndex,
+                blackLast
+            );
+
+            return false;
+        }
+
+
+        if (!IsPointInRange(blackEndPointIndex, blackLast))
+        {
+            LogPointError(
+                "흑백 End",
+                blackEndPointIndex,
+                blackLast
+            );
+
+            return false;
+        }
+
+
+        // -----------------------------------------------------
+        // 이동 순서 검사
+        // 현재 PathMover는 작은 Index -> 큰 Index 방향 이동
+        // -----------------------------------------------------
+
+        if (!(
+            colorStartPointIndex <
+            colorTriggerPointIndex &&
+            colorTriggerPointIndex <
+            colorEndPointIndex
+        ))
         {
             Debug.LogError(
-                "[SpringTrainSequence] " +
-                "흑백 기차 Collision A Point를 확인하세요.",
+                "[SpringTrainSequence] 컬러 Point 순서 오류. " +
+                "Color Start < A Trigger < Color End 순서로 지정하세요.",
                 this
             );
 
+            return false;
+        }
+
+
+        if (!(
+            blackStartPointIndex <
+            blackEndPointIndex
+        ))
+        {
+            Debug.LogError(
+                "[SpringTrainSequence] 흑백 Point 순서 오류. " +
+                "Black Start < Black End 순서로 지정하세요.",
+                this
+            );
 
             return false;
         }
 
 
         return true;
+    }
+
+
+    private bool IsPointInRange(
+        int pointIndex,
+        int lastPointIndex
+    )
+    {
+        return
+            pointIndex >= 0 &&
+            pointIndex <= lastPointIndex;
+    }
+
+
+    private void LogPointError(
+        string pointName,
+        int pointIndex,
+        int lastPointIndex
+    )
+    {
+        Debug.LogError(
+            "[SpringTrainSequence] " +
+            $"{pointName} Point Index 오류 : {pointIndex} / " +
+            $"사용 가능 0 ~ {lastPointIndex}",
+            this
+        );
     }
 
 
@@ -309,13 +405,12 @@ public class SpringTrainSequenceManager : MonoBehaviour
     private IEnumerator PlaySequence()
     {
         Debug.Log(
-            "[SpringTrainSequence] " +
-            "정답 → Train Sequence 시작"
+            "[SpringTrainSequence] 정답 → Train Sequence 시작"
         );
 
 
         // =====================================================
-        // 1. 정답 상태 Rotation 정확히 고정
+        // 1. 정답 선로 Rotation 고정
         // =====================================================
 
         if (railDataManager != null)
@@ -329,52 +424,21 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
 
         // =====================================================
-        // 2. 기차 시작 위치
+        // 2. 두 기차를 각각 지정된 Start Point에 배치
         // =====================================================
 
         if (
-            !movingTrain.SnapTrainToStart() ||
-            !blackTrain.SnapTrainToStart()
+            !movingTrain.SnapTrainToPoint(
+                colorStartPointIndex
+            ) ||
+            !blackTrain.SnapTrainToPoint(
+                blackStartPointIndex
+            )
         )
         {
-            Debug.LogError(
-                "[SpringTrainSequence] " +
-                "기차 시작 위치 초기화 실패",
-                this
+            FailSequence(
+                "기차 Start Point 배치 실패"
             );
-
-
-            yield break;
-        }
-
-
-        // =====================================================
-        // 3. 두 기차 동시에 Collision A로 이동
-        // =====================================================
-
-        bool colorStarted =
-            movingTrain.MoveToPoint(
-                blackTrainStartPointIndex
-            );
-
-
-        bool blackStarted =
-            blackTrain.MoveToPoint(
-                blackCollisionPointIndex
-            );
-
-
-        if (
-            !colorStarted ||
-            !blackStarted
-        )
-        {
-            Debug.LogError(
-                "[SpringTrainSequence] " +
-                "Collision A 이동 시작 실패",
-                this
-            );
-
 
             yield break;
         }
@@ -382,19 +446,89 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
         Debug.Log(
             "[SpringTrainSequence] " +
-            "두 기차 Collision A 이동"
+            $"Start 배치 완료 / " +
+            $"Color:{colorStartPointIndex}, " +
+            $"Black:{blackStartPointIndex}"
         );
 
 
         // =====================================================
-        // 4. 두 기차 Middle이 A에 도착
-        //
-        // 이것을 실제 충돌 판정으로 사용
+        // 3. 컬러 기차는 처음부터 End까지 계속 이동
+        // =====================================================
+
+        if (!movingTrain.MoveToPoint(colorEndPointIndex))
+        {
+            FailSequence(
+                "컬러 기차 출발 실패"
+            );
+
+            yield break;
+        }
+
+
+        Debug.Log(
+            "[SpringTrainSequence] " +
+            $"컬러 기차 출발 → End {colorEndPointIndex}"
+        );
+
+
+        // =====================================================
+        // 4. 컬러 Middle이 A Point를 지나면 흑백 기차 출발
         // =====================================================
 
         while (
-            !movingTrain.IsRouteComplete ||
-            !blackTrain.IsRouteComplete
+            !movingTrain.HasMiddleReachedPoint(
+                colorTriggerPointIndex
+            )
+        )
+        {
+            if (!movingTrain.IsMoving)
+            {
+                FailSequence(
+                    "컬러 기차가 A Trigger에 도달하지 못하고 정지했습니다."
+                );
+
+                yield break;
+            }
+
+
+            yield return null;
+        }
+
+
+        Debug.Log(
+            "[SpringTrainSequence] " +
+            $"컬러 기차 A 통과 : Point {colorTriggerPointIndex}"
+        );
+
+
+        // =====================================================
+        // 5. 흑백 기차는 Start -> End까지 한 번에 이동
+        // =====================================================
+
+        if (!blackTrain.MoveToPoint(blackEndPointIndex))
+        {
+            FailSequence(
+                "흑백 기차 출발 실패"
+            );
+
+            yield break;
+        }
+
+
+        Debug.Log(
+            "[SpringTrainSequence] " +
+            $"흑백 기차 출발 → End {blackEndPointIndex}"
+        );
+
+
+        // =====================================================
+        // 6. 두 기차가 모두 End에 도착할 때까지 대기
+        // =====================================================
+
+        while (
+            movingTrain.IsMoving ||
+            blackTrain.IsMoving
         )
         {
             yield return null;
@@ -403,62 +537,9 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
         Debug.Log(
             "[SpringTrainSequence] " +
-            "Collision 판정 완료"
-        );
-
-
-        // =====================================================
-        // 5. Collision 이후
-        //
-        // 각 기차가 자신의 Track 마지막 Point까지 이동
-        // =====================================================
-
-        bool colorExitStarted =
-            movingTrain.MoveToEnd();
-
-
-        bool blackExitStarted =
-            blackTrain.MoveToEnd();
-
-
-        if (
-            !colorExitStarted ||
-            !blackExitStarted
-        )
-        {
-            Debug.LogError(
-                "[SpringTrainSequence] " +
-                "충돌 후 이동 시작 실패",
-                this
-            );
-
-
-            yield break;
-        }
-
-
-        Debug.Log(
-            "[SpringTrainSequence] " +
-            "충돌 후 기차 이동 시작"
-        );
-
-
-        // =====================================================
-        // 6. 원하는 전체 기차 애니메이션 종료 대기
-        // =====================================================
-
-        while (
-            !movingTrain.IsRouteComplete ||
-            !blackTrain.IsRouteComplete
-        )
-        {
-            yield return null;
-        }
-
-
-        Debug.Log(
-            "[SpringTrainSequence] " +
-            "두 기차 최종 위치 도착 / 정지"
+            $"두 기차 최종 정지 / " +
+            $"Color:{colorEndPointIndex}, " +
+            $"Black:{blackEndPointIndex}"
         );
 
 
@@ -481,26 +562,40 @@ public class SpringTrainSequenceManager : MonoBehaviour
         }
 
 
-        Debug.Log(
-            "[SpringTrainSequence] " +
-            "Spring 공개"
-        );
-
-
         // =====================================================
         // 8. Sequence 완료
         // =====================================================
 
-        IsSequenceComplete =
-            true;
+        IsSequenceComplete = true;
 
 
         OnSequenceCompleted?.Invoke();
 
 
         Debug.Log(
-            "[SpringTrainSequence] " +
-            "Sequence 완료"
+            "[SpringTrainSequence] Sequence 완료 → Spring 공개"
+        );
+    }
+
+
+    // =========================================================
+    // Sequence 실패
+    // =========================================================
+
+    private void FailSequence(
+        string message
+    )
+    {
+        movingTrain?.StopMovementImmediately();
+        blackTrain?.StopMovementImmediately();
+
+
+        isSequenceStarted = false;
+
+
+        Debug.LogError(
+            "[SpringTrainSequence] " + message,
+            this
         );
     }
 
@@ -511,24 +606,25 @@ public class SpringTrainSequenceManager : MonoBehaviour
 
     private void OnValidate()
     {
-        blackTrainStartPointIndex =
-            Mathf.Max(
-                0,
-                blackTrainStartPointIndex
-            );
+        colorStartPointIndex =
+            Mathf.Max(0, colorStartPointIndex);
 
+        colorTriggerPointIndex =
+            Mathf.Max(0, colorTriggerPointIndex);
 
-        blackCollisionPointIndex =
-            Mathf.Max(
-                0,
-                blackCollisionPointIndex
-            );
+        colorEndPointIndex =
+            Mathf.Max(0, colorEndPointIndex);
+
+        blackStartPointIndex =
+            Mathf.Max(0, blackStartPointIndex);
+
+        blackEndPointIndex =
+            Mathf.Max(0, blackEndPointIndex);
 
 
         if (springRevealDelay < 0f)
         {
-            springRevealDelay =
-                0f;
+            springRevealDelay = 0f;
         }
     }
 }
