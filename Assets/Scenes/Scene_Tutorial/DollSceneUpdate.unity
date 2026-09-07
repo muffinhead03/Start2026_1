@@ -1427,7 +1427,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpringTrainPathMover
   track: {fileID: 190693363}
   formationController: {fileID: 190693362}
-  moveSpeed: 2
+  moveSpeed: 1
 --- !u!114 &190693362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1444,7 +1444,7 @@ MonoBehaviour:
   middleCar: {fileID: 1386216278}
   rearCar: {fileID: 509044156}
   carSpacing: 0
-  modelRotationOffset: {x: 0, y: 0, z: 0}
+  modelRotationOffset: {x: -90, y: 0, z: 0}
 --- !u!114 &190693363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6168,9 +6168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b18929dce6c62840b95ea1840bb726b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpringPickupState
-  springVisual: {fileID: 2089151052}
-  springCollider3D: {fileID: 0}
-  springCollider2D: {fileID: 0}
+  springPickupObject: {fileID: 2089151052}
 --- !u!1 &624312916 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 12025476701060254, guid: f9cf20b88f87ea24a8c48449712130e2, type: 3}
@@ -11564,7 +11562,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DollRepairInteractor
   playerGrab: {fileID: 2099574905}
   repairManager: {fileID: 1118158350}
-  changeDoll: {fileID: 0}
+  changeDoll: {fileID: 1939678380}
   legItemName: DollLeg
   armItemName: DollArm
   springItemName: Spring
@@ -18519,9 +18517,11 @@ MonoBehaviour:
   railDataManager: {fileID: 681806961}
   movingTrain: {fileID: 2071336385}
   blackTrain: {fileID: 190693360}
-  blackTrainStartPointIndex: 30
-  blackCollisionPointIndex: 10
-  triggerCar: 0
+  colorStartPointIndex: 0
+  colorTriggerPointIndex: 50
+  colorEndPointIndex: 75
+  blackStartPointIndex: 0
+  blackEndPointIndex: 34
   springPickupState: {fileID: 620240947}
   springRevealDelay: 0.2
 --- !u!114 &1937047144
@@ -20198,7 +20198,7 @@ MonoBehaviour:
   middleCar: {fileID: 7229108681191490625}
   rearCar: {fileID: 8114279931059670959}
   carSpacing: 0
-  modelRotationOffset: {x: 0, y: 0, z: 0}
+  modelRotationOffset: {x: 0, y: 90, z: 0}
 --- !u!114 &2071336385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20213,7 +20213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpringTrainPathMover
   track: {fileID: 2071336389}
   formationController: {fileID: 2071336384}
-  moveSpeed: 2
+  moveSpeed: 1
 --- !u!54 &2071336388
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -20584,15 +20584,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1715607091821767759, guid: ead50f65b9ced7c418bc036a75d47b6d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.269
+      value: -4.118
       objectReference: {fileID: 0}
     - target: {fileID: 1715607091821767759, guid: ead50f65b9ced7c418bc036a75d47b6d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.121
+      value: 0.105
       objectReference: {fileID: 0}
     - target: {fileID: 1715607091821767759, guid: ead50f65b9ced7c418bc036a75d47b6d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.498
+      value: 0.813
       objectReference: {fileID: 0}
     - target: {fileID: 1715607091821767759, guid: ead50f65b9ced7c418bc036a75d47b6d, type: 3}
       propertyPath: m_LocalRotation.w
