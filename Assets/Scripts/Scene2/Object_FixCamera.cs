@@ -7,7 +7,7 @@ public class Object_FixCamera : MonoBehaviour
     public Transform pivot;
     public Vector3 targetPos;
 
-    [Header("Optional Camera Point")]
+    [Header("Optional Camera Point")]//새로 추가된 기능
     public bool useCameraPoint;
     public Transform cameraPoint;
 
