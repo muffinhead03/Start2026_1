@@ -680,4 +680,21 @@ private void StoreCurrentObject()
         return false;
     }
 
+    // InventoryUIManager 등 외부에서 손 오브젝트를 직접 옮겼을 때
+    // (Transform만 이동시키고 Grab()을 안 거친 경우) 내부 상태만 맞춰주는 용도.
+    // Grab()/Release()/PutOn()과 달리 이동/인벤토리 처리는 하지 않음.
+    public void SyncGrabbingObject(Object_Grabbable grabbable)
+    {
+        if (grabbable == null)
+        {
+            isGrabbing = false;
+            GrabbingObject = null;
+        }
+        else
+        {
+            isGrabbing = true;
+            GrabbingObject = grabbable.gameObject;
+        }
+    }
+
 }
