@@ -6,6 +6,7 @@ public class PuzzleConfigData : IPuzzleDataProvider
         {
             case "wine_glass_room": return WineGlassRoomData.GetConfig();
             case "organ_room":      return OrganRoomData.GetConfig();
+            case "doll_room":       return DollRoomData.GetConfig();
             // 새 씬 추가 시 여기에 case 한 줄만 추가
             default: return null;
         }
