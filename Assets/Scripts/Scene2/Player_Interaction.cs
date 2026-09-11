@@ -55,6 +55,7 @@ public class Player_Interaction : MonoBehaviour
                     CurrentTarget = Interactable;
                     CurrentTarget.OnRayEnter();
                     SceneUI.SwitchCursor(true);
+                    SceneUI.SetActivePanel(3, true);
                 }
 
                 CurrentTarget.OnRayStay();
@@ -68,6 +69,7 @@ public class Player_Interaction : MonoBehaviour
                     CurrentTarget.OnRayExit();
                     CurrentTarget = null;
                     SceneUI.SwitchCursor(false);
+                    SceneUI.SetActivePanel(3, false);
                 }
             }
         }
@@ -79,6 +81,7 @@ public class Player_Interaction : MonoBehaviour
                 CurrentTarget.OnRayExit();
                 CurrentTarget = null;
                 SceneUI.SwitchCursor(false);
+                SceneUI.SetActivePanel(3, false);
             }
         }
     }
