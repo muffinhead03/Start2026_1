@@ -41,7 +41,7 @@ public class Player_Interaction : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, dist))
         {
-            Debug.DrawLine(ray.origin, hit.point);
+            //Debug.DrawLine(ray.origin, hit.point);
 
             var Interactable = hit.collider.GetComponent<Event_On_Ray>();
 

@@ -93,8 +93,9 @@ public class Player_Grab : MonoBehaviour
         handPerception?.ForceScan();
     }
 
-   public void Grab(Object_Grabbable grab)
+    public void Grab(Object_Grabbable grab)
 {
+
     if (grab == null)
     {
         Debug.LogWarning(
