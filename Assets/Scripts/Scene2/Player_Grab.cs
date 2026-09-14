@@ -93,133 +93,118 @@ public class Player_Grab : MonoBehaviour
         handPerception?.ForceScan();
     }
 
-   public void Grab(Object_Grabbable grab)
-{
-    if (grab == null)
+    public void Grab(Object_Grabbable grab)
     {
-        Debug.LogWarning(
-            "[Player_Grab] 잡을 물체가 없습니다.",
-            this
-        );
+
+        if (grab == null)
+        {   
+            Debug.LogWarning("[Player_Grab] 잡을 물체가 없습니다.",this);
+            return;
+        }
+
+        if (Hand == null)
+        {
+            Debug.LogError("[Player_Grab] HandPivot이 연결되지 않았습니다.",this);
+            return;
+        }
+
+        if (inventoryData == null)
+            {
+                Debug.LogError("[Player_Grab] InventoryData가 연결되지 않았습니다.",this);
+                return;
+            }
+
+        GameObject newObject = grab.gameObject;
+        GameObject previousObject = GrabbingObject;
+
+        /*
+         * 현재 들고 있는 동일한 실제 오브젝트를
+         * 다시 클릭한 경우에는 처리하지 않습니다.
+         */
+        if (previousObject == newObject)
+            {
+                return;
+            }
+        
+        if (isGrabbing && previousObject != null)
+            {
+                Debug.Log($"[Player_Grab] 이미 '{previousObject.name}'을 " + $"들고 있어서 '{newObject.name}'을 주울 수 없습니다.",this);
+                return;
+            }
+
+
+        /*
+         * 이름이 아니라 실제 Object_Grabbable 참조를 기준으로
+         * 이미 인벤토리에 등록됐는지 검사합니다.
+         */
+        bool alreadyRegistered = 
+            inventoryData.FindIndexBySource(
+                grab
+                ) >= 0;
+
+        /*
+         * 신규 물체인데 8개 슬롯이 모두 사용 중이라면
+         * 기존 A를 보관하거나 B를 잡기 전에 중단합니다.
+         * 따라서 현재 손에 든 A는 그대로 유지됩니다.
+         */
+        if (!alreadyRegistered &&!HasEmptyInventorySlot())
+            {
+                Debug.LogWarning(
+                    $"[Player_Grab] 인벤토리가 가득 차서 " +
+                    $"'{grab.objectName}'을 획득할 수 없습니다. " +
+                    $"최대 수량={inventoryData.SlotCount}",
+                    grab
+                );
 
         return;
-    }
+            }
 
-    if (Hand == null)
-    {
-        Debug.LogError(
-            "[Player_Grab] HandPivot이 연결되지 않았습니다.",
-            this
-        );
+        /*
+        * A를 들고 있었다면 InventoryData 오브젝트 아래에 보관합니다.
+        */
+        //    if (isGrabbing &&previousObject != null)
+        //        {
+        //            StoreCurrentObject();
+        //        }
 
-        return;
-    }
+            /*
+             * 현재 손에 든 물체를 B로 교체합니다.
+            */
+            isGrabbing = true;
+            GrabbingObject = newObject;
 
-    if (inventoryData == null)
-    {
-        Debug.LogError(
-            "[Player_Grab] InventoryData가 연결되지 않았습니다.",
-            this
-        );
+            newObject.SetActive(true);
 
-        return;
-    }
+            /*
+            * B를 HandPivot의 직접 자식으로 이동합니다.
+            */
+            newObject.transform.SetParent(Hand,true);
 
-    GameObject newObject =
-        grab.gameObject;
-
-    GameObject previousObject =
-        GrabbingObject;
-
-    /*
-     * 현재 들고 있는 동일한 실제 오브젝트를
-     * 다시 클릭한 경우에는 처리하지 않습니다.
-     */
-    if (previousObject == newObject)
-    {
-        return;
-    }
-
-    /*
-     * 이름이 아니라 실제 Object_Grabbable 참조를 기준으로
-     * 이미 인벤토리에 등록됐는지 검사합니다.
-     */
-    bool alreadyRegistered =
-        inventoryData.FindIndexBySource(
-            grab
-        ) >= 0;
-
-    /*
-     * 신규 물체인데 8개 슬롯이 모두 사용 중이라면
-     * 기존 A를 보관하거나 B를 잡기 전에 중단합니다.
-     *
-     * 따라서 현재 손에 든 A는 그대로 유지됩니다.
-     */
-    if (!alreadyRegistered &&
-        !HasEmptyInventorySlot())
-    {
-        Debug.LogWarning(
-            $"[Player_Grab] 인벤토리가 가득 차서 " +
-            $"'{grab.objectName}'을 획득할 수 없습니다. " +
-            $"최대 수량={inventoryData.SlotCount}",
-            grab
-        );
-
-        return;
-    }
-
-    /*
-     * A를 들고 있었다면 InventoryData 오브젝트 아래에 보관합니다.
-     */
-    if (isGrabbing &&
-        previousObject != null)
-    {
-        StoreCurrentObject();
-    }
-
-    /*
-     * 현재 손에 든 물체를 B로 교체합니다.
-     */
-    isGrabbing = true;
-    GrabbingObject = newObject;
-
-    newObject.SetActive(true);
-
-    /*
-     * B를 HandPivot의 직접 자식으로 이동합니다.
-     */
-    newObject.transform.SetParent(
-        Hand,
-        true
-    );
-
-    newObject.transform.SetAsLastSibling();
+        newObject.transform.SetAsLastSibling();
 
 
-    StopMoveCoroutine();
+        StopMoveCoroutine();
     
-    moveCoroutine =StartCoroutine(MoveToTargetPosition(Hand.position,newObject));
+        moveCoroutine =StartCoroutine(MoveToTargetPosition(Hand.position,newObject));
 
-    /*
-     * 이미 등록된 동일 오브젝트라면
-     * 기존 문자열 인벤토리에 다시 추가하지 않습니다.
-     *
-     * 같은 objectsName의 다른 오브젝트는
-     * SourceObject가 다르므로 정상적으로 추가됩니다.
-     */
-    if (!alreadyRegistered)
-    {
-        Player_Inventory.AddItem(
-            grab.objectName
-        );
-    }
+        /*
+         * 이미 등록된 동일 오브젝트라면
+         * 기존 문자열 인벤토리에 다시 추가하지 않습니다.
+         *
+         * 같은 objectsName의 다른 오브젝트는
+         * SourceObject가 다르므로 정상적으로 추가됩니다.
+         */
+        if (!alreadyRegistered)
+        {
+            Player_Inventory.AddItem(grab.objectName);
+        }
 
-    /*
-     * A 보관과 B 배치가 모두 끝난 후 한 번만 스캔합니다.
-     */
-    handPerception?.ForceScan();
+        /*
+         * A 보관과 B 배치가 모두 끝난 후 한 번만 스캔합니다.
+         */
+        handPerception?.ForceScan();
 
-    Debug.Log(
+        Debug.Log(
         $"[Player_Grab] 물체 교체 완료: " +
         $"Previous=" +
         $"{(previousObject != null ? previousObject.name : "null")}, " +
@@ -229,8 +214,8 @@ public class Player_Grab : MonoBehaviour
         $"InventoryCount={GetInventoryObjectCount()}/" +
         $"{inventoryData.SlotCount}",
         grab
-    );
-}
+        );
+    }
 
 private void StoreCurrentObject()
     {
