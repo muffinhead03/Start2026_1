@@ -33,6 +33,7 @@ public class WineBookPutOn : MonoBehaviour
     {
         state = 0;
         putOn = null;
+        mesh.enabled = false;
     }
 
     public void SetKeyName(string name)
