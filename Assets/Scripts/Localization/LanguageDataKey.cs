@@ -16,7 +16,7 @@ public static class LanguageDataKey
         nameof(DollScene_Item_BeheaddedTeddyBear);
 
     public const string DollScene_Item_Coin =
-        nameof(TDollScene_Item_Coin);
+        nameof(DollScene_Item_Coin);
 
     public const string DollScene_Item_DollArm =
         nameof(DollScene_Item_DollArm);
