@@ -31,6 +31,12 @@ public class HintManager : MonoBehaviour
     [Header("씬 컨텍스트 데이터 (선택 — 비워두면 기존 하드코딩 데이터로 자동 동작)")]
     [SerializeField] SceneContextData[] sceneContexts;
 
+    [Header("힌트 사용 횟수")]
+    [SerializeField] int maxHints = 4;
+
+    [Header("힌트 레벨 판정 튜닝 (데모용 조절 가능 — 기본값은 기존 하드코딩 값과 동일)")]
+    [SerializeField] HintTuningConfig hintTuning = new HintTuningConfig();
+
     [Header("타이핑 연출")]
     [SerializeField] float typingSpeed = 0.03f;
     [SerializeField] float loadingDotInterval = 0.4f;
@@ -42,7 +48,6 @@ public class HintManager : MonoBehaviour
     [HideInInspector]
     public PlayerState currentPlayerState;
 
-    const int MAX_HINTS = 4;
     bool isOpen = false;
     bool isRequesting = false;
     bool firstChunkReceived = false;
@@ -79,6 +84,8 @@ public class HintManager : MonoBehaviour
         };
 
         hintPanel.SetActive(false);
+
+        HintEngine.Tuning = hintTuning;
         UpdateUsageUI();
 
         GameData.LoadLanguage();
@@ -148,7 +155,7 @@ public class HintManager : MonoBehaviour
         Debug.Log("[foundClues] " + string.Join(", ", currentPlayerState.foundClues));
         Debug.Log("[completedSteps] " + string.Join(", ", currentPlayerState.completedSteps));
 
-        if (currentPlayerState.hintCount >= MAX_HINTS)
+        if (currentPlayerState.hintCount >= maxHints)
         {
             SetHintText("더 이상 도움을 받을 수 없어.");
             return;
@@ -244,9 +251,9 @@ public class HintManager : MonoBehaviour
 
     void UpdateUsageUI()
     {
-        int remaining = MAX_HINTS - currentPlayerState.hintCount;
+        int remaining = maxHints - currentPlayerState.hintCount;
         if (usageCountText != null)
-            usageCountText.text = $"{remaining}/{MAX_HINTS}";
+            usageCountText.text = $"{remaining}/{maxHints}";
     }
 
     public void OnSceneChanged(string newPuzzleId)

@@ -72,7 +72,6 @@ public class DollScene_ChangeDoll : MonoBehaviour
         );
 
 
-        CheckRepairComplete();
     }
 
 
@@ -94,7 +93,6 @@ public class DollScene_ChangeDoll : MonoBehaviour
         );
 
 
-        CheckRepairComplete();
     }
 
 
@@ -116,32 +114,12 @@ public class DollScene_ChangeDoll : MonoBehaviour
         );
 
 
-        CheckRepairComplete();
     }
 
 
     // =========================================================
     // 전체 수리 조건 확인
     // =========================================================
-
-    private void CheckRepairComplete()
-    {
-        if (gameManager == null)
-            return;
-
-
-        if (!gameManager.CanRepairDoll())
-        {
-            Debug.Log(
-                "[ChangeDoll] 아직 인형 수리 조건이 부족합니다."
-            );
-
-            return;
-        }
-
-
-        RepairDoll();
-    }
 
 
     // =========================================================

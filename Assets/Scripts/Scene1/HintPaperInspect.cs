@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 // 여러 번 다시 읽을 수 있는 조사 오브젝트 (힌트 종이 전용)
 // Object_Inspecatable 구조를 참고했지만, 두 번째 상호작용 시
@@ -14,7 +15,8 @@ public class HintPaperInspect : MonoBehaviour
     public float inspectDistance = 0.6f;
 
     [Header("UI Settings")]
-    public string disc;
+    public string discBefore = "낡은 종이가 붙어있다. 뭔가 더 필요해 보인다.";
+    public string discAfter;
     public Scene_UI_Manager SceneUI;
 
     [Header("사운드")]
@@ -26,9 +28,13 @@ public class HintPaperInspect : MonoBehaviour
     Collider col;
     Rigidbody rigid;
     bool isInspecting = false;
+    bool notesComplete = false;
 
     Camera mainCamera;
     Play_Audio audio_player;
+
+    Collider[] childColliders;
+    Coroutine moveCoroutine;
 
     void Start()
     {
@@ -39,20 +45,48 @@ public class HintPaperInspect : MonoBehaviour
 
         originalPosition = transform.position;
         originalRotation = transform.rotation;
+
+        childColliders = GetComponentsInChildren<Collider>();
+    }
+
+    void Update()
+    {
+        if (!isInspecting) return;
+
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+            moveCoroutine = StartCoroutine(MoveBackToOriginal());
+        }
+    }
+
+    // HintPaperNotesManager.onAllNotesPlaced 에 연결
+    public void RevealText()
+    {
+        notesComplete = true;
     }
 
     // OnClick 에 연결할 함수
     public void OnInspect()
     {
         if (!isInspecting)
-            StartCoroutine(MoveToInspectPosition());
+        {
+            if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+            moveCoroutine = StartCoroutine(MoveToInspectPosition());
+        }
         else
-            StartCoroutine(MoveBackToOriginal());
+        {
+            if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+            moveCoroutine = StartCoroutine(MoveBackToOriginal());
+        }
     }
 
     IEnumerator MoveToInspectPosition()
     {
         isInspecting = true;
+
+        foreach (var c in childColliders)
+            if (c != col) c.enabled = false;
 
         if (col != null) col.isTrigger = true;
         if (rigid != null) rigid.isKinematic = true;
@@ -79,7 +113,7 @@ public class HintPaperInspect : MonoBehaviour
 
         if (SceneUI != null)
         {
-            SceneUI.ChangeText(0, disc);
+            SceneUI.ChangeText(0, notesComplete ? discAfter : discBefore);
             SceneUI.SetActivePanel(2, true);
             SceneUI.SetActiveCursor(false);
         }
@@ -119,5 +153,8 @@ public class HintPaperInspect : MonoBehaviour
         if (col != null) col.isTrigger = false;
         if (rigid != null) rigid.isKinematic = false;
         if (player != null) player.SetMoveLock(false);
+
+        foreach (var c in childColliders)
+            if (c != col) c.enabled = true;
     }
 }
