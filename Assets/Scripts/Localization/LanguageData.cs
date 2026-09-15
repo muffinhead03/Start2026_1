@@ -8,7 +8,13 @@ public static class LanguageData
     > Data = new()
     {
         /*
+<<<<<<< HEAD
          * Doll Scene
+=======
+         * ==============================
+         * Doll Scene
+         * ==============================
+>>>>>>> develop
          */
 
         {
@@ -42,7 +48,11 @@ public static class LanguageData
         },
 
         {
+<<<<<<< HEAD
             LanguageDataKey.DollScene_Item_TeddyBearTornHead,
+=======
+            LanguageDataKey.DollScene_Item_TeddyBearTornhead,
+>>>>>>> develop
             new()
             {
                 {
@@ -57,7 +67,11 @@ public static class LanguageData
         },
 
         {
+<<<<<<< HEAD
             LanguageDataKey.DollScene_Item_BeheadedTeddyBear,
+=======
+            LanguageDataKey.DollScene_Item_BeheaddedTeddyBear,
+>>>>>>> develop
             new()
             {
                 {
@@ -133,7 +147,13 @@ public static class LanguageData
 
 
         /*
+<<<<<<< HEAD
          * Wine Scene
+=======
+         * ==============================
+         * Wine Scene
+         * ==============================
+>>>>>>> develop
          */
 
         {
@@ -168,7 +188,13 @@ public static class LanguageData
 
 
         /*
+<<<<<<< HEAD
          * Organ Scene
+=======
+         * ==============================
+         * Organ Scene
+         * ==============================
+>>>>>>> develop
          */
 
         {
@@ -202,7 +228,11 @@ public static class LanguageData
         },
 
         {
+<<<<<<< HEAD
             LanguageDataKey.OrganScene_Item_SheetMusic,
+=======
+            LanguageDataKey.OrganScene_Item_SheeMusic,
+>>>>>>> develop
             new()
             {
                 {
