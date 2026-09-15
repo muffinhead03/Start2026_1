@@ -17,8 +17,16 @@ public class BookInspectGrab : MonoBehaviour
     public float targetTime = 0.5f;
     public float inspectDistance = 0.6f;
 
+    [Header("Obstruction Check")]
+    [Tooltip("책장 등 인스펙트 위치와 충돌 검사할 레이어 (BookShelf 콜라이더가 속한 레이어로 설정)")]
+    public LayerMask obstructionMask;
+    [Tooltip("장애물 표면에서 얼마나 앞에서 멈출지")]
+    public float safetyMargin = 0.05f;
+    [Tooltip("플레이어가 아주 가까이 있어도 최소 이 거리는 확보")]
+    public float minInspectDistance = 0.15f;
+
     [Header("Rotate Settings")]
-    public float rotateSpeed = 150f;   // 추가
+    public float rotateSpeed = 150f;
 
     [Header("UI Settings")]
     public Scene_UI_Manager SceneUI;
@@ -50,7 +58,6 @@ public class BookInspectGrab : MonoBehaviour
             return;
         }
 
-        // 추가: 마우스로 회전
         if (Mouse.current != null)
         {
             Vector2 delta = Mouse.current.delta.ReadValue();
@@ -59,13 +66,33 @@ public class BookInspectGrab : MonoBehaviour
         }
     }
 
-    // Event_On_Ray.OnClick 에 연결할 함수
     public void OnInspectOrGrab()
     {
         if (!isInspecting)
             StartCoroutine(MoveToInspectPosition());
         else
             GrabNow();
+    }
+
+    // 카메라 앞 목표 지점 사이에 장애물(책장 등)이 있으면 그 앞에서 멈추도록 거리 보정
+    float GetSafeInspectDistance()
+    {
+        float safeDistance = inspectDistance;
+
+        bool hitSomething = Physics.Raycast(
+                mainCamera.transform.position,
+                mainCamera.transform.forward,
+                out RaycastHit hit,
+                inspectDistance,
+                obstructionMask,
+                QueryTriggerInteraction.Ignore);
+
+        Debug.Log($"[BookInspectGrab] hit={hitSomething}, target={(hitSomething ? hit.collider.name : "none")}, dist={(hitSomething ? hit.distance.ToString("F2") : "-")}");
+
+        if (hitSomething)
+            safeDistance = hit.distance - safetyMargin;
+
+        return Mathf.Max(safeDistance, minInspectDistance);
     }
 
     IEnumerator MoveToInspectPosition()
@@ -79,7 +106,8 @@ public class BookInspectGrab : MonoBehaviour
         if (rigid != null) rigid.isKinematic = true;
         if (player != null) player.SetMoveLock(true);
 
-        Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * inspectDistance;
+        float safeDistance = GetSafeInspectDistance();
+        Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * safeDistance;
         Quaternion targetRotation = Quaternion.LookRotation(mainCamera.transform.forward);
 
         Vector3 startPos = transform.position;
