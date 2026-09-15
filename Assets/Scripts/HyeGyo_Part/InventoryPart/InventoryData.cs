@@ -121,7 +121,22 @@ public sealed class InventoryData : MonoBehaviour
     }
 
     public string GetObjectNameAt(
-        int slotIndex)
+    int slotIndex)
+{
+    string key =
+        GetObjectNameKeyAt(slotIndex);
+
+    if (string.IsNullOrWhiteSpace(key) ||
+        key == "—")
+    {
+        return "—";
+    }
+
+    return LanguageData.Get(key);
+}
+
+
+    public string GetObjectNameKeyAt(int slotIndex)
     {
         EnsureSlots();
 
@@ -130,18 +145,17 @@ public sealed class InventoryData : MonoBehaviour
             return "—";
         }
 
-        SlotEntry slot =
-            slots[slotIndex];
+        SlotEntry slot = slots[slotIndex];
 
-        if (slot == null ||
-            slot.SourceObject == null)
+        if (slot == null || slot.SourceObject == null)
         {
             return "—";
         }
 
         return string.IsNullOrWhiteSpace(
                 slot.ObjectName)
-            ? ResolveObjectName(slot.SourceObject)
+            ? ResolveObjectName(
+                slot.SourceObject)
             : slot.ObjectName;
     }
 
