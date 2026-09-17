@@ -25,13 +25,25 @@ public static class PromptBuilder
         // 해석: 숨겨진 아이템 이름과 행동을 명확히 말하고, 필요하면 해결 과정을 단계별로 짚어줘.
     };
 
-    static readonly Dictionary<string, string> StatusGuide = new Dictionary<string, string>
+    static readonly Dictionary<HintStatus, string> StatusGuide = new Dictionary<HintStatus, string>
     {
-        { "단서 미발견",    "Player hasn't found the key clue yet. Guide them to explore." },
-        { "단서 미이해",    "Player found the clue but doesn't understand it. Help them interpret it." },
-        { "단서 연결 실패", "Player can't connect the clues. Hint at the relationship." },
-        { "반복 실패",      "Player keeps repeating the same failed attempt. Be more direct." },
-        { "포기 직전",      "Player is about to give up. Give a strong hint." },
+        { HintStatus.ClueNotFound, "Player hasn't found the key clue yet. Guide them to explore." },
+        // 해석: 플레이어가 아직 핵심 단서를 못 찾음. 탐색하도록 유도해.
+
+        { HintStatus.ClueMisunderstood, "Player found the clue but doesn't understand it. Help them interpret it." },
+        // 해석: 단서는 찾았는데 이해를 못 하고 있음. 해석하는 걸 도와줘.
+
+        { HintStatus.ClueConnectFailed, "Player can't connect the clues. Hint at the relationship." },
+        // 해석: 단서들을 서로 연결 짓지 못함. 단서들 사이의 관계를 넌지시 알려줘.
+
+        { HintStatus.RepeatedFailure, "Player keeps repeating the same failed attempt. Be more direct." },
+        // 해석: 같은 실패를 반복 중. 더 직접적으로 말해줘.
+
+        { HintStatus.AboutToGiveUp, "Player is about to give up. Give a strong hint." },
+        // 해석: 포기하기 직전. 강한 힌트를 줘.
+
+        { HintStatus.PossessedItemInProgress, "Player already has an item related to this step in hand or inventory and is actively working with it. Do NOT assume earlier steps are finished." },
+        // 해석: 플레이어가 이 스텝과 관련된 물건을 이미 손이나 인벤토리에 들고 있고 그걸로 진행 중임. 이전 스텝들이 끝났다고 가정하지 마.
     };
 
     // 씬별 배경 정보는 SceneContextProvider로 위임. 기본값 없음(Core가 게임 콘텐츠를 모르게 하기 위함) —
@@ -70,6 +82,14 @@ public static class PromptBuilder
         string sceneCtx    = SceneContextProvider.GetSceneContext(result.puzzleId);
         string stepHint    = GetStepHint(result.nextStep, result.hintLevel);
 
+        // nextStep이 체크리스트 순서를 따라 나온 게 아니라 손/인벤토리 보유 물품 기준으로 override된 경우,
+        // "이전 스텝을 이미 지나쳤다"는 전제를 깔면 안 됨 — 실제로는 안 지나쳤을 수 있어서 LLM이 사실과 다른 멘트를 할 위험이 있음
+        string orderNote = result.isOverride
+            ? "the player may not have completed earlier puzzle steps yet — do not assume any prior step is done, focus only on the item they currently have."
+            // 해석: 플레이어가 이전 퍼즐 스텝을 아직 안 끝냈을 수 있음 — 이전 스텝이 끝났다고 가정하지 말고, 지금 들고 있는 물건에만 집중해.
+            : "the player has already moved past earlier parts of the puzzle.";
+            // 해석: 플레이어는 이미 퍼즐의 앞부분을 지나쳤음.
+
         return
             $"[Scene context]\n{sceneCtx}\n\n" +
             $"[Player state]\n" +
@@ -79,7 +99,7 @@ public static class PromptBuilder
             $"Hint direction: {stepHint}\n\n" +
             $"IMPORTANT: Base your hint ONLY on the [Hint direction] above. " +
             $"Do NOT mention any other puzzle mechanic, object, or step that isn't part of it — " +
-            $"the player has already moved past earlier parts of the puzzle.\n\n" +
+            $"{orderNote}\n\n" +
             $"{Config.language} hint ({Config.language} language only, no other language):";
     }
 
