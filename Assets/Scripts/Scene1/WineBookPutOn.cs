@@ -45,14 +45,10 @@ public class WineBookPutOn : MonoBehaviour
     {
         var grab = player.GetComponent<Player_Grab>();
 
-        if (state == 0 && grab.hasKey(keyName))
+        if (state == 0 && grab.isGrab())
         {
-            PutOn();
-        }
-        else if (state == 0 && grab.isGrab())
-        {
-            // 책을 들고 있지만 이 슬롯 정답이 아님 → 실패
-            hintManager?.RegisterFail();
+            bool isCorrect = grab.hasKey(keyName);
+            PutOn(isCorrect);
         }
         else if (state == 1 && !grab.isGrab())
         {
@@ -60,16 +56,18 @@ public class WineBookPutOn : MonoBehaviour
         }
     }
 
-    void PutOn()
+    void PutOn(bool isCorrect)
     {
         mesh.enabled = false;
         state = 1;
         putOn = player.GetComponent<Player_Grab>().PutOn(transform.position);
 
         // 추가: 책장이 슬라이드될 때 같이 움직이도록 다시 부모 설정
-        // worldPositionStays=true 라서 지금 위치 그대로 유지되면서 부모만 바뀜
         if (putOn != null && shelfParent != null)
             putOn.transform.SetParent(shelfParent, true);
+
+        if (!isCorrect)
+            hintManager?.RegisterFail();
 
         StartCoroutine(AfterPutDown(0.5f));
     }
