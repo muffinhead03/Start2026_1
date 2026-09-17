@@ -3799,6 +3799,12 @@ PrefabInstance:
       addedObject: {fileID: 1794386155}
     - targetCorrespondingSourceObject: {fileID: 7534352789055334371, guid: f9cf20b88f87ea24a8c48449712130e2, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 553037889}
+    - targetCorrespondingSourceObject: {fileID: 7534352789055334371, guid: f9cf20b88f87ea24a8c48449712130e2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1825743045}
+    - targetCorrespondingSourceObject: {fileID: 7534352789055334371, guid: f9cf20b88f87ea24a8c48449712130e2, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1291306860}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 12025476701060254, guid: f9cf20b88f87ea24a8c48449712130e2, type: 3}
@@ -4026,37 +4032,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Event_On_Ray
   OnEnter:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 676938599}
-        m_TargetAssemblyTypeName: Scene_UI_Manager, Assembly-CSharp
-        m_MethodName: SwitchCursor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnStay:
     m_PersistentCalls:
       m_Calls: []
   OnExit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 676938599}
-        m_TargetAssemblyTypeName: Scene_UI_Manager, Assembly-CSharp
-        m_MethodName: SwitchCursor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -5554,6 +5536,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 979160122}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &553037888
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 553037889}
+  m_Layer: 0
+  m_Name: CoinRotationPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &553037889
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 553037888}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.262, y: 0.239, z: -0.198}
+  m_LocalScale: {x: 0.029999, y: 0.09455616, z: 0.04623568}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 110911423}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &556281202
 GameObject:
@@ -9556,8 +9569,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player_Grab
   Hand: {fileID: 1288474068}
   targetTime: 1
-  handPerception: {fileID: 0}
-  inventoryData: {fileID: 0}
+  handPerception: {fileID: 743450503}
+  inventoryData: {fileID: 1989395466}
   throwForce: 0
 --- !u!114 &958948378
 MonoBehaviour:
@@ -13228,10 +13241,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Coin_Insert
   playerGrab: {fileID: 2099574905}
+  coinRotationPoint: {fileID: 553037889}
   retroGameManager: {fileID: 642766321}
-  insertPoint: {fileID: 1291306860}
+  insertCollider: {fileID: 1794386156}
   coinName: "\uB3D9\uC804"
-  insertDistance: 0.3
+  insertDistance: 0
+  coinMoveDelay: 0.5
+  finalMovePoint: {fileID: 1825743045}
+  finalMoveDuration: 3
 --- !u!114 &1291306862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13246,37 +13263,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Event_On_Ray
   OnEnter:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 676938599}
-        m_TargetAssemblyTypeName: Scene_UI_Manager, Assembly-CSharp
-        m_MethodName: SwitchCursor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnStay:
     m_PersistentCalls:
       m_Calls: []
   OnExit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 676938599}
-        m_TargetAssemblyTypeName: Scene_UI_Manager, Assembly-CSharp
-        m_MethodName: SwitchCursor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -17245,13 +17238,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1794386154}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0.262, y: 0.239, z: -0.198}
   m_LocalScale: {x: 0.029999, y: 0.09455616, z: 0.04623568}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 110911423}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!65 &1794386156
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17344,37 +17337,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Event_On_Ray
   OnEnter:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 676938599}
-        m_TargetAssemblyTypeName: Scene_UI_Manager, Assembly-CSharp
-        m_MethodName: SwitchCursor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnStay:
     m_PersistentCalls:
       m_Calls: []
   OnExit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 676938599}
-        m_TargetAssemblyTypeName: Scene_UI_Manager, Assembly-CSharp
-        m_MethodName: SwitchCursor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -17403,10 +17372,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Coin_Insert
   playerGrab: {fileID: 2099574905}
+  coinRotationPoint: {fileID: 553037889}
   retroGameManager: {fileID: 642766321}
-  insertPoint: {fileID: 1794386155}
+  insertCollider: {fileID: 1794386156}
   coinName: "\uB3D9\uC804"
-  insertDistance: 0.3
+  insertDistance: 0
+  coinMoveDelay: 0.5
+  finalMovePoint: {fileID: 1825743045}
+  finalMoveDuration: 3
 --- !u!1 &1797521197
 GameObject:
   m_ObjectHideFlags: 0
@@ -17635,6 +17608,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1416036292}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1825743044
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1825743045}
+  m_Layer: 0
+  m_Name: "coinPut_\uCD5C\uC885\uC774\uB3D9"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1825743045
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825743044}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.113, y: 0.239, z: -0.198}
+  m_LocalScale: {x: 0.029999, y: 0.09455616, z: 0.04623568}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 110911423}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1825957318
 GameObject:
