@@ -16,37 +16,76 @@ public class FiveDial_NumberAdjust : MonoBehaviour
     private Button rightButton;
 
 
-    private void Awake()
+    private void Start()
     {
-        // 같은 오브젝트에 있는 FiveDial_Number 자동 연결
+        // Dial 자동 연결
         if (dial == null)
         {
             dial =
                 GetComponent<FiveDial_Number>();
         }
-    }
 
 
-    private void OnEnable()
-    {
+        // ============================================
+        // Left Button 연결
+        // ============================================
+
         if (leftButton != null)
         {
+            leftButton.onClick.RemoveListener(
+                PreviousNumber
+            );
+
             leftButton.onClick.AddListener(
                 PreviousNumber
             );
+
+
+            Debug.Log(
+                $"[FiveDialAdjust] {gameObject.name} " +
+                $"LEFT 등록 완료 : {leftButton.gameObject.name}"
+            );
+        }
+        else
+        {
+            Debug.LogError(
+                $"[FiveDialAdjust] {gameObject.name} " +
+                $"LEFT BUTTON 연결 안 됨"
+            );
         }
 
 
+        // ============================================
+        // Right Button 연결
+        // ============================================
+
         if (rightButton != null)
         {
+            rightButton.onClick.RemoveListener(
+                NextNumber
+            );
+
             rightButton.onClick.AddListener(
                 NextNumber
+            );
+
+
+            Debug.Log(
+                $"[FiveDialAdjust] {gameObject.name} " +
+                $"RIGHT 등록 완료 : {rightButton.gameObject.name}"
+            );
+        }
+        else
+        {
+            Debug.LogError(
+                $"[FiveDialAdjust] {gameObject.name} " +
+                $"RIGHT BUTTON 연결 안 됨"
             );
         }
     }
 
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         if (leftButton != null)
         {
@@ -66,50 +105,19 @@ public class FiveDial_NumberAdjust : MonoBehaviour
 
 
     // ================================================
-    // 왼쪽 버튼
+    // 왼쪽
     // ================================================
 
     public void PreviousNumber()
-{
-    Debug.Log(
-        $"[FiveDialAdjust] LEFT 버튼 클릭됨 : {gameObject.name}"
-    );
-
-    if (dial == null)
     {
-        Debug.LogWarning(
-            $"[FiveDialAdjust] {gameObject.name} Dial 없음"
+        Debug.Log(
+            $"[FiveDialAdjust] ★ LEFT CLICK : {gameObject.name}"
         );
 
-        return;
-    }
 
-    int nextNumber =
-        dial.CurrentNumber - 1;
-
-    if (nextNumber < 0)
-    {
-        nextNumber = 9;
-    }
-
-    Debug.Log(
-        $"[FiveDialAdjust] LEFT : " +
-        $"{dial.CurrentNumber} → {nextNumber}"
-    );
-
-    dial.SetNumberAndSnap(nextNumber);
-}
-
-
-    // ================================================
-    // 오른쪽 버튼
-    // ================================================
-
-    public void NextNumber()
-    {
         if (dial == null)
         {
-            Debug.LogWarning(
+            Debug.LogError(
                 $"[FiveDialAdjust] {gameObject.name} Dial 없음"
             );
 
@@ -117,8 +125,59 @@ public class FiveDial_NumberAdjust : MonoBehaviour
         }
 
 
+        int currentNumber =
+            dial.CurrentNumber;
+
+
         int nextNumber =
-            dial.CurrentNumber + 1;
+            currentNumber - 1;
+
+
+        if (nextNumber < 0)
+        {
+            nextNumber = 9;
+        }
+
+
+        Debug.Log(
+            $"[FiveDialAdjust] {gameObject.name} " +
+            $"LEFT : {currentNumber} → {nextNumber}"
+        );
+
+
+        dial.SetNumberAndSnap(
+            nextNumber
+        );
+    }
+
+
+    // ================================================
+    // 오른쪽
+    // ================================================
+
+    public void NextNumber()
+    {
+        Debug.Log(
+            $"[FiveDialAdjust] ★ RIGHT CLICK : {gameObject.name}"
+        );
+
+
+        if (dial == null)
+        {
+            Debug.LogError(
+                $"[FiveDialAdjust] {gameObject.name} Dial 없음"
+            );
+
+            return;
+        }
+
+
+        int currentNumber =
+            dial.CurrentNumber;
+
+
+        int nextNumber =
+            currentNumber + 1;
 
 
         if (nextNumber > 9)
@@ -129,7 +188,7 @@ public class FiveDial_NumberAdjust : MonoBehaviour
 
         Debug.Log(
             $"[FiveDialAdjust] {gameObject.name} " +
-            $"RIGHT : {dial.CurrentNumber} → {nextNumber}"
+            $"RIGHT : {currentNumber} → {nextNumber}"
         );
 
 

@@ -33,6 +33,7 @@ public class WineBookPutOn : MonoBehaviour
     {
         state = 0;
         putOn = null;
+        mesh.enabled = false;
     }
 
     public void SetKeyName(string name)
@@ -85,7 +86,8 @@ public class WineBookPutOn : MonoBehaviour
 
     public void OnEnter()
     {
-        if (state == 0 && player.GetComponent<Player_Grab>().hasKey(keyName))
+        var grab = player.GetComponent<Player_Grab>();
+        if (state == 0 && grab.isGrab())
         {
             mesh.material = mat_trans;
             mesh.enabled = true;

@@ -19,6 +19,9 @@ public sealed class InventoryUIManager : MonoBehaviour
     private PerceiveObjectHandPivot handPerception;
 
     [SerializeField]
+    private Player_Grab playerGrab;
+
+    [SerializeField]
     private BringData bringData;
 
     [SerializeField]
@@ -452,18 +455,16 @@ public sealed class InventoryUIManager : MonoBehaviour
         );
     }
 
-    private static string ResolveObjectName(
-        Object_Grabbable sourceObject)
+    private static string ResolveObjectName(Object_Grabbable sourceObject)
     {
         if (sourceObject == null)
         {
             return "Unknown";
         }
 
-        if (!string.IsNullOrWhiteSpace(
-                sourceObject.objectName))
+        if (!string.IsNullOrWhiteSpace(sourceObject.InventoryObjectName))
         {
-            return sourceObject.objectName;
+            return sourceObject.InventoryObjectName;
         }
 
         return sourceObject.gameObject.name;
@@ -729,6 +730,8 @@ public sealed class InventoryUIManager : MonoBehaviour
                 currentHeldObject = null;
 
                 TryForceHandScan();
+
+                playerGrab?.SyncGrabbingObject(null);
             }
             else
             {
@@ -766,6 +769,8 @@ public sealed class InventoryUIManager : MonoBehaviour
                     currentHeldObject =
                         handPerception.CurrentObject;
                 }
+
+                playerGrab?.SyncGrabbingObject(currentHeldObject);
             }
         }
         catch (Exception exception)

@@ -1,15 +1,15 @@
-using TMPro;
 using UnityEngine;
-using System.Collections;
-using NUnit.Framework.Constraints;
 
 public class Object_Grabbable : MonoBehaviour
 {
-    [Header("이름")]
+    [Header("내부 이름")]
     public string objectName;
 
-    [Header("설명")]
-    [TextArea(3, 8)]
+    [Header("Localization")]
+    [Tooltip("인벤토리 이름 Localization Key")]
+    public string InventoryObjectName;
+
+    [Tooltip("설명 Localization Key")]
     public string description;
 
     [Header("Player Character")]
@@ -20,20 +20,59 @@ public class Object_Grabbable : MonoBehaviour
 
     private Play_Audio audio_player;
 
-    void Start()
+
+    private void Start()
     {
-        audio_player = GetComponent<Play_Audio>();
+        audio_player =
+            GetComponent<Play_Audio>();
     }
 
-    // OnClick 에 연결할 함수
+
+    /// 인벤토리 이름의 Localization Key 반환
+    public string GetInventoryNameKey()
+    {
+        return InventoryObjectName;
+    }
+
+
+    /// 현재 언어 기준 인벤토리 표시 이름 반환
+    public string GetInventoryDisplayName()
+    {
+        return LanguageData.Get(InventoryObjectName);
+    }
+
+
+    /// 설명 Localization Key 반환
+    public string GetDescriptionKey()
+    {
+        return description;
+    }
+
+
+    /// 현재 언어 기준 설명 반환
+    public string GetDisplayDescription()
+    {
+        return LanguageData.Get(description);
+    }
+
     public void OnGrab()
     {
-        player.GetComponent<Player_Grab>().Grab(this);
+        player.GetComponent<Player_Grab>()
+            .Grab(this);
 
-        if (audio_player != null)
+        if (audio_player != null &&
+            audio_grap != null &&
+            audio_grap.Length > 0)
         {
-            int random_id = Random.Range(0, audio_grap.Length);
-            audio_player.PlayAudio(audio_grap[random_id]);
+            int random_id =
+                Random.Range(
+                    0,
+                    audio_grap.Length
+                );
+
+            audio_player.PlayAudio(
+                audio_grap[random_id]
+            );
         }
     }
 }
