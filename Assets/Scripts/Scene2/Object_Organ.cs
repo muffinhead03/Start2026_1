@@ -10,6 +10,9 @@ public class Object_Organ : MonoBehaviour
     [Header("Answer")]
     [SerializeField] string answer;
 
+    [Header("Button Layer")]
+    [SerializeField] LayerMask button_layer;
+
     [Header("해제 완료")]
     [SerializeField] UnityEvent Unlock;
 
@@ -69,7 +72,7 @@ public class Object_Organ : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 0.8f))
+        if (Physics.Raycast(ray, out hit, 0.8f, button_layer))
         {
             var button = hit.collider.GetComponent<Object_Pwd_Button>();
 
