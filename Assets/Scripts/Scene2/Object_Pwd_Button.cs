@@ -3,9 +3,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Object_Pwd_Button : MonoBehaviour
+public class Object_Pwd_Button : MonoBehaviour, APwdButton
 {
-    public string id;
+    [SerializeField]private string id;
     public UnityEvent OnPressed;
 
     [Header("Materials")]
@@ -14,6 +14,8 @@ public class Object_Pwd_Button : MonoBehaviour
     MeshRenderer mesh;
 
     Collider col;
+
+    public string GetId() { return id; }
 
     public void Pressed()
     {

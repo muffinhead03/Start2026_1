@@ -74,11 +74,11 @@ public class Object_Organ : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 0.8f, button_layer))
         {
-            var button = hit.collider.GetComponent<Object_Pwd_Button>();
+            var button = hit.collider.GetComponent<APwdButton>();
 
             if (button != null)
             {
-                string n = button.id;
+                string n = button.GetId();
 
                 button.Pressed();
 
