@@ -22,6 +22,10 @@ public class HintManager : MonoBehaviour
     [Header("버튼")]
     [SerializeField] Button puzzleHintButton;   // exitButton, entityButton 제거
 
+    [Header("혜교님 인벤토리/그랩 시스템 참조 (읽기 전용, 코드 수정 안 함)")]
+    [SerializeField] PerceiveObjectHandPivot handPerception; // 지금 손에 실제로 들려있는 오브젝트 — 힌트 우선순위 1순위
+    [SerializeField] InventoryData inventoryData;             // 8칸 보관함 — 힌트 우선순위 2순위
+
     [Header("현재 퍼즐 ID (씬마다 변경)")]
     public string currentPuzzleId = "wine_glass_room";
 
@@ -73,14 +77,14 @@ public class HintManager : MonoBehaviour
         {
             staySeconds         = 0f,
             hintCount           = 0,
-            failCount           = 0,
-            hintType            = "indirect",
-            completedSteps      = new List<int>(),
-            foundClues          = new List<string>(),
-            missedClues         = new List<string>(),
-            visitedRooms        = new List<string>(),
-            lastActions         = new List<string>(),
-            repeatedInspections = new List<RepeatedInspection>()
+            failCount            = 0,
+            hintType             = "indirect",
+            completedSteps       = new List<int>(),
+            foundClues           = new List<string>(),
+            missedClues          = new List<string>(),
+            visitedRooms         = new List<string>(),
+            lastActions          = new List<string>(),
+            repeatedInspections  = new List<RepeatedInspection>()
         };
 
         hintPanel.SetActive(false);
@@ -168,7 +172,26 @@ public class HintManager : MonoBehaviour
             return;
         }
 
-        var result = HintEngine.Calculate(currentPlayerState, config);
+        // 손/인벤토리 보유 오브젝트 이름 수집 — HintEngine의 override 우선순위 판단용.
+        // handPerception/inventoryData가 씬에 연결 안 돼있어도(null이어도) 그냥 기존 체크리스트로 fallback되니 안전함.
+        string handObjectName = handPerception?.CurrentObject?.objectName;
+
+        List<string> inventoryObjectNames = new List<string>();
+        if (inventoryData != null)
+        {
+            for (int i = 0; i < inventoryData.SlotCount; i++)
+            {
+                var obj = inventoryData.GetObjectAt(i);
+                if (obj != null) inventoryObjectNames.Add(obj.objectName);
+            }
+        }
+
+        Debug.Log($"[Possessed] Hand={handObjectName ?? "empty"} / Inventory=[{string.Join(", ", inventoryObjectNames)}]");
+
+        var result = HintEngine.Calculate(currentPlayerState, config, handObjectName, inventoryObjectNames);
+
+        Debug.Log($"[힌트 판단] {result.debugReason} / override={result.isOverride} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()}");
+
         if (result.nextStep == null)
         {
             SetHintText("이미 모든 단서를 찾았어.");
@@ -211,7 +234,7 @@ public class HintManager : MonoBehaviour
                 stopwatch.Stop();
                 isRequesting = false;
                 if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
-                Debug.Log($"[힌트 결과] 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {lastReply}");
+                Debug.Log($"[힌트 결과] 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {lastReply}");
             },
             hintDirection: PromptBuilder.GetStepHint(result.nextStep, result.hintLevel)
         );
