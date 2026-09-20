@@ -11,6 +11,10 @@ public class HintPaperNotesManager : MonoBehaviour
     [Header("정답 쪽지 이름 4개 (예: clue_note_S)")]
     public List<string> validNoteNames = new List<string>();
 
+    [Header("Sound")]                       
+    public Play_Audio audioPlayer;          
+    public AudioClip attachClip;            
+
     [Header("전부 붙었을 때 이벤트")]
     public UnityEvent onAllNotesPlaced;
 
@@ -77,6 +81,9 @@ public class HintPaperNotesManager : MonoBehaviour
         {
             note.transform.position = slot.position;
             note.transform.rotation = slot.rotation;
+
+            if (audioPlayer != null && attachClip != null)   
+                audioPlayer.PlayAudio(attachClip);          
         }
     }
 }

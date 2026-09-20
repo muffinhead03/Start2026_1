@@ -8,9 +8,16 @@ public class ShelfSlideReveal : MonoBehaviour
     public Animator shelfAnimator;
     public GameObject hiddenPaper;
 
+    [Header("Sound")]
+    public Play_Audio audioPlayer;
+    public AudioClip slideClip;
+
     public void OnReveal()
     {
         Debug.Log("[ShelfSlideReveal] 책장이 밀려나며 종이 발견");
+
+        if (audioPlayer != null && slideClip != null)
+            audioPlayer.PlayAudio(slideClip);
 
         if (shelfAnimator != null) shelfAnimator.SetTrigger("Slide");
         if (hiddenPaper != null) hiddenPaper.SetActive(true);
