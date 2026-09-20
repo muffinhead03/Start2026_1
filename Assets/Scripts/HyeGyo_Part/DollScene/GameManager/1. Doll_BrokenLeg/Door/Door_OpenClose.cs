@@ -66,6 +66,25 @@ public class Door_OpenClose : MonoBehaviour
     // ================================================
     // State
     // ================================================
+    // ================================================
+// Door Sound
+// ================================================
+
+    [Header("Door Sound")]
+
+    [Tooltip("문 열기/닫기 효과음을 재생할 Play_Audio")]
+    [SerializeField]
+    private Play_Audio doorAudio;
+
+    [Tooltip("문이 열릴 때 효과음")]
+    [SerializeField]
+    private AudioClip openSound;
+
+    [Tooltip("문이 닫힐 때 효과음")]
+    [SerializeField]
+    private AudioClip closeSound;
+
+
 
     [Header("State")]
 
@@ -283,27 +302,35 @@ public class Door_OpenClose : MonoBehaviour
     // ================================================
     // Rotation 시작
     // ================================================
-
-    private void StartRotation(
-        Quaternion targetRotation,
-        bool targetOpenState)
+private void StartRotation(
+    Quaternion targetRotation,
+    bool targetOpenState)
+{
+    if (moveCoroutine != null)
     {
-        if (moveCoroutine != null)
-        {
-            StopCoroutine(
-                moveCoroutine
-            );
-        }
-
-
-        moveCoroutine =
-            StartCoroutine(
-                RotateDoor(
-                    targetRotation,
-                    targetOpenState
-                )
-            );
+        StopCoroutine(
+            moveCoroutine
+        );
     }
+
+
+    // ============================================
+    // 문 열기 / 닫기 Sound
+    // ============================================
+
+    PlayDoorSound(
+        targetOpenState
+    );
+
+
+    moveCoroutine =
+        StartCoroutine(
+            RotateDoor(
+                targetRotation,
+                targetOpenState
+            )
+        );
+}
 
 
     // ================================================
@@ -389,4 +416,46 @@ public class Door_OpenClose : MonoBehaviour
             $"{(isOpen ? "OPEN" : "CLOSE")}"
         );
     }
+
+    // ================================================
+// Door Sound
+// ================================================
+
+private void PlayDoorSound(bool opening)
+{
+    if (doorAudio == null)
+    {
+        Debug.LogWarning(
+            "[Door] Door Play_Audio가 연결되지 않았습니다."
+        );
+
+        return;
+    }
+
+
+    AudioClip clip =
+        opening
+            ? openSound
+            : closeSound;
+
+
+    if (clip == null)
+    {
+        Debug.LogWarning(
+            $"[Door] {(opening ? "Open" : "Close")} AudioClip이 없습니다."
+        );
+
+        return;
+    }
+
+
+    doorAudio.PlayAudio(
+        clip
+    );
+
+
+    Debug.Log(
+        $"[Door] {(opening ? "Open" : "Close")} Sound 재생"
+    );
+}
 }
