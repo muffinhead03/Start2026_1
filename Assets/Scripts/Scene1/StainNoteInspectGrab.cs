@@ -16,6 +16,10 @@ public class StainNoteInspectGrab : MonoBehaviour
     [Header("연결 (같은 오브젝트의 Object_Grabbable)")]
     public Object_Grabbable grabbable;
 
+    [Header("Sound")]
+    public Play_Audio audioPlayer;     // 이 쪽지 오브젝트의 Play_Audio
+    public AudioClip paperClip;        // Sounds > paper 에 있는 종이 소리
+
     [Header("Inspect Settings")]
     public float targetTime = 0.5f;
     public float inspectDistance = 0.6f;
@@ -74,6 +78,9 @@ public class StainNoteInspectGrab : MonoBehaviour
     IEnumerator MoveToInspectPosition()
     {
         isInspecting = true;
+
+        if (audioPlayer != null && paperClip != null)
+        audioPlayer.PlayAudio(paperClip);
 
         originalPosition = transform.position;
         originalRotation = transform.rotation;
