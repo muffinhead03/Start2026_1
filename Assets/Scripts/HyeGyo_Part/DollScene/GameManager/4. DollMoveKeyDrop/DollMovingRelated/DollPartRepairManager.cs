@@ -2,17 +2,32 @@ using UnityEngine;
 
 public class DollPartRepairManager : MonoBehaviour
 {
+    // =========================================================
+    // Player
+    // =========================================================
+
     [Header("Player")]
+
     [SerializeField]
     private Player_Grab playerGrab;
 
 
+    // =========================================================
+    // Doll State
+    // =========================================================
+
     [Header("Doll State")]
+
     [SerializeField]
     private DollScene_ChangeDoll changeDoll;
 
 
+    // =========================================================
+    // Completion
+    // =========================================================
+
     [Header("Completion")]
+
     [SerializeField]
     private DollRepairCompletionManager completionManager;
 
@@ -32,6 +47,39 @@ public class DollPartRepairManager : MonoBehaviour
     [SerializeField]
     private GameObject fixedSpringObject;
 
+
+    // =========================================================
+    // Repair Sound
+    // =========================================================
+
+    [Header("Repair Sound")]
+
+    [Tooltip(
+        "인형 부품 장착 효과음을 재생할 Play_Audio.\n" +
+        "AudioCollection의 Doll_FixPartAudio를 연결"
+    )]
+    [SerializeField]
+    private Play_Audio repairAudio;
+
+
+    [Tooltip("다리 장착 시 재생할 효과음")]
+    [SerializeField]
+    private AudioClip fixLegClip;
+
+
+    [Tooltip("팔 장착 시 재생할 효과음")]
+    [SerializeField]
+    private AudioClip fixArmClip;
+
+
+    [Tooltip("태엽 장착 시 재생할 효과음")]
+    [SerializeField]
+    private AudioClip fixSpringClip;
+
+
+    // =========================================================
+    // Start
+    // =========================================================
 
     private void Start()
     {
@@ -91,6 +139,16 @@ public class DollPartRepairManager : MonoBehaviour
         if (fixedLegObject != null)
         {
             fixedLegObject.SetActive(true);
+
+
+            // =========================================
+            // 다리 장착 Sound
+            // =========================================
+
+            PlayRepairSound(
+                fixLegClip,
+                "다리"
+            );
         }
         else
         {
@@ -142,6 +200,16 @@ public class DollPartRepairManager : MonoBehaviour
         if (fixedArmObject != null)
         {
             fixedArmObject.SetActive(true);
+
+
+            // =========================================
+            // 팔 장착 Sound
+            // =========================================
+
+            PlayRepairSound(
+                fixArmClip,
+                "팔"
+            );
         }
         else
         {
@@ -193,6 +261,16 @@ public class DollPartRepairManager : MonoBehaviour
         if (fixedSpringObject != null)
         {
             fixedSpringObject.SetActive(true);
+
+
+            // =========================================
+            // 태엽 장착 Sound
+            // =========================================
+
+            PlayRepairSound(
+                fixSpringClip,
+                "태엽"
+            );
         }
         else
         {
@@ -212,6 +290,52 @@ public class DollPartRepairManager : MonoBehaviour
 
 
         CheckCompletion();
+    }
+
+
+    // =========================================================
+    // Repair Sound
+    // =========================================================
+
+    private void PlayRepairSound(
+        AudioClip clip,
+        string partName)
+    {
+        if (repairAudio == null)
+        {
+            Debug.LogWarning(
+                "[DollPartRepair] " +
+                "Repair Play_Audio가 연결되지 않았습니다.",
+                this
+            );
+
+            return;
+        }
+
+
+        if (clip == null)
+        {
+            Debug.LogWarning(
+                "[DollPartRepair] " +
+                $"{partName} 장착 AudioClip이 없습니다.",
+                this
+            );
+
+            return;
+        }
+
+
+        // 팀 공용 Play_Audio를 통해 재생
+        repairAudio.PlayAudio(
+            clip
+        );
+
+
+        Debug.Log(
+            "[DollPartRepair] " +
+            $"{partName} 장착 Sound 재생",
+            this
+        );
     }
 
 
