@@ -60,7 +60,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
     [Tooltip(
         "곰 랜덤 음성을 재생할 Play_Audio.\n" +
-        "AudioCollection의 Doll_BearVoiceAudio를 연결"
+        "AudioCollection의 Doll_BearVoiceAudio 연결"
     )]
     [SerializeField]
     private Play_Audio bearVoiceAudio;
@@ -69,7 +69,7 @@ public class SpeakingBearDoll : MonoBehaviour
     [Tooltip(
         "충돌할 때 랜덤으로 재생할 곰 음성.\n" +
         "4개, 5개 등 원하는 만큼 등록 가능.\n" +
-        "한 번 재생된 음성은 다시 재생되지 않음."
+        "한 번 재생된 음성은 다시 나오지 않음."
     )]
     [SerializeField]
     private AudioClip[] hitVoices;
@@ -79,31 +79,51 @@ public class SpeakingBearDoll : MonoBehaviour
     private AudioSource bearVoiceSource;
 
 
-    // 아직 한 번도 재생되지 않은 Voice 목록
+    // 아직 재생되지 않은 곰 목소리 목록
     private readonly List<AudioClip> remainingHitVoices =
         new List<AudioClip>();
 
 
     // =============================================
-    // Break / Coin Sound
+    // Bear Tear Sound
     // =============================================
 
-    [Header("Break / Coin Sound")]
+    [Header("Bear Tear Sound")]
 
     [Tooltip(
-        "5번째 충돌에서 곰이 찢어지고 동전이 나올 때 " +
-        "효과음을 재생할 Play_Audio.\n" +
-        "AudioCollection의 Doll_BearBreakCoinAudio를 연결"
+        "5번째 충돌에서 곰이 찢어질 때 사용할 Play_Audio.\n" +
+        "AudioCollection의 Doll_BearTearAudio 연결"
     )]
     [SerializeField]
-    private Play_Audio breakCoinAudio;
+    private Play_Audio bearTearAudio;
 
 
     [Tooltip(
-        "곰 파손 + 동전 등장 시 반드시 재생할 효과음"
+        "곰 인형이 찢어질 때 재생할 효과음"
     )]
     [SerializeField]
-    private AudioClip breakCoinClip;
+    private AudioClip bearTearClip;
+
+
+    // =============================================
+    // Coin Sound
+    // =============================================
+
+    [Header("Coin Sound")]
+
+    [Tooltip(
+        "5번째 충돌에서 동전이 튀어나올 때 사용할 Play_Audio.\n" +
+        "AudioCollection의 Doll_BearCoinAudio 연결"
+    )]
+    [SerializeField]
+    private Play_Audio coinAudio;
+
+
+    [Tooltip(
+        "동전이 튀어나올 때 재생할 효과음"
+    )]
+    [SerializeField]
+    private AudioClip coinClip;
 
 
     // =============================================
@@ -149,7 +169,7 @@ public class SpeakingBearDoll : MonoBehaviour
         // Bear Voice AudioSource
         //
         // 실제 재생용이 아니라
-        // 현재 재생 중인지 검사하는 용도
+        // isPlaying 확인 용도
         // -----------------------------------------
 
         if (bearVoiceAudio != null)
@@ -160,7 +180,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // -----------------------------------------
-        // 아직 사용하지 않은 Voice 목록 생성
+        // 사용 가능한 Bear Voice 목록 생성
         // -----------------------------------------
 
         InitializeRemainingVoices();
@@ -198,7 +218,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
     // =============================================
-    // Voice List 초기화
+    // Random Voice 목록 초기화
     // =============================================
 
     private void InitializeRemainingVoices()
@@ -224,8 +244,8 @@ public class SpeakingBearDoll : MonoBehaviour
             }
 
 
-            // Inspector에 같은 AudioClip을
-            // 실수로 두 번 넣었어도 중복 등록하지 않음
+            // 같은 Clip을 Inspector에
+            // 실수로 두 번 등록했어도 중복 제거
             if (remainingHitVoices.Contains(clip))
             {
                 continue;
@@ -252,7 +272,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
     public void RegisterThrowHit()
     {
-        // 이미 찢어진 곰이면 처리 안 함
+        // 이미 찢어진 곰이면 더 이상 처리 안 함
         if (isBroken)
         {
             return;
@@ -268,8 +288,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // =========================================
-        // 충돌할 때마다
-        // 아직 사용하지 않은 Voice 중 랜덤 1개
+        // 아직 안 나온 Bear Voice 중 랜덤 1개
         // =========================================
 
         PlayRandomBearVoice();
@@ -294,9 +313,9 @@ public class SpeakingBearDoll : MonoBehaviour
     {
         // -----------------------------------------
         // 기존 Bear Voice가 아직 재생 중이면
-        // 새로운 Voice는 겹쳐서 재생하지 않음
+        // 다른 Bear Voice는 겹치지 않게 함
         //
-        // 이 경우 Voice 목록에서도 제거하지 않음
+        // 이 경우 목록에서도 제거하지 않음
         // -----------------------------------------
 
         if (bearVoiceSource != null &&
@@ -327,7 +346,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // -----------------------------------------
-        // 남은 Voice 확인
+        // 남아있는 Voice 확인
         // -----------------------------------------
 
         if (remainingHitVoices.Count == 0)
@@ -342,7 +361,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // -----------------------------------------
-        // 아직 안 나온 Voice 중 랜덤 선택
+        // 아직 안 나온 Voice 중 Random
         // -----------------------------------------
 
         int randomIndex =
@@ -363,7 +382,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // -----------------------------------------
-        // 먼저 실제 재생
+        // 팀 공용 Play_Audio를 통해 재생
         // -----------------------------------------
 
         bearVoiceAudio.PlayAudio(
@@ -372,9 +391,9 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // -----------------------------------------
-        // 재생한 Voice는 목록에서 제거
+        // 실제로 재생한 Voice는 목록에서 제거
         //
-        // 이후 절대로 다시 랜덤 선택되지 않음
+        // 이후에는 다시 선택되지 않음
         // -----------------------------------------
 
         remainingHitVoices.RemoveAt(
@@ -384,7 +403,7 @@ public class SpeakingBearDoll : MonoBehaviour
 
         Debug.Log(
             "[SpeakingBear] " +
-            $"Bear Voice 재생 : {selectedClip.name} / " +
+            $"Bear Voice : {selectedClip.name} / " +
             $"남은 Voice : {remainingHitVoices.Count}"
         );
     }
@@ -433,12 +452,12 @@ public class SpeakingBearDoll : MonoBehaviour
 
         Debug.Log(
             "[SpeakingBear] " +
-            "5번째 충돌! 곰 인형이 찢어졌습니다."
+            "5번째 충돌! 곰 인형 파손"
         );
 
 
         // =========================================
-        // 정상 곰의 충돌 순간 위치 / 회전 저장
+        // 정상 곰 위치 / 회전 저장
         // =========================================
 
         Vector3 breakPosition =
@@ -609,13 +628,14 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // =========================================
-        // 파손 + Coin 등장 Sound
+        // ★ 곰 찢어지는 소리
+        // ★ Coin 등장 소리
         //
-        // Bear Voice와 별도의 Play_Audio이므로
-        // 곰 Voice와 관계없이 반드시 재생 가능
+        // 각각 다른 Play_Audio를 사용하므로
+        // 동시에 재생 가능
         // =========================================
 
-        PlayBreakCoinSound();
+        PlayBreakSounds();
 
 
         // =========================================
@@ -627,43 +647,61 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
     // =============================================
-    // Break / Coin Sound
+    // Break Sounds
     // =============================================
 
-    private void PlayBreakCoinSound()
+    private void PlayBreakSounds()
     {
-        if (breakCoinAudio == null)
+        // -----------------------------------------
+        // 곰 찢어지는 효과음
+        // -----------------------------------------
+
+        if (bearTearAudio != null &&
+            bearTearClip != null)
+        {
+            bearTearAudio.PlayAudio(
+                bearTearClip
+            );
+
+
+            Debug.Log(
+                "[SpeakingBear] " +
+                "곰 찢어지는 Sound 재생"
+            );
+        }
+        else
         {
             Debug.LogWarning(
                 "[SpeakingBear] " +
-                "Break/Coin Play_Audio가 연결되지 않았습니다."
+                "Bear Tear Audio 또는 Clip이 없습니다."
             );
-
-            return;
         }
 
 
-        if (breakCoinClip == null)
+        // -----------------------------------------
+        // 동전 등장 효과음
+        // -----------------------------------------
+
+        if (coinAudio != null &&
+            coinClip != null)
+        {
+            coinAudio.PlayAudio(
+                coinClip
+            );
+
+
+            Debug.Log(
+                "[SpeakingBear] " +
+                "Coin 등장 Sound 재생"
+            );
+        }
+        else
         {
             Debug.LogWarning(
                 "[SpeakingBear] " +
-                "Break/Coin AudioClip이 연결되지 않았습니다."
+                "Coin Audio 또는 Clip이 없습니다."
             );
-
-            return;
         }
-
-
-        // 팀 공용 Play_Audio 사용
-        breakCoinAudio.PlayAudio(
-            breakCoinClip
-        );
-
-
-        Debug.Log(
-            "[SpeakingBear] " +
-            "곰 파손 + Coin 등장 Sound 재생"
-        );
     }
 
 
