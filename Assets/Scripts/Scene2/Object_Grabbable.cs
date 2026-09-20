@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Object_Grabbable : MonoBehaviour
 {
@@ -17,6 +18,10 @@ public class Object_Grabbable : MonoBehaviour
 
     [Header("사운드")]
     public AudioClip[] audio_grap;
+
+    [Header("Grab Event")]
+    [Tooltip("손에서 이 오브젝트를 놓았을 때 실행")]
+    public UnityEvent OnReleased;
 
     private Play_Audio audio_player;
 
@@ -74,5 +79,10 @@ public class Object_Grabbable : MonoBehaviour
                 audio_grap[random_id]
             );
         }
+    }
+
+    public void OnRelease()
+    {
+        OnReleased?.Invoke();
     }
 }
