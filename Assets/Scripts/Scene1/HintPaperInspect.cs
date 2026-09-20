@@ -3,8 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // 여러 번 다시 읽을 수 있는 조사 오브젝트 (힌트 종이 전용)
-// Object_Inspecatable 구조를 참고했지만, 두 번째 상호작용 시
-// 사라지지 않고 원래 위치로 돌아옵니다. (수집되지 않음)
+// 종이는 원래 위치에 고정되어 있고, 카메라가 종이 앞으로 다가갔다가
+// 다시 원래 위치로 돌아오는 방식입니다. (종이 자체는 움직이지 않음)
 public class HintPaperInspect : MonoBehaviour
 {
     [Header("Player Character")]
@@ -15,38 +15,30 @@ public class HintPaperInspect : MonoBehaviour
     public float inspectDistance = 0.6f;
 
     [Header("UI Settings")]
+    [TextArea(2, 5)]
     public string discBefore = "낡은 종이가 붙어있다. 뭔가 더 필요해 보인다.";
+    [TextArea(2, 5)]
     public string discAfter;
     public Scene_UI_Manager SceneUI;
 
     [Header("사운드")]
     public AudioClip audio_inspect;
 
-    Vector3 originalPosition;
-    Quaternion originalRotation;
+    Vector3 originalCameraPosition;
+    Quaternion originalCameraRotation;
 
-    Collider col;
-    Rigidbody rigid;
     bool isInspecting = false;
     bool notesComplete = false;
 
     Camera mainCamera;
     Play_Audio audio_player;
 
-    Collider[] childColliders;
     Coroutine moveCoroutine;
 
     void Start()
     {
         mainCamera = Camera.main;
         audio_player = GetComponent<Play_Audio>();
-        col = GetComponent<Collider>();
-        rigid = GetComponent<Rigidbody>();
-
-        originalPosition = transform.position;
-        originalRotation = transform.rotation;
-
-        childColliders = GetComponentsInChildren<Collider>();
     }
 
     void Update()
@@ -85,31 +77,31 @@ public class HintPaperInspect : MonoBehaviour
     {
         isInspecting = true;
 
-        foreach (var c in childColliders)
-            if (c != col) c.enabled = false;
-
-        if (col != null) col.isTrigger = true;
-        if (rigid != null) rigid.isKinematic = true;
         if (player != null) player.SetMoveLock(true);
 
-        Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * inspectDistance;
-        Quaternion targetRotation = Quaternion.LookRotation(mainCamera.transform.forward);
+        // 복귀용으로 카메라의 원래 위치/회전 저장
+        originalCameraPosition = mainCamera.transform.position;
+        originalCameraRotation = mainCamera.transform.rotation;
 
-        Vector3 startPos = transform.position;
-        Quaternion startRot = transform.rotation;
+        // 종이는 고정, 카메라가 종이 정면 inspectDistance 만큼 앞으로 이동
+        Vector3 targetPosition = transform.position - transform.forward * inspectDistance;
+        Quaternion targetRotation = Quaternion.LookRotation(transform.forward);
+
+        Vector3 startPos = mainCamera.transform.position;
+        Quaternion startRot = mainCamera.transform.rotation;
         float t = 0f;
 
         while (t < targetTime)
         {
             t += Time.deltaTime;
             float tp = t / targetTime;
-            transform.position = Vector3.Lerp(startPos, targetPosition, tp);
-            transform.rotation = Quaternion.Lerp(startRot, targetRotation, tp);
+            mainCamera.transform.position = Vector3.Lerp(startPos, targetPosition, tp);
+            mainCamera.transform.rotation = Quaternion.Lerp(startRot, targetRotation, tp);
             yield return null;
         }
 
-        transform.position = targetPosition;
-        transform.rotation = targetRotation;
+        mainCamera.transform.position = targetPosition;
+        mainCamera.transform.rotation = targetRotation;
 
         if (SceneUI != null)
         {
@@ -118,7 +110,6 @@ public class HintPaperInspect : MonoBehaviour
             SceneUI.SetActiveCursor(false);
         }
 
-        if (col != null) col.isTrigger = false;
         audio_player?.PlayAudio(audio_inspect);
     }
 
@@ -132,29 +123,22 @@ public class HintPaperInspect : MonoBehaviour
             SceneUI.SetActiveCursor(true);
         }
 
-        if (col != null) col.isTrigger = true;
-
-        Vector3 startPos = transform.position;
-        Quaternion startRot = transform.rotation;
+        Vector3 startPos = mainCamera.transform.position;
+        Quaternion startRot = mainCamera.transform.rotation;
         float t = 0f;
 
         while (t < targetTime)
         {
             t += Time.deltaTime;
             float tp = t / targetTime;
-            transform.position = Vector3.Lerp(startPos, originalPosition, tp);
-            transform.rotation = Quaternion.Lerp(startRot, originalRotation, tp);
+            mainCamera.transform.position = Vector3.Lerp(startPos, originalCameraPosition, tp);
+            mainCamera.transform.rotation = Quaternion.Lerp(startRot, originalCameraRotation, tp);
             yield return null;
         }
 
-        transform.position = originalPosition;
-        transform.rotation = originalRotation;
+        mainCamera.transform.position = originalCameraPosition;
+        mainCamera.transform.rotation = originalCameraRotation;
 
-        if (col != null) col.isTrigger = false;
-        if (rigid != null) rigid.isKinematic = false;
         if (player != null) player.SetMoveLock(false);
-
-        foreach (var c in childColliders)
-            if (c != col) c.enabled = true;
     }
 }
