@@ -35,4 +35,9 @@ public class OrganSceneManager : MonoBehaviour
     {
 
     }
+
+    public void CompleteNextStep()
+    {
+        CompleteStep(step);
+    }
 }
