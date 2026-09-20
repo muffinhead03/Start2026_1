@@ -13,17 +13,17 @@ public class LLMSingleton : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log($"[LLMSingleton] Awake 호출됨. 오브젝트: {gameObject.name}, llmClient 필드 연결됨? {(llmClient != null)}");
+        Debug.Log($"[LLMSingleton] Awake 호출됨. 오브젝트: {gameObject.name}, instanceID={gameObject.GetInstanceID()}, scene={gameObject.scene.name}, llmClient 필드 연결됨? {(llmClient != null)}");
 
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning("[LLMSingleton] 이미 인스턴스가 존재함 → 이 오브젝트는 파괴됨 (중복 방지)");
+            Debug.LogWarning($"[LLMSingleton] 이미 인스턴스가 존재함(instanceID={Instance.gameObject.GetInstanceID()}) → 이 오브젝트(instanceID={gameObject.GetInstanceID()})는 파괴됨 (중복 방지)");
             Destroy(gameObject);
             return;
         }
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        Debug.Log("[LLMSingleton] 싱글톤으로 등록 완료, DontDestroyOnLoad 적용됨");
+        Debug.Log($"[LLMSingleton] 싱글톤으로 등록 완료(instanceID={gameObject.GetInstanceID()}), DontDestroyOnLoad 적용됨");
     }
 }

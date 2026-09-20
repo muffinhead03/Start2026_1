@@ -2,11 +2,15 @@ using UnityEngine;
 
 /// <summary>
 /// OrganSceneManager.GetCurrentStep()을 폴링해서 HintManager에 completedSteps를 기록하는 브릿지.
-/// 8~17번(Phase 2~3) 전용 — 1~7번(파이프)은 기존 Scene2_AI 스크립트가 직접 HintManager를 호출하는
-/// 방식을 그대로 유지하므로 여기서는 다루지 않음.
 ///
-/// 전제: 민주님 파트에서 8~17번 완료 지점마다 organSceneManager.CompleteNextStep()
-/// (또는 CompleteStep(7~16))을 순서대로 호출 → GetCurrentStep()이 8→9→...→17로 올라감.
+/// 주의: OrganSceneManager.CompleteStep(id)는 내부적으로 this.step = id + 1 로 저장한다.
+/// 즉 GetCurrentStep()이 반환하는 값은 "완료된 마지막 스텝 id"가 아니라 그보다 1 큰 값
+/// ("다음에 진행할 스텝")이다. 그래서 실제로 완료된 마지막 스텝 id는 GetCurrentStep() - 1.
+///
+/// 1~7번(파이프)은 기존 Scene2_AI 스크립트가 이미 HintManager에 직접 보고하고 있고,
+/// 씬 확인 결과 2~6번도 OrganSceneManager.CompleteStep으로 중복 연결돼있음 — 중복이어도
+/// HintManager 쪽 Contains() 체크로 안전하니 그대로 둬도 됨. 이 브릿지는 1~17번 전체를
+/// OrganSceneManager 기준으로 커버한다.
 /// </summary>
 public class OrganHintBridge : MonoBehaviour
 {
@@ -23,7 +27,7 @@ public class OrganHintBridge : MonoBehaviour
         (15, "clue_completed_sheet"),
     };
 
-    int lastReportedStep = 7; // 1~7번은 기존 방식이 이미 처리하므로 8번부터 시작
+    int lastReportedStep = 0; // 전체 1~17번 커버
 
     void Start()
     {
@@ -44,10 +48,10 @@ public class OrganHintBridge : MonoBehaviour
     {
         if (hintManager == null || organSceneManager == null) return;
 
-        int current = organSceneManager.GetCurrentStep();
+        int highestCompleted = organSceneManager.GetCurrentStep() - 1;
 
         // 한 번에 여러 칸 올라가는 경우(스텝 스킵 등)까지 대비해 사이값도 다 보고
-        while (lastReportedStep < current && lastReportedStep < 17)
+        while (lastReportedStep < highestCompleted && lastReportedStep < 17)
         {
             lastReportedStep++;
             ReportStep(lastReportedStep);

@@ -17,11 +17,28 @@ public class LLMClient : MonoBehaviour, IHintLLMClient
 
     async void Start()
     {
-        Debug.Log($"[LLMClient] Start 호출됨. llmCharacter 연결됨? {(llmCharacter != null)}");
+        Debug.Log($"[LLMClient] Start 호출됨. gameObject={gameObject.name}, instanceID={gameObject.GetInstanceID()}, scene={gameObject.scene.name}, llmCharacter 연결됨? {(llmCharacter != null)}");
+
+        if (llmCharacter == null)
+            llmCharacter = GetComponentInChildren<LLMCharacter>(true);
+
+        // 도메인 리로드 직후 중첩 프리팹이 아직 안 붙어있는 드문 타이밍 이슈 대비, 최대 30프레임(~0.5초) 재시도
+        int retries = 0;
+        while (llmCharacter == null && retries < 30)
+        {
+            await Task.Yield();
+            llmCharacter = GetComponentInChildren<LLMCharacter>(true);
+            retries++;
+        }
+
+        if (retries > 0)
+            Debug.Log($"[LLMClient] {retries}프레임 재시도 후 llmCharacter 연결됨? {(llmCharacter != null)}");
 
         if (llmCharacter == null)
         {
-            Debug.LogError("[LLMClient] llmCharacter가 연결 안 되어 있음! Warmup 진행 불가.");
+            Debug.LogError($"[LLMClient] llmCharacter가 연결 안 되어 있음! (instanceID={gameObject.GetInstanceID()}) Warmup 진행 불가. 자식 개수={transform.childCount}");
+            for (int i = 0; i < transform.childCount; i++)
+                Debug.LogError($"[LLMClient]   자식[{i}]: {transform.GetChild(i).name}, active={transform.GetChild(i).gameObject.activeSelf}");
             return;
         }
 
