@@ -11,6 +11,10 @@ public class WineLabelInspect : MonoBehaviour
     [Header("Player")]
     public Player_Move player;
 
+    [Header("Sound")]
+    public Play_Audio audioPlayer;
+    public AudioClip wineClip;
+
     [Header("연결 (같은 오브젝트의 WineRackLabel)")]
     public WineRackLabel wineLabel;
 
@@ -73,6 +77,9 @@ public class WineLabelInspect : MonoBehaviour
     {
         isInspecting = true;
 
+        if (audioPlayer != null && wineClip != null)
+        audioPlayer.PlayAudio(wineClip);
+
         originalPosition = transform.position;
         originalRotation = transform.rotation;
 
@@ -111,6 +118,12 @@ public class WineLabelInspect : MonoBehaviour
     void CancelInspect()
     {
         isInspecting = false;
+
+        if (audioPlayer != null)
+        {
+            AudioSource src = audioPlayer.GetComponent<AudioSource>();
+            if (src != null) src.Stop();   // ← 추가: 재생 중인 소리 정지
+        }
 
         if (SceneUI != null)
         {

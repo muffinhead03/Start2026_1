@@ -99,6 +99,9 @@ public class BookInspectGrab : MonoBehaviour
     {
         isInspecting = true;
 
+        if (BookSoundManager.Instance != null)
+            BookSoundManager.Instance.PlayPickup();
+
         originalPosition = transform.position;
         originalRotation = transform.rotation;
 
