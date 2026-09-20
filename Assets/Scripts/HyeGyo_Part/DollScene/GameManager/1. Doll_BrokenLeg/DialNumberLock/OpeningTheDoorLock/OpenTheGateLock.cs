@@ -90,6 +90,20 @@ public class OpenTheGateLock : MonoBehaviour
 
     public bool IsOpened => isOpened;
 
+    // ================================================
+    // Lock Open Sound
+    // ================================================
+
+    [Header("Lock Open Sound")]
+
+    [Tooltip("자물쇠 정답 시 열리는 효과음을 재생할 Play_Audio")]
+    [SerializeField]
+    private Play_Audio lockOpenAudio;
+
+    [Tooltip("자물쇠가 열릴 때 재생할 효과음")]
+    [SerializeField]
+    private AudioClip lockOpenClip;
+
 
     // ================================================
     // Puzzle 정답에서 호출
@@ -105,8 +119,7 @@ public class OpenTheGateLock : MonoBehaviour
 
 
         isOpened = true;
-
-
+        PlayLockOpenSound();
         // --------------------------------------------
         // 1. 문 쪽 고정물 강제 비활성화
         // --------------------------------------------
@@ -333,6 +346,44 @@ public class OpenTheGateLock : MonoBehaviour
 
         Debug.Log(
             "[OpenTheGateLock] 자물쇠 Rigidbody 해제 → 낙하"
+        );
+    }
+
+    // ================================================
+    // Lock Open Sound
+    // ================================================
+
+    private void PlayLockOpenSound()
+    {
+        if (lockOpenAudio == null)
+        {
+            Debug.LogWarning(
+                "[OpenTheGateLock] " +
+                "Lock Open Play_Audio가 연결되지 않았습니다."
+            );
+
+            return;
+        }
+
+
+        if (lockOpenClip == null)
+        {
+            Debug.LogWarning(
+                "[OpenTheGateLock] " +
+                "Lock Open AudioClip이 연결되지 않았습니다."
+            );
+
+            return;
+        }
+
+
+        lockOpenAudio.PlayAudio(
+            lockOpenClip
+        );
+
+
+        Debug.Log(
+            "[OpenTheGateLock] 자물쇠 열림 Sound 재생"
         );
     }
 }
