@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -42,6 +43,18 @@ public sealed class InventoryUIManager : MonoBehaviour
     [SerializeField]
     private GrabbableEvent onEquipRequested;
 
+    [Header("Hand Position Override")]
+    [SerializeField]
+    private string[] handYOffsetObjectNames =
+    {
+        "원하는이름1",
+        "원하는이름2"
+    };
+
+    [SerializeField]
+    private float specialHandY = 0.132f;
+
+
     [Header("Debug")]
     [SerializeField]
     private bool showDebugLog = true;
@@ -58,6 +71,30 @@ public sealed class InventoryUIManager : MonoBehaviour
 
     // HandPivot 정리 중 발생하는 재귀 이벤트를 막습니다.
     private bool isSynchronizingHand;
+
+    /*
+     * E로 처음 집었을 때 Player_Grab이 만든 손 배치를 기억합니다.
+     * 이후 스크롤로 다시 장착할 때 X/Z/회전을 같은 값으로 복원하고,
+     * 지정된 아이템만 Y를 specialHandY로 덮어씁니다.
+     * Object_Grabbable.cs는 수정하지 않습니다.
+     */
+    private readonly Dictionary<Object_Grabbable, HandTransformState>
+        handTransformStates =
+            new Dictionary<Object_Grabbable, HandTransformState>();
+
+    private struct HandTransformState
+    {
+        public Vector3 LocalPosition;
+        public Quaternion LocalRotation;
+
+        public HandTransformState(
+            Vector3 localPosition,
+            Quaternion localRotation)
+        {
+            LocalPosition = localPosition;
+            LocalRotation = localRotation;
+        }
+    }
 
     public bool IsOpen => isOpen;
 
@@ -318,6 +355,18 @@ public sealed class InventoryUIManager : MonoBehaviour
             RefreshView();
             return;
         }
+
+        /*
+         * E로 처음 집은 순간의 Player_Grab 배치를 먼저 저장합니다.
+         * 그 다음 지정된 objectName인 경우에만 Y를 보정합니다.
+         */
+        CaptureHandTransformIfNeeded(
+            detectedObject
+        );
+
+        ApplySpecialHandPosition(
+            detectedObject
+        );
 
         isSynchronizingHand = true;
 
@@ -1224,8 +1273,6 @@ public sealed class InventoryUIManager : MonoBehaviour
             );
         }
     }
-
-
     /// <summary>
     /// InventoryData 아래에 보관된 Object를
     /// 실제 HandPivot으로 꺼내 장착합니다.
@@ -1294,13 +1341,42 @@ public sealed class InventoryUIManager : MonoBehaviour
                 handPivot,
                 true
             );
-
-            handRoot.position =
-                handPivot.position;
-
-            handRoot.rotation =
-                handPivot.rotation;
         }
+
+        /*
+         * E로 처음 잡았을 때 저장해 둔 배치가 있으면 복원합니다.
+         * 이렇게 해야 스크롤 재장착 시 갑자기 다른 X/Z/회전으로
+         * 튀는 현상을 막을 수 있습니다.
+         *
+         * 저장값이 없는 아이템은 기존 동작처럼
+         * HandPivot의 원점/회전을 사용합니다.
+         */
+        if (handTransformStates.TryGetValue(
+                targetObject,
+                out HandTransformState savedState))
+        {
+            handRoot.localPosition =
+                savedState.LocalPosition;
+
+            handRoot.localRotation =
+                savedState.LocalRotation;
+        }
+        else
+        {
+            handRoot.localPosition =
+                Vector3.zero;
+
+            handRoot.localRotation =
+                Quaternion.identity;
+        }
+
+        /*
+         * 지정된 Object_Grabbable.objectName만
+         * X/Z/회전은 그대로 두고 Y만 변경합니다.
+         */
+        ApplySpecialHandPosition(
+            targetObject
+        );
 
         /*
          * 모든 Transform 변경이 끝난 마지막에 활성화합니다.
@@ -1317,11 +1393,152 @@ public sealed class InventoryUIManager : MonoBehaviour
             Debug.Log(
                 "[InventoryUIManager] Object 장착 완료: " +
                 $"Object={targetObject.gameObject.name}, " +
+                $"ObjectName={targetObject.objectName}, " +
                 $"Root={handObject.name}, " +
-                $"Parent={handPivot.gameObject.name}",
+                $"Parent={handPivot.gameObject.name}, " +
+                $"LocalPosition={handRoot.localPosition}",
                 targetObject
             );
         }
     }
 
+
+    /// <summary>
+    /// E로 처음 잡았을 때 Player_Grab이 만들어 둔
+    /// HandPivot 기준 Local Position / Rotation을 한 번만 저장합니다.
+    /// </summary>
+    private void CaptureHandTransformIfNeeded(
+        Object_Grabbable targetObject)
+    {
+        if (targetObject == null ||
+            handPerception == null ||
+            handPerception.HandPivot == null ||
+            handTransformStates.ContainsKey(targetObject))
+        {
+            return;
+        }
+
+        Transform handPivot =
+            handPerception.HandPivot;
+
+        Transform handRoot =
+            FindDirectChildRoot(
+                handPivot,
+                targetObject.transform
+            );
+
+        if (handRoot == null)
+        {
+            if (targetObject.transform.parent != handPivot)
+            {
+                return;
+            }
+
+            handRoot =
+                targetObject.transform;
+        }
+
+        handTransformStates[targetObject] =
+            new HandTransformState(
+                handRoot.localPosition,
+                handRoot.localRotation
+            );
+
+        if (showDebugLog)
+        {
+            Debug.Log(
+                "[InventoryUIManager] 최초 Hand Transform 저장: " +
+                $"ObjectName={targetObject.objectName}, " +
+                $"Root={handRoot.name}, " +
+                $"LocalPosition={handRoot.localPosition}",
+                targetObject
+            );
+        }
+    }
+
+
+    /// <summary>
+    /// 지정된 objectName의 아이템만 HandPivot 기준 Y를 변경합니다.
+    /// X/Z/Rotation은 건드리지 않습니다.
+    /// </summary>
+    private void ApplySpecialHandPosition(
+        Object_Grabbable targetObject)
+    {
+        if (targetObject == null ||
+            handPerception == null ||
+            handPerception.HandPivot == null ||
+            !UseSpecialHandPosition(targetObject))
+        {
+            return;
+        }
+
+        Transform handPivot =
+            handPerception.HandPivot;
+
+        Transform handRoot =
+            FindDirectChildRoot(
+                handPivot,
+                targetObject.transform
+            );
+
+        if (handRoot == null)
+        {
+            if (targetObject.transform.parent != handPivot)
+            {
+                return;
+            }
+
+            handRoot =
+                targetObject.transform;
+        }
+
+        Vector3 localPosition =
+            handRoot.localPosition;
+
+        localPosition.y =
+            specialHandY;
+
+        handRoot.localPosition =
+            localPosition;
+
+        if (showDebugLog)
+        {
+            Debug.Log(
+                "[InventoryUIManager] 특수 Hand Y 적용: " +
+                $"ObjectName={targetObject.objectName}, " +
+                $"Root={handRoot.name}, " +
+                $"Y={specialHandY}, " +
+                $"LocalPosition={handRoot.localPosition}",
+                targetObject
+            );
+        }
+    }
+
+
+    private bool UseSpecialHandPosition(
+        Object_Grabbable targetObject)
+    {
+        if (targetObject == null ||
+            string.IsNullOrWhiteSpace(
+                targetObject.objectName) ||
+            handYOffsetObjectNames == null)
+        {
+            return false;
+        }
+
+        for (int i = 0;
+             i < handYOffsetObjectNames.Length;
+             i++)
+        {
+            if (string.Equals(
+                    targetObject.objectName,
+                    handYOffsetObjectNames[i],
+                    StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
