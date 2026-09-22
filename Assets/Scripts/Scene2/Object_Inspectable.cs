@@ -16,6 +16,7 @@ public class Object_Inspecatable : MonoBehaviour
     public float inspectDistance = 1f;
 
     [Header("UI Settings")]
+    public bool usePanel = true;
     [TextArea(3, 8)]
     public string disc;
     public Scene_UI_Manager SceneUI;
@@ -107,8 +108,11 @@ public class Object_Inspecatable : MonoBehaviour
         }
 
         // 조사 UI 활성화
-        SceneUI.ChangeText(0, disc);
-        SceneUI.SetActivePanel(2, true);
+        if (usePanel)
+        {
+            SceneUI.ChangeText(0, disc);
+            SceneUI.SetActivePanel(2, true);
+        }
         SceneUI.SetActiveCursor(false);
 
         col.isTrigger = false;
