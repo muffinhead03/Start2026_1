@@ -15591,7 +15591,8 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1300778458280845108, guid: 526a940d1a22940d99731f8a511201de, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 526a940d1a22940d99731f8a511201de, type: 3}
@@ -16628,6 +16629,7 @@ GameObject:
   m_Component:
   - component: {fileID: 654760819}
   - component: {fileID: 654760818}
+  - component: {fileID: 654760820}
   m_Layer: 0
   m_Name: Organ_Scene_Manager
   m_TagString: Untagged
@@ -16683,6 +16685,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &654760820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654760817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0aa36090a1974024ae336377adf10d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganHintBridge
+  hintManager: {fileID: 763785486}
+  organSceneManager: {fileID: 654760818}
 --- !u!1001 &657163486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21706,9 +21722,7 @@ PrefabInstance:
       propertyPath: llmCharacter
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7073582449341293015, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
-    - {fileID: 2727790571270554856, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
