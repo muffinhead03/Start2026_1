@@ -29,8 +29,16 @@ public class PuzzleSolver : MonoBehaviour
 
     void Start()
     {
-        answerFurnitureName = CalculateAnswer();
-        Debug.Log($"[PuzzleSolver] 정답 가구: {answerFurnitureName}");
+        // 변경: 직접 계산하지 않고 GetAnswer()를 통해 가져옴
+        Debug.Log($"[PuzzleSolver] 정답 가구: {GetAnswer()}");
+    }
+
+    // 추가: 누가 먼저 호출하든(Awake/Start 순서 상관없이) 정답이 항상 계산되어 있도록 보장
+    public string GetAnswer()
+    {
+        if (string.IsNullOrEmpty(answerFurnitureName))
+            answerFurnitureName = CalculateAnswer();
+        return answerFurnitureName;
     }
 
     // 와인 첫 글자 + 숫자만큼 알파벳 이동 (z→a 순환)
@@ -52,7 +60,8 @@ public class PuzzleSolver : MonoBehaviour
     // 플레이어가 가구 조사 시 호출 — 정답 여부 반환
     public bool CheckFurniture(string furnitureName)
     {
-        bool correct = furnitureName.ToUpper() == answerFurnitureName.ToUpper();
+        // 변경: answerFurnitureName 대신 GetAnswer()
+        bool correct = furnitureName.ToUpper() == GetAnswer().ToUpper();
         Debug.Log($"[PuzzleSolver] {furnitureName} 조사 → {(correct ? "정답!" : "오답")}");
         return correct;
     }
