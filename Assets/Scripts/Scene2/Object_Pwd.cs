@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEngine.Analytics;
-using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class Object_Pwd : MonoBehaviour
 {
@@ -10,8 +11,6 @@ public class Object_Pwd : MonoBehaviour
 
     [Header("해제 이벤트")]
     public UnityEvent UnlockEvent;
-
-    public HintManager hintManager; // 추가
 
     bool isActive;
 
@@ -22,9 +21,7 @@ public class Object_Pwd : MonoBehaviour
     void Start()
     {
         click = InputSystem.actions.FindAction("Click");
-        click.Disable();
-
-        isActive = false;
+        SetActive(false);
     }
 
     public void SetActive(bool active)
@@ -54,11 +51,11 @@ public class Object_Pwd : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 0.5f))
         {
-            var button = hit.collider.GetComponent<Object_Pwd_Button>();
+            var button = hit.collider.GetComponent<APwdButton>();
 
             if(button != null)
             {
-                string n = button.id;
+                string n = button.GetId();
 
                 button.Pressed();
 
@@ -67,7 +64,6 @@ public class Object_Pwd : MonoBehaviour
                     if (pwd == input)
                     {
                         UnlockEvent?.Invoke();
-                        hintManager?.currentPlayerState.completedSteps.Add(5);
                     }
                     else input = "";
                 }

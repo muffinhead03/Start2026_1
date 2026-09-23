@@ -26,14 +26,14 @@ public class EndingManager : MonoBehaviour
 
     public void OnInteract()
     {
-        SceneUI.SetActivePanel(1, true);
+        SceneUI.SetActivePanel(3, true);
         SceneUI.UnlockPointer();
         player.SetMoveLock(true);
     }
 
     public void ClickButton(string choice)
     {
-        SceneUI.SetActivePanel(2, false);
+        SceneUI.SetActivePanel(4, false);
         if (choice == "thank_you") SceneUI.ChangeText(0, talk1);
         else SceneUI.ChangeText(0, talk2);
         timeLine.SetActive(true);
