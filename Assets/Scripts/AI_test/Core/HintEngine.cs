@@ -29,6 +29,12 @@ public class HintResult
     public string puzzleId;      // 현재 씬 퍼즐 ID — PromptBuilder 씬 컨텍스트 조회용
     public string debugReason;   // nextStep이 어떤 경로(손/인벤토리/체크리스트)로 선택됐는지 — 콘솔 로그용, 프롬프트엔 안 넣음
     public bool isOverride;      // true면 손/인벤토리 보유 물품 기준으로 순서를 건너뛰고 선택된 것 — PromptBuilder가 "이미 지나쳤다" 문구를 뺄지 판단하는 데 씀
+
+    // 아래 3개는 ILocationAwareProvider가 등록된 씬에서만 채워짐. 등록 안 된 씬은 전부 null —
+    // PromptBuilder가 null이면 그냥 그 줄을 프롬프트에서 뺀다 (판단 실패가 아니라 "정보 없음"으로 처리).
+    public string proximityNote; // "player-very-close" / "player-nearby" / "player-far" 중 하나. 좌표 자체는 절대 안 담음
+    public string zoneNote;      // 예: "GateArea (오래 머무는 중)" — 구역 이름 + 체류시간 판단 결과
+    public string recentAction;  // state.lastActions의 가장 최근 항목 하나. 없으면 null
 }
 
 /// <summary>
@@ -41,6 +47,14 @@ public static class HintEngine
     // 점수 계산 임계값 모음. 기본값 = 기존 하드코딩 값과 동일.
     // HintManager 등 외부에서 Inspector로 받은 값을 여기에 주입해서 코드 수정 없이 튜닝 가능.
     public static HintTuningConfig Tuning { get; set; } = new HintTuningConfig();
+
+    // 근접도 판단 거리 임계값(미터). 나중에 HintTuningConfig로 옮기고 싶으면 그쪽으로 이전 가능 —
+    // 지금은 별도 파일 의존 늘리지 않으려고 여기 상수로 둠.
+    const float ProximityVeryCloseDistance = 2f;
+    const float ProximityNearbyDistance    = 6f;
+
+    // 구역 체류시간이 이 값(초)을 넘으면 "오래 머무는 중"으로 판단.
+    const float ZoneLongStaySeconds = 25f;
 
     // 콘솔 로그 등에서 사람이 읽기 좋은 한국어 라벨이 필요할 때 쓰는 매핑.
     // 판단 로직 자체와는 무관 — 순수 표시용이라 Unity 의존성 없음.
@@ -63,9 +77,13 @@ public static class HintEngine
     /// 점수를 내고, 그 점수를 5단계로 환산한다.
     /// handObjectName/inventoryObjectNames가 주어지면, 체크리스트 순서보다 "지금 실제로 보유 중인 것"을 우선해서
     /// nextStep을 override한다 (물리적 배치상 스텝 순서 보장이 안 되는 씬 대응용 — 예: 좁은 방에 여러 상호작용 오브젝트가 동시에 노출되는 경우).
+    /// locationProvider가 주어지면, nextStep이 정해진 뒤에 플레이어-오브젝트 거리 / 현재 구역 체류시간을
+    /// 판단해서 proximityNote/zoneNote로 남긴다 (좌표 자체는 절대 HintResult에 담지 않음 — "가깝다/멀다"류의
+    /// 판단된 결과만 전달해서 PromptBuilder/LLM이 자연스럽게 문장으로 풀게 한다).
     /// </summary>
     public static HintResult Calculate(PlayerState state, PuzzleConfig config,
-        string handObjectName = null, List<string> inventoryObjectNames = null)
+        string handObjectName = null, List<string> inventoryObjectNames = null,
+        ILocationAwareProvider locationProvider = null)
     {
         float score = 0f;
         score += CalcHintHistoryScore(state)  * 0.35f;
@@ -76,15 +94,31 @@ public static class HintEngine
 
         var nextStep = GetNextStep(state, config, handObjectName, inventoryObjectNames, out string reason, out bool isOverride);
 
+        string proximityNote = null;
+        string zoneNote      = null;
+
+        if (locationProvider != null && nextStep != null)
+        {
+            proximityNote = BuildProximityNote(locationProvider, nextStep);
+            zoneNote      = BuildZoneNote(locationProvider);
+        }
+
+        string recentAction = (state.lastActions != null && state.lastActions.Count > 0)
+            ? state.lastActions[state.lastActions.Count - 1]
+            : null;
+
         return new HintResult
         {
-            hintLevel    = ScoreToLevel(score),
-            playerStatus = DetermineStatus(state, config, handObjectName, inventoryObjectNames),
-            nextStep     = nextStep,
-            hintType     = state.hintType,
-            puzzleId     = config.puzzleId,
-            debugReason  = reason,
-            isOverride   = isOverride
+            hintLevel     = ScoreToLevel(score),
+            playerStatus  = DetermineStatus(state, config, handObjectName, inventoryObjectNames),
+            nextStep      = nextStep,
+            hintType      = state.hintType,
+            puzzleId      = config.puzzleId,
+            debugReason   = reason,
+            isOverride    = isOverride,
+            proximityNote = proximityNote,
+            zoneNote      = zoneNote,
+            recentAction  = recentAction
         };
     }
 
@@ -204,5 +238,44 @@ public static class HintEngine
         reason = "all-completed";
         isOverride = false;
         return null;
+    }
+
+    /// <summary>
+    /// 플레이어-오브젝트 거리를 3단계로 판단한다. 좌표는 계산에만 쓰고 결과에는 절대 안 남김.
+    /// nextStep에 relatedObjectName이 없거나(구역형 퍼즐), provider가 위치를 못 찾으면 null 반환
+    /// (해석: "정보 없음"과 "멀리 있음"을 구분 — 모르면 아예 언급 안 하는 게 맞음)
+    /// </summary>
+    static string BuildProximityNote(ILocationAwareProvider provider, PuzzleStep nextStep)
+    {
+        if (string.IsNullOrEmpty(nextStep.relatedObjectName))
+            return null;
+
+        Vector3? playerPos = provider.GetPlayerPosition();
+        Vector3? objectPos = provider.GetObjectPosition(nextStep.relatedObjectName);
+
+        if (!playerPos.HasValue || !objectPos.HasValue)
+            return null;
+
+        float dist = Vector3.Distance(playerPos.Value, objectPos.Value);
+
+        if (dist <= ProximityVeryCloseDistance) return "player-very-close";
+        if (dist <= ProximityNearbyDistance)    return "player-nearby";
+        return "player-far";
+    }
+
+    /// <summary>
+    /// 구역 이름 + 체류시간을 판단해서 "오래 머무는 중"인지 표시한다.
+    /// 구역 시스템이 없는 씬(GetCurrentZoneName()이 null 반환)은 그냥 null.
+    /// </summary>
+    static string BuildZoneNote(ILocationAwareProvider provider)
+    {
+        string zoneName = provider.GetCurrentZoneName();
+        if (string.IsNullOrEmpty(zoneName))
+            return null;
+
+        float staySeconds = provider.GetCurrentZoneStaySeconds();
+        return staySeconds >= ZoneLongStaySeconds
+            ? $"{zoneName} (오래 머무는 중)"
+            : zoneName;
     }
 }

@@ -31,6 +31,10 @@ public class HintManager : MonoBehaviour
     //  "질문에 답해줄 대상"이 있는지만 신경 씀)
     public IPossessionProvider PossessionProvider { get; set; }
 
+    // (ILocationAwareProvider는 선택 사항: 씬에 구역/좌표 추적 구현이 없으면 null로 둬도
+    //  HintEngine.Calculate()가 알아서 위치/구역 관련 필드만 비우고 나머진 정상 동작함)
+    public ILocationAwareProvider LocationProvider { get; set; }
+
     [Header("현재 퍼즐 ID (씬마다 변경)")]
     public string currentPuzzleId = "wine_glass_room";
 
@@ -184,7 +188,13 @@ public class HintManager : MonoBehaviour
 
         Debug.Log($"[Possessed] Hand={handObjectName ?? "empty"} / Inventory=[{string.Join(", ", inventoryObjectNames)}]");
 
-        var result = HintEngine.Calculate(currentPlayerState, config, handObjectName, inventoryObjectNames);
+        var result = HintEngine.Calculate(
+            currentPlayerState,     // 플레이어 상태 (힌트 요청 이력, 정체 시간 등)
+            config,                 // 현재 씬의 퍼즐 체크리스트
+            handObjectName,         // 1순위: 손에 쥔 오브젝트 이름 (기존)
+            inventoryObjectNames,   // 2순위: 인벤토리 보유 오브젝트 이름 목록 (기존)
+            LocationProvider        // 신규: 위치/구역 정보 제공자 — null이면 proximityNote/zoneNote만 안 채워짐
+        );
 
         Debug.Log($"[힌트 판단] {result.debugReason} / override={result.isOverride} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()}");
 
