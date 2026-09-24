@@ -242,7 +242,11 @@ PrefabInstance:
     - target: {fileID: 412710786664382884, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: inventoryUIManager
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 323076718}
+    - target: {fileID: 1133352419626379065, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: hand
+      value: 
+      objectReference: {fileID: 8387336}
     - target: {fileID: 1133352419626379065, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: SceneUI
       value: 
@@ -295,6 +299,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player_InputSystem_V2
       objectReference: {fileID: 0}
+    - target: {fileID: 8573735766143835360, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
       propertyPath: inventoryData
       value: 
@@ -311,17 +319,6 @@ PrefabInstance:
       addedObject: {fileID: 121621141}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
---- !u!114 &8387332 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1133352419626379065, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
-  m_PrefabInstance: {fileID: 8387331}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8387334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dba7f341dea80264083f4f9537049f7f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player_FixCamera
 --- !u!4 &8387333 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8334787724187479039, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
@@ -335,6 +332,11 @@ GameObject:
 --- !u!4 &8387335 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4093937196723730831, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 8387331}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8387336 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8252295781479430924, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
   m_PrefabInstance: {fileID: 8387331}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &9419843
@@ -750,7 +752,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45454e756455e48919fc54a9ffb0d043, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineLabelInspect
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   audioPlayer: {fileID: 18074225}
   wineClip: {fileID: 8300000, guid: d36b4dddb3a4f4dc7bc02786bfc2c11d, type: 3}
   wineLabel: {fileID: 18074218}
@@ -1241,7 +1243,7 @@ MonoBehaviour:
   objectName: book_S
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -1259,7 +1261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 50311039}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -1705,7 +1707,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   SceneUI: {fileID: 1169160861}
-  player: {fileID: 8387332}
+  player: {fileID: 1596104631}
 --- !u!1001 &87715977
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2095,7 +2097,7 @@ MonoBehaviour:
   objectName: book_X
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -2113,7 +2115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 100534479}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -2283,7 +2285,7 @@ MonoBehaviour:
   objectName: book_Q
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -2301,7 +2303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 103584228}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -3733,7 +3735,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45454e756455e48919fc54a9ffb0d043, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineLabelInspect
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   audioPlayer: {fileID: 219046419}
   wineClip: {fileID: 8300000, guid: d36b4dddb3a4f4dc7bc02786bfc2c11d, type: 3}
   wineLabel: {fileID: 219046412}
@@ -4057,17 +4059,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84393eca26bf9a345aa2ef3e33a5f712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &224039316 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
-  m_PrefabInstance: {fileID: 8387331}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8387334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ee6140171ba3f7408ef7c047df25d35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player_Grab
 --- !u!1 &226253143 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2426116118826635540, guid: a84c75812c87adf46bcffa5abcc9aeee, type: 3}
@@ -5410,7 +5401,7 @@ MonoBehaviour:
   objectName: book_K
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -5428,7 +5419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 306819074}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -5974,7 +5965,7 @@ MonoBehaviour:
   objectName: book_U
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -5992,7 +5983,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 315310394}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -6035,6 +6026,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a4771636bade3498ba37923bb9a12abe, type: 3}
   m_PrefabInstance: {fileID: 1640429370}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &323076718 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 711485128260922222, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
+  m_PrefabInstance: {fileID: 2048120662}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4275d387d847cb4b8fb2d6b2f33a29b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUIManager
 --- !u!224 &327156770 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2097246207743343441, guid: 9a56fa7b38f3c6044a8c8750f7665e70, type: 3}
@@ -6284,7 +6286,7 @@ MonoBehaviour:
   objectName: book_V
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -6302,7 +6304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 337314244}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -6564,6 +6566,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 350595580}
   m_Mesh: {fileID: 6503316152310639137, guid: b8c5835a872e3184d876cab46579faa7, type: 3}
+--- !u!4 &353966789 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 917864519793089442, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 1596104627}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &354149700
 GameObject:
   m_ObjectHideFlags: 0
@@ -7609,7 +7616,7 @@ MonoBehaviour:
   objectName: book_W
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -7627,7 +7634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 444591229}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -8559,11 +8566,11 @@ PrefabInstance:
     - target: {fileID: 3792545803807663973, guid: b66e7c0ce07794393823742b7861cba2, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 8387334}
+      objectReference: {fileID: 1596104628}
     - target: {fileID: 4889747999392610679, guid: b66e7c0ce07794393823742b7861cba2, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 224039312}
+      objectReference: {fileID: 1596104632}
     - target: {fileID: 4889747999392610679, guid: b66e7c0ce07794393823742b7861cba2, type: 3}
       propertyPath: SceneUI
       value: 
@@ -9733,7 +9740,7 @@ MonoBehaviour:
   objectName: book_C
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -9751,7 +9758,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 559473572}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -10722,7 +10729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d09ccaf7423d34ae4ac942c32fe8c6b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineBookPutOn
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   shelfParent: {fileID: 837396937}
   mat_trans: {fileID: 2100000, guid: 8bf1de10e11a14fd584972e713b85b9d, type: 2}
   mesh: {fileID: 612176731}
@@ -12000,7 +12007,7 @@ MonoBehaviour:
   objectName: book_O
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -12018,7 +12025,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 714873781}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -13345,7 +13352,7 @@ PrefabInstance:
     - target: {fileID: 7132118780479406537, guid: 018426fe930b5ff4da6d7050a023d8f2, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 8387334}
+      objectReference: {fileID: 1596104628}
     - target: {fileID: 7132118780479406537, guid: 018426fe930b5ff4da6d7050a023d8f2, type: 3}
       propertyPath: keyName
       value: key1
@@ -14420,7 +14427,7 @@ MonoBehaviour:
   objectName: book_J
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -14438,7 +14445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 835960838}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -14788,7 +14795,7 @@ MonoBehaviour:
   objectName: book_H
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -14806,7 +14813,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 840889630}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -15144,7 +15151,7 @@ MonoBehaviour:
   objectName: book_M
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -15162,7 +15169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 857697445}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -15389,7 +15396,7 @@ MonoBehaviour:
   objectName: book_E
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -15407,7 +15414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 890933982}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -17971,7 +17978,7 @@ MonoBehaviour:
   objectName: book_B
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -17989,7 +17996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1063875766}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -18127,11 +18134,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6399698, y: 0.79130024, z: 0.30691344}
   m_Center: {x: 0, y: 0.39648482, z: 0.0016994476}
---- !u!4 &1087343836 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 917864519793089442, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
-  m_PrefabInstance: {fileID: 8387331}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1093469649
 GameObject:
   m_ObjectHideFlags: 0
@@ -18759,7 +18761,7 @@ MonoBehaviour:
   objectName: book_F
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -18777,7 +18779,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1116443784}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -19454,7 +19456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45454e756455e48919fc54a9ffb0d043, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineLabelInspect
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   audioPlayer: {fileID: 1161482367}
   wineClip: {fileID: 8300000, guid: d36b4dddb3a4f4dc7bc02786bfc2c11d, type: 3}
   wineLabel: {fileID: 1161482360}
@@ -19800,7 +19802,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d09ccaf7423d34ae4ac942c32fe8c6b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineBookPutOn
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   shelfParent: {fileID: 837396937}
   mat_trans: {fileID: 2100000, guid: 8bf1de10e11a14fd584972e713b85b9d, type: 2}
   mesh: {fileID: 1166160441}
@@ -19836,11 +19838,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   hintManager: {fileID: 850534001}
---- !u!4 &1167475307 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8124890597826565058, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
-  m_PrefabInstance: {fileID: 8387331}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1169160860
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19896,7 +19893,7 @@ PrefabInstance:
     - target: {fileID: 4082912021310373487, guid: 416b69257cc537b4eb1a8a65d5d8c79e, type: 3}
       propertyPath: cursor
       value: 
-      objectReference: {fileID: 1262017555}
+      objectReference: {fileID: 2102109102}
     - target: {fileID: 4082912021310373487, guid: 416b69257cc537b4eb1a8a65d5d8c79e, type: 3}
       propertyPath: texts.Array.size
       value: 3
@@ -20531,7 +20528,7 @@ MonoBehaviour:
   objectName: book_Y
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -20549,7 +20546,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1218039844}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -20951,7 +20948,7 @@ PrefabInstance:
     - target: {fileID: 1646489777600475592, guid: f10816dae33284bcda0a6036dd2937a4, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 224039312}
+      objectReference: {fileID: 1596104632}
     - target: {fileID: 1646489777600475592, guid: f10816dae33284bcda0a6036dd2937a4, type: 3}
       propertyPath: SceneUI
       value: 
@@ -20967,7 +20964,7 @@ PrefabInstance:
     - target: {fileID: 7134730244717628868, guid: f10816dae33284bcda0a6036dd2937a4, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 8387334}
+      objectReference: {fileID: 1596104628}
     - target: {fileID: 9170839601521799316, guid: f10816dae33284bcda0a6036dd2937a4, type: 3}
       propertyPath: m_Size.x
       value: 0.8164382
@@ -21085,11 +21082,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!1 &1262017555 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8490206054229539911, guid: 9a56fa7b38f3c6044a8c8750f7665e70, type: 3}
-  m_PrefabInstance: {fileID: 2102109099}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1264487602
 GameObject:
   m_ObjectHideFlags: 0
@@ -22424,7 +22416,7 @@ MonoBehaviour:
   objectName: book_R
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -22442,7 +22434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1311159278}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -23326,7 +23318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d09ccaf7423d34ae4ac942c32fe8c6b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineBookPutOn
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   shelfParent: {fileID: 837396937}
   mat_trans: {fileID: 2100000, guid: 8bf1de10e11a14fd584972e713b85b9d, type: 2}
   mesh: {fileID: 1365861521}
@@ -23556,7 +23548,7 @@ MonoBehaviour:
   objectName: book_N
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -23574,7 +23566,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1373527268}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -24283,7 +24275,7 @@ MonoBehaviour:
   objectName: book_Z
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -24301,7 +24293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1389270003}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -24840,7 +24832,7 @@ MonoBehaviour:
   objectName: book_P
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -24858,7 +24850,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1441258048}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -25321,7 +25313,7 @@ MonoBehaviour:
   objectName: book_L
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -25339,7 +25331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1480748753}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -27205,6 +27197,130 @@ Transform:
   m_Children: []
   m_Father: {fileID: 20585186}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1596104627
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 412710786664382884, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: SceneUI
+      value: 
+      objectReference: {fileID: 1169160861}
+    - target: {fileID: 412710786664382884, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: inventoryUIManager
+      value: 
+      objectReference: {fileID: 323076718}
+    - target: {fileID: 1133352419626379065, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: hand
+      value: 
+      objectReference: {fileID: 1596104630}
+    - target: {fileID: 1133352419626379065, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: SceneUI
+      value: 
+      objectReference: {fileID: 1169160861}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0000001788139
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573735766143835360, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: inventoryData
+      value: 
+      objectReference: {fileID: 2048120665}
+    - target: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      propertyPath: handPerception
+      value: 
+      objectReference: {fileID: 2048120664}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+--- !u!1 &1596104628 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8573735766143835360, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 1596104627}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1596104629 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8747588067531962059, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 1596104627}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596104628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ee6140171ba3f7408ef7c047df25d35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Grab
+--- !u!1 &1596104630 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8252295781479430924, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 1596104627}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1596104631 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1133352419626379065, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 1596104627}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596104628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dba7f341dea80264083f4f9537049f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_FixCamera
+--- !u!114 &1596104632 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8226634641620429372, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 1596104627}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596104628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84393eca26bf9a345aa2ef3e33a5f712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1597173563
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27343,7 +27459,7 @@ PrefabInstance:
     - target: {fileID: 3440403077543250089, guid: 12aa8f87cb94940b2b5ba3f62d716ab4, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 8387334}
+      objectReference: {fileID: 1596104628}
     - target: {fileID: 4092547949634759886, guid: 12aa8f87cb94940b2b5ba3f62d716ab4, type: 3}
       propertyPath: m_Size.x
       value: 0.8200151
@@ -27371,7 +27487,7 @@ PrefabInstance:
     - target: {fileID: 6067013555510322048, guid: 12aa8f87cb94940b2b5ba3f62d716ab4, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 224039312}
+      objectReference: {fileID: 1596104632}
     - target: {fileID: 6067013555510322048, guid: 12aa8f87cb94940b2b5ba3f62d716ab4, type: 3}
       propertyPath: SceneUI
       value: 
@@ -28317,6 +28433,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5177946, y: 0.41381562, z: 0.016792692}
   m_Center: {x: 0.022193313, y: 0.1133133, z: 0.00050809234}
+--- !u!4 &1712342044 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8124890597826565058, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 1596104627}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1724837550 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8382580544748508253, guid: 55c713275d0946041a3a9a58f1e10de4, type: 3}
@@ -28715,7 +28836,7 @@ MonoBehaviour:
   objectName: book_T
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -28733,7 +28854,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1736868813}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -29369,7 +29490,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d09ccaf7423d34ae4ac942c32fe8c6b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineBookPutOn
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   shelfParent: {fileID: 837396937}
   mat_trans: {fileID: 2100000, guid: 8bf1de10e11a14fd584972e713b85b9d, type: 2}
   mesh: {fileID: 1775227529}
@@ -29979,7 +30100,7 @@ MonoBehaviour:
   objectName: book_G
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -29997,7 +30118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1836552947}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -30430,7 +30551,7 @@ MonoBehaviour:
   objectName: book_D
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -30448,7 +30569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 1885933393}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -31232,7 +31353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45454e756455e48919fc54a9ffb0d043, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineLabelInspect
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   audioPlayer: {fileID: 1985416738}
   wineClip: {fileID: 8300000, guid: d36b4dddb3a4f4dc7bc02786bfc2c11d, type: 3}
   wineLabel: {fileID: 1985416731}
@@ -32092,7 +32213,7 @@ PrefabInstance:
     - target: {fileID: 3958756211668588614, guid: 74f89c403ff714234886d7142953f369, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 224039312}
+      objectReference: {fileID: 1596104632}
     - target: {fileID: 3958756211668588614, guid: 74f89c403ff714234886d7142953f369, type: 3}
       propertyPath: SceneUI
       value: 
@@ -32108,7 +32229,7 @@ PrefabInstance:
     - target: {fileID: 4845776407832131579, guid: 74f89c403ff714234886d7142953f369, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 8387334}
+      objectReference: {fileID: 1596104628}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -32545,7 +32666,7 @@ MonoBehaviour:
   objectName: book_I
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -32563,7 +32684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 2036453610}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -33144,7 +33265,7 @@ PrefabInstance:
     - target: {fileID: 711485128260922222, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
       propertyPath: playerGrab
       value: 
-      objectReference: {fileID: 224039316}
+      objectReference: {fileID: 1596104629}
     - target: {fileID: 3530787692653000192, guid: 49bd5e2529063454ab69520d4d593a63, type: 3}
       propertyPath: inventoryData
       value: 
@@ -34057,6 +34178,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!1 &2102109102 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2098923261433134708, guid: 9a56fa7b38f3c6044a8c8750f7665e70, type: 3}
+  m_PrefabInstance: {fileID: 2102109099}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2102109103 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8845368006941846283, guid: 9a56fa7b38f3c6044a8c8750f7665e70, type: 3}
@@ -35066,7 +35192,7 @@ PrefabInstance:
     - target: {fileID: 5239618114141935234, guid: ed29470afa7abf3439a0be56f76c0e10, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 8387334}
+      objectReference: {fileID: 1596104628}
     - target: {fileID: 5239618114141935234, guid: ed29470afa7abf3439a0be56f76c0e10, type: 3}
       propertyPath: objectName
       value: key1
@@ -35309,7 +35435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2585fbedd98e2400da8c6f806fa7e493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HintPaperInspect
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   targetTime: 0.5
   inspectDistance: 0.6
   discBefore: "\uB0A1\uC740 \uC885\uC774\uAC00 \uBD99\uC5B4\uC788\uB2E4. \uBB54\uAC00
@@ -35661,7 +35787,7 @@ PrefabInstance:
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 224039312}
+      objectReference: {fileID: 1596104632}
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: hintText
       value: 
@@ -35693,11 +35819,11 @@ PrefabInstance:
     - target: {fileID: 5347934386039576611, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: examinePoint
       value: 
-      objectReference: {fileID: 1087343836}
+      objectReference: {fileID: 353966789}
     - target: {fileID: 5347934386039576611, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: walkieTalkieObject
       value: 
-      objectReference: {fileID: 1167475307}
+      objectReference: {fileID: 1712342044}
     - target: {fileID: 6061279514347985201, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: m_Name
       value: HintManager
@@ -35965,7 +36091,7 @@ MonoBehaviour:
   objectName: book_A
   InventoryObjectName: 
   description: 
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   audio_grap:
   - {fileID: 0}
   OnReleased:
@@ -35983,7 +36109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa37493abba694c79ae55f6fc178605b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookInspectGrab
-  player: {fileID: 224039312}
+  player: {fileID: 1596104632}
   grabbable: {fileID: 3524182413978194873}
   targetTime: 0.5
   inspectDistance: 0.6
@@ -36252,7 +36378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee5b538f7edab460dab184e60e988aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HintPaperNotesManager
-  player: {fileID: 8387334}
+  player: {fileID: 1596104628}
   validNoteNames:
   - clue_note_H
   - clue_note_B
@@ -36402,3 +36528,4 @@ SceneRoots:
   - {fileID: 2116315074}
   - {fileID: 1093469650}
   - {fileID: 1728939470}
+  - {fileID: 1596104627}
