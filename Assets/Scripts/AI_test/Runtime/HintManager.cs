@@ -22,9 +22,14 @@ public class HintManager : MonoBehaviour
     [Header("버튼")]
     [SerializeField] Button puzzleHintButton;   // exitButton, entityButton 제거
 
-    [Header("혜교님 인벤토리/그랩 시스템 참조 (읽기 전용, 코드 수정 안 함)")]
-    [SerializeField] PerceiveObjectHandPivot handPerception; // 지금 손에 실제로 들려있는 오브젝트 — 힌트 우선순위 1순위
-    [SerializeField] InventoryData inventoryData;             // 8칸 보관함 — 힌트 우선순위 2순위
+    // 손/인벤토리 정보는 씬마다 다른 그랩/인벤토리 시스템을 쓸 수 있으므로
+    // 구체 타입(PerceiveObjectHandPivot, InventoryData)을 직접 참조하지 않고
+    // IPossessionProvider 인터페이스로만 의존함.
+    // 각 씬의 XxxHintBridge가 Start()에서 자기 자신을 등록함 (예: DollHintBridge).
+    // 등록이 없으면(null이면) 그냥 기존 체크리스트 로직으로 안전하게 fallback됨.
+    // (해석: PuzzleDataProvider와 동일한 방식 — HintManager는 씬의 구체 구현을 모르고,
+    //  "질문에 답해줄 대상"이 있는지만 신경 씀)
+    public IPossessionProvider PossessionProvider { get; set; }
 
     [Header("현재 퍼즐 ID (씬마다 변경)")]
     public string currentPuzzleId = "wine_glass_room";
@@ -173,18 +178,9 @@ public class HintManager : MonoBehaviour
         }
 
         // 손/인벤토리 보유 오브젝트 이름 수집 — HintEngine의 override 우선순위 판단용.
-        // handPerception/inventoryData가 씬에 연결 안 돼있어도(null이어도) 그냥 기존 체크리스트로 fallback되니 안전함.
-        string handObjectName = handPerception?.CurrentObject?.objectName;
-
-        List<string> inventoryObjectNames = new List<string>();
-        if (inventoryData != null)
-        {
-            for (int i = 0; i < inventoryData.SlotCount; i++)
-            {
-                var obj = inventoryData.GetObjectAt(i);
-                if (obj != null) inventoryObjectNames.Add(obj.objectName);
-            }
-        }
+        // PossessionProvider가 등록 안 돼있어도(null이어도) 그냥 기존 체크리스트로 fallback되니 안전함.
+        string handObjectName = PossessionProvider?.GetHandObjectName();
+        List<string> inventoryObjectNames = PossessionProvider?.GetInventoryObjectNames() ?? new List<string>();
 
         Debug.Log($"[Possessed] Hand={handObjectName ?? "empty"} / Inventory=[{string.Join(", ", inventoryObjectNames)}]");
 
@@ -198,10 +194,14 @@ public class HintManager : MonoBehaviour
             return;
         }
 
-        if (llmClient == null)
+        // LLM을 쓸 수 없으면(로드 실패/워밍업 미완료/연결 누락) 고정 문구로 대체.
+        // 힌트 레벨 판단(HintEngine)은 위에서 이미 끝났으므로 표현만 hintByLevel 문구로 바뀜.
+        if (llmClient == null || !llmClient.IsAvailable)
         {
-            Debug.LogError("[HintManager] llmClient가 null입니다. LLMSingleton 연결을 확인하세요.");
-            SetHintText("치지직... 지금은 응답할 수 없어.");
+            string reason = llmClient == null ? "llmClient null" : "LLM 사용 불가";
+            ShowFallbackHint(result, reason);
+            currentPlayerState.hintCount++;
+            UpdateUsageUI();
             return;
         }
 
@@ -231,16 +231,39 @@ public class HintManager : MonoBehaviour
             },
             onComplete: () =>
             {
+                if (this == null) return; // 생성 도중 씬이 바뀌어 HintManager가 파괴된 경우
                 stopwatch.Stop();
                 isRequesting = false;
                 if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
-                Debug.Log($"[힌트 결과] 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {lastReply}");
+
+                // 생성 중 오류로 아무 글자도 못 받았으면 고정 문구로 대체
+                if (!firstChunkReceived || string.IsNullOrWhiteSpace(lastReply))
+                {
+                    ShowFallbackHint(result, $"LLM 응답 없음 ({stopwatch.ElapsedMilliseconds}ms)");
+                    return;
+                }
+
+                Debug.Log($"[힌트 결과] fallback=false / 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {lastReply}");
             },
             hintDirection: PromptBuilder.GetStepHint(result.nextStep, result.hintLevel)
         );
 
         currentPlayerState.hintCount++;
         UpdateUsageUI();
+    }
+
+    // LLM 없이 hintByLevel 고정 문구를 그대로 출력. (베타 로그 비교용으로 fallback=true 남김)
+    void ShowFallbackHint(HintResult result, string reason)
+    {
+        if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
+
+        string fixedHint = PromptBuilder.GetStepHint(result.nextStep, result.hintLevel);
+        string message = string.IsNullOrEmpty(fixedHint)
+            ? "치지직... 지금은 응답할 수 없어."
+            : "치지직... " + fixedHint;
+
+        Debug.LogWarning($"[힌트 결과] fallback=true / 사유: {reason} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 스텝: {result.nextStep?.id} / 응답: {message}");
+        SetHintText(message);
     }
 
     IEnumerator TypeText(string message)
