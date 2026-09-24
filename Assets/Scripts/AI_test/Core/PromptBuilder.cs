@@ -56,11 +56,6 @@ public static class PromptBuilder
 
     public static string SystemPrompt =>
         $"You are a hint guide AI in a horror escape room game. " +
-        $"You may occasionally reference what you have observed about the player " +
-        $"(their recent action, how close they are to something, or how long they've lingered somewhere) " +
-        $"to make the player feel watched, but only when that observation is given to you below — never invent one. " +
-        // 해석: 가끔 플레이어에 대해 관찰한 것(최근 행동, 뭔가와의 거리, 어딘가에 머문 시간)을 언급해서
-        // "지켜보고 있다"는 느낌을 줘도 되지만, 아래에 실제로 주어진 관찰 정보가 있을 때만 그렇게 하고 지어내지는 마.
         $"CRITICAL: You MUST respond in {Config.language} language ONLY. Do NOT use any other language whatsoever. " +
         $"Do NOT add a translation in parentheses after your sentence. " +
         $"Do NOT explain or repeat your answer in another language in any form. " +
@@ -95,10 +90,10 @@ public static class PromptBuilder
             : "the player has already moved past earlier parts of the puzzle.";
             // 해석: 플레이어는 이미 퍼즐의 앞부분을 지나쳤음.
 
-        // 관찰 정보(최근 행동/근접도/체류) — HintEngine이 값을 채워준 것만 프롬프트에 들어감.
-        // 정보가 없으면(null) 그냥 그 줄을 통째로 뺀다 — "정보 없음이면 언급 안 함" 원칙.
-        string observations = BuildObservationsBlock(result);
-
+        // 최근 행동/근접도("플레이어를 지켜보고 있다"는 느낌)는 여기서 LLM에 맡기지 않는다.
+        // HintEngine.BuildWatchingLine()이 이미 자연어 문장(result.watchingLine)으로 만들어뒀고,
+        // HintManager가 힌트 본문 앞에 코드로 직접 붙인다 — 로컬 소형 모델이 "선택 반영" 지시를
+        // 안정적으로 안 따르는 문제 때문에, 이 부분만큼은 판단(로직)이 표현까지 확정해서 내려보낸다.
         return
             $"[Scene context]\n{sceneCtx}\n\n" +
             $"[Player state]\n" +
@@ -106,37 +101,10 @@ public static class PromptBuilder
             $"Hint style: {typeEn}\n" +
             $"Player status: {statusGuide}\n" +
             $"Hint direction: {stepHint}\n\n" +
-            observations +
             $"IMPORTANT: Base your hint ONLY on the [Hint direction] above. " +
             $"Do NOT mention any other puzzle mechanic, object, or step that isn't part of it — " +
             $"{orderNote}\n\n" +
             $"{Config.language} hint ({Config.language} language only, no other language):";
-    }
-
-    /// <summary>
-    /// result.recentAction / proximityNote / zoneNote 중 채워진 것만 모아서 [Observations] 블록을 만든다.
-    /// 셋 다 없으면 빈 문자열을 반환해서 프롬프트에 아무 흔적도 남기지 않는다.
-    /// </summary>
-    static string BuildObservationsBlock(HintResult result)
-    {
-        var lines = new List<string>();
-
-        if (!string.IsNullOrEmpty(result.recentAction))
-            lines.Add($"- Player's most recent action: {result.recentAction}");
-
-        if (!string.IsNullOrEmpty(result.proximityNote))
-            lines.Add($"- Player's proximity to the relevant object: {result.proximityNote}");
-
-        if (!string.IsNullOrEmpty(result.zoneNote))
-            lines.Add($"- Player's current location: {result.zoneNote}");
-
-        if (lines.Count == 0) return "";
-
-        return
-            $"[Observations — things you have noticed about the player]\n" +
-            string.Join("\n", lines) +
-            $"\nYou may weave ONE of these in naturally if it fits, to make the hint feel observant. Do not list them all.\n\n";
-            // 해석: 자연스럽게 어울리면 이 중 하나 정도만 녹여서 "지켜보고 있다"는 느낌을 줘도 됨. 전부 나열하지는 마.
     }
 
     /// <summary>

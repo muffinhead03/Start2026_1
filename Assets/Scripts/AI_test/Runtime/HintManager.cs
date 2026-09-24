@@ -65,6 +65,12 @@ public class HintManager : MonoBehaviour
     bool isRequesting = false;
     bool firstChunkReceived = false;
 
+    // 관찰 문장("치지직... ~했지") 타이핑 연출 + LLM 요청 병렬 처리용 상태.
+    // introTypingActive: 관찰 문장이 아직 타이핑되는 중인지. true인 동안은 onChunk가 화면을 직접 안 건드림.
+    // introBufferedPartial: 타이핑 중에 도착한 최신 LLM 청크를 잠깐 보관 — 타이핑 끝나는 순간 한 번에 반영.
+    bool introTypingActive = false;
+    string introBufferedPartial = null;
+
     Coroutine typingCoroutine;
     Coroutine loadingCoroutine;
 
@@ -196,7 +202,7 @@ public class HintManager : MonoBehaviour
             LocationProvider        // 신규: 위치/구역 정보 제공자 — null이면 proximityNote/zoneNote만 안 채워짐
         );
 
-        Debug.Log($"[힌트 판단] {result.debugReason} / override={result.isOverride} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()}");
+        Debug.Log($"[힌트 판단] {result.debugReason} / override={result.isOverride} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 관찰: {result.watchingLine ?? "(없음)"}");
 
         if (result.nextStep == null)
         {
@@ -204,12 +210,80 @@ public class HintManager : MonoBehaviour
             return;
         }
 
+        // "플레이어를 지켜보고 있다"는 느낌을 주는 관찰 문장 — HintEngine이 이미 완성된 한국어 문장으로 만들어둔 것을
+        // 힌트 본문 앞에 붙인다. LLM 사용 여부와 상관없이(fallback이든 스트리밍이든) 100% 붙어서 나가도록
+        // 여기서 코드로 직접 처리함 (로컬 소형 모델이 프롬프트만으로는 이 부분을 안정적으로 반영 못 해서).
+        //
+        // 병렬 처리: 관찰 문장이 타이핑되는 동안 LLM 요청은 이미 먼저 쏴놓는다(순차 X).
+        // 타이핑이 끝나는 시점엔 LLM이 이미 일부 응답을 만들어놨을 수도 있어서, 그 뒤에 뜨는
+        // "교신 중..." 로딩 시간이 줄어들거나 아예 없어짐 — 체감 대기시간을 실제로 줄이기 위함.
+        // 타이핑이 끝나기 전에 도착한 청크는 화면에 바로 안 띄우고 introBufferedPartial에 잠깐 보관했다가,
+        // 타이핑이 끝나는 순간 한 번에 이어붙여서 보여준다.
+        bool hasWatchingLine = !string.IsNullOrEmpty(result.watchingLine);
+        string introText = hasWatchingLine ? "치지직... " + result.watchingLine : null;
+        string displayPrefix = hasWatchingLine ? introText + " " : "";
+
+        introTypingActive = hasWatchingLine;
+        introBufferedPartial = null;
+
+        if (hasWatchingLine)
+        {
+            if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+            typingCoroutine = StartCoroutine(PlayIntroThenReveal(introText, displayPrefix));
+        }
+
+        ContinueHintFlow(result, displayPrefix, hasWatchingLine);
+    }
+
+    // 관찰 문장(치지직... 포함)을 타이핑 효과로 보여준다. 그동안 LLM 요청은 ContinueHintFlow에서
+    // 이미 병렬로 진행 중 — 타이핑이 끝나면 그 시점까지 도착한 내용(introBufferedPartial)이 있으면
+    // 바로 이어붙여서 보여주고, 아직 아무 것도 안 왔으면 그제서야 "교신 중..." 로딩을 띄운다.
+    IEnumerator PlayIntroThenReveal(string introText, string displayPrefix)
+    {
+        yield return StartCoroutine(TypeText(introText));
+        introTypingActive = false;
+
+        if (introBufferedPartial != null)
+        {
+            hintText.text = displayPrefix + introBufferedPartial;
+        }
+        else if (isRequesting && !firstChunkReceived)
+        {
+            if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
+            loadingCoroutine = StartCoroutine(LoadingDots());
+        }
+    }
+
+    // 관찰 문장 타이핑이 끝날 때까지 기다렸다가(이미 끝났으면 즉시) fallback 문구를 이어붙인다.
+    // 인트로를 다시 타이핑하지 않고 그 뒤에 바로 덧붙이기만 함 — 같은 문장을 두 번 타이핑하는 걸 방지.
+    IEnumerator AppendFallbackAfterIntro(HintResult result, string displayPrefix, string reason)
+    {
+        while (introTypingActive)
+            yield return null;
+
+        string fixedHint = PromptBuilder.GetStepHint(result.nextStep, result.hintLevel);
+        string appendText = string.IsNullOrEmpty(fixedHint) ? "지금은 응답할 수 없어." : fixedHint;
+
+        hintText.text = displayPrefix + appendText;
+
+        Debug.LogWarning($"[힌트 결과] fallback=true / 사유: {reason} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 스텝: {result.nextStep?.id} / 응답: {hintText.text}");
+    }
+
+    // 관찰 문장 타이핑과 별개로(병렬로) 실제 힌트를 가져오는 부분.
+    // displayPrefix는 힌트 텍스트를 다시 세팅할 때마다(스트리밍 중간 갱신 포함) 맨 앞에 유지하기 위해 넘김.
+    void ContinueHintFlow(HintResult result, string displayPrefix, bool hasWatchingLine)
+    {
         // LLM을 쓸 수 없으면(로드 실패/워밍업 미완료/연결 누락) 고정 문구로 대체.
         // 힌트 레벨 판단(HintEngine)은 위에서 이미 끝났으므로 표현만 hintByLevel 문구로 바뀜.
         if (llmClient == null || !llmClient.IsAvailable)
         {
             string reason = llmClient == null ? "llmClient null" : "LLM 사용 불가";
-            ShowFallbackHint(result, reason);
+
+            if (hasWatchingLine)
+                StartCoroutine(AppendFallbackAfterIntro(result, displayPrefix, reason));
+            else
+                ShowFallbackHint(result, reason);
+
             currentPlayerState.hintCount++;
             UpdateUsageUI();
             return;
@@ -223,8 +297,10 @@ public class HintManager : MonoBehaviour
         string lastReply = "";
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
-        loadingCoroutine = StartCoroutine(LoadingDots());
+        // 인트로 타이핑이 없는 경우에만 바로 로딩 표시. 인트로가 있으면 PlayIntroThenReveal이
+        // 타이핑이 끝난 뒤 필요할 때만(아직 청크가 안 왔을 때만) 로딩을 띄운다.
+        if (!hasWatchingLine)
+            loadingCoroutine = StartCoroutine(LoadingDots());
 
         llmClient.RequestHintStream(
             systemPrompt,
@@ -236,7 +312,17 @@ public class HintManager : MonoBehaviour
                     firstChunkReceived = true;
                     if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
                 }
-                hintText.text = partial;
+
+                if (introTypingActive)
+                {
+                    // 인트로가 아직 타이핑 중이면 화면은 안 건드리고 최신 청크만 보관해둔다.
+                    introBufferedPartial = partial;
+                }
+                else
+                {
+                    hintText.text = displayPrefix + partial;
+                }
+
                 lastReply = partial;
             },
             onComplete: () =>
@@ -249,11 +335,14 @@ public class HintManager : MonoBehaviour
                 // 생성 중 오류로 아무 글자도 못 받았으면 고정 문구로 대체
                 if (!firstChunkReceived || string.IsNullOrWhiteSpace(lastReply))
                 {
-                    ShowFallbackHint(result, $"LLM 응답 없음 ({stopwatch.ElapsedMilliseconds}ms)");
+                    if (hasWatchingLine)
+                        StartCoroutine(AppendFallbackAfterIntro(result, displayPrefix, $"LLM 응답 없음 ({stopwatch.ElapsedMilliseconds}ms)"));
+                    else
+                        ShowFallbackHint(result, $"LLM 응답 없음 ({stopwatch.ElapsedMilliseconds}ms)");
                     return;
                 }
 
-                Debug.Log($"[힌트 결과] fallback=false / 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {lastReply}");
+                Debug.Log($"[힌트 결과] fallback=false / 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {displayPrefix}{lastReply}");
             },
             hintDirection: PromptBuilder.GetStepHint(result.nextStep, result.hintLevel)
         );
@@ -268,9 +357,13 @@ public class HintManager : MonoBehaviour
         if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
 
         string fixedHint = PromptBuilder.GetStepHint(result.nextStep, result.hintLevel);
+
+        // 관찰 문장(result.watchingLine)을 고정 힌트 문구 앞에 붙인다 — LLM 사용 여부와 무관하게 항상 노출.
+        string watchingPart = string.IsNullOrEmpty(result.watchingLine) ? "" : result.watchingLine + " ";
+
         string message = string.IsNullOrEmpty(fixedHint)
             ? "치지직... 지금은 응답할 수 없어."
-            : "치지직... " + fixedHint;
+            : "치지직... " + watchingPart + fixedHint;
 
         Debug.LogWarning($"[힌트 결과] fallback=true / 사유: {reason} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 스텝: {result.nextStep?.id} / 응답: {message}");
         SetHintText(message);

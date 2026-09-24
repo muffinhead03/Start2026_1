@@ -35,6 +35,12 @@ public class HintResult
     public string proximityNote; // "player-very-close" / "player-nearby" / "player-far" 중 하나. 좌표 자체는 절대 안 담음
     public string zoneNote;      // 예: "GateArea (오래 머무는 중)" — 구역 이름 + 체류시간 판단 결과
     public string recentAction;  // state.lastActions의 가장 최근 항목 하나. 없으면 null
+
+    // recentAction/proximityNote를 자연스러운 한국어 한 문장으로 미리 조립해둔 것.
+    // LLM한테 "참고해서 녹여봐" 맡기지 않고 코드에서 직접 만들어서 100% 확실하게 노출시키기 위함
+    // (로컬 소형 모델은 "선택적으로 반영" 지시를 잘 안 따름 — 그래서 로직 쪽에서 보장함).
+    // HintManager가 힌트 본문 앞에 그대로 붙여서 보여줌. 둘 다 없으면 null.
+    public string watchingLine;
 }
 
 /// <summary>
@@ -107,6 +113,8 @@ public static class HintEngine
             ? state.lastActions[state.lastActions.Count - 1]
             : null;
 
+        string watchingLine = BuildWatchingLine(recentAction, proximityNote);
+
         return new HintResult
         {
             hintLevel     = ScoreToLevel(score),
@@ -118,7 +126,8 @@ public static class HintEngine
             isOverride    = isOverride,
             proximityNote = proximityNote,
             zoneNote      = zoneNote,
-            recentAction  = recentAction
+            recentAction  = recentAction,
+            watchingLine  = watchingLine
         };
     }
 
@@ -277,5 +286,66 @@ public static class HintEngine
         return staySeconds >= ZoneLongStaySeconds
             ? $"{zoneName} (오래 머무는 중)"
             : zoneName;
+    }
+
+    // recentAction의 접두사(action id 규칙)별 자연어 라벨. 씬마다 AddLastAction()에 넘기는 문자열
+    // 규칙이 다를 수 있으니, 새 씬 추가 시 여기에 패턴만 추가하면 됨. 매칭 안 되면 GenericActionLabels로 폴백.
+    static readonly (string prefix, string[] labels)[] ActionLabelPatterns =
+    {
+        ("inspect_wine_stain_",      new[] { "바닥 얼룩을 들여다보고 있었지", "바닥 얼룩 색깔을 살펴보고 있었네" }),
+        ("inspect_alphabet_marker_", new[] { "바닥의 알파벳 표시를 확인하고 있었지", "얼룩 사이 알파벳을 들여다보고 있었네" }),
+        ("inspect_wine_label_",      new[] { "와인 라벨을 확인하고 있었지", "병 라벨을 살펴보고 있었네" }),
+    };
+
+    static readonly string[] GenericActionLabels =
+    {
+        "방금 뭔가를 조사하고 있었지",
+        "조금 전에 뭔가 살펴보고 있었네",
+    };
+
+    static readonly Dictionary<string, string[]> ProximityLabels = new Dictionary<string, string[]>
+    {
+        { "player-very-close", new[] { "바로 근처에 있네", "가까이 와 있구나" } },
+        { "player-nearby",     new[] { "근처에 있는 것 같은데", "가까운 곳에 있나 보네" } },
+        { "player-far",        new[] { "좀 멀리 떨어진 곳에 있는 것 같은데", "다른 데 가 있나 보네" } },
+    };
+
+    static string PickRandom(string[] options)
+        => options[Random.Range(0, options.Length)];
+
+    static string LabelForAction(string actionId)
+    {
+        foreach (var (prefix, labels) in ActionLabelPatterns)
+            if (actionId.StartsWith(prefix))
+                return PickRandom(labels);
+
+        return PickRandom(GenericActionLabels); // 매칭 안 되는 action id도 그냥 생략하지 않고 일반 문구로 커버
+    }
+
+    /// <summary>
+    /// recentAction/proximityNote를 조합해서 자연스러운 한국어 "관찰 문장" 한 줄을 만든다.
+    /// 프롬프트로 LLM에 맡기지 않고 여기서 직접 조립하는 이유: 로컬 소형 모델은 "선택 반영" 지시를
+    /// 안정적으로 안 따라서, "플레이어를 지켜보고 있다"는 느낌이 매번 확실히 나오게 하려면 로직에서 보장해야 함.
+    /// 둘 다 없으면 null (아무것도 안 붙임).
+    /// </summary>
+    static string BuildWatchingLine(string recentAction, string proximityNote)
+    {
+        string actionPart = !string.IsNullOrEmpty(recentAction)
+            ? LabelForAction(recentAction)
+            : null;
+
+        string proximityPart = (!string.IsNullOrEmpty(proximityNote) &&
+                                 ProximityLabels.TryGetValue(proximityNote, out var labels))
+            ? PickRandom(labels)
+            : null;
+
+        if (actionPart != null && proximityPart != null)
+            return $"{actionPart}, 지금은 {proximityPart}.";
+        if (actionPart != null)
+            return $"{actionPart}.";
+        if (proximityPart != null)
+            return $"{proximityPart}.";
+
+        return null;
     }
 }
