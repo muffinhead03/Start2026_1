@@ -41,6 +41,12 @@ public class HintResult
     // (로컬 소형 모델은 "선택적으로 반영" 지시를 잘 안 따름 — 그래서 로직 쪽에서 보장함).
     // HintManager가 힌트 본문 앞에 그대로 붙여서 보여줌. 둘 다 없으면 null.
     public string watchingLine;
+
+    // 현재 스텝의 진행 상황을 로직이 판단한 문장 (예: "곰 인형이 이제 거의 버티지 못하는 것 같아요. 조금만 더 던져보세요.").
+    // IStepProgressProvider가 등록된 씬에서, 그 스텝에 진행도 개념이 있을 때만 채워짐. 없으면 null.
+    // 원본 수치(던진 횟수 등)는 담지 않음 — 판단된 결과만 넘겨서 LLM이 정답 숫자를 말할 여지를 없앰.
+    // 값이 있으면 PromptBuilder.GetEffectiveHint()가 hintByLevel 문구 대신 이 문장을 힌트 방향으로 씀.
+    public string progressNote;
 }
 
 /// <summary>
@@ -86,10 +92,12 @@ public static class HintEngine
     /// locationProvider가 주어지면, nextStep이 정해진 뒤에 플레이어-오브젝트 거리 / 현재 구역 체류시간을
     /// 판단해서 proximityNote/zoneNote로 남긴다 (좌표 자체는 절대 HintResult에 담지 않음 — "가깝다/멀다"류의
     /// 판단된 결과만 전달해서 PromptBuilder/LLM이 자연스럽게 문장으로 풀게 한다).
+    /// progressProvider가 주어지면, nextStep의 세부 진행 상황(예: 곰 인형을 몇 번 던졌는지)을 판단한 문장을 progressNote로 남긴다.
     /// </summary>
     public static HintResult Calculate(PlayerState state, PuzzleConfig config,
         string handObjectName = null, List<string> inventoryObjectNames = null,
-        ILocationAwareProvider locationProvider = null)
+        ILocationAwareProvider locationProvider = null,
+        IStepProgressProvider progressProvider = null)
     {
         float score = 0f;
         score += CalcHintHistoryScore(state)  * 0.35f;
@@ -115,6 +123,10 @@ public static class HintEngine
 
         string watchingLine = BuildWatchingLine(recentAction, proximityNote);
 
+        string progressNote = (progressProvider != null && nextStep != null)
+            ? progressProvider.GetProgressNote(nextStep)
+            : null;
+
         return new HintResult
         {
             hintLevel     = ScoreToLevel(score),
@@ -127,7 +139,8 @@ public static class HintEngine
             proximityNote = proximityNote,
             zoneNote      = zoneNote,
             recentAction  = recentAction,
-            watchingLine  = watchingLine
+            watchingLine  = watchingLine,
+            progressNote  = string.IsNullOrEmpty(progressNote) ? null : progressNote
         };
     }
 
@@ -288,14 +301,10 @@ public static class HintEngine
             : zoneName;
     }
 
-    // recentAction의 접두사(action id 규칙)별 자연어 라벨. 씬마다 AddLastAction()에 넘기는 문자열
-    // 규칙이 다를 수 있으니, 새 씬 추가 시 여기에 패턴만 추가하면 됨. 매칭 안 되면 GenericActionLabels로 폴백.
-    static readonly (string prefix, string[] labels)[] ActionLabelPatterns =
-    {
-        ("inspect_wine_stain_",      new[] { "바닥 얼룩을 들여다보고 있었지", "바닥 얼룩 색깔을 살펴보고 있었네" }),
-        ("inspect_alphabet_marker_", new[] { "바닥의 알파벳 표시를 확인하고 있었지", "얼룩 사이 알파벳을 들여다보고 있었네" }),
-        ("inspect_wine_label_",      new[] { "와인 라벨을 확인하고 있었지", "병 라벨을 살펴보고 있었네" }),
-    };
+    // recentAction(action id)을 자연어 라벨로 바꿔주는 제공자. 씬별 문구는 Core가 모르도록 외부(Runtime)에서 주입함
+    // (PromptBuilder.SceneContextProvider와 같은 패턴 — HintManager.Start()에서 세팅).
+    // null이거나 매칭되는 라벨이 없으면 GenericActionLabels로 폴백.
+    public static IActionLabelProvider ActionLabelProvider { get; set; }
 
     static readonly string[] GenericActionLabels =
     {
@@ -315,9 +324,9 @@ public static class HintEngine
 
     static string LabelForAction(string actionId)
     {
-        foreach (var (prefix, labels) in ActionLabelPatterns)
-            if (actionId.StartsWith(prefix))
-                return PickRandom(labels);
+        string[] labels = ActionLabelProvider?.GetLabels(actionId);
+        if (labels != null && labels.Length > 0)
+            return PickRandom(labels);
 
         return PickRandom(GenericActionLabels); // 매칭 안 되는 action id도 그냥 생략하지 않고 일반 문구로 커버
     }
