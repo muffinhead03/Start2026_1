@@ -90,6 +90,10 @@ public static class PromptBuilder
             : "the player has already moved past earlier parts of the puzzle.";
             // 해석: 플레이어는 이미 퍼즐의 앞부분을 지나쳤음.
 
+        // 최근 행동/근접도("플레이어를 지켜보고 있다"는 느낌)는 여기서 LLM에 맡기지 않는다.
+        // HintEngine.BuildWatchingLine()이 이미 자연어 문장(result.watchingLine)으로 만들어뒀고,
+        // HintManager가 힌트 본문 앞에 코드로 직접 붙인다 — 로컬 소형 모델이 "선택 반영" 지시를
+        // 안정적으로 안 따르는 문제 때문에, 이 부분만큼은 판단(로직)이 표현까지 확정해서 내려보낸다.
         return
             $"[Scene context]\n{sceneCtx}\n\n" +
             $"[Player state]\n" +

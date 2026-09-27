@@ -21,6 +21,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 1, goal = "마트료시카 순서로 자물쇠 번호를 알아내 목마 구역을 연다",
+                    // relatedObjectName 없음 — 손에 드는 아이템이 아니라 관찰형 퍼즐
                     hintByLevel = new[]
                     {
                         "방 안의 인형들을 잘 살펴보는 게 좋을 것 같아요.",
@@ -33,6 +34,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 2, goal = "목마 구역에서 부러진 다리를 찾아 교체한다",
+                    relatedObjectName = "DollLeg", // Object_Grabbable.objectName Inspector 값으로 확인 완료
                     hintByLevel = new[]
                     {
                         "목마 구역을 다시 살펴보는 게 좋을 것 같아요.",
@@ -45,6 +47,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 3, goal = "말하는 곰 인형을 반복해서 던져 동전을 얻는다",
+                    relatedObjectName = "TeddyBear", // SpeakingBearDoll 프리팹의 objectName
                     hintByLevel = new[]
                     {
                         "다른 인형들도 뭔가 반응이 있을 것 같아요.",
@@ -57,6 +60,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 4, goal = "오락기에 동전을 넣고 게임에서 승리해 팔을 얻는다",
+                    relatedObjectName = "동전", // Object_Grabbable.objectName Inspector 값으로 확인 완료 (GameObject 이름은 Bear_Coin이지만 필드값은 "동전")
                     hintByLevel = new[]
                     {
                         "방금 얻은 걸 쓸 곳이 있을 것 같아요.",
@@ -69,6 +73,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 5, goal = "획득한 팔을 인형에 교체한다",
+                    relatedObjectName = "DollArm", // Object_Grabbable.objectName Inspector 값으로 확인 완료
                     hintByLevel = new[]
                     {
                         "지금까지 모은 걸 쓸 차례인 것 같아요.",
@@ -81,6 +86,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 6, goal = "버튼으로 선로를 맞춰 검은 기차를 밀어내고 태엽을 얻는다",
+                    // relatedObjectName 없음 — 손에 드는 아이템이 아니라 선로/기차 조작형 퍼즐
                     hintByLevel = new[]
                     {
                         "기차 트랙 쪽에 뭔가 있을 것 같아요.",
@@ -93,6 +99,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 7, goal = "얻은 태엽을 인형에 장착한다",
+                    relatedObjectName = "Spring", // Object_Grabbable.objectName Inspector 값으로 확인 완료
                     hintByLevel = new[]
                     {
                         "인형에게 다시 가볼 때가 된 것 같아요.",
@@ -105,6 +112,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 8, goal = "완성된 인형의 태엽을 돌려 수리를 완료하고 열쇠를 얻어 탈출한다",
+                    // relatedObjectName 없음 — 다리/팔/태엽이 전부 장착된 인형 본체와 상호작용
                     hintByLevel = new[]
                     {
                         "인형이 이제 다 준비된 것 같아요.",
