@@ -58,6 +58,14 @@ public class HintManager : MonoBehaviour
     [SerializeField] float typingSpeed = 0.03f;
     [SerializeField] float loadingDotInterval = 0.4f;
 
+    [Header("베타 테스트")]
+    [Tooltip("체크하면 폴백(고정 문구) 힌트일 때 [폴백] 태그 + FallBack 배지 표시. 출시 빌드 전엔 꼭 해제!")]
+    [SerializeField] bool showFallbackTag = true;
+    [Tooltip("hintPanel 자식으로 둔 'FallBack (에러 아닙니다)' 배지 오브젝트 (비워두면 배지 없이 태그만)")]
+    [SerializeField] GameObject fallbackBadge;
+    const string FallbackTag = "[폴백] ";
+    string FallbackPrefix => showFallbackTag ? FallbackTag : "";
+
     [Header("실패 쿨다운")]
     [SerializeField] float failCooldown = 2f;
     float lastFailTime = -999f;
@@ -113,6 +121,7 @@ public class HintManager : MonoBehaviour
         };
 
         hintPanel.SetActive(false);
+        SetFallbackBadge(false);
 
         HintEngine.Tuning = hintTuning;
         // 관찰 문장("~하고 있었지")의 씬별 문구 — Core(HintEngine)가 게임 내용을 모르도록 여기서 주입
@@ -153,6 +162,9 @@ public class HintManager : MonoBehaviour
 
         if (isOpen)
         {
+            // LLM을 못 쓰는 상태(폴백 모드)면 패널을 열 때마다 배지를 계속 보여줌
+            RefreshFallbackBadge();
+
             // 힌트가 아직 생성/타이핑 중이면(패널을 닫았다 다시 연 경우) 인사말로 덮어쓰지 않고 이어서 보여줌
             if (!isRequesting && revealCoroutine == null)
                 SetHintText("치지직... 도움이 필요해?");
@@ -184,6 +196,8 @@ public class HintManager : MonoBehaviour
             Debug.Log("[HintManager] 이미 힌트 요청 처리 중");
             return;
         }
+
+        RefreshFallbackBadge(); // LLM 상태 기준으로 다시 맞춤 (폴백 힌트가 나가면 아래에서 다시 켜짐)
 
         Debug.Log("[foundClues] " + string.Join(", ", currentPlayerState.foundClues));
         Debug.Log("[completedSteps] " + string.Join(", ", currentPlayerState.completedSteps));
@@ -333,7 +347,8 @@ public class HintManager : MonoBehaviour
         string fixedHint = PromptBuilder.GetEffectiveHint(result); // hintByLevel 문구 (스텝 진행 상황이 있으면 그 문장)
         string appendText = string.IsNullOrEmpty(fixedHint) ? "지금은 응답할 수 없어." : fixedHint;
 
-        hintText.text = displayPrefix + appendText;
+        hintText.text = FallbackPrefix + displayPrefix + appendText;
+        SetFallbackBadge(true);
 
         Debug.LogWarning($"[힌트 결과] fallback=true / 사유: {reason} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 스텝: {result.nextStep?.id} / 응답: {hintText.text}");
     }
@@ -431,12 +446,30 @@ public class HintManager : MonoBehaviour
         // 관찰 문장(result.watchingLine)을 고정 힌트 문구 앞에 붙인다 — LLM 사용 여부와 무관하게 항상 노출.
         string watchingPart = string.IsNullOrEmpty(result.watchingLine) ? "" : result.watchingLine + " ";
 
-        string message = string.IsNullOrEmpty(fixedHint)
+        string message = FallbackPrefix + (string.IsNullOrEmpty(fixedHint)
             ? "치지직... 지금은 응답할 수 없어."
-            : "치지직... " + watchingPart + fixedHint;
+            : "치지직... " + watchingPart + fixedHint);
 
         Debug.LogWarning($"[힌트 결과] fallback=true / 사유: {reason} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 스텝: {result.nextStep?.id} / 응답: {message}");
+        SetFallbackBadge(true);
         SetHintText(message);
+    }
+
+    // LLM을 쓸 수 없는 상태(로드 실패/워밍업 미완료/연결 누락)인지
+    bool IsLLMDown => llmClient == null || !llmClient.IsAvailable;
+
+    // 폴백 모드면 배지 ON, 아니면 OFF.
+    // 워밍업 타임아웃으로 넘어왔다가 나중에 LLM이 준비되면 그때부터 자동으로 꺼짐.
+    void RefreshFallbackBadge()
+    {
+        SetFallbackBadge(IsLLMDown);
+    }
+
+    // 베타 테스트용: "FallBack (에러 아닙니다)" 배지를 켜고 끈다.
+    void SetFallbackBadge(bool on)
+    {
+        if (fallbackBadge != null)
+            fallbackBadge.SetActive(on && showFallbackTag);
     }
 
     IEnumerator TypeText(string message)
