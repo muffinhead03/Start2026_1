@@ -88,6 +88,9 @@ public class HintManager : MonoBehaviour
     bool llmStreamDone = false;
     bool llmFlowActive = false;
 
+    [Header("Number Lock")]
+    [SerializeField] GoToNumberLockMode numberLockMode;
+
     Coroutine typingCoroutine;
     Coroutine loadingCoroutine;
     Coroutine revealCoroutine;
@@ -157,6 +160,13 @@ public class HintManager : MonoBehaviour
 
     void TogglePanel()
     {
+    // NumberLock 조작 중에는 힌트 패널 열기 금지
+    if (numberLockMode != null && numberLockMode.IsActive())
+    {
+        Debug.Log("[HintManager] NumberLock 조작 중이라 힌트 패널을 열 수 없음");
+        return;
+    }
+
         isOpen = !isOpen;
         hintPanel.SetActive(isOpen);
 
