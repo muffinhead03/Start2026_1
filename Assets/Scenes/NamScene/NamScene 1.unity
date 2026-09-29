@@ -27667,6 +27667,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 153115c9bf1ea4f15991eb3fd27fb28c, type: 3}
   m_PrefabInstance: {fileID: 1818224348}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1627167511 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7727151380464178553, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+  m_PrefabInstance: {fileID: 2614731262131411427}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1640429370
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35872,34 +35877,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1300778458280845108, guid: 526a940d1a22940d99731f8a511201de, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1579525285310847247, guid: 526a940d1a22940d99731f8a511201de, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1579525285310847247, guid: 526a940d1a22940d99731f8a511201de, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1579525285310847247, guid: 526a940d1a22940d99731f8a511201de, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1579525285310847247, guid: 526a940d1a22940d99731f8a511201de, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1579525285310847247, guid: 526a940d1a22940d99731f8a511201de, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1579525285310847247, guid: 526a940d1a22940d99731f8a511201de, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6729653282953345471, guid: 526a940d1a22940d99731f8a511201de, type: 3}
       propertyPath: m_Name
       value: HintUiCanvas
@@ -35966,25 +35943,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 555188446}
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
-      propertyPath: maxHints
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: hintPanel
       value: 
       objectReference: {fileID: 1318228001}
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
-      propertyPath: llmClient
+      propertyPath: fallbackBadge
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1627167511}
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: usageCountText
       value: 
       objectReference: {fileID: 608053286}
-    - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
-      propertyPath: currentPuzzleId
-      value: wine_glass_room
-      objectReference: {fileID: 0}
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: puzzleHintButton
       value: 
@@ -36001,16 +35970,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: HintManager
       objectReference: {fileID: 0}
-    - target: {fileID: 7073582449341293015, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7073582449341293015, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
-      propertyPath: llmCharacter
-      value: 
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7073582449341293015, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

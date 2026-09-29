@@ -15590,6 +15590,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7727151380464178553, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 1300778458280845108, guid: 526a940d1a22940d99731f8a511201de, type: 3}
@@ -15632,6 +15636,11 @@ MonoBehaviour:
 --- !u!1 &610415871 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3760827721061636039, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+  m_PrefabInstance: {fileID: 610415867}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &610415872 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7727151380464178553, guid: 526a940d1a22940d99731f8a511201de, type: 3}
   m_PrefabInstance: {fileID: 610415867}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &614090274
@@ -16699,6 +16708,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrganHintBridge
   hintManager: {fileID: 763785486}
   organSceneManager: {fileID: 654760818}
+  handPerception: {fileID: 0}
+  inventoryData: {fileID: 0}
+  player: {fileID: 2099574905}
+  vent: {fileID: 1228620543}
 --- !u!1001 &657163486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21694,6 +21707,10 @@ PrefabInstance:
       propertyPath: hintPanel
       value: 
       objectReference: {fileID: 610415871}
+    - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
+      propertyPath: fallbackBadge
+      value: 
+      objectReference: {fileID: 610415872}
     - target: {fileID: 4259074310291933702, guid: 084b84339060c4125a3e249b41f935ef, type: 3}
       propertyPath: usageCountText
       value: 
@@ -50093,6 +50110,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ee6140171ba3f7408ef7c047df25d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_Grab
+--- !u!4 &2099574905 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4215817960233805769, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+  m_PrefabInstance: {fileID: 743923335}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2101381304
 PrefabInstance:
   m_ObjectHideFlags: 0
