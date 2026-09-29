@@ -15,6 +15,7 @@ public static class WineGlassRoomData
                 {
                     id = 1,
                     goal = "바닥의 와인 얼룩과 알파벳을 조사한다",
+                    relatedObjectName = "WineStains", // WineLocationProvider에 등록된 "1.WineStains" 영역과 매칭
                     hintByLevel = new[]
                     {
                         "발밑을 한번 살펴보는 게 어떨까요.",
@@ -28,6 +29,7 @@ public static class WineGlassRoomData
                 {
                     id = 2,
                     goal = "같은 색 얼룩끼리 짝지어 알파벳 4글자를 알아낸다",
+                    relatedObjectName = "StainCrossPoints", // "2.StainCrossPoints" 영역과 매칭
                     hintByLevel = new[]
                     {
                         "얼룩들 사이에 뭔가 규칙이 있을지도 몰라요.",
@@ -41,6 +43,7 @@ public static class WineGlassRoomData
                 {
                     id = 3,
                     goal = "와인렉 라벨의 숫자를 확인한다",
+                    relatedObjectName = "WineRackLabels", // "3.WineRackLabels" 영역과 매칭
                     hintByLevel = new[]
                     {
                         "이 방에 있는 다른 물건도 뭔가 관련 있어 보여요.",
@@ -54,6 +57,8 @@ public static class WineGlassRoomData
                 {
                     id = 4,
                     goal = "얼룩 색과 같은 색 와인의 숫자만큼 알파벳을 밀어 진짜 알파벳을 알아낸다",
+                    // relatedObjectName 없음: 얼룩(1)과 라벨(3) 단서를 머릿속에서 조합하는 계산 단계라
+                    // 특정 물리적 위치가 없음 — proximityNote는 자동으로 안 붙고 나머지 힌트는 정상 동작함
                     hintByLevel = new[]
                     {
                         "두 가지 단서가 서로 연결될지도 몰라요.",
@@ -67,6 +72,7 @@ public static class WineGlassRoomData
                 {
                     id = 5,
                     goal = "책장에서 알아낸 알파벳에 해당하는 책 4권을 찾는다",
+                    relatedObjectName = "PuzzleBookShelf", // "5_6.PuzzleBookShelf" 영역과 매칭
                     hintByLevel = new[]
                     {
                         "이 방을 벗어나 다른 공간도 살펴볼 때가 된 것 같아요.",
@@ -80,6 +86,7 @@ public static class WineGlassRoomData
                 {
                     id = 6,
                     goal = "책을 와인렉의 와인 배치 순서대로 꽂는다",
+                    relatedObjectName = "PuzzleBookShelf", // 5단계와 같은 책장 — 배치만 다름
                     hintByLevel = new[]
                     {
                         "이제 마지막으로 정리할 일이 남은 것 같아요.",
