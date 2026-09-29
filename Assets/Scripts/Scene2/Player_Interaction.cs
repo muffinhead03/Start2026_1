@@ -88,6 +88,13 @@ public class Player_Interaction : MonoBehaviour
 
     void Interact()
     {
+        // 확대 조사 중이면 E는 무조건 조사 중인 오브젝트가 처리 (취소 / 손에 넣기)
+        if (InspectInput.Current != null)
+        {
+            InspectInput.Current.OnInteractWhileInspecting();
+            return;
+        }
+
         if (fix.isPlayerFix())
         {
             fix.fixObject.UnFixCamera();
