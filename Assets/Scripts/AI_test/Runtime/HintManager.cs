@@ -95,6 +95,9 @@ public class HintManager : MonoBehaviour
     Coroutine loadingCoroutine;
     Coroutine revealCoroutine;
 
+    //InputAction 추가
+    InputAction hint;
+
     void Start()
     {
         Debug.Log("[HintManager] Start 호출됨, LLMSingleton.Instance 확인 중...");
@@ -145,17 +148,20 @@ public class HintManager : MonoBehaviour
         }
 
         puzzleHintButton.onClick.AddListener(OnHintButtonClicked);
+
+        hint = InputSystem.actions.FindAction("Hint");
+        hint.performed += ctx => TogglePanel();
     }
 
     void Update()
     {
         currentPlayerState.staySeconds += Time.deltaTime;
 
-        if (Keyboard.current.fKey.wasPressedThisFrame)
-            TogglePanel();
+        //if (Keyboard.current.fKey.wasPressedThisFrame)
+        //    TogglePanel();
 
-        if (isOpen && Keyboard.current.escapeKey.wasPressedThisFrame)
-            TogglePanel();
+        //if (isOpen && Keyboard.current.escapeKey.wasPressedThisFrame)
+        //    TogglePanel();
     }
 
     void TogglePanel()
