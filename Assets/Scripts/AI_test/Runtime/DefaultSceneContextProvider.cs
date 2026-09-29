@@ -23,6 +23,10 @@ public class DefaultSceneContextProvider : ISceneContextProvider
         { "organ_room",
             "Scene: A large old mansion themed around a broken organ. " +
             "The player is trying to repair the organ and perform a piece of music to escape." },
+
+        { "doll_room",
+            "Scene: A dim old playroom full of toys — wooden rocking horses, nesting dolls, a toy train, a retro arcade machine and a talking teddy bear. " +
+            "A broken wooden doll stands in the corner. The player is trying to repair the doll to escape." },
     };
 
     public string GetSceneContext(string puzzleId)
