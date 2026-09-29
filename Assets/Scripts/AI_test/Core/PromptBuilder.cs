@@ -80,7 +80,7 @@ public static class PromptBuilder
         string levelGuide  = LevelGuide.ContainsKey(result.hintLevel)    ? LevelGuide[result.hintLevel]    : "";
         string statusGuide = StatusGuide.ContainsKey(result.playerStatus) ? StatusGuide[result.playerStatus] : "";
         string sceneCtx    = SceneContextProvider.GetSceneContext(result.puzzleId);
-        string stepHint    = GetStepHint(result.nextStep, result.hintLevel);
+        string stepHint    = GetEffectiveHint(result);
 
         // nextStep이 체크리스트 순서를 따라 나온 게 아니라 손/인벤토리 보유 물품 기준으로 override된 경우,
         // "이전 스텝을 이미 지나쳤다"는 전제를 깔면 안 됨 — 실제로는 안 지나쳤을 수 있어서 LLM이 사실과 다른 멘트를 할 위험이 있음
@@ -94,6 +94,16 @@ public static class PromptBuilder
         // HintEngine.BuildWatchingLine()이 이미 자연어 문장(result.watchingLine)으로 만들어뒀고,
         // HintManager가 힌트 본문 앞에 코드로 직접 붙인다 — 로컬 소형 모델이 "선택 반영" 지시를
         // 안정적으로 안 따르는 문제 때문에, 이 부분만큼은 판단(로직)이 표현까지 확정해서 내려보낸다.
+        // 스텝 진행 상황(예: 곰 인형을 3번 던짐 → "거의 버티지 못하는 것 같아요. 조금만 더 던져보세요.")이 있으면
+        // hintByLevel 문구 대신 그 문장 하나를 [Hint direction]으로 넘긴다 (GetEffectiveHint).
+        // 처음엔 둘을 같이 넘겼더니 4B 모델이 한쪽을 빼먹거나(1차), 둘 다 베낀 뒤 덧붙여 4문장이 됨(2차) — 베타 로그 확인.
+        // 전할 내용을 하나로 줄이는 게 소형 모델에선 가장 안정적이었음.
+        bool hasProgress = !string.IsNullOrEmpty(result.progressNote);
+        string baseOn = hasProgress
+            ? "Base your hint ONLY on the [Hint direction] above. Never mention any numbers or counts. "
+            // 해석: 힌트 방향만 근거로 삼아. 숫자나 횟수는 절대 말하지 마.
+            : "Base your hint ONLY on the [Hint direction] above. ";
+
         return
             $"[Scene context]\n{sceneCtx}\n\n" +
             $"[Player state]\n" +
@@ -101,7 +111,10 @@ public static class PromptBuilder
             $"Hint style: {typeEn}\n" +
             $"Player status: {statusGuide}\n" +
             $"Hint direction: {stepHint}\n\n" +
-            $"IMPORTANT: Base your hint ONLY on the [Hint direction] above. " +
+            $"IMPORTANT: {baseOn}" +
+            $"Do NOT invent objects, places, lights, or actions that are not in the [Hint direction]. " +
+            // 해석: 힌트 방향에 없는 물건·장소·빛·행동을 지어내지 마. (베타 로그에서 "빛을 향해", "그림 뒤에 숨겨진 비밀",
+            // "묘한 빛을 따라" 같은 없는 단서를 지어내서 플레이어를 엉뚱한 곳으로 보낼 위험이 반복 확인됨)
             $"Do NOT mention any other puzzle mechanic, object, or step that isn't part of it — " +
             $"{orderNote}\n\n" +
             $"{Config.language} hint ({Config.language} language only, no other language):";
@@ -118,5 +131,50 @@ public static class PromptBuilder
 
         int idx = hintLevel < 1 ? 0 : (hintLevel > step.hintByLevel.Length ? step.hintByLevel.Length - 1 : hintLevel - 1);
         return step.hintByLevel[idx];
+    }
+
+    /// <summary>
+    /// 실제로 전달할 힌트 문구. 스텝 진행 상황(progressNote)이 있으면 그 문장이 hintByLevel 문구를 대신한다.
+    /// LLM 프롬프트의 [Hint direction], LLM 요청 맨 끝의 [힌트 방향], LLM이 없을 때의 고정 문구(폴백) 모두 이 값을 쓴다.
+    /// </summary>
+    public static string GetEffectiveHint(HintResult result)
+    {
+        return !string.IsNullOrEmpty(result.progressNote)
+            ? result.progressNote
+            : GetStepHint(result.nextStep, result.hintLevel);
+    }
+
+    /// <summary>
+    /// LLM 응답을 앞에서부터 maxSentences 문장까지만 잘라낸다 (SystemPrompt로 문장 수를 지시해도 소형 모델이 자주 넘겨서 코드로 보장).
+    /// 문장 끝 판정: '.', '?', '!' 뒤에 공백이 오거나 텍스트가 끝날 때.
+    /// 말줄임표("...", "…")는 문장 끝으로 안 셈 — LLM이 "한계인 것 같아요… 조금만 더"처럼 문장 중간에 자주 써서.
+    /// 문장이 maxSentences개보다 적으면 그대로 반환 (스트리밍 중간 결과에도 매번 적용해도 안전).
+    /// </summary>
+    public static string LimitSentences(string text, int maxSentences)
+    {
+        if (string.IsNullOrEmpty(text) || maxSentences <= 0)
+            return text;
+
+        int count = 0;
+        for (int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+            if (c != '.' && c != '?' && c != '!')
+                continue;
+
+            // "..." 같은 연속 마침표는 말줄임표로 보고 건너뜀
+            if (c == '.' && ((i > 0 && text[i - 1] == '.') || (i + 1 < text.Length && text[i + 1] == '.')))
+                continue;
+
+            bool atEnd = i + 1 >= text.Length;
+            if (!atEnd && !char.IsWhiteSpace(text[i + 1]))
+                continue;
+
+            count++;
+            if (count >= maxSentences)
+                return text.Substring(0, i + 1);
+        }
+
+        return text;
     }
 }

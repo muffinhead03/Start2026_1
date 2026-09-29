@@ -1,5 +1,10 @@
 using System.Collections.Generic;
 
+/// <summary>
+/// 오르간씬 퍼즐 설정. relatedObjectName은 OrganHintBridge.ResolveTarget()의 위치 키와 1:1로 맞춰둔 값.
+/// step 6의 "LP"만 손/인벤토리 override에도 쓰임 (OrganHintBridge가 LP_0~LP_4를 "LP"로 묶어서 넘김).
+/// 나머지 키는 실제 objectName과 겹치지 않게 지어서 위치 전용으로만 동작.
+/// </summary>
 public static class OrganRoomData
 {
     public static PuzzleConfig GetConfig()
@@ -22,6 +27,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 1, goal = "오르간이 고장났음을 확인한다",
+                    relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "이 방의 중심에 있는 것을 살펴보는 게 어떨까요.",
@@ -34,6 +40,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 2, goal = "거실에서 파이프 1을 찾는다",
+                    relatedObjectName = "Pipe1", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "다른 공간도 살펴봐야 할 것 같아요.",
@@ -46,6 +53,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 3, goal = "1층 왼쪽 방에서 파이프 2를 찾는다",
+                    relatedObjectName = "Pipe2", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "1층 공간을 다시 살펴보는 것도 좋을 것 같아요.",
@@ -58,6 +66,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 4, goal = "거실의 오르골을 재생해 멜로디를 확인한다",
+                    relatedObjectName = "MusicBox", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "소리 나는 물건이 있을지도 몰라요.",
@@ -70,6 +79,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 5, goal = "오르골 멜로디로 비밀번호 방을 열고 파이프 3을 찾는다",
+                    relatedObjectName = "PwdDoor", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "방금 들은 것이 다른 곳에 쓰일 수도 있어요.",
@@ -82,6 +92,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 6, goal = "거실 그림을 보고 올바른 색 LP를 재생해 파이프 4를 찾는다",
+                    relatedObjectName = "LP", // LP_0~4를 들고 있으면 이 스텝으로 override + 위치는 턴테이블(GramophoneA) — OrganHintBridge
                     hintByLevel = new[]
                     {
                         "거실에 걸린 것도 관련이 있을 수 있어요.",
@@ -94,6 +105,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 7, goal = "파이프 4개를 오르간에 교체한다",
+                    relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "지금까지 모은 것들을 쓸 차례인 것 같아요.",
@@ -108,6 +120,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 8, goal = "파이프 교체 후 흩어진 악보 조각들을 확인한다",
+                    relatedObjectName = "SheetPiece2", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "주변이 조금 달라진 것 같아요.",
@@ -120,6 +133,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 9, goal = "거실 바닥에서 악보 조각 2를 찾는다",
+                    relatedObjectName = "SheetPiece2", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "발밑을 살펴보는 게 좋을 것 같아요.",
@@ -132,6 +146,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 10, goal = "비밀 통로를 통해 메트로놈 방으로 이동한다",
+                    relatedObjectName = "Vent", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "지나온 곳 중 하나에 다른 길이 있을지도 몰라요.",
@@ -144,6 +159,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 11, goal = "메트로놈 박자를 맞춰 캐비닛을 열고 악보 조각 1을 찾는다",
+                    relatedObjectName = "Metronome", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "소리에 맞춰 무언가를 해야 할 것 같아요.",
@@ -156,6 +172,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 12, goal = "캐비닛 안 힌트 그림대로 책장을 조작해 큰 방을 연다",
+                    relatedObjectName = "BookShelf", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "방금 연 것 안에 또 다른 단서가 있을지도 몰라요.",
@@ -168,6 +185,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 13, goal = "가족 사진 액자 안에서 악보 조각 3을 찾는다",
+                    relatedObjectName = "SheetPiece3", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "새로 열린 방에 뭔가 있을 것 같아요.",
@@ -180,6 +198,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 14, goal = "책상 위에서 악보 조각 4를 찾는다",
+                    relatedObjectName = "SheetPiece4", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "구석에 있는 것도 살펴볼 만해요.",
@@ -194,6 +213,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 15, goal = "모은 악보 조각을 기존 조각과 조합해 완성한다",
+                    relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "모은 것들을 정리할 때가 된 것 같아요.",
@@ -206,6 +226,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 16, goal = "완성된 악보의 숫자 순서대로 건반을 눌러 연주한다",
+                    relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "이제 오르간으로 뭔가 해야 할 것 같아요.",
@@ -218,6 +239,7 @@ public static class OrganRoomData
                 new PuzzleStep
                 {
                     id = 17, goal = "연주 후 떨어진 열쇠를 찾아 상자에 넣고 탈출한다",
+                    relatedObjectName = "Chest", // OrganHintBridge 위치 매핑 키
                     hintByLevel = new[]
                     {
                         "연주가 끝나면 뭔가 달라질 수 있어요.",

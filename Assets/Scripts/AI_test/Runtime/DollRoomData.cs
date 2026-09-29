@@ -1,5 +1,10 @@
 using System.Collections.Generic;
 
+/// <summary>
+/// 인형씬 퍼즐 설정. relatedObjectName은 두 가지 용도로 쓰임:
+/// - 2/3/4/5/7번: Object_Grabbable.objectName과 같은 값 → 손/인벤토리 보유 시 HintEngine이 그 스텝으로 override
+/// - 1/6/8번: 위치 전용 키 (실제 오브젝트 이름과 겹치지 않게 지음) → DollHintBridge.ResolveTarget()이 구역 Transform으로 매핑
+/// </summary>
 public static class DollRoomData
 {
     public static PuzzleConfig GetConfig()
@@ -21,7 +26,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 1, goal = "마트료시카 순서로 자물쇠 번호를 알아내 목마 구역을 연다",
-                    // relatedObjectName 없음 — 손에 드는 아이템이 아니라 관찰형 퍼즐
+                    relatedObjectName = "LockArea", // 위치 전용 키 (DollHintBridge) — 손에 드는 아이템이 아니라 관찰형 퍼즐
                     hintByLevel = new[]
                     {
                         "방 안의 인형들을 잘 살펴보는 게 좋을 것 같아요.",
@@ -47,10 +52,10 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 3, goal = "말하는 곰 인형을 반복해서 던져 동전을 얻는다",
-                    relatedObjectName = "TeddyBear", // SpeakingBearDoll 프리팹의 objectName
+                    relatedObjectName = "TeddyBear", // 씬의 곰 인형 objectName은 비어있음 — DollHintBridge.ResolveObjectName()이 SpeakingBearDoll 컴포넌트로 식별해서 이 값으로 치환
                     hintByLevel = new[]
                     {
-                        "다른 인형들도 뭔가 반응이 있을 것 같아요.",
+                        "그 곰 인형, 뭔가 반응이 있을 것 같아요.",
                         "곰 인형이 뭔가 말을 하는 것 같아요.",
                         "곰 인형을 집어서 던져보세요.",
                         "곰 인형을 여러 번 던지면 동전이 나올 거예요.",
@@ -86,7 +91,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 6, goal = "버튼으로 선로를 맞춰 검은 기차를 밀어내고 태엽을 얻는다",
-                    // relatedObjectName 없음 — 손에 드는 아이템이 아니라 선로/기차 조작형 퍼즐
+                    relatedObjectName = "TrainArea", // 위치 전용 키 (DollHintBridge) — 손에 드는 아이템이 아니라 선로/기차 조작형 퍼즐
                     hintByLevel = new[]
                     {
                         "기차 트랙 쪽에 뭔가 있을 것 같아요.",
@@ -112,7 +117,7 @@ public static class DollRoomData
                 new PuzzleStep
                 {
                     id = 8, goal = "완성된 인형의 태엽을 돌려 수리를 완료하고 열쇠를 얻어 탈출한다",
-                    // relatedObjectName 없음 — 다리/팔/태엽이 전부 장착된 인형 본체와 상호작용
+                    relatedObjectName = "DollStand", // 위치 전용 키 (DollHintBridge) — 다리/팔/태엽이 전부 장착된 인형 본체와 상호작용
                     hintByLevel = new[]
                     {
                         "인형이 이제 다 준비된 것 같아요.",
