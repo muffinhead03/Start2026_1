@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Object_FixCamera : MonoBehaviour
+public class Object_FixCamera : MonoBehaviour, IInspectInteractHandler
 {
     [Header("Fix Position")]
     public Transform pivot;
@@ -28,10 +28,18 @@ public class Object_FixCamera : MonoBehaviour
         targetRot = (-1) * targetPos;
     }
 
+    public void OnInteractWhileInspecting()
+    {
+        UnFixCamera();
+    }
+
     public void FixCamera()
     {
+        Debug.Log("fix");
         SceneUI.SetActiveCursor(false);
         Fixed?.Invoke();
+
+        InspectInput.Begin(this);
 
     if (useCameraPoint && cameraPoint != null)
             {
@@ -48,8 +56,11 @@ public class Object_FixCamera : MonoBehaviour
 
     public void UnFixCamera()
     {
+        Debug.Log("unfix");
         SceneUI.SetActiveCursor(true);
         UnFixed?.Invoke();
+
+        InspectInput.End(this);
 
         player.UnFixCamera();
     }

@@ -152,9 +152,9 @@ public class HintManager : MonoBehaviour
 
         //InputAction
         hint_open = InputSystem.actions.FindAction("HintOpen");
-        hint_open.performed += ctx => TogglePanel();
+        hint_open.performed += ctx => OpenPanel();
         hint_close = InputSystem.actions.FindAction("HintClose");
-        hint_close.performed += ctx => TogglePanel();
+        hint_close.performed += ctx => ClosePanel();
     }
 
     void Update()
@@ -168,42 +168,40 @@ public class HintManager : MonoBehaviour
         //    TogglePanel();
     }
 
-    void TogglePanel()
+    void ClosePanel()
     {
-    // NumberLock 조작 중에는 힌트 패널 열기 금지
-    if (numberLockMode != null && numberLockMode.IsActive())
-    {
-        Debug.Log("[HintManager] NumberLock 조작 중이라 힌트 패널을 열 수 없음");
-        return;
-    }
+        if (!isOpen) return;
 
         isOpen = !isOpen;
         hintPanel.SetActive(isOpen);
 
-        if (isOpen)
-        {
-            // LLM을 못 쓰는 상태(폴백 모드)면 패널을 열 때마다 배지를 계속 보여줌
-            RefreshFallbackBadge();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        player.SetMoveLock(false);
+        walkieExamine?.EndExamine();
 
-            // 힌트가 아직 생성/타이핑 중이면(패널을 닫았다 다시 연 경우) 인사말로 덮어쓰지 않고 이어서 보여줌
-            if (!isRequesting && revealCoroutine == null)
-                SetHintText("치지직... 도움이 필요해?");
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible   = true;
-            player.SetMoveLock(true);
-            walkieExamine?.StartExamine();
+        InputManager.instance.EnablePlayerInput();
+    }
 
-            InputManager.instance.EnableUIInput();
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible   = false;
-            player.SetMoveLock(false);
-            walkieExamine?.EndExamine();
+    void OpenPanel()
+    {
+        if (isOpen) return;
 
-            InputManager.instance.EnablePlayerInput();
-        }
+        isOpen = !isOpen;
+        hintPanel.SetActive(isOpen);
+
+        // LLM을 못 쓰는 상태(폴백 모드)면 패널을 열 때마다 배지를 계속 보여줌
+        RefreshFallbackBadge();
+
+        // 힌트가 아직 생성/타이핑 중이면(패널을 닫았다 다시 연 경우) 인사말로 덮어쓰지 않고 이어서 보여줌
+        if (!isRequesting && revealCoroutine == null)
+            SetHintText("치지직... 도움이 필요해?");
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        player.SetMoveLock(true);
+        walkieExamine?.StartExamine();
+
+        InputManager.instance.EnableUIInput();
     }
 
     public void AddLastAction(string actionName)
