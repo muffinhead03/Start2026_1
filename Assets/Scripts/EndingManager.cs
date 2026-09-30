@@ -29,6 +29,8 @@ public class EndingManager : MonoBehaviour
         SceneUI.SetActivePanel(3, true);
         SceneUI.UnlockPointer();
         player.SetMoveLock(true);
+
+        InputManager.EnableUIInput();
     }
 
     public void ClickButton(string choice)
@@ -42,7 +44,7 @@ public class EndingManager : MonoBehaviour
 
     public void ChangeText()
     {
-        SceneUI.ChangeText(1, ending_credit[credit_id++]);
+        SceneUI.ChangeText(3, ending_credit[credit_id++]);
     }
 
     public void GoToStartScene()

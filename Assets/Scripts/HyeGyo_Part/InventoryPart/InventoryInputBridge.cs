@@ -20,7 +20,7 @@ public sealed class InventoryInputBridge : MonoBehaviour
 
     [Header("Input Actions")]
     [SerializeField]
-    private InputActionReference inventoryToggleAction;
+    private InputActionReference inventoryOpenAction;
 
     [SerializeField]
     private InputActionReference inventoryCloseAction;
@@ -72,8 +72,8 @@ public sealed class InventoryInputBridge : MonoBehaviour
     private void OnEnable()
     {
         RegisterAction(
-            inventoryToggleAction,
-            HandleInventoryToggle
+            inventoryOpenAction,
+            HandleInventoryOpen
         );
 
         RegisterAction(
@@ -130,8 +130,8 @@ public sealed class InventoryInputBridge : MonoBehaviour
     private void OnDisable()
     {
         UnregisterAction(
-            inventoryToggleAction,
-            HandleInventoryToggle
+            inventoryOpenAction,
+            HandleInventoryOpen
         );
 
         UnregisterAction(
@@ -153,7 +153,7 @@ public sealed class InventoryInputBridge : MonoBehaviour
     }
 
 
-    private void HandleInventoryToggle(
+    private void HandleInventoryOpen(
         InputAction.CallbackContext context)
     {
         if (inventoryUIManager == null)
@@ -161,7 +161,7 @@ public sealed class InventoryInputBridge : MonoBehaviour
             return;
         }
 
-        inventoryUIManager.ToggleInventory();
+        inventoryUIManager.OpenInventory();
 
         /*
          * Toggle 직후 바로 Interact 상태 변경.

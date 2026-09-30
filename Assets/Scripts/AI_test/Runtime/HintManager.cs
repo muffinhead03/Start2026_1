@@ -129,7 +129,8 @@ public class HintManager : MonoBehaviour
                 || revealCoroutine != null || fallbackCoroutine != null;
 
     //InputAction 추가
-    InputAction hint;
+    InputAction hint_open;
+    InputAction hint_close;
 
     void Start()
     {
@@ -181,30 +182,20 @@ public class HintManager : MonoBehaviour
         }
 
         puzzleHintButton.onClick.AddListener(OnHintButtonClicked);
-
-        hint = InputSystem.actions?.FindAction("Hint");
-        if (hint != null)
-            hint.performed += OnHintAction;   // 람다 대신 메서드로 연결 → OnDestroy에서 해제 가능
-        else
-            Debug.LogError("[HintManager] Input Actions에 'Hint' 액션이 없습니다. .inputactions 파일이 커밋됐는지 확인하세요.");
     }
 
-    void OnHintAction(InputAction.CallbackContext ctx) => TogglePanel();
-
-    // InputSystem.actions는 씬이 바뀌어도 살아있는 전역 입력이라,
-    // 해제 안 하면 파괴된 HintManager의 TogglePanel이 계속 불려서 MissingReferenceException이 남.
-    void OnDestroy()
+    private void OnEnable()
     {
-        if (hint != null)
-            hint.performed -= OnHintAction;
+        hint_open = InputSystem.actions.FindAction("HintOpen");
+        hint_open.performed += OnOpenPanel;
+        hint_close = InputSystem.actions.FindAction("HintClose");
+        hint_close.performed += OnClosePanel;
     }
 
-    // 오브젝트가 꺼지면 코루틴이 전부 멈추므로, 상태 플래그가 "진행 중"으로 남지 않게 초기화
     void OnDisable()
     {
-        introTypingActive = false;
-        revealCoroutine = null;
-        fallbackCoroutine = null;
+        if(hint_open!=null) hint_open.performed -= OnOpenPanel;
+        if (hint_open != null) hint_close.performed -= OnClosePanel;
     }
 
     void Update()
@@ -224,66 +215,70 @@ public class HintManager : MonoBehaviour
         //    TogglePanel();
     }
 
-    void TogglePanel()
+    void ClosePanel()
     {
-    // NumberLock 조작 중에는 힌트 패널 열기 금지
-    if (numberLockMode != null && numberLockMode.IsActive())
-    {
-        Debug.Log("[HintManager] NumberLock 조작 중이라 힌트 패널을 열 수 없음");
-        return;
-    }
-
-        // 커서가 풀려 있으면 다른 UI(자물쇠, 조사 화면, 인벤토리 등)를 쓰는 중 → 힌트 패널 안 엶.
-        // (여기서 열었다 닫으면 닫을 때 커서를 잠가버려서 그 UI가 멈춘 것처럼 보임)
-        if (!isOpen && blockWhenCursorFree && Cursor.lockState != CursorLockMode.Locked)
-        {
-            Debug.Log($"[HintManager] 다른 UI가 마우스를 쓰는 중이라 힌트 패널을 열지 않음 (cursor={Cursor.lockState})");
-            return;
-        }
+        if (!isOpen) return;
 
         isOpen = !isOpen;
         hintPanel.SetActive(isOpen);
 
-        if (isOpen)
-        {
-            // LLM을 못 쓰는 상태(폴백 모드)면 패널을 열 때마다 배지를 계속 보여줌
-            RefreshFallbackBadge();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        player.SetMoveLock(false);
+        walkieExamine?.EndExamine();
 
-            // 힌트가 아직 생성/타이핑 중이면(패널을 닫았다 다시 연 경우) 인사말로 덮어쓰지 않고 이어서 보여줌.
-            // 이미 받은 힌트가 있으면 인사말 대신 마지막 힌트를 바로 보여줌 (타이핑 없이).
-            // 인사말은 이 씬에서 아직 힌트를 한 번도 안 받았을 때만.
-            if (!IsBusy)
+        InputManager.EnablePlayerInput();
+    }
+
+    private void OnOpenPanel(InputAction.CallbackContext ctx)
+    {
+        OpenPanel();
+    }
+
+    private void OnClosePanel(InputAction.CallbackContext ctx)
+    {
+        ClosePanel();
+    }
+
+    void OpenPanel()
+    {
+        if (isOpen) return;
+
+        isOpen = !isOpen;
+        hintPanel.SetActive(isOpen);
+
+        // LLM을 못 쓰는 상태(폴백 모드)면 패널을 열 때마다 배지를 계속 보여줌
+        RefreshFallbackBadge();
+
+        // 힌트가 아직 생성/타이핑 중이면(패널을 닫았다 다시 연 경우) 인사말로 덮어쓰지 않고 이어서 보여줌.
+        // 이미 받은 힌트가 있으면 인사말 대신 마지막 힌트를 바로 보여줌 (타이핑 없이).
+        // 인사말은 이 씬에서 아직 힌트를 한 번도 안 받았을 때만.
+        if (!IsBusy)
+        {
+            // 힌트를 받은 뒤 스텝을 더 풀었으면 그 힌트는 지난 얘기 → 버리고 인사말
+            if (!string.IsNullOrEmpty(lastHintDisplay) &&
+                currentPlayerState.completedSteps.Count != lastHintCompletedCount)
             {
-                // 힌트를 받은 뒤 스텝을 더 풀었으면 그 힌트는 지난 얘기 → 버리고 인사말
-                if (!string.IsNullOrEmpty(lastHintDisplay) &&
-                    currentPlayerState.completedSteps.Count != lastHintCompletedCount)
-                {
-                    Debug.Log("[HintManager] 힌트를 받은 뒤 진행된 스텝이 있어서 지난 힌트 대신 인사말 표시");
-                    lastHintDisplay = null;
-                }
-
-                if (!string.IsNullOrEmpty(lastHintDisplay))
-                {
-                    ShowTextInstant(lastHintDisplay);
-                    if (lastHintWasFallback) SetFallbackBadge(true);
-                }
-                else
-                {
-                    SetHintText("치지직... 도움이 필요해?");
-                }
+                Debug.Log("[HintManager] 힌트를 받은 뒤 진행된 스텝이 있어서 지난 힌트 대신 인사말 표시");
+                lastHintDisplay = null;
             }
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible   = true;
-            player.SetMoveLock(true);
-            walkieExamine?.StartExamine();
+
+            if (!string.IsNullOrEmpty(lastHintDisplay))
+            {
+                ShowTextInstant(lastHintDisplay);
+                if (lastHintWasFallback) SetFallbackBadge(true);
+            }
+            else
+            {
+                SetHintText("치지직... 도움이 필요해?");
+            }
         }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible   = false;
-            player.SetMoveLock(false);
-            walkieExamine?.EndExamine();
-        }
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        player.SetMoveLock(true);
+        walkieExamine?.StartExamine();
+
+        InputManager.EnableUIInput();
     }
 
     public void AddLastAction(string actionName)

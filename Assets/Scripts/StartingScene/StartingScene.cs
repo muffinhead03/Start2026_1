@@ -46,15 +46,11 @@ public class StartingScene : MonoBehaviour
             yield break;
         }
 
-        RectTransform introRect = introScreen.GetComponent<RectTransform>();
-
         introScreen.gameObject.SetActive(true);
 
         Color color = introScreen.color;
         color.a = 0f;
         introScreen.color = color;
-
-        introRect.localScale = Vector3.one;
 
         float elapsedTime = 0f;
 
@@ -68,14 +64,12 @@ public class StartingScene : MonoBehaviour
             introScreen.color = color;
 
             float scale = Mathf.Lerp(1f, introTargetScale, t);
-            introRect.localScale = new Vector3(scale, scale, 1f);
 
             yield return null;
         }
 
         color.a = 1f;
         introScreen.color = color;
-        introRect.localScale = new Vector3(introTargetScale, introTargetScale, 1f);
 
         SceneManager.LoadScene(tutorialSceneName);
     }

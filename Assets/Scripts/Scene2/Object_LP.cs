@@ -9,6 +9,7 @@ public class Object_LP : MonoBehaviour
     public void PutOnLP()
     {
         animator = GetComponent<Object_PutOn>().putOn.GetComponent<Animator>();
+        animator.enabled = true;
         animator.SetTrigger("On");
         GetComponent<Collider>().enabled = false;
 
@@ -26,6 +27,7 @@ public class Object_LP : MonoBehaviour
     {
         animator = GetComponent<Object_PutOn>().putOn.GetComponent<Animator>();
         animator.SetTrigger("Off");
+        animator.enabled = false;
         GetComponent<Collider>().enabled = true;
         GetComponent<Object_KeyLocked>().UseKey(GetComponent<Object_PutOn>().putOn.GetComponent<Object_Grabbable>().objectName);
     }

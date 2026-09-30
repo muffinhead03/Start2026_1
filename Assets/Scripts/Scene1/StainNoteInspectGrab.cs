@@ -100,6 +100,8 @@ public class StainNoteInspectGrab : MonoBehaviour, IInspectInteractHandler
         if (rigid != null) rigid.isKinematic = true;
         if (player != null) player.SetMoveLock(true);
 
+        InputManager.EnableUIInput();
+
         Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * inspectDistance;
         Quaternion targetRotation = Quaternion.LookRotation(mainCamera.transform.forward);
 
@@ -138,6 +140,8 @@ public class StainNoteInspectGrab : MonoBehaviour, IInspectInteractHandler
             SceneUI.SetActiveCursor(true);
 
         if (player != null) player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
 
         transform.position = originalPosition;
         transform.rotation = originalRotation;
@@ -183,5 +187,7 @@ public class StainNoteInspectGrab : MonoBehaviour, IInspectInteractHandler
         if (col != null) col.isTrigger = false;
         if (rigid != null) rigid.isKinematic = false;
         if (player != null) player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 // 여러 번 다시 읽을 수 있는 조사 오브젝트 (힌트 종이 전용)
 // 종이는 원래 위치에 고정되어 있고, 카메라가 종이 앞으로 다가갔다가
 // 다시 원래 위치로 돌아오는 방식입니다. (종이 자체는 움직이지 않음)
-public class HintPaperInspect : MonoBehaviour
+public class HintPaperInspect : MonoBehaviour, IInspectInteractHandler
 {
     [Header("Player Character")]
     public Player_Move player;
@@ -52,6 +52,15 @@ public class HintPaperInspect : MonoBehaviour
         }
     }
 
+    public void OnInteractWhileInspecting()
+    {
+        if (isInspecting)
+        {
+            if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+            moveCoroutine = StartCoroutine(MoveBackToOriginal());
+        }
+    }
+
     // HintPaperNotesManager.onAllNotesPlaced 에 연결
     public void RevealText()
     {
@@ -66,11 +75,6 @@ public class HintPaperInspect : MonoBehaviour
             if (moveCoroutine != null) StopCoroutine(moveCoroutine);
             moveCoroutine = StartCoroutine(MoveToInspectPosition());
         }
-        else
-        {
-            if (moveCoroutine != null) StopCoroutine(moveCoroutine);
-            moveCoroutine = StartCoroutine(MoveBackToOriginal());
-        }
     }
 
     IEnumerator MoveToInspectPosition()
@@ -78,6 +82,9 @@ public class HintPaperInspect : MonoBehaviour
         isInspecting = true;
 
         if (player != null) player.SetMoveLock(true);
+
+        InspectInput.Begin(this);
+        InputManager.EnableUIInput();
 
         // 복귀용으로 카메라의 원래 위치/회전 저장
         originalCameraPosition = mainCamera.transform.position;
@@ -140,5 +147,8 @@ public class HintPaperInspect : MonoBehaviour
         mainCamera.transform.rotation = originalCameraRotation;
 
         if (player != null) player.SetMoveLock(false);
+
+        InspectInput.End(this);
+        InputManager.EnablePlayerInput();
     }
 }
