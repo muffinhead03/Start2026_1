@@ -102,6 +102,8 @@ public class WineLabelInspect : MonoBehaviour, IInspectInteractHandler
         if (rigid != null) rigid.isKinematic = true;
         if (player != null) player.SetMoveLock(true);
 
+        InputManager.EnableUIInput();
+
         Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * inspectDistance;
         targetPosition -= mainCamera.transform.up * verticalOffset; // ← 새로 추가: 병 전체를 화면에서 살짝 아래로 내려서 윗부분(라벨) 여백 확보
         Quaternion targetRotation = Quaternion.LookRotation(mainCamera.transform.forward);
@@ -173,6 +175,8 @@ public class WineLabelInspect : MonoBehaviour, IInspectInteractHandler
         if (col != null) col.isTrigger = false;
         if (rigid != null) rigid.isKinematic = false;
         if (player != null) player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
 
         isReturning = false;
         moveCoroutine = null;

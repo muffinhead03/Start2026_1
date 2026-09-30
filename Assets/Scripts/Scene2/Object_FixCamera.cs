@@ -35,7 +35,6 @@ public class Object_FixCamera : MonoBehaviour, IInspectInteractHandler
 
     public void FixCamera()
     {
-        Debug.Log("fix");
         SceneUI.SetActiveCursor(false);
         Fixed?.Invoke();
 
@@ -56,7 +55,6 @@ public class Object_FixCamera : MonoBehaviour, IInspectInteractHandler
 
     public void UnFixCamera()
     {
-        Debug.Log("unfix");
         SceneUI.SetActiveCursor(true);
         UnFixed?.Invoke();
 

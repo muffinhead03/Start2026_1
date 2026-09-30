@@ -149,12 +149,20 @@ public class HintManager : MonoBehaviour
         }
 
         puzzleHintButton.onClick.AddListener(OnHintButtonClicked);
+    }
 
-        //InputAction
+    private void OnEnable()
+    {
         hint_open = InputSystem.actions.FindAction("HintOpen");
-        hint_open.performed += ctx => OpenPanel();
+        hint_open.performed += OnOpenPanel;
         hint_close = InputSystem.actions.FindAction("HintClose");
-        hint_close.performed += ctx => ClosePanel();
+        hint_close.performed += OnClosePanel;
+    }
+
+    void OnDisable()
+    {
+        if(hint_open!=null) hint_open.performed -= OnOpenPanel;
+        if (hint_open != null) hint_close.performed -= OnClosePanel;
     }
 
     void Update()
@@ -180,7 +188,17 @@ public class HintManager : MonoBehaviour
         player.SetMoveLock(false);
         walkieExamine?.EndExamine();
 
-        InputManager.instance.EnablePlayerInput();
+        InputManager.EnablePlayerInput();
+    }
+
+    private void OnOpenPanel(InputAction.CallbackContext ctx)
+    {
+        OpenPanel();
+    }
+
+    private void OnClosePanel(InputAction.CallbackContext ctx)
+    {
+        ClosePanel();
     }
 
     void OpenPanel()
@@ -201,7 +219,7 @@ public class HintManager : MonoBehaviour
         player.SetMoveLock(true);
         walkieExamine?.StartExamine();
 
-        InputManager.instance.EnableUIInput();
+        InputManager.EnableUIInput();
     }
 
     public void AddLastAction(string actionName)

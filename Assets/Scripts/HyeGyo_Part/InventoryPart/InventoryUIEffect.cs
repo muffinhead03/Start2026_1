@@ -211,8 +211,8 @@ public sealed class InventoryUIEffect : MonoBehaviour
                 open
             );
 
-            if(open) InputManager.instance.EnableUIInput();
-            else InputManager.instance.EnablePlayerInput();
+            if(open) InputManager.EnableUIInput();
+            else InputManager.EnablePlayerInput();
         }
 
         if (!open)

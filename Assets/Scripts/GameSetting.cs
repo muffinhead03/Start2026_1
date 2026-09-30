@@ -10,10 +10,10 @@ public static class Setting
     public const int maxLanguage = 1;
     public const float minSensitivity = 0.01f;
     public const float maxSensitivity = 0.5f;
-    public static int hintLevel;
-    public static float mouseSensitivity;
-    public static float soundEffect;
-    public static int language;
+    public static int hintLevel = 1;
+    public static float mouseSensitivity = 0.1f;
+    public static float soundEffect = 1;
+    public static int language = 0;
 }
 
 public class GameSetting : MonoBehaviour
@@ -39,7 +39,9 @@ public class GameSetting : MonoBehaviour
 
     private void OnEnable()
     {
-        SetValuesSetting();
+        InputManager.EnablePlayerInput();
+
+        UnregisterInputAction();
         RegisterInputAction();
         isPanelOpen = false;
     }
@@ -52,23 +54,25 @@ public class GameSetting : MonoBehaviour
     private void RegisterInputAction()
     {
         settings_open = InputSystem.actions.FindAction("SettingOpen");
-        settings_open.performed += ctx => OpenSetting();
+        settings_open.performed += OnSettingsOpenPerformed;
         settings_close = InputSystem.actions.FindAction("SettingClose");
-        settings_close.performed += ctx => CloseSetting();
+        settings_close.performed += OnSettingsClosePerformed;
     }
 
     private void UnregisterInputAction()
     {
-        settings_open.performed -= ctx => OpenSetting();
-        settings_close.performed -= ctx => CloseSetting();
+        if (settings_open != null)  settings_open.performed -= OnSettingsOpenPerformed;
+        if (settings_close!=null) settings_close.performed -= OnSettingsClosePerformed;
     }
 
-    private void SetValuesSetting()
+    private void OnSettingsOpenPerformed(InputAction.CallbackContext ctx)
     {
-        Setting.hintLevel = 1;
-        Setting.mouseSensitivity = 0.1f;
-        Setting.soundEffect = 1f;
-        Setting.language = 0;
+        OpenSetting();
+    }
+
+    private void OnSettingsClosePerformed(InputAction.CallbackContext ctx)
+    {
+        CloseSetting();
     }
 
     public void OpenSetting()
@@ -83,7 +87,7 @@ public class GameSetting : MonoBehaviour
         SceneUI.SetActiveCursor(false);
         player?.SetMoveLock(true);
 
-        InputManager.instance.EnableUIInput();
+        InputManager.EnableUIInput();
     }
 
     public void CloseSetting()
@@ -97,7 +101,7 @@ public class GameSetting : MonoBehaviour
         SceneUI.SetActiveCursor(true);
         player?.SetMoveLock(false);
 
-        InputManager.instance.EnablePlayerInput();
+        InputManager.EnablePlayerInput();
     }
 
     public void ClickLeftBtn_Hint()

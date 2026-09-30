@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 // 책 조사(확대 + 마우스 회전 + 제목 표시) → 두 번째 상호작용 시 실제로 손에 잡히도록 처리
 // ESC를 누르면 잡지 않고 원위치로 취소됩니다.
 // 같은 오브젝트의 Object_Grabbable과 함께 사용합니다.
-public class BookInspectGrab : MonoBehaviour
+public class BookInspectGrab : MonoBehaviour, IInspectInteractHandler
 {
     [Header("Player")]
     public Player_Move player;
@@ -66,12 +66,15 @@ public class BookInspectGrab : MonoBehaviour
         }
     }
 
+    public void OnInteractWhileInspecting()
+    {
+        if (isInspecting) GrabNow();
+    }
+
     public void OnInspectOrGrab()
     {
         if (!isInspecting)
             StartCoroutine(MoveToInspectPosition());
-        else
-            GrabNow();
     }
 
     // 카메라 앞 목표 지점 사이에 장애물(책장 등)이 있으면 그 앞에서 멈추도록 거리 보정
@@ -108,6 +111,9 @@ public class BookInspectGrab : MonoBehaviour
         if (col != null) col.isTrigger = true;
         if (rigid != null) rigid.isKinematic = true;
         if (player != null) player.SetMoveLock(true);
+
+        InspectInput.Begin(this);
+        InputManager.EnableUIInput();
 
         float safeDistance = GetSafeInspectDistance();
         Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * safeDistance;
@@ -151,6 +157,9 @@ public class BookInspectGrab : MonoBehaviour
         }
 
         if (player != null) player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
+        InspectInput.End(this);
 
         transform.position = originalPosition;
         transform.rotation = originalRotation;
@@ -197,5 +206,8 @@ public class BookInspectGrab : MonoBehaviour
         if (col != null) col.isTrigger = false;
         if (rigid != null) rigid.isKinematic = false;
         if (player != null) player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
+        InspectInput.End(this);
     }
 }

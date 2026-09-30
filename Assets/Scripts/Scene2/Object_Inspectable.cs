@@ -79,7 +79,7 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
         // 플레이어 이동 잠금
         player.SetMoveLock(true);
 
-        InputManager.instance.EnableUIInput();
+        InputManager.EnableUIInput();
         InspectInput.Begin(this);
 
         // 목표 위치 (카메라 앞 1m)
@@ -158,7 +158,7 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
         isInspecting = false;
         player.SetMoveLock(false);
 
-        InputManager.instance.EnablePlayerInput();
+        InputManager.EnablePlayerInput();
         InspectInput.End(this);
     }
 }

@@ -61,7 +61,7 @@ public class Player_FixCamera : MonoBehaviour
         // 플레이어 이동 잠금
         GetComponent<Player_Move>().SetMoveLock(true);
 
-        InputManager.instance.EnableUIInput();
+        InputManager.EnableUIInput();
 
         if (hand != null) hand.GetComponent<Collider>().isTrigger = true;
 
@@ -105,7 +105,7 @@ public class Player_FixCamera : MonoBehaviour
 
         GetComponent<Player_Move>().SetMoveLock(false);
 
-        InputManager.instance.EnablePlayerInput();
+        InputManager.EnablePlayerInput();
 
         if (hand != null) hand.GetComponent<Collider>().isTrigger = false;
     }
