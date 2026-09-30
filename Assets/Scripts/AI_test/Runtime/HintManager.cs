@@ -96,7 +96,8 @@ public class HintManager : MonoBehaviour
     Coroutine revealCoroutine;
 
     //InputAction 추가
-    InputAction hint;
+    InputAction hint_open;
+    InputAction hint_close;
 
     void Start()
     {
@@ -149,8 +150,11 @@ public class HintManager : MonoBehaviour
 
         puzzleHintButton.onClick.AddListener(OnHintButtonClicked);
 
-        hint = InputSystem.actions.FindAction("Hint");
-        hint.performed += ctx => TogglePanel();
+        //InputAction
+        hint_open = InputSystem.actions.FindAction("HintOpen");
+        hint_open.performed += ctx => TogglePanel();
+        hint_close = InputSystem.actions.FindAction("HintClose");
+        hint_close.performed += ctx => TogglePanel();
     }
 
     void Update()
@@ -188,6 +192,8 @@ public class HintManager : MonoBehaviour
             Cursor.visible   = true;
             player.SetMoveLock(true);
             walkieExamine?.StartExamine();
+
+            InputManager.instance.EnableUIInput();
         }
         else
         {
@@ -195,6 +201,8 @@ public class HintManager : MonoBehaviour
             Cursor.visible   = false;
             player.SetMoveLock(false);
             walkieExamine?.EndExamine();
+
+            InputManager.instance.EnablePlayerInput();
         }
     }
 

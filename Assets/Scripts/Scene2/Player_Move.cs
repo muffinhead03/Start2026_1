@@ -45,7 +45,6 @@ public class Player_Move : MonoBehaviour
     Vector2 MoveInput;
     Vector2 LookInput;
 
-    InputActionMap player_input;
     InputAction lookAction;
     InputAction moveAction;
     InputAction runAction;
@@ -76,22 +75,11 @@ public class Player_Move : MonoBehaviour
         if (bodyMesh != null)
             originalMeshScale = bodyMesh.localScale;
 
-        player_input = InputSystem.actions.FindActionMap("PC_Player");
         lookAction = InputSystem.actions.FindAction("Look");
         moveAction = InputSystem.actions.FindAction("Move");
         runAction = InputSystem.actions.FindAction("Run");
         hideAction = InputSystem.actions.FindAction("Hide");
         jumpAction = InputSystem.actions.FindAction("Jump");
-    }
-
-    private void OnEnable()
-    {
-        player_input.Enable();
-    }
-
-    private void OnDisable()
-    {
-        player_input.Disable();
     }
 
     void Update()

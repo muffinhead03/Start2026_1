@@ -31,8 +31,9 @@ public class GameSetting : MonoBehaviour
     [Header("LockPointer")]
     public bool lockPointer;
 
-    private InputActionMap ui_input;
-    private InputAction settingsAction;
+    private InputAction settings_open;
+    private InputAction settings_close;
+
     private bool isPanelOpen;
 
 
@@ -50,16 +51,16 @@ public class GameSetting : MonoBehaviour
 
     private void RegisterInputAction()
     {
-        ui_input = InputSystem.actions.FindActionMap("PC_UI");
-        ui_input.Enable();
-        settingsAction = InputSystem.actions.FindAction("Settings");
-        settingsAction.performed += OpenCloseSettings;
+        settings_open = InputSystem.actions.FindAction("SettingOpen");
+        settings_open.performed += ctx => OpenSetting();
+        settings_close = InputSystem.actions.FindAction("SettingClose");
+        settings_close.performed += ctx => CloseSetting();
     }
 
     private void UnregisterInputAction()
     {
-        ui_input.Disable();
-        settingsAction.performed -= OpenCloseSettings;
+        settings_open.performed -= ctx => OpenSetting();
+        settings_close.performed -= ctx => CloseSetting();
     }
 
     private void SetValuesSetting()
@@ -72,6 +73,8 @@ public class GameSetting : MonoBehaviour
 
     public void OpenSetting()
     {
+        if (isPanelOpen) return;
+
         isPanelOpen = true;
         SceneUI.SetActivePanel(0, isPanelOpen);
 
@@ -79,36 +82,22 @@ public class GameSetting : MonoBehaviour
         if(lockPointer) SceneUI.UnlockPointer();
         SceneUI.SetActiveCursor(false);
         player?.SetMoveLock(true);
+
+        InputManager.instance.EnableUIInput();
     }
 
     public void CloseSetting()
     {
+        if (!isPanelOpen) return;
+
         isPanelOpen = false;
         SceneUI.SetActivePanel(0, isPanelOpen);
 
         if(lockPointer) SceneUI.LockPointer();
         SceneUI.SetActiveCursor(true);
         player?.SetMoveLock(false);
-    }
 
-    private void OpenCloseSettings(InputAction.CallbackContext context)
-    {
-        isPanelOpen = !isPanelOpen;
-        SceneUI.SetActivePanel(0, isPanelOpen);
-
-        if (isPanelOpen)
-        {
-            ShowSettingPanel();
-            if(lockPointer) SceneUI.UnlockPointer();
-            SceneUI.SetActiveCursor(false);
-            player?.SetMoveLock(true);
-        }
-        else
-        {
-            if(lockPointer) SceneUI.LockPointer();
-            SceneUI.SetActiveCursor(true);
-            player?.SetMoveLock(false);
-        }
+        InputManager.instance.EnablePlayerInput();
     }
 
     public void ClickLeftBtn_Hint()
