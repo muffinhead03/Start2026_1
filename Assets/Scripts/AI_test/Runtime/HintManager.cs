@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class HintManager : MonoBehaviour
 {
@@ -91,9 +92,41 @@ public class HintManager : MonoBehaviour
     [Header("Number Lock")]
     [SerializeField] GoToNumberLockMode numberLockMode;
 
+    [Header("안전장치")]
+    [Tooltip("체크하면 마우스 커서가 풀려 있을 때(자물쇠/조사 화면 등 다른 UI를 쓰는 중) F로 힌트 패널을 열지 않음.\n" +
+             "닫을 때 커서를 잠그면서 다른 UI가 멈춰 보이는 문제를 모든 씬에서 한 번에 막음.")]
+    [SerializeField] bool blockWhenCursorFree = true;
+
+    [Header("힌트 표현 다양화")]
+    [Tooltip("같은 스텝에서 다시 힌트를 요청하면, 직전에 보여준 LLM 힌트를 프롬프트에 넣고 다른 표현을 요청함.\n" +
+             "베타에서 모델이 이전 힌트를 베끼는 게 보이면 체크 해제.")]
+    [SerializeField] bool varyRepeatedHints = true;
+
+    // 요청 번호: 타임아웃 뒤에 늦게 도착한 옛 요청의 응답이 새 힌트에 섞이지 않게 함
+    int currentRequestId = 0;
+
+    // 스텝별 마지막 LLM 힌트 (표현 다양화용)
+    readonly Dictionary<int, string> lastHintByStep = new Dictionary<int, string>();
+
+    // LLM 상태가 바뀌는 순간(폴백 → AI 힌트)을 로그로 남기기 위한 이전 상태
+    bool? lastLLMDown = null;
+
+    // 마지막으로 끝까지 보여준 힌트 (관찰 문장 포함 전체 문장).
+    // 패널을 닫았다 다시 열면 인사말 대신 이걸 바로 보여줌 → 다 읽기 전에 닫아도 힌트를 잃지 않음
+    string lastHintDisplay = null;
+    bool lastHintWasFallback = false;
+    // 힌트를 받은 시점의 완료 스텝 수 — 그 뒤로 스텝을 더 풀었으면 지난 힌트는 안 보여줌
+    int lastHintCompletedCount = -1;
+
     Coroutine typingCoroutine;
     Coroutine loadingCoroutine;
     Coroutine revealCoroutine;
+    Coroutine fallbackCoroutine;   // AppendFallbackAfterIntro — 멈출 수 있도록 저장
+
+    // 지금 힌트를 보여주는 중인지 한 곳에서 판단 (인사말 타이핑은 포함 안 함).
+    // 폴백 모드는 isRequesting을 안 켜기 때문에, 이걸로 막아야 연타 시 힌트 횟수가 여러 번 깎이지 않음.
+    bool IsBusy => isRequesting || introTypingActive
+                || revealCoroutine != null || fallbackCoroutine != null;
 
     //InputAction 추가
     InputAction hint_open;
@@ -169,6 +202,12 @@ public class HintManager : MonoBehaviour
     {
         currentPlayerState.staySeconds += Time.deltaTime;
 
+        // 힌트를 보여주는 중에는 버튼을 회색으로 → "눌렀는데 반응 없음"으로 고장처럼 보이는 것 방지
+        if (puzzleHintButton != null)
+            puzzleHintButton.interactable = !IsBusy;
+
+        LogLLMStateChange();
+
         //if (Keyboard.current.fKey.wasPressedThisFrame)
         //    TogglePanel();
 
@@ -211,15 +250,37 @@ public class HintManager : MonoBehaviour
         // LLM을 못 쓰는 상태(폴백 모드)면 패널을 열 때마다 배지를 계속 보여줌
         RefreshFallbackBadge();
 
-        // 힌트가 아직 생성/타이핑 중이면(패널을 닫았다 다시 연 경우) 인사말로 덮어쓰지 않고 이어서 보여줌
-        if (!isRequesting && revealCoroutine == null)
-            SetHintText("치지직... 도움이 필요해?");
+        // 힌트가 아직 생성/타이핑 중이면(패널을 닫았다 다시 연 경우) 인사말로 덮어쓰지 않고 이어서 보여줌.
+        // 이미 받은 힌트가 있으면 인사말 대신 마지막 힌트를 바로 보여줌 (타이핑 없이).
+        // 인사말은 이 씬에서 아직 힌트를 한 번도 안 받았을 때만.
+        if (!IsBusy)
+        {
+            // 힌트를 받은 뒤 스텝을 더 풀었으면 그 힌트는 지난 얘기 → 버리고 인사말
+            if (!string.IsNullOrEmpty(lastHintDisplay) &&
+                currentPlayerState.completedSteps.Count != lastHintCompletedCount)
+            {
+                Debug.Log("[HintManager] 힌트를 받은 뒤 진행된 스텝이 있어서 지난 힌트 대신 인사말 표시");
+                lastHintDisplay = null;
+            }
+
+            if (!string.IsNullOrEmpty(lastHintDisplay))
+            {
+                ShowTextInstant(lastHintDisplay);
+                if (lastHintWasFallback) SetFallbackBadge(true);
+            }
+            else
+            {
+                SetHintText("치지직... 도움이 필요해?");
+            }
+        }
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         player.SetMoveLock(true);
         walkieExamine?.StartExamine();
 
         InputManager.EnableUIInput();
+    }
+
     }
 
     public void AddLastAction(string actionName)
@@ -231,9 +292,9 @@ public class HintManager : MonoBehaviour
 
     public void OnHintButtonClicked()
     {
-        if (isRequesting)
+        if (IsBusy)
         {
-            Debug.Log("[HintManager] 이미 힌트 요청 처리 중");
+            Debug.Log("[HintManager] 힌트 출력 중이라 요청 무시");
             return;
         }
 
@@ -293,16 +354,15 @@ public class HintManager : MonoBehaviour
         string displayPrefix = hasWatchingLine ? introText + " " : "";
 
         StopReveal();
+        StopFallback();
+        StopIntro();
         introTypingActive = hasWatchingLine;
         llmTarget = "";
         llmStreamDone = false;
         llmFlowActive = false;
 
         if (hasWatchingLine)
-        {
-            if (typingCoroutine != null) StopCoroutine(typingCoroutine);
             typingCoroutine = StartCoroutine(PlayIntroThenReveal(introText, displayPrefix));
-        }
 
         ContinueHintFlow(result, displayPrefix, hasWatchingLine);
     }
@@ -312,7 +372,9 @@ public class HintManager : MonoBehaviour
     // 버퍼에서 같은 속도로 한 글자씩 이어서 타이핑한다 (한 번에 확 뜨는 끊김 없이).
     IEnumerator PlayIntroThenReveal(string introText, string displayPrefix)
     {
-        yield return StartCoroutine(TypeText(introText));
+        // StartCoroutine 없이 직접 yield → TypeText가 이 코루틴 안에서 돌아서,
+        // 이 코루틴을 멈추면 타이핑도 같이 멈춤 (따로 살아남아 글자가 섞이는 문제 방지)
+        yield return TypeText(introText);
         introTypingActive = false;
 
         if (llmFlowActive)
@@ -325,6 +387,10 @@ public class HintManager : MonoBehaviour
     // - 아직 한 글자도 안 왔으면 관찰 문장 뒤에 "교신 중..." 점 애니메이션
     IEnumerator RevealLLM(string displayPrefix)
     {
+        // 한 프레임 먼저 양보: 첫 yield 전에 바로 끝나버리면
+        // "revealCoroutine = StartCoroutine(...)" 대입이 끝난 코루틴을 가리킨 채 남아서 IsBusy가 영영 true가 됨
+        yield return null;
+
         int shown = 0;
         bool showingLoading = false;
 
@@ -377,10 +443,29 @@ public class HintManager : MonoBehaviour
         if (loadingCoroutine != null) StopCoroutine(loadingCoroutine);
     }
 
+    // 관찰 문장 타이핑(또는 인사말 타이핑) 중단.
+    // StopReveal과 분리한 이유: StopReveal은 "LLM 응답 없음" 경로에서도 불리는데,
+    // 거기서 introTypingActive를 꺼버리면 관찰 문장이 아직 타이핑 중인데 고정 문구가 바로 덮어씀.
+    void StopIntro()
+    {
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+        typingCoroutine = null;
+        introTypingActive = false;
+    }
+
+    void StopFallback()
+    {
+        if (fallbackCoroutine != null) StopCoroutine(fallbackCoroutine);
+        fallbackCoroutine = null;
+    }
+
     // 관찰 문장 타이핑이 끝날 때까지 기다렸다가(이미 끝났으면 즉시) fallback 문구를 이어붙인다.
     // 인트로를 다시 타이핑하지 않고 그 뒤에 바로 덧붙이기만 함 — 같은 문장을 두 번 타이핑하는 걸 방지.
     IEnumerator AppendFallbackAfterIntro(HintResult result, string displayPrefix, string reason)
     {
+        // 한 프레임 먼저 양보 (RevealLLM과 같은 이유 — fallbackCoroutine이 끝난 코루틴을 가리킨 채 남는 것 방지)
+        yield return null;
+
         while (introTypingActive)
             yield return null;
 
@@ -389,8 +474,12 @@ public class HintManager : MonoBehaviour
 
         hintText.text = FallbackPrefix + displayPrefix + appendText;
         SetFallbackBadge(true);
+        RememberHint(hintText.text, true);
 
         Debug.LogWarning($"[힌트 결과] fallback=true / 사유: {reason} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 스텝: {result.nextStep?.id} / 응답: {hintText.text}");
+        LogHintSummary(result, "폴백", reason, -1);
+
+        fallbackCoroutine = null;
     }
 
     // 관찰 문장 타이핑과 별개로(병렬로) 실제 힌트를 가져오는 부분.
@@ -403,18 +492,31 @@ public class HintManager : MonoBehaviour
         {
             string reason = llmClient == null ? "llmClient null" : "LLM 사용 불가";
 
-            if (hasWatchingLine)
-                StartCoroutine(AppendFallbackAfterIntro(result, displayPrefix, reason));
-            else
-                ShowFallbackHint(result, reason);
-
+            // 횟수를 먼저 올려야 [힌트요약] 로그의 사용 횟수가 LLM 경로와 똑같이 찍힘
             currentPlayerState.hintCount++;
             UpdateUsageUI();
+
+            if (hasWatchingLine)
+                fallbackCoroutine = StartCoroutine(AppendFallbackAfterIntro(result, displayPrefix, reason));
+            else
+                ShowFallbackHint(result, reason);
             return;
         }
 
         string systemPrompt = PromptBuilder.SystemPrompt;
         string userPrompt   = PromptBuilder.Build(result);
+
+        // 같은 스텝에서 다시 물어보면 직전 힌트를 알려주고 다른 표현을 요청 (같은 문장 반복 방지)
+        int stepId = result.nextStep.id;
+        if (varyRepeatedHints && lastHintByStep.TryGetValue(stepId, out string prevHint) && !string.IsNullOrEmpty(prevHint))
+        {
+            userPrompt += "\n\n[Previous hint for this step]\n" + prevHint +
+                          "\nThe player already heard this. Give the same direction in different words. Do not repeat the previous sentence.";
+            // 해석: 플레이어가 이미 이 힌트를 들었음. 같은 방향을 다른 말로 전해. 이전 문장을 반복하지 마.
+        }
+
+        // 요청 번호 — 이 번호와 다른(옛) 요청의 콜백은 무시
+        int requestId = ++currentRequestId;
 
         // 진행 상황이 붙는 요청만 실제 프롬프트를 로그로 남김 — LLM이 진행 상황을 반영했는지 비교하기 위함 (베타 확인용)
         if (!string.IsNullOrEmpty(result.progressNote))
@@ -436,6 +538,7 @@ public class HintManager : MonoBehaviour
             userPrompt,
             onChunk: (partial) =>
             {
+                if (requestId != currentRequestId) return; // 옛 요청의 늦은 응답은 무시
                 firstChunkReceived = true;
                 lastReply = partial;
 
@@ -446,18 +549,25 @@ public class HintManager : MonoBehaviour
             onComplete: () =>
             {
                 if (this == null) return; // 생성 도중 씬이 바뀌어 HintManager가 파괴된 경우
+                if (requestId != currentRequestId) return; // 옛 요청의 늦은 완료는 무시
                 stopwatch.Stop();
                 isRequesting = false;
                 llmStreamDone = true;
 
-                // 생성 중 오류로 아무 글자도 못 받았으면 고정 문구로 대체
-                if (!firstChunkReceived || string.IsNullOrWhiteSpace(lastReply))
+                // 타임아웃이거나, 생성 중 오류로 아무 글자도 못 받았으면 → 현재 레벨의 고정 문구로 대체.
+                // 타임아웃이면 화면에 일부 찍힌 글자가 있어도 버리고 폴백 문구로 덮어씀 (중간에 끊긴 문장을 보여주지 않음)
+                bool timedOut = llmClient.LastRequestTimedOut;
+                if (timedOut || !firstChunkReceived || string.IsNullOrWhiteSpace(lastReply))
                 {
                     StopReveal();
+                    llmFlowActive = false; // 관찰 문장이 끝난 뒤 RevealLLM이 빈 버퍼로 시작되지 않게
+                    string noReplyReason = timedOut
+                        ? $"LLM 타임아웃 ({stopwatch.ElapsedMilliseconds}ms, 받은 글자 {lastReply.Length}자 버림)"
+                        : $"LLM 응답 없음 ({stopwatch.ElapsedMilliseconds}ms)";
                     if (hasWatchingLine)
-                        StartCoroutine(AppendFallbackAfterIntro(result, displayPrefix, $"LLM 응답 없음 ({stopwatch.ElapsedMilliseconds}ms)"));
+                        fallbackCoroutine = StartCoroutine(AppendFallbackAfterIntro(result, displayPrefix, noReplyReason));
                     else
-                        ShowFallbackHint(result, $"LLM 응답 없음 ({stopwatch.ElapsedMilliseconds}ms)");
+                        ShowFallbackHint(result, noReplyReason);
                     return;
                 }
 
@@ -468,6 +578,10 @@ public class HintManager : MonoBehaviour
                 // 원문과 화면 표시가 다르면(문장 수 제한으로 잘림) 둘 다 남김 — 잘린 부분에 중요한 내용이 있었는지 베타에서 확인용
                 Debug.Log($"[힌트 결과] fallback=false / 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {displayPrefix}{shownReply}" +
                           (truncated ? $" / 잘림=true / 원문: {lastReply}" : ""));
+
+                lastHintByStep[stepId] = shownReply.Trim();
+                RememberHint(displayPrefix + shownReply, false);
+                LogHintSummary(result, "AI", null, stopwatch.ElapsedMilliseconds);
             },
             hintDirection: PromptBuilder.GetEffectiveHint(result) // 프롬프트 맨 끝에 붙는 방향 문구 (진행 상황이 있으면 그 문장)
         );
@@ -491,8 +605,66 @@ public class HintManager : MonoBehaviour
             : "치지직... " + watchingPart + fixedHint);
 
         Debug.LogWarning($"[힌트 결과] fallback=true / 사유: {reason} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 스텝: {result.nextStep?.id} / 응답: {message}");
+        LogHintSummary(result, "폴백", reason, -1);
         SetFallbackBadge(true);
-        SetHintText(message);
+        RememberHint(message, true);
+
+        // SetHintText 대신 fallbackCoroutine으로 타이핑 → 타이핑 중에도 IsBusy가 true라서 연타로 횟수가 안 깎임
+        StopFallback();
+        StopIntro();
+        fallbackCoroutine = StartCoroutine(TypeFallbackText(message));
+    }
+
+    void RememberHint(string fullText, bool isFallback)
+    {
+        lastHintDisplay = fullText;
+        lastHintWasFallback = isFallback;
+        lastHintCompletedCount = currentPlayerState.completedSteps.Count;
+    }
+
+    // 타이핑 없이 바로 표시 (다시 열었을 때 마지막 힌트 보여주기용)
+    void ShowTextInstant(string message)
+    {
+        StopReveal();
+        StopFallback();
+        StopIntro();
+        hintText.text = message;
+    }
+
+    IEnumerator TypeFallbackText(string message)
+    {
+        yield return null; // 끝난 코루틴이 fallbackCoroutine에 남는 것 방지 (RevealLLM과 같은 이유)
+        yield return TypeText(message);
+        fallbackCoroutine = null;
+    }
+
+    // 힌트 한 번당 한 줄 요약 — 테스터 로그에서 "[힌트요약]"으로 검색하면 흐름이 한눈에 보이고,
+    // 모아서 개발보고서 수치(평균 응답시간, 폴백 비율, 레벨 분포)로 쓸 수 있음
+    void LogHintSummary(HintResult result, string mode, string reason, long elapsedMs)
+    {
+        Debug.Log($"[힌트요약] 씬={SceneManager.GetActiveScene().name} / 퍼즐={currentPuzzleId} / 스텝={result.nextStep?.id} / " +
+                  $"레벨={result.hintLevel} / 상태={result.playerStatus.ToKoreanLabel()} / 모드={mode} / " +
+                  $"응답시간={(elapsedMs >= 0 ? elapsedMs + "ms" : "-")} / 사유={reason ?? "-"} / 사용={currentPlayerState.hintCount}/{maxHints}");
+    }
+
+    // LLM 상태가 바뀌는 순간을 한 번만 로그로 남김 (예: 워밍업 타임아웃으로 폴백 → 나중에 로드 완료되어 AI 힌트로 전환)
+    void LogLLMStateChange()
+    {
+        bool down = IsLLMDown;
+        if (lastLLMDown == down) return;
+
+        if (lastLLMDown.HasValue)
+            Debug.Log(down
+                ? "[HintManager] LLM 사용 불가로 전환 → 지금부터 폴백(고정 문구) 힌트"
+                : "[HintManager] LLM 준비됨 → 지금부터 AI 힌트로 전환");
+        else
+            Debug.Log($"[HintManager] 시작 시 힌트 모드: {(down ? "폴백(고정 문구)" : "AI(LLM)")}");
+
+        lastLLMDown = down;
+
+        // 패널이 열려 있고 힌트를 보여주는 중이 아니면 배지도 바로 맞춰줌
+        if (isOpen && !IsBusy)
+            RefreshFallbackBadge();
     }
 
     // LLM을 쓸 수 없는 상태(로드 실패/워밍업 미완료/연결 누락)인지
@@ -525,7 +697,8 @@ public class HintManager : MonoBehaviour
     void SetHintText(string message)
     {
         StopReveal(); // 이전 LLM 응답이 아직 타이핑 중이어도 새 문구로 확실히 교체
-        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+        StopFallback();
+        StopIntro();
         typingCoroutine = StartCoroutine(TypeText(message));
     }
 
