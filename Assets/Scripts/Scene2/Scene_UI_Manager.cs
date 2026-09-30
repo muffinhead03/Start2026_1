@@ -7,7 +7,8 @@ using Cursor = UnityEngine.Cursor;
 public class Scene_UI_Manager : MonoBehaviour
 {
     [Header("판넬")]
-    public GameObject[] panels;
+    [SerializeField]
+    GameObject[] panels;
 
     [Header("버튼")]
     public GameObject[] buttons;
@@ -15,11 +16,11 @@ public class Scene_UI_Manager : MonoBehaviour
     [Header("슬라이더")]
     public Slider[] sliders;
 
-    [Header("커서 판넬")]
-    public GameObject cursor;
-
-    [Header("커서 이미지")]
-    public Sprite[] cursor_imgs;
+    [Header("커서")]
+    [SerializeField] GameObject panel_cursor;
+    [SerializeField] GameObject panel_e;
+    [SerializeField] GameObject cursor;
+    [SerializeField] Sprite[] cursor_imgs;
 
     [Header("텍스트")]
     public TextMeshProUGUI[] texts;
@@ -47,13 +48,21 @@ public class Scene_UI_Manager : MonoBehaviour
 
     public void SetActiveCursor(bool active)
     {
-        if(cursor!=null) cursor.SetActive(active);
+        if(panel_cursor!=null) panel_cursor.SetActive(active);
     }
 
     public void SwitchCursor(bool on)
     {
-        if (on) cursor.GetComponent<Image>().sprite = cursor_imgs[1];
-        else cursor.GetComponent<Image>().sprite = cursor_imgs[0];
+        if (on)
+        {
+            cursor.GetComponent<Image>().sprite = cursor_imgs[1];
+        }
+        else
+        {
+            cursor.GetComponent<Image>().sprite = cursor_imgs[0];
+        }
+
+        panel_e?.SetActive(on);
     }
 
     public void LockPointer()
