@@ -281,8 +281,6 @@ public class HintManager : MonoBehaviour
         InputManager.EnableUIInput();
     }
 
-    }
-
     public void AddLastAction(string actionName)
     {
         currentPlayerState.lastActions.Add(actionName);
