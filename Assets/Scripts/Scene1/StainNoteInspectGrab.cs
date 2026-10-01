@@ -5,10 +5,10 @@ using UnityEngine.InputSystem;
 // 쪽지 조사(확대 + 마우스 회전) → 두 번째 상호작용 시 실제로 손에 잡히도록 처리
 // BookInspectGrab과 동일한 구조이지만, 텍스트 UI 패널 없이 쪽지 자체 머티리얼(텍스처)에
 // 미리 입혀둔 알파벳을 확대해서 눈으로 직접 확인하는 방식입니다.
-// ESC를 누르면 잡지 않고 원위치로 취소됩니다.
+// E: 조사 → E 한 번 더: 손에 들어감 → 손에 든 상태에서 E: 떨어뜨림(Player_Grab.Release, 기존 동작)
 // 같은 오브젝트의 Object_Grabbable과 함께 사용합니다.
 // 처음엔 비활성 상태로 배치해두고, StainIntersection.notePickup에 연결해 조사 시 활성화합니다.
-public class StainNoteInspectGrab : MonoBehaviour
+public class StainNoteInspectGrab : MonoBehaviour, IInspectInteractHandler
 {
     [Header("Player")]
     public Player_Move player;
@@ -52,12 +52,6 @@ public class StainNoteInspectGrab : MonoBehaviour
     {
         if (!isInspecting) return;
 
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            CancelInspect();
-            return;
-        }
-
         if (Mouse.current != null)
         {
             Vector2 delta = Mouse.current.delta.ReadValue();
@@ -70,14 +64,31 @@ public class StainNoteInspectGrab : MonoBehaviour
     public void OnInspectOrGrab()
     {
         if (!isInspecting)
-            StartCoroutine(MoveToInspectPosition());
+        {
+            if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+            moveCoroutine = StartCoroutine(MoveToInspectPosition());
+        }
         else
+        {
             GrabNow();
+        }
+    }
+
+    // 조사 중 E 입력 (Player_Interaction이 레이와 상관없이 호출) → 손에 넣기
+    public void OnInteractWhileInspecting()
+    {
+        if (isInspecting) GrabNow();
+    }
+
+    void OnDisable()
+    {
+        InspectInput.End(this);
     }
 
     IEnumerator MoveToInspectPosition()
     {
         isInspecting = true;
+        InspectInput.Begin(this);
 
         if (audioPlayer != null && paperClip != null)
         audioPlayer.PlayAudio(paperClip);
@@ -88,6 +99,8 @@ public class StainNoteInspectGrab : MonoBehaviour
         if (col != null) col.isTrigger = true;
         if (rigid != null) rigid.isKinematic = true;
         if (player != null) player.SetMoveLock(true);
+
+        InputManager.EnableUIInput();
 
         Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * inspectDistance;
         Quaternion targetRotation = Quaternion.LookRotation(mainCamera.transform.forward);
@@ -117,11 +130,18 @@ public class StainNoteInspectGrab : MonoBehaviour
     void GrabNow()
     {
         isInspecting = false;
+        InspectInput.End(this);
+
+        // 확대 애니메이션 도중 E를 눌러도 이동 코루틴이 계속 돌지 않도록 정지
+        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+        moveCoroutine = null;
 
         if (SceneUI != null)
             SceneUI.SetActiveCursor(true);
 
         if (player != null) player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
 
         transform.position = originalPosition;
         transform.rotation = originalRotation;
@@ -133,9 +153,11 @@ public class StainNoteInspectGrab : MonoBehaviour
             grabbable.OnGrab();
     }
 
+    // (현재 E 흐름에서는 쓰이지 않음 — 나중에 '잡지 않고 취소' 키가 필요하면 사용)
     void CancelInspect()
     {
         isInspecting = false;
+        InspectInput.End(this);
 
         if (SceneUI != null)
             SceneUI.SetActiveCursor(true);
@@ -165,5 +187,7 @@ public class StainNoteInspectGrab : MonoBehaviour
         if (col != null) col.isTrigger = false;
         if (rigid != null) rigid.isKinematic = false;
         if (player != null) player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
     }
 }

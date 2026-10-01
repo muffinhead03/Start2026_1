@@ -4,9 +4,9 @@ using UnityEngine.InputSystem;
 
 // 와인랙 라벨 확대 조사(줌인 + 마우스 드래그 회전)
 // Event_On_Ray.OnClick → OnInspect() 연결
-// ESC 누르면 원위치로 취소
+// 조사 중 E를 한 번 더 누르면 원위치로 취소 (Player_Interaction → InspectInput 경유)
 // 같은 오브젝트의 WineRackLabel과 함께 사용
-public class WineLabelInspect : MonoBehaviour
+public class WineLabelInspect : MonoBehaviour, IInspectInteractHandler
 {
     [Header("Player")]
     public Player_Move player;
@@ -35,6 +35,7 @@ public class WineLabelInspect : MonoBehaviour
     Collider col;
     Rigidbody rigid;
     bool isInspecting = false;
+    bool isReturning = false;   // 원위치 복귀 중(이때 들어온 E는 무시)
     Coroutine moveCoroutine;
 
     Camera mainCamera;
@@ -50,13 +51,6 @@ public class WineLabelInspect : MonoBehaviour
     {
         if (!isInspecting) return;
 
-        // ESC로 취소
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            CancelInspect();
-            return;
-        }
-
         // 마우스 움직임으로 회전
         if (Mouse.current != null)
         {
@@ -69,13 +63,34 @@ public class WineLabelInspect : MonoBehaviour
     // Event_On_Ray.OnClick 에 연결할 함수
     public void OnInspect()
     {
+        if (isReturning) return;   // 복귀 도중 재조사하면 원래 위치가 덮어써지므로 막음
+
         if (!isInspecting)
-            StartCoroutine(MoveToInspectPosition());
+        {
+            if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+            moveCoroutine = StartCoroutine(MoveToInspectPosition());
+        }
+        else
+        {
+            CancelInspect();
+        }
+    }
+
+    // 조사 중 E 입력 (Player_Interaction이 레이와 상관없이 호출)
+    public void OnInteractWhileInspecting()
+    {
+        if (isInspecting) CancelInspect();
+    }
+
+    void OnDisable()
+    {
+        InspectInput.End(this);
     }
 
     IEnumerator MoveToInspectPosition()
     {
         isInspecting = true;
+        InspectInput.Begin(this);
 
         if (audioPlayer != null && wineClip != null)
         audioPlayer.PlayAudio(wineClip);
@@ -86,6 +101,8 @@ public class WineLabelInspect : MonoBehaviour
         if (col != null) col.isTrigger = true;
         if (rigid != null) rigid.isKinematic = true;
         if (player != null) player.SetMoveLock(true);
+
+        InputManager.EnableUIInput();
 
         Vector3 targetPosition = mainCamera.transform.position + mainCamera.transform.forward * inspectDistance;
         targetPosition -= mainCamera.transform.up * verticalOffset; // ← 새로 추가: 병 전체를 화면에서 살짝 아래로 내려서 윗부분(라벨) 여백 확보
@@ -118,6 +135,8 @@ public class WineLabelInspect : MonoBehaviour
     void CancelInspect()
     {
         isInspecting = false;
+        isReturning = true;
+        InspectInput.End(this);
 
         if (audioPlayer != null)
         {
@@ -156,5 +175,10 @@ public class WineLabelInspect : MonoBehaviour
         if (col != null) col.isTrigger = false;
         if (rigid != null) rigid.isKinematic = false;
         if (player != null) player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
+
+        isReturning = false;
+        moveCoroutine = null;
     }
 }

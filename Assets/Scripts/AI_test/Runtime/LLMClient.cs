@@ -21,8 +21,17 @@ public class LLMClient : MonoBehaviour, IHintLLMClient
     // 워밍업 성공 + 실패 이력 없음일 때만 LLM 사용. 아니면 HintManager가 고정 문구로 대체
     public bool IsAvailable => IsWarmedUp && !IsFailed;
 
+    // 가장 최근 힌트 요청이 타임아웃으로 끝났는지 — HintManager가 onComplete에서 보고 폴백 문구로 바꿈
+    public bool LastRequestTimedOut { get; private set; } = false;
+
     [Header("테스트용 — 체크하면 LLM 로드 실패를 흉내냄 (에디터/Development Build에서만 동작)")]
     [SerializeField] bool simulateLLMFailure = false;
+
+    [Header("힌트 생성 타임아웃 (진행이 멈춘 시간 기준 — 천천히라도 생성 중이면 안 끊음)")]
+    [Tooltip("요청 후 첫 글자가 이 초 동안 안 오면 타임아웃 → 폴백 문구. 느린 PC는 프롬프트 처리만 10초 넘게 걸릴 수 있어서 넉넉하게.")]
+    [SerializeField] float firstChunkTimeout = 30f;
+    [Tooltip("글자가 오기 시작한 뒤, 다음 글자가 이 초 동안 안 오면 타임아웃 (그때까지 온 글자는 버리고 현재 레벨의 폴백 문구로 대체)")]
+    [SerializeField] float chunkIdleTimeout = 10f;
 
     async void Start()
     {
@@ -90,6 +99,8 @@ public class LLMClient : MonoBehaviour, IHintLLMClient
     public async void RequestHintStream(string systemPrompt, string userPrompt,
         Action<string> onChunk, Action onComplete, string hintDirection = null)
     {
+        LastRequestTimedOut = false;
+
         if (!IsAvailable)
         {
             Debug.LogWarning("[LLMClient] LLM 사용 불가 상태에서 RequestHintStream 호출됨 → 바로 onComplete");
@@ -102,23 +113,86 @@ public class LLMClient : MonoBehaviour, IHintLLMClient
         if (!string.IsNullOrEmpty(hintDirection))
             combined += "\n\n[힌트 방향: " + hintDirection + "]";
 
-        bool completed = false;
+        // finished: onComplete를 딱 한 번만 부르기 위한 플래그.
+        // 타임아웃으로 먼저 끝낸 뒤에 늦게 오는 청크/완료 콜백은 전부 무시함.
+        bool finished = false;
+        Action Finish = () =>
+        {
+            if (finished) return;
+            finished = true;
+            onComplete?.Invoke();
+        };
+
+        // 마지막으로 "진행이 있었던" 시각 (요청 시작 또는 청크 도착). realtime이라 timeScale 영향 없음
+        float lastActivity = Time.realtimeSinceStartup;
+        bool gotFirstChunk = false;
+
+        Action<string> guardedChunk = partial =>
+        {
+            if (finished) return;
+            gotFirstChunk = true;
+            lastActivity = Time.realtimeSinceStartup;
+            onChunk?.Invoke(partial);
+        };
+
+        Task<string> chatTask;
         try
         {
-            await llmCharacter.Chat(combined, onChunk, () =>
+            chatTask = llmCharacter.Chat(combined, guardedChunk, Finish, false);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[LLMClient] 힌트 생성 시작 중 예외: {e.Message}");
+            Finish();
+            return;
+        }
+
+        // 전체 시간 제한이 아니라 "진행이 멈춘 시간"으로 판단 — 느린 PC에서 천천히라도 생성 중이면 끊지 않음
+        //  - 첫 글자가 오기 전: firstChunkTimeout초 동안 아무것도 안 오면 타임아웃 (프롬프트 처리 시간 포함)
+        //  - 글자가 오기 시작한 뒤: chunkIdleTimeout초 동안 다음 글자가 안 오면 타임아웃
+        while (!chatTask.IsCompleted && !finished)
+        {
+            await Task.WhenAny(chatTask, Task.Delay(250));
+            if (this == null) return; // 대기 중에 오브젝트가 파괴된 경우
+
+            float limit = gotFirstChunk ? chunkIdleTimeout : firstChunkTimeout;
+            if (!chatTask.IsCompleted && Time.realtimeSinceStartup - lastActivity > limit)
             {
-                completed = true;
-                onComplete?.Invoke();
-            }, false);
+                Debug.LogWarning($"[LLMClient] 힌트 생성 타임아웃 ({(gotFirstChunk ? "생성 도중 멈춤" : "첫 응답 없음")}, {limit}초) → 폴백 처리");
+                TryCancelGeneration();
+                LastRequestTimedOut = true; // Finish(onComplete) 전에 세팅해야 HintManager가 읽을 수 있음
+                Finish();
+                return;
+            }
+        }
+
+        try
+        {
+            await chatTask; // 이미 끝난 Task — 예외가 있었다면 여기서 드러남
         }
         catch (Exception e)
         {
             Debug.LogError($"[LLMClient] 힌트 생성 중 예외: {e.Message}");
         }
 
-        // 예외 등으로 완료 콜백이 안 불린 경우 여기서 한 번 호출
-        if (!completed)
-            onComplete?.Invoke();
+        // LLMUnity Chat은 내부에서 예외를 잡고 완료 콜백을 안 부르는 경우가 있어서 여기서 보장
+        Finish();
+    }
+
+    // 타임아웃 시 뒤에서 계속 생성 중인 요청을 멈춤.
+    // LLMCharacter의 slot이 -1(자동)이면 어떤 슬롯인지 몰라서 취소를 못 함 → 이 경우엔 결과만 무시되고 생성은 끝까지 돌아감.
+    // 취소까지 하려면 LLM_Manager 프리팹의 LLMCharacter Slot을 0으로 지정.
+    void TryCancelGeneration()
+    {
+        try
+        {
+            if (llmCharacter != null && llmCharacter.slot >= 0)
+                llmCharacter.CancelRequest(llmCharacter.slot);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[LLMClient] 생성 취소 실패 (무시해도 됨): {e.Message}");
+        }
     }
 
     // HintManager가 부르는 시그니처는 OllamaClient랑 똑같이 유지 + hintDirection 추가

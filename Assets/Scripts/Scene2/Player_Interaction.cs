@@ -23,6 +23,7 @@ public class Player_Interaction : MonoBehaviour
     private InventoryUIManager inventoryUIManager;
 
     InputAction interact;
+    InputAction interact_inspecting;
 
     Event_On_Ray CurrentTarget;
     Event_On_Ray LastTarget;
@@ -31,6 +32,8 @@ public class Player_Interaction : MonoBehaviour
     {
         interact = InputSystem.actions.FindAction("Interact");
         interact.performed += ctx => Interact();
+        interact_inspecting = InputSystem.actions.FindAction("Interact While Inspecting");
+        interact_inspecting.performed += ctx => InteractWhileInspecting();
         CurrentTarget = null;
     }
 
@@ -55,7 +58,6 @@ public class Player_Interaction : MonoBehaviour
                     CurrentTarget = Interactable;
                     CurrentTarget.OnRayEnter();
                     SceneUI.SwitchCursor(true);
-                    SceneUI.SetActivePanel(3, true);
                 }
 
                 CurrentTarget.OnRayStay();
@@ -69,7 +71,6 @@ public class Player_Interaction : MonoBehaviour
                     CurrentTarget.OnRayExit();
                     CurrentTarget = null;
                     SceneUI.SwitchCursor(false);
-                    SceneUI.SetActivePanel(3, false);
                 }
             }
         }
@@ -81,20 +82,12 @@ public class Player_Interaction : MonoBehaviour
                 CurrentTarget.OnRayExit();
                 CurrentTarget = null;
                 SceneUI.SwitchCursor(false);
-                SceneUI.SetActivePanel(3, false);
             }
         }
     }
 
     void Interact()
     {
-        if (fix.isPlayerFix())
-        {
-            fix.fixObject.UnFixCamera();
-            return;
-        }
-
-
         if(CurrentTarget != null)
         {
             // 상호작용
@@ -107,6 +100,14 @@ public class Player_Interaction : MonoBehaviour
         }
     }
 
-
+    void InteractWhileInspecting()
+    {
+        // 확대 조사 중이면 E는 무조건 조사 중인 오브젝트가 처리 (취소 / 손에 넣기)
+        if (InspectInput.Current != null)
+        {
+            InspectInput.Current.OnInteractWhileInspecting();
+            return;
+        }
+    }
 
 }
