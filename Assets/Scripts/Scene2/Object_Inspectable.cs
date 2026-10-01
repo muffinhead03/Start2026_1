@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using static Unity.VisualScripting.Member;
 
-public class Object_Inspecatable : MonoBehaviour
+public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
 {
     [Header("이름")]
     public string objectName;
@@ -48,22 +48,21 @@ public class Object_Inspecatable : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
     }
 
+    public void OnInteractWhileInspecting()
+    {
+        if (!isInspecting) return;
+
+        StartCoroutine(ReturnToOriginalPosition());
+        animator?.SetTrigger("Off");
+    }
+
     // OnClick 에 연결할 함수
     public void OnInspect()
     {
-        if (!isInspecting)
-        {
-            StartCoroutine(MoveToInspectPosition());
-            animator?.SetTrigger("On");
-        }
-        else
-        {
-            //gameObject.SetActive(false);
+        if (isInspecting) return;
 
-            //Player_Inventory.AddItem(objectName);
-            StartCoroutine(ReturnToOriginalPosition());
-            animator?.SetTrigger("Off");
-        }
+        StartCoroutine(MoveToInspectPosition());
+        animator?.SetTrigger("On");
     }
 
     IEnumerator MoveToInspectPosition()
@@ -79,6 +78,9 @@ public class Object_Inspecatable : MonoBehaviour
 
         // 플레이어 이동 잠금
         player.SetMoveLock(true);
+
+        InputManager.EnableUIInput();
+        InspectInput.Begin(this);
 
         // 목표 위치 (카메라 앞 1m)
         Vector3 targetPosition =
@@ -155,5 +157,8 @@ public class Object_Inspecatable : MonoBehaviour
 
         isInspecting = false;
         player.SetMoveLock(false);
+
+        InputManager.EnablePlayerInput();
+        InspectInput.End(this);
     }
 }

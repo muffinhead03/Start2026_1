@@ -16,6 +16,13 @@ public interface IHintLLMClient
     bool IsAvailable { get; }
 
     /// <summary>
+    /// 가장 최근 RequestHintStream 요청이 타임아웃으로 끝났는지.
+    /// true면 HintManager는 그때까지 받은 글자를 버리고 hintByLevel 고정 문구(현재 레벨)로 대체한다.
+    /// onComplete가 불리는 시점에 이미 값이 정해져 있어야 한다.
+    /// </summary>
+    bool LastRequestTimedOut { get; }
+
+    /// <summary>
     /// 힌트를 스트리밍으로 요청한다.
     /// onChunk는 생성 중 누적 텍스트로 여러 번, onComplete는 생성이 끝나면 한 번 호출된다.
     /// 생성 중 오류가 나도 onComplete는 반드시 한 번 호출된다 (onChunk 없이 호출될 수 있음).

@@ -210,6 +210,9 @@ public sealed class InventoryUIEffect : MonoBehaviour
             inventoryRoot.SetActive(
                 open
             );
+
+            if(open) InputManager.EnableUIInput();
+            else InputManager.EnablePlayerInput();
         }
 
         if (!open)
