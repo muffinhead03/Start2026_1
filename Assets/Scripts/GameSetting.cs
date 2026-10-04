@@ -141,6 +141,11 @@ public class GameSetting : MonoBehaviour
         Setting.soundEffect = value;
     }
 
+    public void ReturnTitle()
+    {
+        SceneManager.LoadScene("StartingScene");
+    }
+
     public void ExitGame()
     {
 #if UNITY_EDITOR
