@@ -99,7 +99,7 @@ public class Player_Move : MonoBehaviour
 
     void Look()
     {
-        mouseSensitivity = Setting.mouseSensitivity;
+        mouseSensitivity = GameSetting.data.mouseSensitivity;
         yaw += LookInput.x * mouseSensitivity;
         pitch -= LookInput.y * mouseSensitivity;
 

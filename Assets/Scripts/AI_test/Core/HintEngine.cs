@@ -123,13 +123,17 @@ public static class HintEngine
 
         string watchingLine = BuildWatchingLine(recentAction, proximityNote);
 
+        // 진행 문장은 레벨에 따라 구체성이 달라서 레벨을 먼저 정한 뒤에 받는다
+        // (HintManager가 같은 스텝 재요청으로 레벨을 조정하면 거기서 한 번 더 다시 받음)
+        int hintLevel = ScoreToLevel(score);
+
         string progressNote = (progressProvider != null && nextStep != null)
-            ? progressProvider.GetProgressNote(nextStep)
+            ? progressProvider.GetProgressNote(nextStep, hintLevel)
             : null;
 
         return new HintResult
         {
-            hintLevel     = ScoreToLevel(score),
+            hintLevel     = hintLevel,
             playerStatus  = DetermineStatus(state, config, handObjectName, inventoryObjectNames),
             nextStep      = nextStep,
             hintType      = state.hintType,
