@@ -32,8 +32,6 @@ public class StartingScene : MonoBehaviour
     
     public void StartGame()
     {
-        Debug.Log("Start Button Clicked");
-
         StartCoroutine(ShowIntroScreenAndLoadScene());
     }
 
@@ -76,16 +74,7 @@ public class StartingScene : MonoBehaviour
 
     public void ContinueGame()
     {
-        Debug.Log("Continue Button Clicked");
-
-        if (!GameData.HasSavedScene())
-        {
-            Debug.Log("No saved scene. Loading default scene number: " + defaultSceneNumber);
-            SceneManager.LoadScene(defaultSceneNumber);
-            return;
-        }
-
-        int savedSceneNumber = GameData.LoadSavedSceneNumber();
+        int savedSceneNumber = GameSetting.data.current_stage;
 
         Debug.Log("Continue to Scene Number: " + savedSceneNumber);
 
@@ -94,8 +83,6 @@ public class StartingScene : MonoBehaviour
 
     public void OpenSetting()
     {
-        Debug.Log("Setting Button Clicked");
-
         if (gameSetting != null)
         {
             gameSetting.OpenSetting();
@@ -108,12 +95,6 @@ public class StartingScene : MonoBehaviour
 
     public void ExitGame()
     {
-        Debug.Log("Exit Button Clicked");
-
-        Application.Quit();
-
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
+        gameSetting.ExitGame();
     }
 }
