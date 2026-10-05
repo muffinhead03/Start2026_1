@@ -15,8 +15,10 @@ public static class PromptBuilder
         { 2, "You may mention a rough direction or distance (e.g. 'something nearby'), but do not name or describe the hidden item itself." },
         // 해석: 대략적인 방향이나 거리("근처에 뭔가 있어" 정도)는 언급해도 되지만, 숨겨진 아이템의 이름이나 생김새는 말하지 마.
 
-        { 3, "You may clearly name and describe the hidden item — its name, appearance, and exact location." },
-        // 해석: 숨겨진 아이템의 이름, 생김새, 정확한 위치를 명확히 말해도 돼.
+        { 3, "Clearly name the item and place written in the Hint direction. Use only the details written there — never add a color, material, or location of your own." },
+        // 해석: 힌트 방향에 적힌 물건과 장소를 분명하게 말해. 거기 적힌 내용만 쓰고, 색깔·재질·위치를 지어내서 덧붙이지 마.
+        // (예전 문구 "생김새(appearance)까지 말해도 돼"가 오히려 지어내기를 유도함 — 베타: "금장식 오르골", "붉은색 LP", "상자 아래".
+        //  재요청 시 레벨이 올라가면서 레벨 3에 더 자주 도달하므로 같이 수정)
 
         { 4, "Clearly name the hidden item and describe the specific action the player should take with it to solve the puzzle." },
         // 해석: 숨겨진 아이템 이름을 명확히 말하고, 그걸로 퍼즐을 풀기 위해 플레이어가 취해야 할 구체적인 행동까지 설명해.
@@ -73,8 +75,10 @@ public static class PromptBuilder
 
     /// <summary>
     /// HintResult 하나를 받아 LLM에 보낼 유저 프롬프트 전체(씬 컨텍스트+플레이어 상태+힌트 방향)를 조립한다.
+    /// previousHint: 같은 스텝·같은 레벨에서 힌트를 다시 요청한 경우에만 직전 답변을 넘김 →
+    /// "같은 뜻, 다른 표현"으로 말하게 해서 똑같은 문장이 반복되지 않게 한다. 그 외엔 null.
     /// </summary>
-    public static string Build(HintResult result)
+    public static string Build(HintResult result, string previousHint = null)
     {
         string typeEn      = result.hintType == "direct" ? "direct" : "indirect and atmospheric";
         string levelGuide  = LevelGuide.ContainsKey(result.hintLevel)    ? LevelGuide[result.hintLevel]    : "";
@@ -117,7 +121,21 @@ public static class PromptBuilder
             // "묘한 빛을 따라" 같은 없는 단서를 지어내서 플레이어를 엉뚱한 곳으로 보낼 위험이 반복 확인됨)
             $"Do NOT mention any other puzzle mechanic, object, or step that isn't part of it — " +
             $"{orderNote}\n\n" +
+            BuildRepeatNote(previousHint) +
             $"{Config.language} hint ({Config.language} language only, no other language):";
+    }
+
+    // 같은 레벨 재요청일 때만 붙는 한 줄. 방향 문장은 그대로 하나만 두고(1·2차 실험에서 둘 이상 주면 퇴화),
+    // "이 문장은 이미 들었으니 같은 뜻을 다른 말로"만 덧붙인다.
+    // 예전엔 프롬프트 맨 끝(답변 시작 신호 뒤)에 붙었는데, 답변 신호 앞으로 옮김.
+    static string BuildRepeatNote(string previousHint)
+    {
+        if (string.IsNullOrWhiteSpace(previousHint))
+            return "";
+
+        return $"[Previous hint for this step]\n{previousHint.Trim()}\n" +
+               "The player already heard this. Give the same direction in different words. Do not repeat the previous sentence.\n\n";
+        // 해석: 플레이어가 이미 이 힌트를 들었음. 같은 방향을 다른 말로 전해. 이전 문장을 반복하지 마.
     }
 
     /// <summary>
