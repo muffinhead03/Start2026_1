@@ -102,11 +102,40 @@ public class HintManager : MonoBehaviour
              "베타에서 모델이 이전 힌트를 베끼는 게 보이면 체크 해제.")]
     [SerializeField] bool varyRepeatedHints = true;
 
+    [Header("힌트 레벨 정교화 (같은 스텝 재요청)")]
+    [Tooltip("같은 스텝에서 다시 힌트를 요청했을 때, 직전 힌트 이후 이 시간(초) 이상 지났으면 '해봤는데도 막혔다'로 보고 레벨 +1.\n" +
+             "실패 기록이나 새 행동이 있었으면 시간과 상관없이 +1. 바로 다시 누르면 레벨 유지(다른 표현으로만 말함).")]
+    [SerializeField] float minRetrySeconds = 20f;
+
+    [Header("설정 난이도별 힌트 레벨 범위 (설정 화면의 Easy / Medium / Hard)")]
+    [Tooltip("Easy: 처음부터 이 레벨 이상으로 시작 (예: 3이면 첫 힌트부터 물건 이름을 분명하게 말함)")]
+    [Range(1, 5)] [SerializeField] int easyMinLevel = 3;
+    [Range(1, 5)] [SerializeField] int easyMaxLevel = 5;
+    [Tooltip("Medium(기본값): 기존과 동일하게 점수대로 1부터 시작해서 재요청할수록 올라감")]
+    [Range(1, 5)] [SerializeField] int mediumMinLevel = 1;
+    [Range(1, 5)] [SerializeField] int mediumMaxLevel = 5;
+    [Tooltip("Hard: 이 레벨 위로는 안 올라감 (예: 3이면 행동/정답 단계(4~5)는 끝까지 안 보여줌)")]
+    [Range(1, 5)] [SerializeField] int hardMinLevel = 1;
+    [Range(1, 5)] [SerializeField] int hardMaxLevel = 3;
+
     // 요청 번호: 타임아웃 뒤에 늦게 도착한 옛 요청의 응답이 새 힌트에 섞이지 않게 함
     int currentRequestId = 0;
 
-    // 스텝별 마지막 LLM 힌트 (표현 다양화용)
-    readonly Dictionary<int, string> lastHintByStep = new Dictionary<int, string>();
+    // 스텝별로 "직전에 어떤 힌트를 줬는지" 기억 — 같은 스텝 재요청 때 레벨 조정 + 표현 다양화에 씀
+    class StepHintMemory
+    {
+        public int    level;        // 직전에 준 레벨
+        public float  time;         // 직전 힌트 시각
+        public int    failCount;    // 직전 힌트 시점의 failCount
+        public int    actionSerial; // 직전 힌트 시점의 행동 기록 번호
+        public string progressBand; // 직전 힌트 시점의 진행 구간 (예: 곰 인형 "early"/"almost")
+        public string lastReply;    // 직전에 LLM이 준 힌트 본문 (관찰 문장 제외) — 같은 레벨 재요청 시 "다르게 말해" 기준
+        public string lastNote;     // 직전에 쓴 진행 문장 — 재요청 때 같은 후보가 연속으로 뽑히지 않게
+    }
+    readonly Dictionary<int, StepHintMemory> stepMemory = new Dictionary<int, StepHintMemory>();
+
+    // AddLastAction이 불릴 때마다 +1. lastActions는 5개로 잘려서 "새 행동이 있었는지"를 개수로 못 세기 때문에 따로 둠
+    int actionSerial = 0;
 
     // LLM 상태가 바뀌는 순간(폴백 → AI 힌트)을 로그로 남기기 위한 이전 상태
     bool? lastLLMDown = null;
@@ -186,16 +215,32 @@ public class HintManager : MonoBehaviour
 
     private void OnEnable()
     {
-        hint_open = InputSystem.actions.FindAction("HintOpen");
-        hint_open.performed += OnOpenPanel;
-        hint_close = InputSystem.actions.FindAction("HintClose");
-        hint_close.performed += OnClosePanel;
+        // 액션이 없으면 NullReferenceException 대신 에러 로그 (.inputactions 커밋 누락 등)
+        hint_open = InputSystem.actions?.FindAction("HintOpen");
+        if (hint_open != null)
+            hint_open.performed += OnOpenPanel;
+        else
+            Debug.LogError("[HintManager] Input Actions에 'HintOpen' 액션이 없습니다. .inputactions 파일이 커밋됐는지 확인하세요.");
+
+        hint_close = InputSystem.actions?.FindAction("HintClose");
+        if (hint_close != null)
+            hint_close.performed += OnClosePanel;
+        else
+            Debug.LogError("[HintManager] Input Actions에 'HintClose' 액션이 없습니다. .inputactions 파일이 커밋됐는지 확인하세요.");
     }
 
+    // InputSystem.actions는 씬이 바뀌어도 살아있는 전역 입력이라, 해제 안 하면
+    // 파괴된 HintManager의 콜백이 계속 불려서 MissingReferenceException이 남. (OnDisable은 파괴 직전에도 호출됨)
     void OnDisable()
     {
-        if(hint_open!=null) hint_open.performed -= OnOpenPanel;
-        if (hint_open != null) hint_close.performed -= OnClosePanel;
+        if (hint_open != null) hint_open.performed -= OnOpenPanel;
+        if (hint_close != null) hint_close.performed -= OnClosePanel;
+
+        // 오브젝트가 꺼지면 코루틴이 전부 멈추므로, 상태 플래그가 "진행 중"으로 남지 않게 초기화
+        // (안 하면 IsBusy가 true로 굳어서 다시 켜졌을 때 힌트 버튼이 계속 막힘)
+        introTypingActive = false;
+        revealCoroutine = null;
+        fallbackCoroutine = null;
     }
 
     void Update()
@@ -244,6 +289,23 @@ public class HintManager : MonoBehaviour
     {
         if (isOpen) return;
 
+        // NumberLock 조작 중에는 힌트 패널 열기 금지
+        if (numberLockMode != null && numberLockMode.IsActive())
+        {
+            Debug.Log("[HintManager] NumberLock 조작 중이라 힌트 패널을 열 수 없음");
+            return;
+        }
+
+        // 커서가 풀려 있으면 다른 UI(자물쇠, 조사 화면 등)를 쓰는 중 → 힌트 패널 안 엶.
+        // 조사 화면처럼 EnableUIInput()을 부르는 UI는 HintOpen 자체가 꺼지지만,
+        // 커서만 풀고 액션맵을 안 바꾸는 UI(인형씬 자물쇠 등)는 여기서 막아야 함.
+        // (여기서 열었다 닫으면 닫을 때 커서를 잠그고 PlayerInput을 켜서 그 UI가 멈춘 것처럼 보임)
+        if (blockWhenCursorFree && Cursor.lockState != CursorLockMode.Locked)
+        {
+            Debug.Log($"[HintManager] 다른 UI가 마우스를 쓰는 중이라 힌트 패널을 열지 않음 (cursor={Cursor.lockState})");
+            return;
+        }
+
         isOpen = !isOpen;
         hintPanel.SetActive(isOpen);
 
@@ -284,6 +346,7 @@ public class HintManager : MonoBehaviour
     public void AddLastAction(string actionName)
     {
         currentPlayerState.lastActions.Add(actionName);
+        actionSerial++;
         if (currentPlayerState.lastActions.Count > 5)
             currentPlayerState.lastActions.RemoveAt(0);
     }
@@ -330,6 +393,9 @@ public class HintManager : MonoBehaviour
             ProgressProvider        // 스텝 진행도 제공자 — null이면 progressNote만 안 채워짐
         );
 
+        // 같은 스텝 재요청이면 레벨 조정 (+ 같은 레벨이면 직전 답변을 넘겨서 다른 표현으로)
+        string previousHint = AdjustForRepeatRequest(result);
+
         Debug.Log($"[힌트 판단] {result.debugReason} / override={result.isOverride} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 관찰: {result.watchingLine ?? "(없음)"} / 진행: {result.progressNote ?? "(없음)"}");
 
         if (result.nextStep == null)
@@ -362,7 +428,119 @@ public class HintManager : MonoBehaviour
         if (hasWatchingLine)
             typingCoroutine = StartCoroutine(PlayIntroThenReveal(introText, displayPrefix));
 
-        ContinueHintFlow(result, displayPrefix, hasWatchingLine);
+        ContinueHintFlow(result, displayPrefix, hasWatchingLine, previousHint);
+    }
+
+    /// <summary>
+    /// 같은 스텝에서 힌트를 다시 요청했을 때 레벨을 조정한다. 점수로 나온 레벨은 "첫 요청의 시작점"으로만 쓰고,
+    /// 재요청부터는 직전 레벨을 기준으로:
+    ///  - 직전 힌트 이후 시도했는데(시간 경과 / 실패 기록 / 새 행동) 진행 구간이 그대로면 → +1 (해봤는데도 막힘)
+    ///  - 바로 다시 눌렀거나, 진행 구간이 바뀌었으면(잘 가고 있음) → 직전 레벨 유지
+    ///  - 어떤 경우에도 직전 레벨보다 내려가지 않음
+    /// 레벨이 바뀌면 진행 문장도 새 레벨로 다시 고른다.
+    /// 반환값: 같은 레벨이 유지된 재요청이면 직전 LLM 답변(→ PromptBuilder가 "다른 표현으로" 지시), 아니면 null.
+    /// </summary>
+    string AdjustForRepeatRequest(HintResult result)
+    {
+        if (result.nextStep == null) return null;
+
+        int id = result.nextStep.id;
+        int originalLevel = result.hintLevel;
+        string bandNow = ProgressProvider?.GetProgressBand(result.nextStep);
+        string previousHint = null;
+
+        // 진행 구간에 따라 최소 레벨이 있는 경우 (예: 곰 인형이 이미 찢어져 동전이 보이는 상태 — 여기서 모호하게 말하면
+        // "주변을 살펴보세요"처럼 쓸모없는 힌트가 됨. 레벨 1~2 지침은 "숨겨진 물건 이름을 말하지 마"라서 동전을 못 말함)
+        int minLevel = ProgressProvider != null ? ProgressProvider.GetMinHintLevel(result.nextStep) : 1;
+        if (minLevel > result.hintLevel)
+        {
+            Debug.Log($"[레벨 조정] step {id}: 진행 구간 '{bandNow}' 최소 레벨 {minLevel} 적용 (점수 {result.hintLevel})");
+            result.hintLevel = Mathf.Clamp(minLevel, 1, 5);
+        }
+        // 설정 난이도 최소 레벨 — 첫 요청부터 적용 (Easy면 3부터 시작)
+        GetDifficultyRange(out string difficultyName, out int diffMin, out int diffMax);
+        if (diffMin > result.hintLevel)
+        {
+            Debug.Log($"[레벨 조정] step {id}: 난이도 {difficultyName} 최소 레벨 {diffMin} 적용 (점수 {result.hintLevel})");
+            result.hintLevel = Mathf.Clamp(diffMin, 1, 5);
+        }
+        int scoreLevel = result.hintLevel;
+
+        if (stepMemory.TryGetValue(id, out var m))
+        {
+            float elapsed    = Time.time - m.time;
+            bool failedSince = currentPlayerState.failCount > m.failCount;
+            bool actedSince  = actionSerial != m.actionSerial;
+            bool triedSince  = elapsed >= minRetrySeconds || failedSince || actedSince;
+            bool progressed  = bandNow != m.progressBand;
+
+            int floor = (triedSince && !progressed) ? m.level + 1 : m.level;
+            result.hintLevel = Mathf.Clamp(Mathf.Max(scoreLevel, floor), 1, 5);
+
+            // 같은 레벨 + 같은 진행 구간일 때만 "다른 표현으로" 요청.
+            // 구간이 바뀌었으면 방향 문장 자체가 달라서, 직전 답변(예: "계속 던져보세요")을 넘기면 오히려 헷갈림
+            if (result.hintLevel == m.level && !progressed)
+                previousHint = m.lastReply;
+
+            Debug.Log($"[레벨 조정] step {id}: 점수 {scoreLevel} → {result.hintLevel} " +
+                      $"(직전 {m.level}, {elapsed:F0}초 경과, 실패 {(failedSince ? "있음" : "없음")}, 새 행동 {(actedSince ? "있음" : "없음")}, " +
+                      $"진행 변화 {(progressed ? "있음" : "없음")}{(previousHint != null ? ", 같은 레벨 → 다른 표현 요청" : "")})");
+        }
+
+        // 설정 난이도 최대 레벨 — 재요청으로 올라가도 이 위로는 안 감 (Hard면 3까지).
+        // 단, 진행 구간 최소 레벨(예: 동전이 이미 눈앞에 보임)이 더 높으면 그쪽을 우선 — 모호한 힌트가 쓸모없는 상황이라서
+        int capped = Mathf.Max(Mathf.Min(result.hintLevel, diffMax), minLevel);
+        if (capped != result.hintLevel)
+        {
+            Debug.Log($"[레벨 조정] step {id}: 난이도 {difficultyName} 최대 레벨 {diffMax} 적용 ({result.hintLevel} → {capped})");
+            result.hintLevel = Mathf.Clamp(capped, 1, 5);
+
+            // 위에서 "같은 레벨이면 다른 표현" 판단을 캡 전 레벨로 했으므로, 캡에 걸려 직전과 같아졌으면 다른 표현 요청
+            if (m != null && result.hintLevel == m.level && previousHint == null && bandNow == m.progressBand)
+                previousHint = m.lastReply;
+        }
+
+        // 레벨이 바뀌었거나 재요청이면 진행 문장을 새 레벨로 다시 고름 (같은 레벨이어도 다시 뽑아서 다른 후보가 나올 수 있게)
+        if (ProgressProvider != null && (m != null || result.hintLevel != originalLevel))
+        {
+            string note = ProgressProvider.GetProgressNote(result.nextStep, result.hintLevel);
+
+            // 직전과 같은 후보가 뽑히면 다시 뽑음 (후보가 하나뿐인 칸이면 그대로 — 몇 번 해봐도 같으면 포기)
+            for (int i = 0; i < 8 && m != null && !string.IsNullOrEmpty(note) && note == m.lastNote; i++)
+                note = ProgressProvider.GetProgressNote(result.nextStep, result.hintLevel);
+
+            result.progressNote = string.IsNullOrEmpty(note) ? null : note;
+        }
+
+        stepMemory[id] = new StepHintMemory
+        {
+            level        = result.hintLevel,
+            time         = Time.time,
+            failCount    = currentPlayerState.failCount,
+            actionSerial = actionSerial,
+            progressBand = bandNow,
+            lastReply    = m?.lastReply, // 이번 답변이 오면 ContinueHintFlow에서 갱신
+            lastNote     = result.progressNote,
+        };
+
+        return previousHint;
+    }
+
+    // 설정 화면 난이도(PlayerData.hintLevel: 0=Easy, 1=Medium, 2=Hard) → 힌트 레벨 범위.
+    // GameSetting이 없는 씬(테스트 씬 등)이면 저장 파일에서 읽고, 그것도 없으면 Medium(기존 동작).
+    void GetDifficultyRange(out string name, out int min, out int max)
+    {
+        PlayerData data = GameSetting.data ?? SaveSystem.LoadGame();
+        int difficulty = data != null ? data.hintLevel : 1;
+
+        switch (difficulty)
+        {
+            case 0:  name = "Easy";   min = easyMinLevel;   max = easyMaxLevel;   break;
+            case 2:  name = "Hard";   min = hardMinLevel;   max = hardMaxLevel;   break;
+            default: name = "Medium"; min = mediumMinLevel; max = mediumMaxLevel; break;
+        }
+
+        if (max < min) max = min; // 인스펙터에서 잘못 넣어도 뒤집히지 않게
     }
 
     // 관찰 문장(치지직... 포함)을 타이핑 효과로 보여준다. 그동안 LLM 요청은 ContinueHintFlow에서
@@ -482,7 +660,7 @@ public class HintManager : MonoBehaviour
 
     // 관찰 문장 타이핑과 별개로(병렬로) 실제 힌트를 가져오는 부분.
     // displayPrefix는 힌트 텍스트를 다시 세팅할 때마다(스트리밍 중간 갱신 포함) 맨 앞에 유지하기 위해 넘김.
-    void ContinueHintFlow(HintResult result, string displayPrefix, bool hasWatchingLine)
+    void ContinueHintFlow(HintResult result, string displayPrefix, bool hasWatchingLine, string previousHint = null)
     {
         // LLM을 쓸 수 없으면(로드 실패/워밍업 미완료/연결 누락) 고정 문구로 대체.
         // 힌트 레벨 판단(HintEngine)은 위에서 이미 끝났으므로 표현만 hintByLevel 문구로 바뀜.
@@ -502,22 +680,17 @@ public class HintManager : MonoBehaviour
         }
 
         string systemPrompt = PromptBuilder.SystemPrompt;
-        string userPrompt   = PromptBuilder.Build(result);
-
-        // 같은 스텝에서 다시 물어보면 직전 힌트를 알려주고 다른 표현을 요청 (같은 문장 반복 방지)
+        // 같은 스텝·같은 레벨 재요청이면 직전 힌트를 알려주고 다른 표현을 요청 (같은 문장 반복 방지).
+        // 레벨이 올라간 재요청은 방향 문장 자체가 달라지므로 붙이지 않음 (AdjustForRepeatRequest가 판단)
         int stepId = result.nextStep.id;
-        if (varyRepeatedHints && lastHintByStep.TryGetValue(stepId, out string prevHint) && !string.IsNullOrEmpty(prevHint))
-        {
-            userPrompt += "\n\n[Previous hint for this step]\n" + prevHint +
-                          "\nThe player already heard this. Give the same direction in different words. Do not repeat the previous sentence.";
-            // 해석: 플레이어가 이미 이 힌트를 들었음. 같은 방향을 다른 말로 전해. 이전 문장을 반복하지 마.
-        }
+        string userPrompt   = PromptBuilder.Build(result, varyRepeatedHints ? previousHint : null);
 
         // 요청 번호 — 이 번호와 다른(옛) 요청의 콜백은 무시
         int requestId = ++currentRequestId;
 
         // 진행 상황이 붙는 요청만 실제 프롬프트를 로그로 남김 — LLM이 진행 상황을 반영했는지 비교하기 위함 (베타 확인용)
-        if (!string.IsNullOrEmpty(result.progressNote))
+        // (같은 레벨 재요청도 "다른 표현" 지시가 붙었는지 확인하려고 같이 남김)
+        if (!string.IsNullOrEmpty(result.progressNote) || !string.IsNullOrEmpty(previousHint))
             Debug.Log($"[프롬프트] {userPrompt}\n[힌트 방향: {PromptBuilder.GetEffectiveHint(result)}]");
 
         isRequesting = true;
@@ -577,7 +750,8 @@ public class HintManager : MonoBehaviour
                 Debug.Log($"[힌트 결과] fallback=false / 모델: {llmClient.ModelName} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 응답시간: {stopwatch.ElapsedMilliseconds}ms / 응답: {displayPrefix}{shownReply}" +
                           (truncated ? $" / 잘림=true / 원문: {lastReply}" : ""));
 
-                lastHintByStep[stepId] = shownReply.Trim();
+                if (stepMemory.TryGetValue(stepId, out var mem))
+                    mem.lastReply = shownReply.Trim();
                 RememberHint(displayPrefix + shownReply, false);
                 LogHintSummary(result, "AI", null, stopwatch.ElapsedMilliseconds);
             },
@@ -725,6 +899,7 @@ public class HintManager : MonoBehaviour
     {
         currentPuzzleId = newPuzzleId;
         currentPlayerState.hintCount = 0;
+        stepMemory.Clear(); // 스텝 id는 씬마다 다시 1부터라 지난 씬 기록이 섞이지 않게
         UpdateUsageUI();
     }
 
