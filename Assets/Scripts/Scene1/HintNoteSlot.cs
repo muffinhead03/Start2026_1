@@ -63,7 +63,13 @@ public class HintNoteSlot : MonoBehaviour
         {
             var grab = player.GetComponent<Player_Grab>();
             if (grab.isGrab())
+            {
+                // 가짜 쪽지면 따로 기록 → WineHintBridge가 "그 쪽지가 아니야" 힌트로 바꿈
+                if (manager.IsHoldingDecoyNote())
+                    manager.RegisterDecoyAttempt();
+
                 hintManager?.RegisterFail();
+            }
         }
     }
 }
