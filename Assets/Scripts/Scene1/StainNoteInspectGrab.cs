@@ -1,8 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-// 쪽지 조사(확대 + 마우스 회전) → 두 번째 상호작용 시 실제로 손에 잡히도록 처리
+// 쪽지 조사(확대, 회전 없음) → 두 번째 상호작용 시 실제로 손에 잡히도록 처리
 // BookInspectGrab과 동일한 구조이지만, 텍스트 UI 패널 없이 쪽지 자체 머티리얼(텍스처)에
 // 미리 입혀둔 알파벳을 확대해서 눈으로 직접 확인하는 방식입니다.
 // E: 조사 → E 한 번 더: 손에 들어감 → 손에 든 상태에서 E: 떨어뜨림(Player_Grab.Release, 기존 동작)
@@ -24,9 +23,6 @@ public class StainNoteInspectGrab : MonoBehaviour, IInspectInteractHandler
     public float targetTime = 0.5f;
     public float inspectDistance = 0.6f;
 
-    [Header("Rotate Settings")]
-    public float rotateSpeed = 150f;
-
     [Header("UI Settings")]
     [Tooltip("확대 중 커서만 숨깁니다. 텍스트 패널은 사용하지 않습니다.")]
     public Scene_UI_Manager SceneUI;
@@ -46,18 +42,6 @@ public class StainNoteInspectGrab : MonoBehaviour, IInspectInteractHandler
         mainCamera = Camera.main;
         col = GetComponent<Collider>();
         rigid = GetComponent<Rigidbody>();
-    }
-
-    void Update()
-    {
-        if (!isInspecting) return;
-
-        if (Mouse.current != null)
-        {
-            Vector2 delta = Mouse.current.delta.ReadValue();
-            transform.Rotate(Vector3.up, -delta.x * rotateSpeed * Time.deltaTime, Space.World);
-            transform.Rotate(Vector3.right, delta.y * rotateSpeed * Time.deltaTime, Space.World);
-        }
     }
 
     // Event_On_Ray.OnClick 에 연결할 함수
