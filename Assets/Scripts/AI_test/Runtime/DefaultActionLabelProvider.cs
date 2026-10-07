@@ -4,6 +4,8 @@
 ///
 /// action id는 접두사로 매칭한다. 새 씬 추가 시 Patterns에 줄만 추가하면 됨.
 /// (와인씬: 각 조사 스크립트가 "inspect_xxx_" + 색/글자로 AddLastAction 호출)
+/// (와인씬: WineHintBridge가 쪽지 찾음 "wine_note_found_{개수}"/"wine_note_found_all",
+///  붙임 "wine_note_placed_{개수}"/"wine_note_all_placed", 가짜 시도 "wine_note_decoy")
 /// (인형씬: DollHintBridge가 스텝 완료 시 "doll_step_NN", 곰 인형 던질 때 "doll_bear_throw_{던진 횟수}")
 /// (오르간씬: 손에 새 물건을 들면 "organ_hold_{종류}"도 기록)
 /// (오르간씬: OrganHintBridge가 스텝 완료 시 "organ_step_NN"으로 AddLastAction 호출 —
@@ -18,6 +20,10 @@ public class DefaultActionLabelProvider : IActionLabelProvider
         ("inspect_wine_stain_",      new[] { "바닥 얼룩을 들여다보고 있었지", "바닥 얼룩 색깔을 살펴보고 있었네" }),
         ("inspect_alphabet_marker_", new[] { "바닥의 알파벳 표시를 확인하고 있었지", "얼룩 사이 알파벳을 들여다보고 있었네" }),
         ("inspect_wine_label_",      new[] { "와인 라벨을 확인하고 있었지", "병 라벨을 살펴보고 있었네" }),
+        // 쪽지 개수가 붙는 "wine_note_found_2" / "wine_note_placed_2"는 아래 GetLabels()에서 따로 처리
+        ("wine_note_found_all",      new[] { "쪽지를 전부 모았네", "바닥의 쪽지를 다 챙겼지" }),
+        ("wine_note_all_placed",     new[] { "종이에 쪽지를 다 붙였지", "종이 빈 칸을 쪽지로 전부 채웠네" }),
+        ("wine_note_decoy",          new[] { "엉뚱한 쪽지를 붙여보려 했지", "맞지 않는 쪽지를 종이에 대보고 있었네" }),
 
         // ── 오르간씬 ───────────────────────────────────────
         ("organ_step_02", new[] { "거실에서 파이프를 하나 찾아냈지", "파이프 하나를 손에 넣었네" }),
@@ -59,6 +65,11 @@ public class DefaultActionLabelProvider : IActionLabelProvider
     // 곰 인형 던지기 — "doll_bear_throw_3"처럼 횟수가 붙어서 들어옴
     const string BearThrowPrefix = "doll_bear_throw_";
 
+    // 와인씬 쪽지 — "wine_note_found_2" / "wine_note_placed_2"처럼 개수가 붙어서 들어옴
+    // ("_all"로 끝나는 건 숫자 파싱이 실패해서 위 Patterns로 넘어감)
+    const string NoteFoundPrefix = "wine_note_found_";
+    const string NotePlacedPrefix = "wine_note_placed_";
+
     public string[] GetLabels(string actionId)
     {
         if (string.IsNullOrEmpty(actionId)) return null;
@@ -66,6 +77,14 @@ public class DefaultActionLabelProvider : IActionLabelProvider
         if (actionId.StartsWith(BearThrowPrefix) &&
             int.TryParse(actionId.Substring(BearThrowPrefix.Length), out int throwCount))
             return BearThrowLabels(throwCount);
+
+        if (actionId.StartsWith(NoteFoundPrefix) &&
+            int.TryParse(actionId.Substring(NoteFoundPrefix.Length), out int foundCount))
+            return NoteFoundLabels(foundCount);
+
+        if (actionId.StartsWith(NotePlacedPrefix) &&
+            int.TryParse(actionId.Substring(NotePlacedPrefix.Length), out int placedCount))
+            return NotePlacedLabels(placedCount);
 
         foreach (var (prefix, labels) in Patterns)
             if (actionId.StartsWith(prefix))
@@ -88,5 +107,25 @@ public class DefaultActionLabelProvider : IActionLabelProvider
 
         // 관찰 문장은 HintEngine에서 "{행동}, 지금은 {거리}." 형태로 이어붙여지므로 라벨 안에는 쉼표를 넣지 않음
         return new[] { $"곰 인형을 벌써 {count}번이나 던졌지", $"곰 인형을 {count}번이나 집어던졌네" };
+    }
+
+    /// <summary>
+    /// 지금까지 찾은 진짜 쪽지 개수를 문장에 반영. 전체 개수(4장)는 말하지 않음 — 다 모으면 "wine_note_found_all"로 따로 옴.
+    /// (관찰 문장은 "{행동}, 지금은 {거리}." 형태로 이어붙여지므로 라벨 안에는 쉼표를 넣지 않음)
+    /// </summary>
+    static string[] NoteFoundLabels(int count)
+    {
+        if (count <= 1)
+            return new[] { "바닥에서 쪽지를 하나 찾았지", "얼룩 사이 쪽지를 하나 챙겼네" };
+
+        return new[] { $"쪽지를 벌써 {count}장 모았지", $"쪽지를 {count}장째 챙겼네" };
+    }
+
+    static string[] NotePlacedLabels(int count)
+    {
+        if (count <= 1)
+            return new[] { "종이에 쪽지를 하나 붙였지", "벽 종이에 쪽지 한 장을 붙였네" };
+
+        return new[] { $"종이에 쪽지를 {count}장 붙였지", $"벽 종이에 쪽지를 {count}장째 붙였네" };
     }
 }
