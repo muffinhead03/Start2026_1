@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class DollScene_ChangeBrokenLeg : MonoBehaviour
@@ -174,35 +175,73 @@ public class DollScene_ChangeBrokenLeg : MonoBehaviour
     // NumberLock 쪽에서 호출
     // =============================================
 
-    public void CompleteNumberLock()
+
+public void CompleteNumberLock()
+{
+    if (isNumberLockSolved)
+        return;
+
+    // 퍼즐 완료 상태 저장
+    isNumberLockSolved = true;
+
+    Debug.Log(
+        "[BrokenLeg] 자물쇠 해결 완료"
+    );
+
+    // 문 열기
+    if (openTheGateLock != null)
     {
-        if (isNumberLockSolved)
-            return;
+        openTheGateLock.OpenLock();
+    }
+    else
+    {
+        Debug.LogWarning(
+            "[BrokenLeg] OpenTheGateLock이 연결되지 않았습니다."
+        );
+    }
+
+    // 0.5초 후 일반 플레이 모드 복귀
+    StartCoroutine(
+        ExitNumberLockAfterDelay()
+    );
+}
 
 
-        isNumberLockSolved = true;
+// =============================================
+// 퍼즐 완료 후 0.5초 대기
+// =============================================
 
+        private IEnumerator ExitNumberLockAfterDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        // NumberLock UI 종료
+        if (numberLockMode != null)
+        {
+            numberLockMode.ExitMode();
+        }
+
+        // 카메라 고정 해제
+        if (playerFixCamera != null)
+        {
+            playerFixCamera.UnFixCamera();
+        }
+
+        // 일반 플레이 UI 및 마우스 복구
+        if (sceneUI != null)
+        {
+            sceneUI.SetActiveCursor(true);
+            sceneUI.LockPointer();
+        }
+
+        // 조사 상태 초기화
+        isCheckingNumberLock = false;
 
         Debug.Log(
-            "[BrokenLeg] 자물쇠 해결 완료"
+            "[BrokenLeg] 0.5초 대기 완료 → 일반 플레이 모드 복귀"
         );
-
-
-        // 울타리 / 문 열기
-        if (openTheGateLock != null)
-        {
-            openTheGateLock.OpenLock();
-        }
-        else
-        {
-            Debug.LogWarning(
-                "[BrokenLeg] OpenTheGateLock이 연결되지 않았습니다."
-            );
-        }
-
-
-        ExitNumberLock();
     }
+
 
 
     // =============================================
