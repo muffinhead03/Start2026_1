@@ -15,6 +15,10 @@ public class FloorStainManager : MonoBehaviour
     HashSet<GameObject> inspectedStains = new HashSet<GameObject>();
     HashSet<GameObject> inspectedMidpoints = new HashSet<GameObject>();
 
+    // WineHintBridge가 읽는 진행도 (읽기 전용)
+    public int InspectedMidpointCount => inspectedMidpoints.Count;
+    public int TotalMidpoints => totalMidpoints;
+
     // 얼룩(색깔) 조사 — Step 1만 담당
     public void OnStainInspected(GameObject stain)
     {

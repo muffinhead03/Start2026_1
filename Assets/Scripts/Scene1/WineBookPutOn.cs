@@ -10,8 +10,11 @@ public class WineBookPutOn : MonoBehaviour
     [Header("책장 (애니메이션되는 오브젝트) - 배치된 책을 여기 자식으로 붙임")]
     [SerializeField] Transform shelfParent;
 
-    [Header("투명 머터리얼")]
+    [Header("투명 머터리얼 (책을 들고 바라볼 때)")]
     [SerializeField] Material mat_trans;
+
+    [Header("평소 자리 표시 머터리얼 (비우면 지금 슬롯에 들어있는 머터리얼 사용)")]
+    [SerializeField] Material mat_idle;
 
     [Header("메쉬 렌더러")]
     [SerializeField] MeshRenderer mesh;
@@ -33,7 +36,12 @@ public class WineBookPutOn : MonoBehaviour
     {
         state = 0;
         putOn = null;
-        mesh.enabled = false;
+
+        // mat_idle을 비워두면 지금 슬롯 머터리얼(하얀 책 모양)을 평소 표시로 사용
+        if (mat_idle == null)
+            mat_idle = mesh.sharedMaterial;
+
+        ShowIdle();
     }
 
     public void SetKeyName(string name)
@@ -62,7 +70,7 @@ public class WineBookPutOn : MonoBehaviour
         state = 1;
         putOn = player.GetComponent<Player_Grab>().PutOn(transform.position);
 
-        // 추가: 책장이 슬라이드될 때 같이 움직이도록 다시 부모 설정
+        // 책장이 슬라이드될 때 같이 움직이도록 다시 부모 설정
         if (putOn != null && shelfParent != null)
             putOn.transform.SetParent(shelfParent, true);
 
@@ -78,6 +86,7 @@ public class WineBookPutOn : MonoBehaviour
         player.GetComponent<Player_Grab>().Grab(grab);
         state = 0;
         putOn = null;
+        ShowIdle();
 
         pickUp?.Invoke();
     }
@@ -94,7 +103,22 @@ public class WineBookPutOn : MonoBehaviour
 
     public void OnExit()
     {
-        mesh.enabled = false;
+        if (state == 0) ShowIdle();
+        else mesh.enabled = false;
+    }
+
+    // 비어 있는 슬롯 표시 (하얀 책 모양)
+    void ShowIdle()
+    {
+        if (mat_idle != null)
+        {
+            mesh.material = mat_idle;
+            mesh.enabled = true;
+        }
+        else
+        {
+            mesh.enabled = false;
+        }
     }
 
     public char GetKeyId()
