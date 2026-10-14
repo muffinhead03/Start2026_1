@@ -26555,6 +26555,8 @@ GameObject:
   - component: {fileID: 7228255245515623015}
   - component: {fileID: 7228255245515623016}
   - component: {fileID: 7228255245515623017}
+  - component: {fileID: 5752200000000000001}
+  - component: {fileID: 5752200000000000002}
   m_Layer: 0
   m_Name: Book_dollscene
   m_TagString: Untagged
@@ -26811,6 +26813,67 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &5752200000000000001
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658992144499600903}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.16, y: 0.19831686, z: 0.27472514}
+  m_Center: {x: 3.3554347e-16, y: 0.0028238716, z: -0.12390061}
+--- !u!114 &5752200000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658992144499600903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57522d5fb855f7647919d281f46d525b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  closedLocalEulerAngles: {x: 0, y: 36.121, z: -90}
+  openLocalEulerAngles: {x: -80, y: 36.121, z: -90}
+  openDuration: 0.5
+  rotationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1.5
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1.5
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  startOpened: 0
 --- !u!23 &5951302851793241935
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -27010,7 +27073,31 @@ MonoBehaviour:
       m_Calls: []
   OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7228255245515623017}
+        m_TargetAssemblyTypeName: Object_Inspecatable, Assembly-CSharp
+        m_MethodName: OnInspect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5752200000000000002}
+        m_TargetAssemblyTypeName: DollManual, Assembly-CSharp
+        m_MethodName: ToggleBook
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7228255245515623017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27024,12 +27111,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Object_Inspecatable
   objectName: DollBook
-  player: {fileID: 0}
+  player: {fileID: 482636803}
   targetTime: 1
   inspectDistance: 1
   usePanel: 1
   disc: 
-  SceneUI: {fileID: 0}
+  SceneUI: {fileID: 676938599}
   audio_inspect: {fileID: 0}
   animator: {fileID: 0}
 --- !u!65 &7229108681191490624
