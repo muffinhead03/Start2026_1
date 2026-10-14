@@ -5,7 +5,8 @@ using UnityEngine;
 /// DollSceneの本を開閉するための専用コンポーネント。
 ///
 /// Book_dollsceneにアタッチし、Event_On_Ray.OnClickから
-/// ToggleBook()を呼び出して使用します。
+/// ToggleBook()を呼び出して使用します。Animatorが設定されている場合は
+/// AC_ManualのOn/Off Triggerを使用し、未設定の場合はTransformを直接回転します。
 /// </summary>
 public class DollManual : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class DollManual : MonoBehaviour
     [SerializeField] private Vector3 openLocalEulerAngles;
 
     [Header("Animation")]
+    [Tooltip("AC_Manualを設定するとOn/Off Triggerで既存の開閉アニメーションを使用します。")]
+    [SerializeField] private Animator animator;
+
     [SerializeField, Min(0f)] private float openDuration = 0.5f;
 
     [SerializeField] private AnimationCurve rotationCurve =
@@ -30,14 +34,28 @@ public class DollManual : MonoBehaviour
 
     private void Awake()
     {
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+
         if (closedLocalEulerAngles == Vector3.zero)
         {
             closedLocalEulerAngles = transform.localEulerAngles;
         }
 
         isOpen = startOpened;
-        transform.localRotation = Quaternion.Euler(
-            isOpen ? openLocalEulerAngles : closedLocalEulerAngles);
+
+        if (animator != null)
+        {
+            animator.Play(isOpen ? "Manual_Opened" : "Manual_Closed", 0, 1f);
+            animator.Update(0f);
+        }
+        else
+        {
+            transform.localRotation = Quaternion.Euler(
+                isOpen ? openLocalEulerAngles : closedLocalEulerAngles);
+        }
     }
 
     /// <summary>
@@ -70,6 +88,13 @@ public class DollManual : MonoBehaviour
     private void StartRotation(bool open)
     {
         isOpen = open;
+
+        if (animator != null)
+        {
+            animator.ResetTrigger(open ? "Off" : "On");
+            animator.SetTrigger(open ? "On" : "Off");
+            return;
+        }
 
         if (rotationCoroutine != null)
         {
