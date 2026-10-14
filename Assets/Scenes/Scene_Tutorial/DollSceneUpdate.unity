@@ -26554,6 +26554,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7228255245515623015}
   - component: {fileID: 7228255245515623016}
+  - component: {fileID: 7228255245515623017}
   m_Layer: 0
   m_Name: Book_dollscene
   m_TagString: Untagged
@@ -27010,6 +27011,27 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7228255245515623017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658992144499600903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0298dd8607407184f9a57a15ac5ede88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Inspecatable
+  objectName: DollBook
+  player: {fileID: 0}
+  targetTime: 1
+  inspectDistance: 1
+  usePanel: 1
+  disc: 
+  SceneUI: {fileID: 0}
+  audio_inspect: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!65 &7229108681191490624
 BoxCollider:
   m_ObjectHideFlags: 0
