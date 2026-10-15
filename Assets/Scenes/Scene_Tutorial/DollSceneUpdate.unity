@@ -4316,6 +4316,7 @@ GameObject:
   - component: {fileID: 399262634}
   - component: {fileID: 399262633}
   - component: {fileID: 399262632}
+  - component: {fileID: 399262636}
   m_Layer: 5
   m_Name: DollBook_Page
   m_TagString: Untagged
@@ -4406,6 +4407,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &399262636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399262631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b7d1c6f2a4e4a1f9b3c6d7e8f901234, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DollBookPageController
+  pageCount: 1
+  startingPage: 0
+  pageObjects: []
 --- !u!4 &408824606 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 706756016842984805, guid: 7660f0b8f5d9ad54bb176c917af76737, type: 3}
@@ -17779,6 +17795,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 399262636}
+        m_TargetAssemblyTypeName: DollBookPageController, Assembly-CSharp
+        m_MethodName: PreviousPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1426702364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19848,6 +19876,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 8300000, guid: 6b4a3eae461ea5e418fcb3c71ee3a55e, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 399262636}
+        m_TargetAssemblyTypeName: DollBookPageController, Assembly-CSharp
+        m_MethodName: NextPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
