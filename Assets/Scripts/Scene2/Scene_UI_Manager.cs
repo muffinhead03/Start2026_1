@@ -46,6 +46,11 @@ public class Scene_UI_Manager : MonoBehaviour
         buttons[id].SetActive(active);
     }
 
+    public void SetInteractableButton(int id, bool active)
+    {
+        buttons[id].GetComponent<Button>().interactable = active;
+    }
+
     public void SetActiveCursor(bool active)
     {
         if(panel_cursor!=null) panel_cursor.SetActive(active);

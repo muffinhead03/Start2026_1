@@ -73,14 +73,12 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
         originalPosition = transform.position;
         originalRotation = transform.rotation;
 
-        col.isTrigger = true;
+        col.enabled = false;
         if (rigid != null) rigid.isKinematic = true;
 
         // 플레이어 이동 잠금
         player.SetMoveLock(true);
-
-        InputManager.EnableUIInput();
-        InspectInput.Begin(this);
+        InputManager.DisableInput();
 
         // 목표 위치 (카메라 앞 1m)
         Vector3 targetPosition =
@@ -109,6 +107,9 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
             yield return null;
         }
 
+        InputManager.EnableUIInput();
+        InspectInput.Begin(this);
+
         // 조사 UI 활성화
         if (usePanel)
         {
@@ -117,14 +118,17 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
         }
         SceneUI.SetActiveCursor(false);
 
-        col.isTrigger = false;
+        //col.isTrigger = false;
 
         audio_player?.PlayAudio(audio_inspect);
     }
 
     IEnumerator ReturnToOriginalPosition()
     {
-        col.isTrigger = true;
+        InspectInput.End(this);
+        InputManager.DisableInput();
+
+        //col.isTrigger = true;
         if (rigid != null) rigid.isKinematic = false;
 
         // 조사 UI 비활성화
@@ -153,12 +157,11 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
             yield return null;
         }
 
-        col.isTrigger = false;
+        col.enabled = true;
 
         isInspecting = false;
         player.SetMoveLock(false);
 
         InputManager.EnablePlayerInput();
-        InspectInput.End(this);
     }
 }
