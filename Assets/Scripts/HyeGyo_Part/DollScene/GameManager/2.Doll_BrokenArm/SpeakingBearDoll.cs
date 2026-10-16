@@ -1,14 +1,14 @@
+
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpeakingBearDoll : MonoBehaviour
 {
     // =============================================
-    // Doll Scene Game Manager
+    // Game Manager
     // =============================================
 
     [Header("Doll Scene Game Manager")]
-
     [SerializeField]
     private DollScene_GameManager gameManager;
 
@@ -24,6 +24,9 @@ public class SpeakingBearDoll : MonoBehaviour
 
     [SerializeField]
     private bool isBroken = false;
+
+    public int HitCount => hitCount;
+    public bool IsBroken => isBroken;
 
 
     // =============================================
@@ -53,33 +56,30 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
     // =============================================
+    // Additional Objects
+    // =============================================
+
+    [Header("파손 시 추가 활성화 오브젝트")]
+
+    [Tooltip("파손 시 추가로 활성화할 오브젝트")]
+    [SerializeField]
+    private GameObject[] objectsToActivateOnBreak;
+
+
+    // =============================================
     // Bear Random Voice
     // =============================================
 
     [Header("Bear Random Voice")]
 
-    [Tooltip(
-        "곰 랜덤 음성을 재생할 Play_Audio.\n" +
-        "AudioCollection의 Doll_BearVoiceAudio 연결"
-    )]
     [SerializeField]
     private Play_Audio bearVoiceAudio;
 
-
-    [Tooltip(
-        "충돌할 때 랜덤으로 재생할 곰 음성.\n" +
-        "4개, 5개 등 원하는 만큼 등록 가능.\n" +
-        "한 번 재생된 음성은 다시 나오지 않음."
-    )]
     [SerializeField]
     private AudioClip[] hitVoices;
 
-
-    // 현재 곰 목소리가 재생 중인지 확인하는 용도
     private AudioSource bearVoiceSource;
 
-
-    // 아직 재생되지 않은 곰 목소리 목록
     private readonly List<AudioClip> remainingHitVoices =
         new List<AudioClip>();
 
@@ -90,17 +90,9 @@ public class SpeakingBearDoll : MonoBehaviour
 
     [Header("Bear Tear Sound")]
 
-    [Tooltip(
-        "5번째 충돌에서 곰이 찢어질 때 사용할 Play_Audio.\n" +
-        "AudioCollection의 Doll_BearTearAudio 연결"
-    )]
     [SerializeField]
     private Play_Audio bearTearAudio;
 
-
-    [Tooltip(
-        "곰 인형이 찢어질 때 재생할 효과음"
-    )]
     [SerializeField]
     private AudioClip bearTearClip;
 
@@ -111,17 +103,9 @@ public class SpeakingBearDoll : MonoBehaviour
 
     [Header("Coin Sound")]
 
-    [Tooltip(
-        "5번째 충돌에서 동전이 튀어나올 때 사용할 Play_Audio.\n" +
-        "AudioCollection의 Doll_BearCoinAudio 연결"
-    )]
     [SerializeField]
     private Play_Audio coinAudio;
 
-
-    [Tooltip(
-        "동전이 튀어나올 때 재생할 효과음"
-    )]
     [SerializeField]
     private AudioClip coinClip;
 
@@ -140,37 +124,16 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
     // =============================================
-    // Public State
-    // =============================================
-
-    public int HitCount => hitCount;
-
-    public bool IsBroken => isBroken;
-
-
-    // =============================================
     // Start
     // =============================================
 
     private void Start()
     {
-        // -----------------------------------------
-        // Game Manager 자동 탐색
-        // -----------------------------------------
-
         if (gameManager == null)
         {
             gameManager =
                 FindFirstObjectByType<DollScene_GameManager>();
         }
-
-
-        // -----------------------------------------
-        // Bear Voice AudioSource
-        //
-        // 실제 재생용이 아니라
-        // isPlaying 확인 용도
-        // -----------------------------------------
 
         if (bearVoiceAudio != null)
         {
@@ -178,126 +141,105 @@ public class SpeakingBearDoll : MonoBehaviour
                 bearVoiceAudio.GetComponent<AudioSource>();
         }
 
-
-        // -----------------------------------------
-        // 사용 가능한 Bear Voice 목록 생성
-        // -----------------------------------------
-
         InitializeRemainingVoices();
 
+        hitCount = 0;
+        isBroken = false;
 
-        // -----------------------------------------
-        // 정상 곰 표시
-        // -----------------------------------------
 
-        if (normalBear != null)
+        // =========================================
+        // 초기 오브젝트 상태
+        // =========================================
+
+        if (brokenHead != null)
         {
-            normalBear.SetActive(true);
+            brokenHead.SetActive(false);
         }
-
-
-        // -----------------------------------------
-        // 찢어진 곰 숨김
-        // -----------------------------------------
 
         if (brokenBear != null)
         {
             brokenBear.SetActive(false);
         }
 
-
-        // -----------------------------------------
-        // 동전 숨김
-        // -----------------------------------------
-
         if (coinObject != null)
         {
             coinObject.SetActive(false);
         }
+
+        if (objectsToActivateOnBreak != null)
+        {
+            foreach (GameObject obj in objectsToActivateOnBreak)
+            {
+                if (obj == null)
+                    continue;
+
+                if (obj == normalBear)
+                    continue;
+
+                obj.SetActive(false);
+            }
+        }
+
+        if (normalBear != null)
+        {
+            normalBear.SetActive(true);
+        }
+
+        Debug.Log(
+            "[SpeakingBear] 초기화 완료"
+        );
     }
 
 
     // =============================================
-    // Random Voice 목록 초기화
+    // Voice List Initialize
     // =============================================
 
     private void InitializeRemainingVoices()
     {
         remainingHitVoices.Clear();
 
-
         if (hitVoices == null)
-        {
             return;
-        }
 
-
-        for (int i = 0; i < hitVoices.Length; i++)
+        foreach (AudioClip clip in hitVoices)
         {
-            AudioClip clip =
-                hitVoices[i];
-
-
             if (clip == null)
-            {
                 continue;
-            }
 
-
-            // 같은 Clip을 Inspector에
-            // 실수로 두 번 등록했어도 중복 제거
             if (remainingHitVoices.Contains(clip))
-            {
                 continue;
-            }
 
-
-            remainingHitVoices.Add(
-                clip
-            );
+            remainingHitVoices.Add(clip);
         }
-
 
         Debug.Log(
-            "[SpeakingBear] " +
-            $"사용 가능한 Bear Voice : " +
-            $"{remainingHitVoices.Count}개"
+            "[SpeakingBear] Voice 준비: " +
+            remainingHitVoices.Count
         );
     }
 
 
     // =============================================
+    // Throw Hit
     // TeddyBear_Grab에서 호출
     // =============================================
 
     public void RegisterThrowHit()
     {
-        // 이미 찢어진 곰이면 더 이상 처리 안 함
         if (isBroken)
-        {
             return;
-        }
-
 
         hitCount++;
 
-
         Debug.Log(
-            $"[SpeakingBear] 충돌 횟수 : {hitCount}/5"
+            $"[SpeakingBear] 충돌 횟수: {hitCount}/5"
         );
 
-
-        // =========================================
-        // 아직 안 나온 Bear Voice 중 랜덤 1개
-        // =========================================
-
+        // 매 충돌마다 랜덤 음성
         PlayRandomBearVoice();
 
-
-        // =========================================
-        // 5번째 충돌 → 곰 파손
-        // =========================================
-
+        // 5번째 충돌에서 파손
         if (hitCount >= 5)
         {
             BreakBear();
@@ -311,100 +253,52 @@ public class SpeakingBearDoll : MonoBehaviour
 
     private void PlayRandomBearVoice()
     {
-        // -----------------------------------------
-        // 기존 Bear Voice가 아직 재생 중이면
-        // 다른 Bear Voice는 겹치지 않게 함
-        //
-        // 이 경우 목록에서도 제거하지 않음
-        // -----------------------------------------
-
-        if (bearVoiceSource != null &&
-            bearVoiceSource.isPlaying)
-        {
-            Debug.Log(
-                "[SpeakingBear] " +
-                "Bear Voice 재생 중 → 새로운 Voice 생략"
-            );
-
-            return;
-        }
-
-
-        // -----------------------------------------
-        // Play_Audio 확인
-        // -----------------------------------------
-
         if (bearVoiceAudio == null)
         {
             Debug.LogWarning(
-                "[SpeakingBear] " +
-                "Bear Voice Play_Audio가 연결되지 않았습니다."
+                "[SpeakingBear] Bear Voice Audio 없음"
             );
 
             return;
         }
-
-
-        // -----------------------------------------
-        // 남아있는 Voice 확인
-        // -----------------------------------------
 
         if (remainingHitVoices.Count == 0)
         {
             Debug.Log(
-                "[SpeakingBear] " +
-                "모든 Bear Voice를 이미 재생했습니다."
+                "[SpeakingBear] 남은 Voice가 없습니다."
             );
 
             return;
         }
 
+        // 기존 음성 중지
+        if (bearVoiceSource != null &&
+            bearVoiceSource.isPlaying)
+        {
+            bearVoiceSource.Stop();
+        }
 
-        // -----------------------------------------
-        // 아직 안 나온 Voice 중 Random
-        // -----------------------------------------
-
-        int randomIndex =
+        int index =
             Random.Range(
                 0,
                 remainingHitVoices.Count
             );
 
-
         AudioClip selectedClip =
-            remainingHitVoices[randomIndex];
-
+            remainingHitVoices[index];
 
         if (selectedClip == null)
-        {
             return;
-        }
 
-
-        // -----------------------------------------
-        // 팀 공용 Play_Audio를 통해 재생
-        // -----------------------------------------
+        remainingHitVoices.RemoveAt(index);
 
         bearVoiceAudio.PlayAudio(
             selectedClip
         );
 
-
-        // -----------------------------------------
-        // 실제로 재생한 Voice는 목록에서 제거
-        //
-        // 이후에는 다시 선택되지 않음
-        // -----------------------------------------
-
-        remainingHitVoices.RemoveAt(
-            randomIndex
-        );
-
-
         Debug.Log(
-            "[SpeakingBear] " +
-            $"Bear Voice : {selectedClip.name} / " +
-            $"남은 Voice : {remainingHitVoices.Count}"
+            "[SpeakingBear] Hit Voice 재생: " +
+            selectedClip.name
         );
     }
 
@@ -416,178 +310,135 @@ public class SpeakingBearDoll : MonoBehaviour
     private void BreakBear()
     {
         if (isBroken)
-        {
             return;
-        }
 
-
-        // -----------------------------------------
-        // Reference 확인
-        // -----------------------------------------
-
-        if (normalBear == null)
+        if (normalBear == null ||
+            brokenBear == null)
         {
             Debug.LogError(
-                "[SpeakingBear] " +
-                "Normal Bear가 연결되지 않았습니다."
+                "[SpeakingBear] Bear Object 연결 오류"
             );
 
             return;
         }
-
-
-        if (brokenBear == null)
-        {
-            Debug.LogError(
-                "[SpeakingBear] " +
-                "Broken Bear가 연결되지 않았습니다."
-            );
-
-            return;
-        }
-
 
         isBroken = true;
 
-
         Debug.Log(
-            "[SpeakingBear] " +
-            "5번째 충돌! 곰 인형 파손"
+            "[SpeakingBear] 5번째 충돌 → 곰 파손"
         );
 
 
         // =========================================
-        // 정상 곰 위치 / 회전 저장
+        // NormalBear 마지막 위치 / 회전
         // =========================================
 
         Vector3 breakPosition =
             normalBear.transform.position;
 
-
         Quaternion breakRotation =
             normalBear.transform.rotation;
 
 
+        Debug.Log(
+            "[SpeakingBear] 파손 위치: " +
+            breakPosition
+        );
+
+
         // =========================================
-        // 찢어진 곰 활성화
+        // 찢어진 몸통
         // =========================================
 
-        brokenBear.transform.position =
-            breakPosition;
-
-
-        brokenBear.transform.rotation =
-            breakRotation;
-
+        PrepareBreakObject(
+            brokenBear,
+            breakPosition,
+            breakRotation
+        );
 
         brokenBear.SetActive(true);
 
 
         // =========================================
-        // 머리 파편 활성화 / 분리
+        // 찢어진 머리
         // =========================================
 
         if (brokenHead != null)
         {
-            brokenHead.SetActive(true);
-
-
-            brokenHead.transform.SetParent(
-                null,
-                true
+            PrepareBreakObject(
+                brokenHead,
+                breakPosition,
+                breakRotation
             );
 
-
-            Rigidbody headRb =
-                brokenHead.GetComponent<Rigidbody>();
-
-
-            if (headRb != null)
-            {
-                headRb.isKinematic =
-                    false;
-
-
-                headRb.useGravity =
-                    true;
-
-
-                headRb.linearVelocity =
-                    Vector3.zero;
-
-
-                headRb.angularVelocity =
-                    Vector3.zero;
-
-
-                Vector3 headForce =
-                    transform.right *
-                    breakForce +
-                    Vector3.up *
-                    breakUpForce;
-
-
-                headRb.AddForce(
-                    headForce,
-                    ForceMode.Impulse
-                );
-
-
-                headRb.AddTorque(
-                    Random.insideUnitSphere *
-                    breakForce,
-                    ForceMode.Impulse
-                );
-            }
+            brokenHead.SetActive(true);
         }
 
 
         // =========================================
-        // Coin 활성화 / 분리
+        // 동전
         // =========================================
 
         if (coinObject != null)
         {
-            coinObject.SetActive(true);
-
-
-            coinObject.transform.SetParent(
-                null,
-                true
+            PrepareBreakObject(
+                coinObject,
+                breakPosition,
+                breakRotation
             );
 
+            coinObject.SetActive(true);
+        }
 
-            Rigidbody coinRb =
-                coinObject.GetComponent<Rigidbody>();
 
+        // =========================================
+        // 추가 오브젝트 활성화
+        // =========================================
 
-            if (coinRb != null)
+        if (objectsToActivateOnBreak != null)
+        {
+            foreach (GameObject obj in objectsToActivateOnBreak)
             {
-                coinRb.isKinematic =
-                    false;
+                if (obj == null)
+                    continue;
+
+                if (obj == normalBear ||
+                    obj == brokenBear ||
+                    obj == brokenHead ||
+                    obj == coinObject)
+                {
+                    continue;
+                }
+
+                PrepareBreakObject(
+                    obj,
+                    breakPosition,
+                    breakRotation
+                );
+
+                obj.SetActive(true);
+            }
+        }
 
 
-                coinRb.useGravity =
-                    true;
+        // =========================================
+        // 머리 파손 물리
+        // =========================================
 
+        if (brokenHead != null)
+        {
+            Rigidbody headRb =
+                brokenHead.GetComponent<Rigidbody>();
 
-                coinRb.linearVelocity =
-                    Vector3.zero;
+            ApplyBreakPhysics(
+                headRb,
+                breakRotation * Vector3.right
+            );
 
-
-                coinRb.angularVelocity =
-                    Vector3.zero;
-
-
-                Vector3 coinForce =
-                    -transform.right *
-                    breakForce +
-                    Vector3.up *
-                    breakUpForce;
-
-
-                coinRb.AddForce(
-                    coinForce,
+            if (headRb != null)
+            {
+                headRb.AddTorque(
+                    Random.insideUnitSphere * breakForce,
                     ForceMode.Impulse
                 );
             }
@@ -595,30 +446,35 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // =========================================
-        // 찢어진 몸통 Rigidbody 활성화
+        // 동전 물리
+        // =========================================
+
+        if (coinObject != null)
+        {
+            Rigidbody coinRb =
+                coinObject.GetComponent<Rigidbody>();
+
+            ApplyBreakPhysics(
+                coinRb,
+                -(breakRotation * Vector3.right)
+            );
+        }
+
+
+        // =========================================
+        // 찢어진 몸통 물리
         // =========================================
 
         Rigidbody bodyRb =
             brokenBear.GetComponent<Rigidbody>();
 
-
         if (bodyRb != null)
         {
-            bodyRb.isKinematic =
-                false;
+            bodyRb.isKinematic = false;
+            bodyRb.useGravity = true;
 
-
-            bodyRb.useGravity =
-                true;
-
-
-            bodyRb.linearVelocity =
-                Vector3.zero;
-
-
-            bodyRb.angularVelocity =
-                Vector3.zero;
-
+            bodyRb.linearVelocity = Vector3.zero;
+            bodyRb.angularVelocity = Vector3.zero;
 
             bodyRb.AddForce(
                 Vector3.up * 0.5f,
@@ -628,21 +484,80 @@ public class SpeakingBearDoll : MonoBehaviour
 
 
         // =========================================
-        // ★ 곰 찢어지는 소리
-        // ★ Coin 등장 소리
-        //
-        // 각각 다른 Play_Audio를 사용하므로
-        // 동시에 재생 가능
+        // 파손 효과음
         // =========================================
 
         PlayBreakSounds();
 
 
         // =========================================
-        // 마지막에 정상 곰 제거
+        // 정상 곰 비활성화
         // =========================================
 
         normalBear.SetActive(false);
+
+        Debug.Log(
+            "[SpeakingBear] 곰 파손 완료"
+        );
+    }
+
+
+    // =============================================
+    // 파손 오브젝트 위치 설정
+    // =============================================
+
+    private void PrepareBreakObject(
+        GameObject obj,
+        Vector3 position,
+        Quaternion rotation)
+    {
+        if (obj == null)
+            return;
+
+        // 기존 부모에서 분리
+        obj.transform.SetParent(
+            null,
+            true
+        );
+
+        // NormalBear의 마지막 위치로 이동
+        obj.transform.SetPositionAndRotation(
+            position,
+            rotation
+        );
+
+        Debug.Log(
+            "[SpeakingBear] 파손 오브젝트 위치 설정: " +
+            obj.name
+        );
+    }
+
+
+    // =============================================
+    // 파손 Rigidbody 물리
+    // =============================================
+
+    private void ApplyBreakPhysics(
+        Rigidbody rb,
+        Vector3 direction)
+    {
+        if (rb == null)
+            return;
+
+        rb.isKinematic = false;
+        rb.useGravity = true;
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        Vector3 force =
+            direction * breakForce +
+            Vector3.up * breakUpForce;
+
+        rb.AddForce(
+            force,
+            ForceMode.Impulse
+        );
     }
 
 
@@ -652,85 +567,60 @@ public class SpeakingBearDoll : MonoBehaviour
 
     private void PlayBreakSounds()
     {
-        // -----------------------------------------
         // 곰 찢어지는 효과음
-        // -----------------------------------------
-
         if (bearTearAudio != null &&
             bearTearClip != null)
         {
             bearTearAudio.PlayAudio(
                 bearTearClip
             );
-
-
-            Debug.Log(
-                "[SpeakingBear] " +
-                "곰 찢어지는 Sound 재생"
-            );
         }
         else
         {
             Debug.LogWarning(
-                "[SpeakingBear] " +
-                "Bear Tear Audio 또는 Clip이 없습니다."
+                "[SpeakingBear] 곰 파손 Sound 연결 없음"
             );
         }
 
 
-        // -----------------------------------------
         // 동전 등장 효과음
-        // -----------------------------------------
-
         if (coinAudio != null &&
             coinClip != null)
         {
             coinAudio.PlayAudio(
                 coinClip
             );
-
-
-            Debug.Log(
-                "[SpeakingBear] " +
-                "Coin 등장 Sound 재생"
-            );
         }
         else
         {
             Debug.LogWarning(
-                "[SpeakingBear] " +
-                "Coin Audio 또는 Clip이 없습니다."
+                "[SpeakingBear] Coin Sound 연결 없음"
             );
         }
     }
 
 
     // =============================================
-    // Coin 획득
+    // Coin Collect
     // =============================================
 
     public void CollectCoin()
     {
         if (!isBroken)
-        {
             return;
-        }
-
 
         if (gameManager != null)
         {
             gameManager.CompleteFindCoin();
         }
 
-
         if (coinObject != null)
         {
             coinObject.SetActive(false);
         }
 
-
         Debug.Log(
-            "[SpeakingBear] 동전을 획득했습니다."
+            "[SpeakingBear] 동전 획득 완료"
         );
     }
 }

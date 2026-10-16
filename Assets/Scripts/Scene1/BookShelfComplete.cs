@@ -24,24 +24,25 @@ public class BookShelfComplete : MonoBehaviour
         if (bookshelfAnimator != null)
         {
             bookshelfAnimator.SetTrigger("Slide");
-            StartCoroutine(StopSoundWhenSlideEnds());   // ← 추가
+            StartCoroutine(StopSoundWhenSlideEnds());
         }
         if (hiddenKey != null) hiddenKey.SetActive(true);
 
         if (hintManager != null)
         {
-            if (!hintManager.currentPlayerState.completedSteps.Contains(5))
-                hintManager.currentPlayerState.completedSteps.Add(5);
-
+            // 스텝 번호: 벽 종이 붙이기(3) 추가로 책장은 6, 7
             if (!hintManager.currentPlayerState.completedSteps.Contains(6))
                 hintManager.currentPlayerState.completedSteps.Add(6);
+
+            if (!hintManager.currentPlayerState.completedSteps.Contains(7))
+                hintManager.currentPlayerState.completedSteps.Add(7);
 
             if (!hintManager.currentPlayerState.foundClues.Contains("clue_bookshelf_order"))
                 hintManager.currentPlayerState.foundClues.Add("clue_bookshelf_order");
         }
     }
 
-    // ← 추가: 슬라이드 애니메이션이 끝나면 소리 정지
+    // 슬라이드 애니메이션이 끝나면 소리 정지
     IEnumerator StopSoundWhenSlideEnds()
     {
         // 트리거 직전 상태(Idle)를 기억하고, 다른 상태로 넘어갈 때까지 대기

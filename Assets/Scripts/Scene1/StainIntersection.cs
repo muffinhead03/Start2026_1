@@ -59,6 +59,14 @@ public class StainIntersection : MonoBehaviour
         if (infoText != null)
             infoText.text = $"알파벳: {letter}";
 
+        MarkFound();
+    }
+
+    // 중점 알파벳을 찾은 것으로 처리 (텍스트 표시 없음)
+    // 교차점 위의 진짜 쪽지(StainNoteInspectGrab)를 조사할 때도 호출됨
+    // — 쪽지가 위에 있으면 이 교차점 콜라이더가 꺼져서 직접 조사가 안 되기 때문
+    public void MarkFound()
+    {
         if (inspected) return;
         inspected = true;
 

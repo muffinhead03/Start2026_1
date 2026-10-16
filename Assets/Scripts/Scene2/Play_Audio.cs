@@ -14,7 +14,6 @@ public class Play_Audio : MonoBehaviour
     {
         if (source == null || ac == null) return;
 
-        source.volume = Setting.soundEffect;
         source.PlayOneShot(ac);
     }
 
@@ -22,7 +21,6 @@ public class Play_Audio : MonoBehaviour
     {
         if (source == null) return;
 
-        source.volume = Mathf.Pow(Setting.soundEffect, 2);
         source.Play();
         source.loop = true;
     }

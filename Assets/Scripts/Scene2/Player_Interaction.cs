@@ -95,6 +95,9 @@ public class Player_Interaction : MonoBehaviour
         }
         else
         {
+            // 책이면 제자리로 (책장 근처일 때만), 아니면 기존처럼 내려놓기
+            if (BookInspectGrab.TryReturnHeldBook(grab)) return;
+            
             // 들고 있는 물건 놓기
             grab.Release();
         }

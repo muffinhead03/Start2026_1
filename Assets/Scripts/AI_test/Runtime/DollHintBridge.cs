@@ -11,7 +11,8 @@ using UnityEngine;
 ///    (DefaultActionLabelProvider가 "인형에 다리를 붙여줬지" 같은 관찰 문장으로 바꿈)
 /// 3) 손/인벤토리 제공(IPossessionProvider) — 들고 있는 부품 기준으로 HintEngine이 스텝 override
 /// 4) 위치 제공(ILocationAwareProvider) — 씬의 번호 붙은 구역 오브젝트를 자동으로 찾아 거리 문장에 사용
-/// 5) 스텝 진행도 제공(IStepProgressProvider) — 곰 인형 던진 횟수를 구간으로 판단해 "조금만 더" 같은 문장으로 넘김
+/// 5) 스텝 진행도 제공(IStepProgressProvider) — 곰 인형 던진 횟수 / 인형 수리 후 상태를 구간으로 판단해
+///    (구간 × 힌트 레벨)별 문장 풀에서 랜덤으로 골라 넘김 → 같은 상태에서 다시 물어도 표현이 달라짐
 ///    (정답 횟수 5는 넘기지 않음 — 기획상 플레이어는 곰 인형 반응이 약해지는 걸 보고 계속 던지는 구조)
 ///    (Inspector에서 직접 넣으면 그걸 우선 사용, 비워두면 경로로 자동 탐색)
 /// </summary>
@@ -185,8 +186,11 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
 
         // id3 : 말하는 곰 인형을 반복해서 던져 동전을 얻는다
         // (해석: TeddyBear_Grab.wasHeld는 private이라 상호작용 자체의 별도 신호는 없어서,
-        //  실질적 결과물인 동전 획득(IsCoinFound)으로 판정)
-        if (!step3Reported && gameManager != null && gameManager.IsCoinFound)
+        //  실질적 결과물인 동전 획득으로 판정)
+        // IsCoinFound를 켜는 SpeakingBearDoll.CollectCoin()을 코드에서 부르는 곳이 없음(인스펙터 이벤트로만 연결됐을 수 있음).
+        // 안 켜지면 step 3이 영원히 미완료로 남아서, 동전을 주운 뒤에도 곰 인형 힌트가 계속 나옴 (테스트 표 D10, D12).
+        // 그래서 동전을 들고 있거나 / 오락기에 넣었거나 / 오락기 보상을 받았으면 step 3 완료로 같이 인정
+        if (!step3Reported && IsCoinObtained())
         {
             step3Reported = true;
             ReportStep(3, "clue_coin");
@@ -224,10 +228,11 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
         }
 
         // id8 : 완성된 인형의 태엽을 돌려 수리를 완료하고 열쇠를 얻어 탈출한다
-        // (해석: 다리+팔+태엽이 전부 붙어야만 true가 되도록 게임 로직 자체가
-        //  DollRepairCompletionManager에서 가드하고 있어서, 별도 순서 체크 없이
-        //  이 프로퍼티 하나만 봐도 안전함)
-        if (!step8Reported && changeDoll != null && changeDoll.IsDollRepairCompleted)
+        // 예전엔 수리 완료(IsDollRepairCompleted) 순간 완료로 쳤는데, 태엽을 붙이면 수리가 자동으로 돼서
+        // step 7과 8이 동시에 끝나버림 → 열쇠를 줍기 전에 힌트를 누르면 "이미 모든 단서를 찾았어"가 나옴.
+        // 그래서 탈출(IsStageCleared) 시점에 완료로 바꾸고, 그 전엔 GetProgressNote가
+        // "인형 이동 중 / 열쇠 떨어짐" 진행 구간에 맞는 문장을 넘김
+        if (!step8Reported && gameManager != null && gameManager.IsStageCleared)
         {
             step8Reported = true;
             ReportStep(8, null);
@@ -332,6 +337,16 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
         return obj.objectName;
     }
 
+    // DollRoomData step 4의 relatedObjectName — 곰 인형에서 나온 동전의 Object_Grabbable.objectName
+    const string CoinObjectName = "동전";
+
+    private bool IsCoinObtained()
+    {
+        if (gameManager != null && gameManager.IsCoinFound) return true;
+        if (retroGameManager != null && (retroGameManager.IsCoinInserted || retroGameManager.IsArmRewardUnlocked)) return true;
+        return IsHolding(CoinObjectName);
+    }
+
     private bool IsHolding(string objectName)
     {
         if (GetHandObjectName() == objectName)
@@ -388,25 +403,127 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
     // 여기선 "거의 다 왔다" 판단 기준으로만 씀 — 바뀌면 이 값만 맞춰주면 됨.
     const int BearAlmostThreshold = 3;
 
-    /// <summary>
-    /// step 3(곰 인형 던지기)일 때만 던진 횟수를 구간으로 판단해서 문장을 돌려줌.
-    /// 1~2번: 반응이 있으니 계속 / 3번 이상: 거의 한계, 조금만 더. 0번이거나 다른 스텝이면 null.
-    /// (이 문장이 step 3의 hintByLevel 문구를 대신하므로, "계속 던져보세요"처럼 할 행동까지 포함해야 함)
-    /// </summary>
-    public string GetProgressNote(PuzzleStep step)
+    // [레벨 단계][후보] — 레벨 1~2(모호) / 3(분명) / 4~5(거의 정답).
+    // 같은 칸 안에서 랜덤으로 골라서, 같은 상태·같은 레벨로 다시 물어도 방향 문장 자체가 조금씩 달라짐
+    // (LLM은 방향 문장을 거의 그대로 옮기는 경향이 있어서, 베끼는 걸 막는 대신 베낄 재료를 다양하게 줌).
+    // 숫자(던진 횟수, 정답 횟수)는 어떤 문장에도 넣지 않음 — 정답 누설 방지.
+    static readonly string[][] BearEarlyNotes =
     {
-        if (step == null || step.id != 3 || speakingBearDoll == null)
-            return null;
+        new[] { "곰 인형이 던질 때마다 반응하고 있어요. 멈추지 말고 계속 던져보세요.",
+                "곰 인형 목소리가 조금씩 달라지고 있어요. 한 번 더 던져보세요.",
+                "곰 인형이 던져질 때마다 뭔가 변하는 것 같아요. 계속 던져보세요." },
+        new[] { "곰 인형이 충격을 받을수록 약해지는 것 같아요. 계속 세게 던져보세요.",
+                "곰 인형이 던질 때마다 조금씩 망가지고 있어요. 멈추지 말고 계속 던져보세요." },
+        new[] { "곰 인형을 계속 던지면 안에서 뭔가 떨어질 거예요. 멈추지 마세요.",
+                "곰 인형 안에 뭔가 들어 있어요. 찢어질 때까지 계속 던져보세요." },
+    };
 
-        int hitCount = speakingBearDoll.HitCount;
+    static readonly string[][] BearAlmostNotes =
+    {
+        new[] { "곰 인형이 이제 거의 버티지 못하는 것 같아요. 조금만 더 던져보세요.",
+                "곰 인형 반응이 점점 약해지고 있어요. 조금만 더 던져보세요.",
+                "곰 인형이 한계에 다다른 것 같아요. 멈추지 말고 조금만 더요." },
+        new[] { "곰 인형이 곧 찢어질 것 같아요. 조금만 더 세게 던져보세요.",
+                "곰 인형 솔기가 터지기 직전이에요. 조금만 더 던져보세요." },
+        new[] { "곰 인형이 찢어지면 안에서 동전이 나올 거예요. 조금만 더 던져보세요.",
+                "조금만 더 던지면 곰 인형이 찢어지면서 동전이 떨어질 거예요." },
+    };
 
-        if (hitCount <= 0)
-            return null;
+    // 곰 인형이 찢어졌는데 아직 동전을 안 주운 상태 — 동전이 이미 눈앞에 보이는 상태라 모호하게 말하면 쓸모없음.
+    // 그래서 최소 레벨 3(GetMinHintLevel)으로 올리고, 모든 문장에 "동전"을 넣음.
+    // (첫 칸은 레벨 1~2용인데 최소 레벨 때문에 실제로는 안 쓰임 — 테이블 모양을 다른 구간과 맞추려고 둠)
+    static readonly string[][] BearBrokenNotes =
+    {
+        new[] { "찢어진 곰 인형에서 동전이 떨어졌어요. 바닥을 확인해보세요." },
+        new[] { "찢어진 곰 인형에서 동전이 떨어졌어요. 근처 바닥에서 주워보세요.",
+                "곰 인형 안에서 동전이 나왔어요. 바닥에 떨어진 동전을 주워보세요.",
+                "곰 인형이 찢어지면서 동전이 굴러 나왔어요. 바닥을 보고 주워보세요." },
+        new[] { "찢어진 곰 인형 바로 옆 바닥에 떨어진 동전을 주우세요. 그 동전은 오락기에 쓸 수 있어요.",
+                "곰 인형에서 나온 동전을 주워서 챙기세요. 오락기에 넣을 수 있어요." },
+    };
 
-        if (hitCount < BearAlmostThreshold)
-            return "곰 인형이 던질 때마다 반응하고 있어요. 멈추지 말고 계속 던져보세요.";
+    // step 8 — 수리가 끝나고 인형이 움직이는 중 (레벨 상관없이 "지켜보세요", 표현만 랜덤)
+    static readonly string[][] DollMovingNotes =
+    {
+        new[] { "인형이 움직이기 시작했어요. 잠시 지켜보세요.",
+                "인형이 뭔가 하려는 것 같아요. 조금만 기다려보세요." },
+    };
 
-        return "곰 인형이 이제 거의 버티지 못하는 것 같아요. 조금만 더 던져보세요.";
+    // step 8 — 열쇠가 떨어진 뒤 (곰 인형 찢어진 뒤와 같은 이유로 최소 레벨 3)
+    static readonly string[][] KeyDroppedNotes =
+    {
+        new[] { "인형 쪽에서 열쇠가 떨어졌어요. 바닥을 확인해보세요." },
+        new[] { "인형 근처 바닥에 떨어진 열쇠를 찾아보세요.",
+                "인형이 떨어뜨린 열쇠가 바닥 어딘가에 있을 거예요." },
+        new[] { "인형이 떨어뜨린 열쇠를 주워서 탈출하세요.",
+                "바닥에 떨어진 열쇠를 주워서 문을 열고 나가세요." },
+    };
+
+    static string PickByLevel(string[][] table, int hintLevel)
+    {
+        int tier = hintLevel <= 2 ? 0 : (hintLevel == 3 ? 1 : 2);
+        tier = Mathf.Clamp(tier, 0, table.Length - 1);
+        var pool = table[tier];
+        return pool[Random.Range(0, pool.Length)];
+    }
+
+    /// <summary>
+    /// 진행 구간 이름. 같은 스텝 재요청 때 HintManager가 "지난 힌트 이후 진행이 있었는지" 보는 데 씀
+    /// (구간이 바뀌었으면 잘 가고 있는 거라 레벨을 올리지 않음).
+    /// </summary>
+    public string GetProgressBand(PuzzleStep step)
+    {
+        if (step == null) return null;
+
+        if (step.id == 3 && speakingBearDoll != null)
+        {
+            if (speakingBearDoll.IsBroken) return "broken";
+            int hit = speakingBearDoll.HitCount;
+            if (hit <= 0) return null;
+            return hit < BearAlmostThreshold ? "early" : "almost";
+        }
+
+        if (step.id == 8 && gameManager != null)
+        {
+            if (gameManager.IsExitKeyDropped) return "key-dropped";
+            if (gameManager.IsDollRepaired)   return "doll-moving";
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 답이 이미 눈앞에 보이는 구간(곰 인형이 찢어져 동전이 나옴 / 열쇠가 떨어짐)은 최소 레벨 3.
+    /// 레벨 1~2면 LLM이 "주변을 살펴보세요"처럼 물건 이름을 빼고 말해서 쓸모없는 힌트가 됨 (베타 로그 확인).
+    /// </summary>
+    public int GetMinHintLevel(PuzzleStep step)
+    {
+        switch (GetProgressBand(step))
+        {
+            case "broken":
+            case "key-dropped":
+                return 3;
+            default:
+                return 1;
+        }
+    }
+
+    /// <summary>
+    /// step 3(곰 인형 던지기) / step 8(수리 완료 → 열쇠)일 때만, 현재 진행 구간 + 힌트 레벨에 맞는 문장을 돌려줌.
+    /// 해당 없으면 null → hintByLevel 문구가 그대로 쓰임.
+    /// (이 문장이 hintByLevel 문구를 대신하므로, "계속 던져보세요"처럼 할 행동까지 포함해야 함)
+    /// </summary>
+    public string GetProgressNote(PuzzleStep step, int hintLevel)
+    {
+        switch (GetProgressBand(step))
+        {
+            case "early":       return PickByLevel(BearEarlyNotes, hintLevel);
+            case "almost":      return PickByLevel(BearAlmostNotes, hintLevel);
+            case "broken":      return PickByLevel(BearBrokenNotes, hintLevel);
+            case "doll-moving": return PickByLevel(DollMovingNotes, hintLevel);
+            case "key-dropped": return PickByLevel(KeyDroppedNotes, hintLevel);
+            default:            return null;
+        }
     }
 
 

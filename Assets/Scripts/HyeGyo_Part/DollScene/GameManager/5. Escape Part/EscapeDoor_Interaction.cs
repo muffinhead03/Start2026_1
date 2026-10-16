@@ -218,6 +218,8 @@ public class EscapeDoor_Interaction : MonoBehaviour
         SetDoorInteractionEnabled(
             true
         );
+
+            OpenEscapeDoor();
     }
 
 
@@ -412,4 +414,35 @@ public class EscapeDoor_Interaction : MonoBehaviour
                 0f;
         }
     }
+
+    private void OpenEscapeDoor()
+{
+    if (door == null)
+    {
+        Debug.LogWarning(
+            "[EscapeDoor_Interaction] Door 참조가 없습니다.",
+            this
+        );
+
+        return;
+    }
+
+    if (isOpened)
+    {
+        return;
+    }
+
+    isOpened = true;
+
+    // 잠금 해제 + 문 바로 열기
+    door.UnlockDoor();
+
+    // 문을 막는 Collider 비활성화
+    DisableDoorCollider();
+
+    Debug.Log(
+        "[EscapeDoor_Interaction] 상자 열림 → 탈출문 자동 오픈",
+        this
+    );
+}
 }

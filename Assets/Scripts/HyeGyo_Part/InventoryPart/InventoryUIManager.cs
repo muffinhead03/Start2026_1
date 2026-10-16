@@ -43,6 +43,9 @@ public sealed class InventoryUIManager : MonoBehaviour
     [SerializeField]
     private GrabbableEvent onEquipRequested;
 
+    [SerializeField]
+    private Transform handEquipPoint;
+
     [Header("Hand Position Override")]
     [SerializeField]
     private string[] handYOffsetObjectNames =
@@ -1351,54 +1354,38 @@ public sealed class InventoryUIManager : MonoBehaviour
          * 저장값이 없는 아이템은 기존 동작처럼
          * HandPivot의 원점/회전을 사용합니다.
          */
-        if (handTransformStates.TryGetValue(
-                targetObject,
-                out HandTransformState savedState))
-        {
-            handRoot.localPosition =
-                savedState.LocalPosition;
+    if (handEquipPoint != null)
+    {
+        handRoot.position =
+            handEquipPoint.position;
 
-            handRoot.localRotation =
-                savedState.LocalRotation;
-        }
-        else
-        {
-            handRoot.localPosition =
-                Vector3.zero;
-
-            handRoot.localRotation =
-                Quaternion.identity;
-        }
+        handRoot.rotation =
+            handEquipPoint.rotation;
+    }
 
         /*
          * 지정된 Object_Grabbable.objectName만
          * X/Z/회전은 그대로 두고 Y만 변경합니다.
          */
-        ApplySpecialHandPosition(
-            targetObject
-        );
+        ApplySpecialHandPosition(targetObject);
+            if (!handObject.activeSelf)
+            {
+                handObject.SetActive(
+                    true
+                );
+            }
 
-        /*
-         * 모든 Transform 변경이 끝난 마지막에 활성화합니다.
-         */
-        if (!handObject.activeSelf)
-        {
-            handObject.SetActive(
-                true
-            );
-        }
-
-        if (showDebugLog)
-        {
-            Debug.Log(
-                "[InventoryUIManager] Object 장착 완료: " +
-                $"Object={targetObject.gameObject.name}, " +
-                $"ObjectName={targetObject.objectName}, " +
-                $"Root={handObject.name}, " +
-                $"Parent={handPivot.gameObject.name}, " +
-                $"LocalPosition={handRoot.localPosition}",
-                targetObject
-            );
+            if (showDebugLog)
+            {
+                Debug.Log(
+                    "[InventoryUIManager] Object 장착 완료: " +
+                    $"Object={targetObject.gameObject.name}, " +
+                    $"ObjectName={targetObject.objectName}, " +
+                    $"Root={handObject.name}, " +
+                    $"Parent={handPivot.gameObject.name}, " +
+                    $"LocalPosition={handRoot.localPosition}",
+                    targetObject
+                );
         }
     }
 
