@@ -1,23 +1,24 @@
+using System.Xml.Serialization;
 using UnityEngine;
 
 public class Object_Turntable: MonoBehaviour
 {
-    [SerializeField] private Player_MouseInteraction player;
-
     [SerializeField] private Scene_UI_Manager SceneUI;
 
-    [SerializeField] private GameObject LP;
+    [SerializeField] private Object_LP LP;
 
     [SerializeField] private GameObject trumpet;
 
-    [SerializeField] private Material[] mats;
-
     [SerializeField] private Animator panel_animator;
+
+    [SerializeField] private Pwd_Turntable pwd_LP;
 
     int panel_id = 4;
     int button_id = 4;
     int button_len = 5;
     int current_LP;
+
+    string[] LP_name = { "G", "R", "B", "Y", "W" };
 
     string LP_object_name;
 
@@ -28,24 +29,23 @@ public class Object_Turntable: MonoBehaviour
         trumpet.SetActive(false);
 
         SceneUI.UnlockPointer();
-        player.SetEnable();
     }
 
     public void OnUnFixed()
     {
         DisablePanel();
-        HideLP();
+        LP.HideLP();
 
         trumpet.SetActive(true);
 
         SceneUI.LockPointer();
-        player.SetDisable();
     }
 
     public void ClickButton(int id)
     {
         current_LP = id;
-        ShowLP(current_LP);
+
+        LP.ShowLP(current_LP);
 
         for(int i = 0; i < button_len; i++)
         {
@@ -54,26 +54,15 @@ public class Object_Turntable: MonoBehaviour
         SceneUI.SetInteractableButton(button_id + current_LP, false);
 
         HidePanel();
+
+        pwd_LP.PutOnLP(LP_name[current_LP]);
     }
 
-    public void ClickLP()
+    public void ResetPanel()
     {
         SceneUI.SetInteractableButton(button_id + current_LP, true);
 
-        HideLP();
-
         if(!panel_animator.GetBool("Open")) ShowPanel();
-    }
-
-    void ShowLP(int id)
-    {
-        LP.GetComponent<MeshRenderer>().material = mats[id];
-        LP.SetActive(true);
-    }
-
-    void HideLP()
-    {
-        LP.SetActive(false);
     }
 
     public void TogglePanel()

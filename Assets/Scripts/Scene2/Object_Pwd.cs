@@ -6,6 +6,27 @@ using UnityEngine.InputSystem;
 
 public class Object_Pwd : APwd
 {
+    [SerializeField] protected Player_MouseInteraction player;
+
+    private void Start()
+    {
+        isActive = false;
+        input = "";
+    }
+
+    public void SetActive(bool active)
+    {
+        isActive = active;
+
+        if (active)
+        {
+            player.SetEnable();
+
+            input = "";
+        }
+        else player.SetDisable();
+    }
+
     public override void PressButton(string n)
     {
         if (!isActive) return;
