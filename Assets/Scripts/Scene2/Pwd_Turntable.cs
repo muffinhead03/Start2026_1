@@ -5,7 +5,10 @@ public class Pwd_Turntable : APwd
 {
     [SerializeField] protected Player_MouseInteraction player;
 
+    [SerializeField] private Controll_Mesh controll_mesh;
+
     int current_index;
+    string track_id;
 
     private void Start()
     {
@@ -26,20 +29,23 @@ public class Pwd_Turntable : APwd
 
     public void PutOnLP(string n)
     {
-        input = n;
+        track_id = n;
     }
 
     public override void PressButton(string n)
     {
         if (!isActive) return;
 
-        input += n;
+        input = track_id + n;
 
         if (CheckAnswer())
         {
             input = "";
 
             current_index += 2;
+
+            int material_index = current_index / 2;
+            controll_mesh.ShowMesh("_MainTex", material_index);
 
             if(current_index >= pwd.Length)
             {

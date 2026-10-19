@@ -6,7 +6,7 @@ public class Object_LP : MonoBehaviour, IMouseInteractable
     MeshRenderer mesh;
     Material mat_original;
 
-    [SerializeField] private Texture2D[] textures;
+    [SerializeField] private Controll_Mesh controll_mesh;
 
     [SerializeField] private Object_Turntable turntable;
 
@@ -30,27 +30,21 @@ public class Object_LP : MonoBehaviour, IMouseInteractable
 
     public void OnMouseEnter()
     {
-        mat_original = mesh.material;
+        mat_original = mesh.sharedMaterial;
 
-        mesh.material = mat_trans;
+        mesh.sharedMaterial = mat_trans;
     }
 
     public void OnMouseExit()
     {
-        mesh.material = mat_original;
+        mesh.sharedMaterial = mat_original;
     }
 
     public void ShowLP(int id)
     {
         if (mesh == null) mesh = GetComponent<MeshRenderer>();
 
-        TextureChange.Instance.Clear();
-
-        mesh.GetPropertyBlock(TextureChange.Instance);
-
-        TextureChange.Instance.SetTexture("_BaseMap", textures[id]);
-
-        mesh.SetPropertyBlock(TextureChange.Instance);
+        controll_mesh.ShowMesh(id);
 
         gameObject.SetActive(true);
 

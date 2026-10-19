@@ -41,13 +41,13 @@ public class Object_Pwd_Button : APwdButton, IMouseInteractable
         if (mesh == null) mesh = GetComponent<MeshRenderer>();
         if (col == null) col = GetComponent<Collider>();
 
-        mesh.material = materials[1];
+        mesh.sharedMaterial = materials[1];
 
         col.enabled = false;
 
         yield return new WaitForSeconds(0.5f);
 
-        mesh.material = materials[0];
+        mesh.sharedMaterial = materials[0];
 
         col.enabled = true;
     }

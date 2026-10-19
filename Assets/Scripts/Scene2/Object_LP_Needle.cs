@@ -13,7 +13,7 @@ public class Object_LP_Needle : MonoBehaviour, IMouseInteractable
 
     [SerializeField] private Transform turntable_plane;
 
-    [SerializeField] private Object_LP_track track;
+    [SerializeField] private Controll_Mesh track;
 
     [SerializeField] private APwd pwd_LP;
 
@@ -64,21 +64,21 @@ public class Object_LP_Needle : MonoBehaviour, IMouseInteractable
     { 
         isDragging = false;
 
-        track.HideTrack();
+        track.HideMesh();
 
         if (track_id >= 0) pwd_LP.PressButton(track_id.ToString());
     }
 
     public void OnMouseEnter()
     {
-        mat_original = mesh.material;
+        mat_original = mesh.sharedMaterial;
 
-        mesh.material = mat_trans;
+        mesh.sharedMaterial = mat_trans;
     }
 
     public void OnMouseExit()
     {
-        mesh.material = mat_original;
+        mesh.sharedMaterial = mat_original;
     }
 
     private void MoveNeedle()
@@ -124,6 +124,7 @@ public class Object_LP_Needle : MonoBehaviour, IMouseInteractable
 
         track_id = 2 - i;
 
-        track.ShowTrack(track_id);
+        if(track_id >= 0) track.ShowMesh("_MainTex", track_id);
+        else track.HideMesh();
     }
 }
