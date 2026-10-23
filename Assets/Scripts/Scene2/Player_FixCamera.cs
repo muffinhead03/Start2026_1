@@ -61,7 +61,7 @@ public class Player_FixCamera : MonoBehaviour
         // 플레이어 이동 잠금
         GetComponent<Player_Move>().SetMoveLock(true);
 
-        InputManager.EnableUIInput();
+        InputManager.DisableInput();
 
         if (hand != null) hand.GetComponent<Collider>().isTrigger = true;
 
@@ -82,12 +82,14 @@ public class Player_FixCamera : MonoBehaviour
             yield return null;
         }
 
+        InputManager.EnableUIInput();
         //SceneUI.UnlockPointer();
     }
 
     IEnumerator MoveToOriginalPosition()
     {
         //SceneUI.LockPointer();
+        InputManager.DisableInput();
 
         float t = 0f;
 

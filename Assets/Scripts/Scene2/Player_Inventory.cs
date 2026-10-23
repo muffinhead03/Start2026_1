@@ -18,11 +18,22 @@ public class Player_Inventory : MonoBehaviour
         {
             if (Regex.IsMatch(s, key))
             {
-                KeyNames.Remove(s);
+                //KeyNames.Remove(s);
                 return true;
             }
         }
         return false;
+    }
+
+    public static void UseKey(string key)
+    {
+        foreach (string s in KeyNames)
+        {
+            if (Regex.IsMatch(s, key))
+            {
+                KeyNames.Remove(s);
+            }
+        }
     }
 
     public static void AddItem(string item)
