@@ -87,6 +87,16 @@ public class Scene_UI_Manager : MonoBehaviour
         texts[id].text = text;
     }
 
+    public void ShowText(int id)
+    {
+        texts[id].gameObject.SetActive(true);
+    }
+
+    public void HideText(int id)
+    {
+        texts[id].gameObject.SetActive(false);
+    }
+
     public void SetSlider(int id, float value)
     {
         sliders[id].value = value;
