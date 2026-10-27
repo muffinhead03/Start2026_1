@@ -46,6 +46,11 @@ public class Scene_UI_Manager : MonoBehaviour
         buttons[id].SetActive(active);
     }
 
+    public void SetInteractableButton(int id, bool active)
+    {
+        buttons[id].GetComponent<Button>().interactable = active;
+    }
+
     public void SetActiveCursor(bool active)
     {
         if(panel_cursor!=null) panel_cursor.SetActive(active);
@@ -80,6 +85,16 @@ public class Scene_UI_Manager : MonoBehaviour
     public void ChangeText(int id, string text)
     {
         texts[id].text = text;
+    }
+
+    public void ShowText(int id)
+    {
+        texts[id].gameObject.SetActive(true);
+    }
+
+    public void HideText(int id)
+    {
+        texts[id].gameObject.SetActive(false);
     }
 
     public void SetSlider(int id, float value)

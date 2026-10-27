@@ -4,24 +4,14 @@ using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class Object_Pwd : MonoBehaviour
+public class Object_Pwd : APwd
 {
-    [Header("정답")]
-    public string pwd;
+    [SerializeField] protected Player_MouseInteraction player;
 
-    [Header("해제 이벤트")]
-    public UnityEvent UnlockEvent;
-
-    bool isActive;
-
-    private string input="";
-
-    InputAction click;
-
-    void Start()
+    private void Start()
     {
-        click = InputSystem.actions.FindAction("Click");
-        SetActive(false);
+        isActive = false;
+        input = "";
     }
 
     public void SetActive(bool active)
@@ -30,45 +20,32 @@ public class Object_Pwd : MonoBehaviour
 
         if (active)
         {
-            click.performed += ctx => PressButton();
-            click.Enable();
+            player.SetEnable();
+
+            input = "";
         }
-        else
-        {
-            click.performed -= ctx => PressButton();
-            click.Disable();
-        }
+        else player.SetDisable();
     }
 
-    public void PressButton()
+    public override void PressButton(string n)
     {
         if (!isActive) return;
 
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-
-        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 0.5f))
+        if (n == "submit")
         {
-            var button = hit.collider.GetComponent<APwdButton>();
-
-            if(button != null)
+            if (CheckAnswer())
             {
-                string n = button.GetId();
-
-                button.Pressed();
-
-                if (n == "submit")
-                {
-                    if (pwd == input)
-                    {
-                        UnlockEvent?.Invoke();
-                    }
-                    else input = "";
-                }
-                else input += n;
+                UnlockEvent?.Invoke();
+                GetComponent<Object_FixCamera>().UnFixCamera();
             }
+            else input = "";
         }
+        else input += n;
+    }
+
+    protected override bool CheckAnswer()
+    {
+        if (pwd == input) return true;
+        else return false;
     }
 }

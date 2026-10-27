@@ -7,3 +7,14 @@ public interface IRayInteractable
     void OnRayExit();
     void OnRayClick();
 }
+
+public interface IMouseInteractable
+{
+    void OnMouseEnter();
+
+    void OnMouseExit();
+
+    void OnMouseClick();
+
+    void OnMouseReleased();
+}
