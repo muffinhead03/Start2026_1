@@ -315,6 +315,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1527740098}
+  - {fileID: 1188803375}
   - {fileID: 917699270}
   - {fileID: 1158609791}
   - {fileID: 78320238}
@@ -4581,8 +4583,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b7d1c6f2a4e4a1f9b3c6d7e8f901234, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DollBookPageController
-  pageCount: 1
+  pageMaterials:
+  - {fileID: 2100000, guid: fa102939c74e7964c8f0cfa55b61365b, type: 2}
+  - {fileID: 2100000, guid: 9dc5b1f5ad72f884cb9168bf305021bc, type: 2}
+  - {fileID: 2100000, guid: 7ffa73d9e494a5448a66d681b8a06bb5, type: 2}
   startingPage: 0
+  bookRenderer: {fileID: 1946435131326011399}
+  bookAnimator: {fileID: 0}
+  pageTurnTrigger: Push
   pageObjects: []
 --- !u!4 &408824606 stripped
 Transform:
@@ -10254,7 +10262,7 @@ Transform:
   m_GameObject: {fileID: 917699269}
   serializedVersion: 2
   m_LocalRotation: {x: -0.49532634, y: -0.5061455, z: 0.50459766, w: 0.49381152}
-  m_LocalPosition: {x: 0.212, y: 0.665, z: 0.621}
+  m_LocalPosition: {x: 0.13348995, y: 0.6629999, z: 0.6205098}
   m_LocalScale: {x: 1, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14316,13 +14324,13 @@ Transform:
   m_GameObject: {fileID: 1188803374}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.68449, y: 2.184, z: 0.80770993}
+  m_LocalPosition: {x: 0.27348995, y: 1.4169999, z: 0.8867097}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6083644573975150860}
   - {fileID: 1492053329}
-  m_Father: {fileID: 1821577444}
+  m_Father: {fileID: 9400945}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1189241617
 GameObject:
@@ -17905,8 +17913,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 180, y: 60}
-  m_SizeDelta: {x: 40, y: 40}
+  m_AnchoredPosition: {x: 114.5, y: 60}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1426702361
 MonoBehaviour:
@@ -17977,18 +17985,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 522724315}
-        m_TargetAssemblyTypeName: Play_Audio, Assembly-CSharp
-        m_MethodName: PlayAudio
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 6b4a3eae461ea5e418fcb3c71ee3a55e, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 399262636}
         m_TargetAssemblyTypeName: DollBookPageController, Assembly-CSharp
         m_MethodName: PreviousPage
@@ -19296,11 +19292,11 @@ Transform:
   m_GameObject: {fileID: 1527740097}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.513, y: 1.352, z: 0.42999995}
+  m_LocalPosition: {x: 0.102, y: 0.585, z: 0.509}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1821577444}
+  m_Father: {fileID: 9400945}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1527740099
 MonoBehaviour:
@@ -20004,7 +20000,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 220, y: 60}
-  m_SizeDelta: {x: 40, y: 40}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1632359188
 MonoBehaviour:
@@ -20063,18 +20059,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 522724315}
-        m_TargetAssemblyTypeName: Play_Audio, Assembly-CSharp
-        m_MethodName: PlayAudio
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 6b4a3eae461ea5e418fcb3c71ee3a55e, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 399262636}
         m_TargetAssemblyTypeName: DollBookPageController, Assembly-CSharp
         m_MethodName: NextPage
@@ -21921,8 +21905,6 @@ Transform:
   m_Children:
   - {fileID: 9400945}
   - {fileID: 33439776}
-  - {fileID: 1188803375}
-  - {fileID: 1527740098}
   - {fileID: 1316076036}
   - {fileID: 951371938}
   - {fileID: 7228255245515623015}
@@ -26422,6 +26404,7 @@ GameObject:
   - component: {fileID: 7279238260707455646}
   - component: {fileID: 1043857833870499449}
   - component: {fileID: 4960012426796251721}
+  - component: {fileID: 7279238260707455647}
   m_Layer: 0
   m_Name: Cube.012
   m_TagString: Untagged
@@ -26504,6 +26487,8 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: fa102939c74e7964c8f0cfa55b61365b, type: 2}
+  - {fileID: 2100000, guid: 9dc5b1f5ad72f884cb9168bf305021bc, type: 2}
+  - {fileID: 2100000, guid: 7ffa73d9e494a5448a66d681b8a06bb5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27397,6 +27382,8 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: fa102939c74e7964c8f0cfa55b61365b, type: 2}
+  - {fileID: 2100000, guid: 9dc5b1f5ad72f884cb9168bf305021bc, type: 2}
+  - {fileID: 2100000, guid: 7ffa73d9e494a5448a66d681b8a06bb5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27529,7 +27516,7 @@ Transform:
   m_GameObject: {fileID: 7511381897688907115}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0, z: -0.016}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27927,12 +27914,34 @@ Transform:
   m_GameObject: {fileID: 1214168133924539260}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: -0.003, z: -0.016}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7228255245515623015}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &7279238260707455647
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214168133924539260}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c9ed35b2237296044969b57bbba596f8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!33 &7411310039373772691
 MeshFilter:
   m_ObjectHideFlags: 0
