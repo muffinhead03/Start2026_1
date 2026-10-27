@@ -21,6 +21,7 @@ public class Object_Box : MonoBehaviour
         if (Player_Inventory.hasKey(requiredKeyName))
         {
             isOpened = true;
+            Player_Inventory.UseKey(requiredKeyName);
 
             // 상자 닫기 애니메이션
             if (boxAnimator != null)

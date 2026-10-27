@@ -5,6 +5,8 @@ public class Play_Audio : MonoBehaviour
 {
     private AudioSource source;
 
+    [SerializeField] private AudioClip[] clips;
+
     private void Awake()
     {
         source = GetComponent<AudioSource>();
@@ -15,6 +17,13 @@ public class Play_Audio : MonoBehaviour
         if (source == null || ac == null) return;
 
         source.PlayOneShot(ac);
+    }
+
+    public void PlayAudio(int id)
+    {
+        if (source == null || id >= clips.Length || id <0 ) return;
+
+        source.PlayOneShot(clips[id]);
     }
 
     public void PlayAudioLoop()

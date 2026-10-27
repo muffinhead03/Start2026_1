@@ -25,8 +25,7 @@ public class Player_Interaction : MonoBehaviour
     InputAction interact;
     InputAction interact_inspecting;
 
-    Event_On_Ray CurrentTarget;
-    Event_On_Ray LastTarget;
+    IRayInteractable CurrentTarget;
 
     void Start()
     {
@@ -46,7 +45,7 @@ public class Player_Interaction : MonoBehaviour
         {
             //Debug.DrawLine(ray.origin, hit.point);
 
-            var Interactable = hit.collider.GetComponent<Event_On_Ray>();
+            var Interactable = hit.collider.GetComponent<IRayInteractable>();
 
             // 상호작용 가능한 물체
             if (Interactable != null)

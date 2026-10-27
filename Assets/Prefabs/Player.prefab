@@ -452,7 +452,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4093937196723730831}
   - component: {fileID: 8068354798978568433}
-  - component: {fileID: 615187844178374985}
+  - component: {fileID: 529133940140231277}
   m_Layer: 3
   m_Name: HandPivot
   m_TagString: Untagged
@@ -469,7 +469,7 @@ Transform:
   m_GameObject: {fileID: 8252295781479430924}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3, y: -0.3, z: 0.5}
+  m_LocalPosition: {x: 0.3, y: -0.239, z: 0.546}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -490,33 +490,30 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.2
   m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &615187844178374985
-SphereCollider:
+--- !u!114 &529133940140231277
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8252295781479430924}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.2
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6ce8c2e0f8623f4291424d17b743d03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_HandPivot
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  radius: 0.2
+  distance: 2
+  player: {fileID: 8747588067531962059}
 --- !u!1 &8573735766143835360
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,7 +593,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CameraPivot: {fileID: 2803602053977864669}
-  mouseSensitivity: 0.1
   bodyMesh: {fileID: 5177016150919761669}
   crouchMeshScaleY: 0.5
   walkSpeed: 3
@@ -612,7 +608,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2d461048eb334dd41bb42287e9b3523f, type: 3}
   - {fileID: 8300000, guid: fffe0cc2e2ff5bd4eafcc96db7aadcc5, type: 3}
   - {fileID: 8300000, guid: 6cc196ea79294f248b825c7491853bad, type: 3}
-  SceneUI: {fileID: 0}
 --- !u!114 &1133352419626379065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -627,6 +622,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player_FixCamera
   CameraPivot: {fileID: 2803602053977864669}
   targetTime: 0.5
+  hand: {fileID: 0}
   SceneUI: {fileID: 0}
   fixObject: {fileID: 0}
 --- !u!114 &6674939295336197482
@@ -784,6 +780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1abd22ba665f1d74d8c426c873a88485, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Play_Audio
+  clips: []
 --- !u!1 &8975025566476872664
 GameObject:
   m_ObjectHideFlags: 0

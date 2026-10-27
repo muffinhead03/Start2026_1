@@ -1,9 +1,8 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
-using static Unity.VisualScripting.Member;
+using UnityEngine.Events;
 
-public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
+public class Object_Inspectable : MonoBehaviour, IInspectInteractHandler, IRayInteractable
 {
     [Header("이름")]
     public string objectName;
@@ -15,17 +14,12 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
     public float targetTime = 1f;
     public float inspectDistance = 1f;
 
-    [Header("UI Settings")]
-    public bool usePanel = true;
-    [TextArea(3, 8)]
-    public string disc;
-    public Scene_UI_Manager SceneUI;
+    [SerializeField] protected Scene_UI_Manager SceneUI;
 
-    [Header("사운드")]
-    public AudioClip audio_inspect;
-
-    [Header("애니메이션")]
-    public Animator animator;
+    [Header("Inspect Events")]
+    public UnityEvent OnInspectStarted;
+    public UnityEvent OnInspectPerformed;
+    public UnityEvent OnInspectCanceled;
 
     private Vector3 originalPosition;
     private Quaternion originalRotation;
@@ -37,32 +31,46 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
 
     private Camera mainCamera;
 
-    private Play_Audio audio_player;
+    public void OnRayEnter() { }
+    public void OnRayStay() { }
+    public void OnRayExit() { }
+    public void OnRayClick() { OnInspect(); }
 
     private void Start()
     {
         mainCamera = Camera.main;
-        audio_player = GetComponent<Play_Audio>();
 
         col = GetComponent<Collider>();
         rigid = GetComponent<Rigidbody>();
     }
 
-    public void OnInteractWhileInspecting()
-    {
-        if (!isInspecting) return;
-
-        StartCoroutine(ReturnToOriginalPosition());
-        animator?.SetTrigger("Off");
-    }
-
     // OnClick 에 연결할 함수
-    public void OnInspect()
+    public virtual void OnInspect()
     {
         if (isInspecting) return;
 
         StartCoroutine(MoveToInspectPosition());
-        animator?.SetTrigger("On");
+
+        SceneUI.SetActiveCursor(false);
+
+        OnInspectStarted?.Invoke();
+    }
+
+    public virtual void OnInspectPosition()
+    {
+        OnInspectPerformed?.Invoke();
+    }
+
+    // 조사 마침 상호작용이 들어왔을 때 실행할 함수
+    public virtual void OnInteractWhileInspecting()
+    {
+        if (!isInspecting) return;
+
+        StartCoroutine(ReturnToOriginalPosition());
+
+        SceneUI.SetActiveCursor(true);
+
+        OnInspectCanceled?.Invoke();
     }
 
     IEnumerator MoveToInspectPosition()
@@ -73,19 +81,12 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
         originalPosition = transform.position;
         originalRotation = transform.rotation;
 
-        col.isTrigger = true;
+        col.enabled = false;
         if (rigid != null) rigid.isKinematic = true;
 
         // 플레이어 이동 잠금
         player.SetMoveLock(true);
-
-        InputManager.EnableUIInput();
-        InspectInput.Begin(this);
-
-        // 목표 위치 (카메라 앞 1m)
-        Vector3 targetPosition =
-            mainCamera.transform.position +
-            mainCamera.transform.forward * inspectDistance;
+        InputManager.DisableInput();
 
         Vector3 startPos = originalPosition;
         Quaternion startRot = originalRotation;
@@ -109,27 +110,21 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
             yield return null;
         }
 
-        // 조사 UI 활성화
-        if (usePanel)
-        {
-            SceneUI.ChangeText(0, disc);
-            SceneUI.SetActivePanel(2, true);
-        }
-        SceneUI.SetActiveCursor(false);
+        InputManager.EnableUIInput();
+        InspectInput.Begin(this);
 
-        col.isTrigger = false;
+        OnInspectPosition();
 
-        audio_player?.PlayAudio(audio_inspect);
+        //col.isTrigger = false;
     }
 
     IEnumerator ReturnToOriginalPosition()
     {
-        col.isTrigger = true;
-        if (rigid != null) rigid.isKinematic = false;
+        InspectInput.End(this);
+        InputManager.DisableInput();
 
-        // 조사 UI 비활성화
-        SceneUI.SetActivePanel(2, false);
-        SceneUI.SetActiveCursor(true);
+        //col.isTrigger = true;
+        if (rigid != null) rigid.isKinematic = false;
 
         Vector3 startPos = transform.position;
         Quaternion startRot = transform.rotation;
@@ -153,12 +148,11 @@ public class Object_Inspecatable : MonoBehaviour, IInspectInteractHandler
             yield return null;
         }
 
-        col.isTrigger = false;
+        col.enabled = true;
 
         isInspecting = false;
         player.SetMoveLock(false);
 
         InputManager.EnablePlayerInput();
-        InspectInput.End(this);
     }
 }

@@ -20,6 +20,7 @@ public class Player_Grab : MonoBehaviour
 
     private bool isGrabbing;
     private GameObject GrabbingObject;
+    private bool isHandValid;
 
     private Vector3 originalPos;
     private Quaternion originalRot;
@@ -31,6 +32,7 @@ public class Player_Grab : MonoBehaviour
     {
         isGrabbing = false;
         GrabbingObject = null;
+        isHandValid = true;
     }
 
     public bool isGrab()
@@ -311,10 +313,10 @@ private void StoreCurrentObject()
          * B가 HandPivot에 들어간 뒤 Grab() 마지막에서 스캔합니다.
          */
     }
+
     public void Release()
     {
-        if (!isGrabbing ||
-            GrabbingObject == null)
+        if (!isGrabbing || GrabbingObject == null || !isHandValid)
         {
             return;
         }
@@ -682,4 +684,9 @@ private void StoreCurrentObject()
         }
     }
 
+    public void SetHandValidate(bool handValid)
+    {
+        isHandValid = handValid;
+        if (GrabbingObject != null) GrabbingObject.SetActive(isHandValid);
+    }
 }
