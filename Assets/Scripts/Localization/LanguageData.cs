@@ -167,6 +167,66 @@ public static class LanguageData
             }
         },
 
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_RubyRed,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "루비색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Ruby Red Wine Bottle"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_TawnyBrown,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "황갈색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Tawny Brown Wine Bottle"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_Burgundy,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "버건디색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Burgundy Wine Bottle"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_Maroon,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "적갈색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Maroon Wine Bottle"
+                }
+            }
+        },
+
 
         /*
          * Organ Scene

@@ -39,6 +39,18 @@ public static class LanguageDataKey
     public const string WineScene_Item_Book =
         nameof(WineScene_Item_Book);
 
+    public const string WineScene_Item_WineBottle_RubyRed =
+        nameof(WineScene_Item_WineBottle_RubyRed);
+
+    public const string WineScene_Item_WineBottle_TawnyBrown =
+        nameof(WineScene_Item_WineBottle_TawnyBrown);
+
+    public const string WineScene_Item_WineBottle_Burgundy =
+        nameof(WineScene_Item_WineBottle_Burgundy);
+
+    public const string WineScene_Item_WineBottle_Maroon =
+        nameof(WineScene_Item_WineBottle_Maroon);
+
 
     /*
      * Organ Scene
