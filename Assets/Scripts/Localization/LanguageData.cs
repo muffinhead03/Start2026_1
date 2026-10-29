@@ -203,6 +203,81 @@ public static class LanguageData
         },
 
         {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Green,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "초록색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Green Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Red,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "빨간색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Red Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Blue,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "파란색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Blue Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Yellow,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "노란색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Yellow Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_White,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "흰색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "White Vinyl Record"
+                }
+            }
+        },
+
+        {
             LanguageDataKey.OrganScene_Item_SheetMusic,
             new()
             {

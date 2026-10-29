@@ -50,6 +50,21 @@ public static class LanguageDataKey
     public const string OrganScene_Item_VinylRecord =
         nameof(OrganScene_Item_VinylRecord);
 
+    public const string OrganScene_Item_VinylRecord_Green =
+        nameof(OrganScene_Item_VinylRecord_Green);
+
+    public const string OrganScene_Item_VinylRecord_Red =
+        nameof(OrganScene_Item_VinylRecord_Red);
+
+    public const string OrganScene_Item_VinylRecord_Blue =
+        nameof(OrganScene_Item_VinylRecord_Blue);
+
+    public const string OrganScene_Item_VinylRecord_Yellow =
+        nameof(OrganScene_Item_VinylRecord_Yellow);
+
+    public const string OrganScene_Item_VinylRecord_White =
+        nameof(OrganScene_Item_VinylRecord_White);
+
     public const string OrganScene_Item_SheetMusic =
         nameof(OrganScene_Item_SheetMusic);
 
