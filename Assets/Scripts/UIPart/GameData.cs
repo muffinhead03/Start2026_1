@@ -87,6 +87,7 @@ public static class GameData
         }
 
         CurrentLanguage = LanguageType[CurrentLanguageIndex];
+        SyncLocalizationLanguage();
 
         PlayerPrefs.SetInt(CurrentLanguageIndexKey, CurrentLanguageIndex);
         PlayerPrefs.Save();
@@ -128,6 +129,24 @@ public static class GameData
         }
 
         CurrentLanguage = LanguageType[CurrentLanguageIndex];
+        SyncLocalizationLanguage();
+    }
+
+    // 게임 시작 시 저장된 언어를 Localization에 반영
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void InitializeLanguage()
+    {
+        LoadLanguage();
+    }
+
+    // GameData의 언어 설정을 LanguageCurrentStatus에 반영
+    // (GameData.LanguageType 필드와 이름이 겹쳐서 global:: 사용)
+    private static void SyncLocalizationLanguage()
+    {
+        if (System.Enum.TryParse(CurrentLanguage, out global::LanguageType language))
+        {
+            LanguageCurrentStatus.SetLanguage(language);
+        }
     }
 
     public static void SaveAll()
@@ -180,6 +199,7 @@ public static class GameData
 
         CurrentLanguageIndex = 0;
         CurrentLanguage = LanguageType[CurrentLanguageIndex];
+        SyncLocalizationLanguage();
 
         Debug.Log("Save data reset.");
     }

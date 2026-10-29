@@ -256,6 +256,11 @@ public static class LanguageData
         {
             // 등록되지 않은 값이면
             // 기존 문자열을 그대로 반환
+#if UNITY_EDITOR
+            UnityEngine.Debug.LogWarning(
+                $"[Localization] 등록되지 않은 키: {key}"
+            );
+#endif
             return key;
         }
 
