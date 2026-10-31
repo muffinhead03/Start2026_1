@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Controll_Material : MonoBehaviour
+public class Controll_Material_Original : MonoBehaviour
 {
     [SerializeField] private Texture2D[] textures;
 

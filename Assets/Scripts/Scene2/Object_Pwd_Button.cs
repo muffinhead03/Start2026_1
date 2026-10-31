@@ -7,11 +7,6 @@ public class Object_Pwd_Button : APwdButton, IMouseInteractable
 {
     public UnityEvent OnPressed;
 
-    [Header("Materials")]
-    [SerializeField] Material[] materials;
-
-    MeshRenderer mesh;
-
     Collider col;
 
     public string GetId() { return id; }
@@ -33,21 +28,16 @@ public class Object_Pwd_Button : APwdButton, IMouseInteractable
 
         OnPressed?.Invoke();
 
-        StartCoroutine(ChangeMaterial());
+        StartCoroutine(ButtonDelay());
     }
 
-    IEnumerator ChangeMaterial()
+    IEnumerator ButtonDelay()
     {
-        if (mesh == null) mesh = GetComponent<MeshRenderer>();
         if (col == null) col = GetComponent<Collider>();
-
-        mesh.sharedMaterial = materials[1];
 
         col.enabled = false;
 
         yield return new WaitForSeconds(0.5f);
-
-        mesh.sharedMaterial = materials[0];
 
         col.enabled = true;
     }
