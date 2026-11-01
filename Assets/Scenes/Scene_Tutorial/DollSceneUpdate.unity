@@ -3926,6 +3926,62 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1116511709}
   m_LocalEulerAnglesHint: {x: 0, y: 125.204, z: 0}
+--- !u!1 &362474704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 362474705}
+  - component: {fileID: 362474706}
+  m_Layer: 0
+  m_Name: CameraPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &362474705
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362474704}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.6760002, y: 0.574, z: 0.0000005364418}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 110911423}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &362474706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362474704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ef4f5845c5a2034aa97c8ec6c86af82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_FixCamera
+  pivot: {fileID: 0}
+  targetPos: {x: 0, y: 0, z: 0}
+  useCameraPoint: 1
+  cameraPoint: {fileID: 362474705}
+  Fixed:
+    m_PersistentCalls:
+      m_Calls: []
+  UnFixed:
+    m_PersistentCalls:
+      m_Calls: []
+  SceneUI: {fileID: 676938599}
+  player: {fileID: 743923336}
 --- !u!1 &364030667
 GameObject:
   m_ObjectHideFlags: 0
@@ -4476,6 +4532,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7534352789055334371, guid: f9cf20b88f87ea24a8c48449712130e2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1435894377}
+    - targetCorrespondingSourceObject: {fileID: 7534352789055334371, guid: f9cf20b88f87ea24a8c48449712130e2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 362474705}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 12025476701060254, guid: f9cf20b88f87ea24a8c48449712130e2, type: 3}
       insertIndex: -1
@@ -7773,7 +7832,7 @@ MonoBehaviour:
   armComeOutDuration: 3
   armComeOutDistance: 0.5
   settledVelocity: 0.08
-  gameScreen: {fileID: 0}
+  gameScreen: {fileID: 1435894380}
 --- !u!1 &645388321
 GameObject:
   m_ObjectHideFlags: 0
@@ -18309,6 +18368,7 @@ GameObject:
   - component: {fileID: 1435894377}
   - component: {fileID: 1435894379}
   - component: {fileID: 1435894378}
+  - component: {fileID: 1435894380}
   m_Layer: 0
   m_Name: screen
   m_TagString: Untagged
@@ -18388,6 +18448,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1435894376}
   m_Mesh: {fileID: -4155378876080153175, guid: 8c7e6a21f34448543a1993eec151e8c5, type: 3}
+--- !u!114 &1435894380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435894376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ac638b4cb56bc4f86935d0e5dd386b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RetroGameScreen
+  screenRenderer: {fileID: 1435894378}
+  offMaterial: {fileID: 2100000, guid: 376a8862e80d1fd48811dd6e4619685c, type: 2}
+  noCoinMaterial: {fileID: 2100000, guid: 998773f632bcba045a9bfc1a4e5fb675, type: 2}
+  playingMaterial: {fileID: 2100000, guid: 15e466e8f8b837a42be4bd418ddb1184, type: 2}
+  noCoinDuration: 3
+  playingDuration: 3
+  moveCameraWhileOn: 1
+  cameraPoint: {fileID: 362474705}
+  cameraFixer: {fileID: 362474706}
 --- !u!1 &1441536301
 GameObject:
   m_ObjectHideFlags: 0

@@ -35,7 +35,7 @@ public class RetroGameManager : MonoBehaviour
     [SerializeField]
     private Transform armComeOutPoint;
 
-    [Tooltip("동전 투입 후 팔 배출까지 기다리는 시간")]
+    [Tooltip("게임기 화면(RetroGameScreen)이 없을 때만 사용.\n화면이 있으면 화면이 꺼지자마자 바로 배출")]
     [SerializeField]
     private float armRewardDelay = 1f;
 
@@ -224,17 +224,70 @@ public class RetroGameManager : MonoBehaviour
         }
 
 
-        // 게임기 화면 켜기 (계속 유지)
-        //
-        // 화면이 켜진 뒤 armRewardDelay 만큼 기다렸다가 팔이 나옴
-        if (gameScreen != null)
+        StartCoroutine(
+            CoinInsertedSequence()
+        );
+    }
+
+
+    // =========================================================
+    // 동전 투입 완료 후 연출
+    //
+    // 동전이 다 들어감
+    // ↓
+    // 화면 켜짐 (Mat_Retrogame_screen 2)
+    // ↓
+    // playingDuration(3초) 유지
+    // ↓
+    // 화면 꺼짐 (Mat_Retrogame_screen 0)
+    // ↓
+    // 바로 인형 팔 배출
+    // =========================================================
+
+    private IEnumerator CoinInsertedSequence()
+    {
+        // 화면 연출 중에도 중복 실행 / 상호작용 막기
+        isArmComingOut = true;
+
+
+        if (gameScreen == null)
         {
-            gameScreen.ShowPlayingScreen();
+            // 화면이 없으면 기존처럼 armRewardDelay 후 배출
+            yield return StartCoroutine(
+                ArmRewardSequence(
+                    armRewardDelay
+                )
+            );
+
+            yield break;
         }
 
 
-        StartCoroutine(
-            ArmRewardSequence()
+        gameScreen.ShowPlayingScreen();
+
+
+        Debug.Log(
+            $"[RetroGame] 게임기 화면 ON → {gameScreen.PlayingDuration}초 유지"
+        );
+
+
+        yield return new WaitForSeconds(
+            gameScreen.PlayingDuration
+        );
+
+
+        gameScreen.TurnOff();
+
+
+        Debug.Log(
+            "[RetroGame] 게임기 화면 OFF → 인형 팔 배출"
+        );
+
+
+        yield return StartCoroutine(
+            ArmRewardSequence(
+                0f
+            )
         );
     }
 
@@ -242,9 +295,7 @@ public class RetroGameManager : MonoBehaviour
     // =========================================================
     // 인형 팔 배출
     //
-    // 동전 투입 완료
-    // ↓
-    // 1초 대기
+    // (화면 꺼짐 직후 / 화면이 없으면 armRewardDelay 대기 후)
     // ↓
     // DollArmComeOut 중앙에서 팔 등장
     // ↓
@@ -257,23 +308,27 @@ public class RetroGameManager : MonoBehaviour
     // 안정된 후 획득 가능
     // =========================================================
 
-    private IEnumerator ArmRewardSequence()
+    private IEnumerator ArmRewardSequence(
+        float delay)
     {
         isArmComingOut = true;
 
 
         // -----------------------------------------------------
-        // 1. 동전 투입 후 대기
+        // 1. (필요하면) 대기
         // -----------------------------------------------------
 
-        Debug.Log(
-            $"[RetroGame] 인형 팔 등장까지 {armRewardDelay}초 대기"
-        );
+        if (delay > 0f)
+        {
+            Debug.Log(
+                $"[RetroGame] 인형 팔 등장까지 {delay}초 대기"
+            );
 
 
-        yield return new WaitForSeconds(
-            armRewardDelay
-        );
+            yield return new WaitForSeconds(
+                delay
+            );
+        }
 
 
         // -----------------------------------------------------
