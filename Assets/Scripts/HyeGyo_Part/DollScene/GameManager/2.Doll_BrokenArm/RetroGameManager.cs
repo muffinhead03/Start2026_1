@@ -55,6 +55,28 @@ public class RetroGameManager : MonoBehaviour
     private bool isArmComingOut = false;
 
 
+    // =========================================================
+    // 게임기 화면
+    // =========================================================
+
+    [Header("게임기 화면")]
+    [Tooltip("retro_game/screen 에 붙은 RetroGameScreen.\n비워두면 씬에서 자동으로 찾음")]
+    [SerializeField]
+    private RetroGameScreen gameScreen;
+
+    // 동전이 손을 떠나 투입이 시작되면 true → 이후 게임기 상호작용 영구 불가
+    private bool isCoinAccepted = false;
+
+    /// 지금 게임기(동전 투입구)와 상호작용할 수 있는지.
+    /// 동전 투입이 시작됐거나, 동전 없이 켜진 화면이 3초간 켜져 있는 동안은 불가.
+    public bool CanInteractMachine =>
+        !isCoinAccepted &&
+        !isCoinInserted &&
+        !isArmRewardUnlocked &&
+        !isArmComingOut &&
+        (gameScreen == null || !gameScreen.IsTemporarilyOn);
+
+
     public bool IsPlaying => isPlaying;
     public bool IsCoinInserted => isCoinInserted;
     public bool IsArmRewardUnlocked => isArmRewardUnlocked;
@@ -77,6 +99,22 @@ public class RetroGameManager : MonoBehaviour
         {
             Debug.LogError(
                 "[RetroGame] DollScene_GameManager를 찾을 수 없습니다.",
+                this
+            );
+        }
+
+
+        if (gameScreen == null)
+        {
+            gameScreen =
+                FindFirstObjectByType<RetroGameScreen>();
+        }
+
+
+        if (gameScreen == null)
+        {
+            Debug.LogWarning(
+                "[RetroGame] RetroGameScreen을 찾을 수 없습니다. 화면 전환 없이 진행합니다.",
                 this
             );
         }
@@ -125,6 +163,43 @@ public class RetroGameManager : MonoBehaviour
     // 동전 투입
     // =========================================================
 
+    // 동전 없이 게임기와 상호작용
+    //
+    // 화면이 3초간 켜졌다가 꺼짐 (그동안 상호작용 불가)
+    public void OnInteractWithoutCoin()
+    {
+        if (!CanInteractMachine)
+        {
+            return;
+        }
+
+
+        if (gameScreen != null)
+        {
+            gameScreen.ShowNoCoinScreen();
+        }
+
+
+        Debug.Log(
+            "[RetroGame] 동전 없이 상호작용 → 화면 잠깐 켜짐"
+        );
+    }
+
+
+    // 동전이 손을 떠나 투입구로 이동 시작
+    //
+    // 이 시점부터 게임기 상호작용 영구 불가
+    public void AcceptCoin()
+    {
+        isCoinAccepted = true;
+
+
+        Debug.Log(
+            "[RetroGame] 동전 투입 시작 → 게임기 상호작용 잠금"
+        );
+    }
+
+
     public void SetCoinInserted(bool inserted)
     {
         isCoinInserted = inserted;
@@ -146,6 +221,15 @@ public class RetroGameManager : MonoBehaviour
             isArmComingOut)
         {
             return;
+        }
+
+
+        // 게임기 화면 켜기 (계속 유지)
+        //
+        // 화면이 켜진 뒤 armRewardDelay 만큼 기다렸다가 팔이 나옴
+        if (gameScreen != null)
+        {
+            gameScreen.ShowPlayingScreen();
         }
 
 
