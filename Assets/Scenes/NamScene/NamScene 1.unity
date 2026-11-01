@@ -20655,8 +20655,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WineHintBridge
   hintManager: {fileID: 850534001}
-  stainManager: {fileID: 2119396151}
-  notesManager: {fileID: 8540713956853235756}
+  memo: {fileID: 1814638192}
+  rackPuzzle: {fileID: 479876835}
+  slotsRoot: {fileID: 2031229128}
+  bottlePrefix: wine_
+  registerFailOnWrongSlot: 1
+  cabinetDoor: {fileID: 1015788873}
+  keyObjectName: key1
+  handPerception: {fileID: 2048120664}
+  inventoryData: {fileID: 2048120665}
+  verboseLog: 1
 --- !u!1001 &835960835
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25631,6 +25639,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1015788873}
         m_TargetAssemblyTypeName: Object_Door, Assembly-CSharp
         m_MethodName: OpenCloseDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 832359130}
+        m_TargetAssemblyTypeName: WineHintBridge, Assembly-CSharp
+        m_MethodName: ReportCabinetTried
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -35548,7 +35568,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 483873544472186330}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d6d722ce80264ab8a35c3a39b9123a1, type: 3}
   m_Name: 
@@ -41822,14 +41842,14 @@ MonoBehaviour:
   hintManager: {fileID: 850534001}
   player: {fileID: 1035524530}
   trackedObjects:
-  - objectName: WineStains
-    transform: {fileID: 642202132}
-  - objectName: StainCrossPoints
-    transform: {fileID: 20585186}
-  - objectName: WineRackLabels
-    transform: {fileID: 932250874}
-  - objectName: PuzzleBookShelf
-    transform: {fileID: 1740562977}
+  - objectName: HintStain
+    transform: {fileID: 1668412323}
+  - objectName: BookShelf
+    transform: {fileID: 2024373794}
+  - objectName: wine
+    transform: {fileID: 1627204547}
+  - objectName: key1
+    transform: {fileID: 968718896}
 --- !u!1001 &1596104627
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43598,7 +43618,19 @@ MonoBehaviour:
   cameraPoint: {fileID: 1450144002}
   Fixed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 832359130}
+        m_TargetAssemblyTypeName: WineHintBridge, Assembly-CSharp
+        m_MethodName: ReportHintStainViewed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   UnFixed:
     m_PersistentCalls:
       m_Calls: []
@@ -50828,7 +50860,19 @@ MonoBehaviour:
   cameraPoint: {fileID: 2066740736}
   Fixed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 832359130}
+        m_TargetAssemblyTypeName: WineHintBridge, Assembly-CSharp
+        m_MethodName: ReportBookshelfViewed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   UnFixed:
     m_PersistentCalls:
       m_Calls: []
@@ -51692,7 +51736,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2045240365}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1407b2ae860f41848d1247ac96bb4ca, type: 3}
   m_Name: 
@@ -53465,7 +53509,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 4538252079024311401}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 594a9cb0306c2473aaa54d7c0e329554, type: 3}
   m_Name: 
@@ -54276,6 +54320,10 @@ PrefabInstance:
     - target: {fileID: 4699634861537794971, guid: 4aefb11e6c1b94dc88182725332f0f34, type: 3}
       propertyPath: m_Name
       value: WineLabelManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8650183700598960359, guid: 4aefb11e6c1b94dc88182725332f0f34, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8650183700598960359, guid: 4aefb11e6c1b94dc88182725332f0f34, type: 3}
       propertyPath: hintManager
@@ -55651,6 +55699,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1728939470}
     m_Modifications:
+    - target: {fileID: 464213790788308962, guid: 75daee9ed92314625999e0f35cc2c4bb, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 464213790788308962, guid: 75daee9ed92314625999e0f35cc2c4bb, type: 3}
       propertyPath: hintManager
       value: 

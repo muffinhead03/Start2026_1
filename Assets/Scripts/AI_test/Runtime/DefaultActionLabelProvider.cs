@@ -67,7 +67,6 @@ public class DefaultActionLabelProvider : IActionLabelProvider
     // 곰 인형 던지기 — "doll_bear_throw_3"처럼 횟수가 붙어서 들어옴
     const string BearThrowPrefix = "doll_bear_throw_";
 
-
     public string[] GetLabels(string actionId)
     {
         if (string.IsNullOrEmpty(actionId)) return null;
@@ -75,7 +74,6 @@ public class DefaultActionLabelProvider : IActionLabelProvider
         if (actionId.StartsWith(BearThrowPrefix) &&
             int.TryParse(actionId.Substring(BearThrowPrefix.Length), out int throwCount))
             return BearThrowLabels(throwCount);
-
 
         foreach (var (prefix, labels) in Patterns)
             if (actionId.StartsWith(prefix))

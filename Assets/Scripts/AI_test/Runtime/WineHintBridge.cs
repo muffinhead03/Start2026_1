@@ -105,7 +105,7 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
         if (memo == null)           Debug.LogWarning("[WineHintBridge] LetterMemoPanel 없음 — 1단계 진행도가 빠집니다.");
         if (rackPuzzle == null)     Debug.LogWarning("[WineHintBridge] Rack Puzzle 칸이 비어 있음 — 3단계 정답 판단이 빠집니다.");
         if (slots.Count == 0)       Debug.LogWarning("[WineHintBridge] Slots Root 아래 Object_Puzzle_Piece가 없음 — 병 꽂기 판단이 빠집니다.");
-        if (cabinetDoor == null)    Debug.LogWarning("[WineHintBridge] Cabinet Door 칸이 비어 있음 — 렉 완성 판단은 pwd로만 합니다.");
+        if (cabinetDoor == null)    Debug.LogWarning("[WineHintBridge] Cabinet Door 칸이 비어 있음 — 잠긴 장식장 시도 기록이 항상 남습니다.");
         if (handPerception == null) Debug.LogWarning("[WineHintBridge] PerceiveObjectHandPivot 없음 — 손 기준 override가 빠집니다.");
 
         foreach (var s in slots)
@@ -320,13 +320,6 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
             var go = CurrentObjectIn(s);
             if (go != null && Classify(s, go) == "correct") c++;
         }
-        return c;
-    }
-
-    int PlacedCount()
-    {
-        int c = 0;
-        foreach (var s in slots) if (CurrentObjectIn(s) != null) c++;
         return c;
     }
 

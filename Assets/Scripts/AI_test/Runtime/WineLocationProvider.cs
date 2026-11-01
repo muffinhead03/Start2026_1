@@ -4,10 +4,10 @@ using UnityEngine;
 /// <summary>
 /// 와인씬의 플레이어 위치와 각 퍼즐 영역의 위치를 HintManager(ILocationAwareProvider)에 제공하는 컴포넌트.
 ///
-/// 기존 힌트 보고 스크립트들(BookShelfComplete, FloorStainManager, WineGlass, WineRackLabel 등)은
-/// completedSteps/foundClues/AddLastAction을 직접 hintManager에 보고하는 구조를 그대로 유지함 —
-/// 이 컴포넌트는 그 구조와 완전히 무관하게, "위치 정보만" 별도로 붙는 독립 컴포넌트임.
-/// 즉 기존 8개 스크립트는 한 줄도 안 건드려도 됨.
+/// 스텝 완료·최근 행동 기록은 WineHintBridge가 담당하고(10월 리디자인), 이 컴포넌트는 "위치 정보만" 제공하는
+/// 독립 컴포넌트임. 코드에 오브젝트 이름이 박혀 있지 않아서, 퍼즐이 바뀌면 Inspector의 Tracked Objects만 다시 등록하면 됨.
+/// 현재 등록할 이름 (WineGlassRoomData의 relatedObjectName):
+///   HintStain → Room_1/Hint_Stain / BookShelf → Room_3/BookShelfView / wine → 와인렉 / key1 → chestbox (1)
 ///
 /// 구역(방별 체류시간) 추적은 트리거 콜라이더가 아직 없어서 지금은 비워둠(null/0) —
 /// 나중에 Room_1/2/3에 트리거 콜라이더를 달면 그때 GetCurrentZoneName()/GetCurrentZoneStaySeconds()만
@@ -25,18 +25,18 @@ public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider
     public class NamedTransform
     {
         [Tooltip("WineGlassRoomData.cs의 relatedObjectName과 정확히 똑같은 문자열이어야 매칭됨. " +
-                 "예: \"WineStains\", \"StainCrossPoints\", \"WineRackLabels\", \"PuzzleBookShelf\"")]
+                 "예: \"HintStain\", \"BookShelf\", \"wine\", \"key1\"")]
         public string objectName;
 
         [Tooltip("이 영역을 대표하는 Transform. 개별 오브젝트 하나여도 되고, " +
-                 "여러 개를 묶는 빈 부모 오브젝트(예: \"1.WineStains\" 그룹)의 Transform이어도 됨.")]
+                 "여러 개를 묶는 빈 부모 오브젝트(예: 와인렉 전체 \"WineReck\")의 Transform이어도 됨.")]
         public Transform transform;
     }
 
     [Header("퍼즐 영역 위치 등록 (relatedObjectName ↔ Transform)")]
     [Tooltip("WineGlassRoomData.cs의 각 스텝에 적어둔 relatedObjectName 문자열마다 하나씩 등록. " +
-             "예: WineStains → \"1.WineStains\" 부모 오브젝트, StainCrossPoints → \"2.StainCrossPoints\" 부모, " +
-             "WineRackLabels → \"3.WineRackLabels\" 부모, PuzzleBookShelf → \"5_6.PuzzleBookShelf\" 부모")]
+             "예: HintStain → Room_1/Hint_Stain, BookShelf → Room_3/BookShelfView, " +
+             "wine → WineReck(와인렉), key1 → chestbox (1)(상자)")]
     [SerializeField] List<NamedTransform> trackedObjects = new List<NamedTransform>();
 
     void Start()
