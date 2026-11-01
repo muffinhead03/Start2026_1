@@ -96,6 +96,23 @@ public static class GameData
         Debug.Log("Current Language: " + CurrentLanguage);
     }
 
+    // 외부 설정 UI(GameSetting 등)에서 언어를 지정할 때 사용
+    public static void SetLanguage(global::LanguageType language)
+    {
+        int index = System.Array.IndexOf(LanguageType, language.ToString());
+
+        if (index < 0)
+        {
+            return;
+        }
+
+        CurrentLanguageIndex = index;
+        FixLanguageIndex();
+
+        PlayerPrefs.SetInt(CurrentLanguageIndexKey, CurrentLanguageIndex);
+        PlayerPrefs.Save();
+    }
+
     public static void SaveLanguage()
     {
         FixLanguageIndex();
