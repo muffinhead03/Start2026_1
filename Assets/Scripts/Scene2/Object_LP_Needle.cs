@@ -15,7 +15,7 @@ public class Object_LP_Needle : MonoBehaviour, IMouseInteractable
 
     [SerializeField] private Controll_Mesh track;
 
-    [SerializeField] private APwd pwd_LP;
+    [SerializeField] private Pwd_Turntable pwd_LP;
 
     private bool isDragging;
 
@@ -58,7 +58,12 @@ public class Object_LP_Needle : MonoBehaviour, IMouseInteractable
         if(!active) transform.rotation = originalRotation;
     }
 
-    public void OnMouseClick() { isDragging = true; }
+    public void OnMouseClick() 
+    { 
+        isDragging = true;
+
+        mesh.sharedMaterial = mat_original;
+    }
 
     public void OnMouseReleased() 
     { 
@@ -67,6 +72,10 @@ public class Object_LP_Needle : MonoBehaviour, IMouseInteractable
         track.HideMesh();
 
         if (track_id >= 0) pwd_LP.PressButton(track_id.ToString());
+        else
+        {
+            pwd_LP.PauseMusic();
+        }
     }
 
     public void OnMouseEnter()

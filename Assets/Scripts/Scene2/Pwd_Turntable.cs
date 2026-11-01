@@ -7,8 +7,12 @@ public class Pwd_Turntable : APwd
 
     [SerializeField] private Controll_Mesh controll_mesh;
 
+    [SerializeField] private Play_Audio audio_player;
+
+    private char[] lp_audio_id = { 'W', 'G', 'R', 'B', 'Y'};
+ 
     int current_index;
-    string track_id;
+    string lp_id;
 
     private void Start()
     {
@@ -29,14 +33,16 @@ public class Pwd_Turntable : APwd
 
     public void PutOnLP(string n)
     {
-        track_id = n;
+        lp_id = n;
     }
 
     public override void PressButton(string n)
     {
         if (!isActive) return;
 
-        input = track_id + n;
+        input = lp_id + n;
+
+        PlayMusic();
 
         if (CheckAnswer())
         {
@@ -63,5 +69,26 @@ public class Pwd_Turntable : APwd
         if (!Regex.IsMatch(input, match) || !Regex.IsMatch(input, match)) return false;
 
         return input.Equals(current_pwd);
+    }
+
+    private void PlayMusic()
+    {
+        for(int i=0;i<lp_audio_id.Length;i++)
+        {
+            if (lp_audio_id[i] == input[0])
+            {
+                int track_id = input[1] - '0';
+                int clip_id = 3 * i + track_id;
+
+                audio_player.PlayAudioNoOverlap(clip_id);
+
+                return;
+            }
+        }
+    }
+
+    public void PauseMusic()
+    {
+        audio_player.PauseAudio();
     }
 }

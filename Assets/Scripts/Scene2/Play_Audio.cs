@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 [RequireComponent(typeof(AudioSource))]
 public class Play_Audio : MonoBehaviour
@@ -24,6 +25,16 @@ public class Play_Audio : MonoBehaviour
         if (source == null || id >= clips.Length || id <0 ) return;
 
         source.PlayOneShot(clips[id]);
+    }
+
+    public void PlayAudioNoOverlap(int id)
+    {
+        if (source == null || id >= clips.Length || id < 0) return;
+
+        source.Stop();
+        source.clip = clips[id];
+
+        source.Play();
     }
 
     public void PlayAudioLoop()

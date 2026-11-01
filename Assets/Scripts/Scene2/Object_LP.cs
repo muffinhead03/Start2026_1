@@ -14,6 +14,8 @@ public class Object_LP : MonoBehaviour, IMouseInteractable
 
     [SerializeField] private Material mat_trans;
 
+    [SerializeField] private Pwd_Turntable pwd_LP;
+
     private void Start()
     {
         if(mesh == null) mesh = GetComponent<MeshRenderer>();
@@ -24,6 +26,8 @@ public class Object_LP : MonoBehaviour, IMouseInteractable
         turntable.ResetPanel();
 
         HideLP();
+
+        pwd_LP.PauseMusic();
     }
 
     public void OnMouseReleased() { }
@@ -53,6 +57,8 @@ public class Object_LP : MonoBehaviour, IMouseInteractable
 
     public void HideLP()
     {
+        if(mat_original!=null) mesh.sharedMaterial = mat_original;
+
         gameObject.SetActive(false);
 
         needle.SetActive(false);
