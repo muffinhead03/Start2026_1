@@ -167,6 +167,66 @@ public static class LanguageData
             }
         },
 
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_RubyRed,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "루비색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Ruby Red Wine Bottle"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_TawnyBrown,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "황갈색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Tawny Brown Wine Bottle"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_Burgundy,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "버건디색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Burgundy Wine Bottle"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_Maroon,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "적갈색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Maroon Wine Bottle"
+                }
+            }
+        },
+
 
         /*
          * Organ Scene
@@ -198,6 +258,81 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Green,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "초록색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Green Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Red,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "빨간색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Red Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Blue,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "파란색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Blue Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Yellow,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "노란색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Yellow Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_White,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "흰색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "White Vinyl Record"
                 }
             }
         },
