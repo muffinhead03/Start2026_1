@@ -239,7 +239,7 @@ public class RetroGameManager : MonoBehaviour
     // ↓
     // playingDuration(3초) 유지
     // ↓
-    // 화면 꺼짐 (Mat_Retrogame_screen 0)
+    // 기본 화면(Off Material)으로 복귀
     // ↓
     // 바로 인형 팔 배출
     // =========================================================
@@ -280,7 +280,7 @@ public class RetroGameManager : MonoBehaviour
 
 
         Debug.Log(
-            "[RetroGame] 게임기 화면 OFF → 인형 팔 배출"
+            "[RetroGame] 게임기 화면 기본으로 복귀 → 인형 팔 배출"
         );
 
 

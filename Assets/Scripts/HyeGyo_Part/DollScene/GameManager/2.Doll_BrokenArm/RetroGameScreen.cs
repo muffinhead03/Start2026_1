@@ -4,10 +4,12 @@ using UnityEngine;
 /// <summary>
 /// 레트로 게임기 화면 Material 전환.
 ///
-/// Off      : 기본 상태 (Mat_Retrogame_screen 0)
-/// NoCoin   : 동전 없이 상호작용 → 잠깐 켜졌다가 꺼짐 (Mat_Retrogame_screen 1)
-/// Playing  : 동전 투입 완료 → playingDuration(3초) 동안 켜짐 (Mat_Retrogame_screen 2)
-///            → 꺼지는 타이밍은 RetroGameManager가 관리 (꺼진 직후 인형 팔 배출)
+/// Off      : 기본 화면 (평소 / 각 연출이 끝난 뒤 돌아오는 화면)
+/// NoCoin   : 동전 없이 E → noCoinDuration(3초) 켜졌다가 Off로 복귀 (카메라 이동 없음)
+/// Playing  : 동전을 넣은 뒤 playingDuration(3초) 켜짐 + 카메라 CameraPoint로 이동
+///            → Off로 복귀하면서 인형 팔 배출
+///            → 이후에는 Off 화면으로 영구 고정 (다시 켜지지 않음)
+///            → Playing → Off 전환 타이밍은 RetroGameManager가 관리
 ///
 /// 화면 오브젝트(retro_game/screen)에 붙여서 사용.
 /// 상호작용 잠금 판단은 RetroGameManager가 이 상태를 보고 결정한다.
@@ -36,15 +38,15 @@ public class RetroGameScreen : MonoBehaviour
     // ============================================
 
     [Header("화면 Material")]
-    [Tooltip("기본(꺼진) 화면 : Mat_Retrogame_screen 0")]
+    [Tooltip("기본 화면 (평소, 그리고 3초 연출이 끝나면 돌아오는 화면)")]
     [SerializeField]
     private Material offMaterial;
 
-    [Tooltip("동전 없이 상호작용했을 때 화면 : Mat_Retrogame_screen 1")]
+    [Tooltip("동전 없이 E를 눌렀을 때 No Coin Duration(3초) 동안 보이는 화면")]
     [SerializeField]
     private Material noCoinMaterial;
 
-    [Tooltip("동전 투입 후 화면 : Mat_Retrogame_screen 2")]
+    [Tooltip("동전을 넣은 뒤 Playing Duration(3초) 동안 보이는 화면")]
     [SerializeField]
     private Material playingMaterial;
 
@@ -69,8 +71,8 @@ public class RetroGameScreen : MonoBehaviour
     // Camera Focus
     // ============================================
 
-    [Header("화면이 켜져 있는 동안 카메라를 CameraPoint로 이동")]
-    [Tooltip("체크하면 화면이 켜져 있는 동안 플레이어 카메라가 CameraPoint로 이동하고,\n화면이 꺼지면 원래 위치로 돌아옴")]
+    [Header("동전을 넣고 화면이 켜져 있는 동안 카메라를 CameraPoint로 이동")]
+    [Tooltip("체크하면 동전 투입 후 화면(Playing)이 켜져 있는 동안 플레이어 카메라가 CameraPoint로 이동하고,\n화면이 꺼지면 원래 위치로 돌아옴\n동전 없이 E로 켤 때는 이동하지 않음")]
     [SerializeField]
     private bool moveCameraWhileOn = true;
 
@@ -83,6 +85,11 @@ public class RetroGameScreen : MonoBehaviour
     private Object_FixCamera cameraFixer;
 
     private bool isCameraMoved = false;
+
+    // 동전 연출(Playing)이 한 번 끝나면 true → 이후 화면은 Off로 영구 고정
+    private bool isLockedOff = false;
+
+    public bool IsLockedOff => isLockedOff;
 
 
     // ============================================
@@ -124,15 +131,15 @@ public class RetroGameScreen : MonoBehaviour
     /// <returns>화면을 켰으면 true, 이미 켜져 있어서 무시했으면 false</returns>
     public bool ShowNoCoinScreen()
     {
-        if (state != ScreenState.Off)
+        if (state != ScreenState.Off ||
+            isLockedOff)
         {
             return false;
         }
 
+        // 동전 없이 켤 때는 카메라 이동 없음
         state = ScreenState.NoCoin;
         ApplyMaterial(noCoinMaterial);
-
-        BeginCameraFocus();
 
         noCoinRoutine =
             StartCoroutine(
@@ -159,8 +166,6 @@ public class RetroGameScreen : MonoBehaviour
 
         state = ScreenState.Off;
         ApplyMaterial(offMaterial);
-
-        EndCameraFocus();
     }
 
 
@@ -170,6 +175,12 @@ public class RetroGameScreen : MonoBehaviour
 
     public void ShowPlayingScreen()
     {
+        // 동전 연출은 한 번만
+        if (isLockedOff)
+        {
+            return;
+        }
+
         StopNoCoinRoutine();
 
         state = ScreenState.Playing;
@@ -186,6 +197,12 @@ public class RetroGameScreen : MonoBehaviour
     public void TurnOff()
     {
         StopNoCoinRoutine();
+
+        // 동전 연출이 끝나고 꺼지는 거라면 이후 Off로 영구 고정
+        if (state == ScreenState.Playing)
+        {
+            isLockedOff = true;
+        }
 
         state = ScreenState.Off;
         ApplyMaterial(offMaterial);
