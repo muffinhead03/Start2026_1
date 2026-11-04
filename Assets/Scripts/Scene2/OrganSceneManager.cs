@@ -6,50 +6,118 @@ public class OrganSceneManager : MonoBehaviour
     [SerializeField] GameObject[] papers;
     [SerializeField] GameObject[] clues;
     [SerializeField] GameObject[] puzzle_obj;
+    [SerializeField] HintTreeNode hint_root;
 
-    private int step;
-
-    // 힌트 시스템(OrganHintBridge) 연동용 — 순서와 상관없이 "방금 완료된 스텝 번호"를 그대로 알려줌.
-    // 아래 CompleteStep의 기존 로직(가장 큰 번호만 기억)은 건드리지 않음.
+    private HintTree tree;
+    
     public event System.Action<int> OnStepCompleted;
 
-    // 힌트 시스템(OrganHintBridge) 위치 계산용 읽기 전용 접근자 — 배열 내용/순서는 Inspector 설정 그대로.
     public GameObject[] Pipes => pipes;
     public GameObject[] Papers => papers;
     public GameObject[] Clues => clues;
     public GameObject[] PuzzleObjects => puzzle_obj;
 
+    private bool[] pipe = new bool[4];
+    private bool[] lp = new bool[5];
+    private bool[] paper = new bool[4];
+    private bool[] musicbox = new bool[2];
+    private int current_lp;
+
     private void Start()
     {
-        InitStage();
+        InitHintTree();
     }
 
-    void InitStage()
+    void InitHintTree()
     {
-        step = 0;
+        tree = new HintTree(hint_root, 50);
     }
 
     public int GetCurrentStep()
     {
-        return step;
+        return tree.FindHintID();
+    }
+
+    public void PlayLP()
+    {
+        current_lp++;
+
+        if (current_lp >= lp.Length) return;
+
+        if (lp[current_lp]) tree.SetCond(12, true);
+        else
+        {
+            if (current_lp == 3 || current_lp == 4) tree.SetCond(13, true);
+            else tree.SetCond(13, false);
+
+            tree.SetCond(12, false);
+        }
     }
 
     public void CompleteStep(int step)
     {
         OnStepCompleted?.Invoke(step);
 
-        if (step < this.step) return;
-
-        this.step = step + 1;
+        tree.SetCond(step, true);
     }
 
-    public void ClearStage()
+    public void FindMusicbox(int id)
     {
+        if (musicbox[id]) return;
 
+        musicbox[id] = true;
+
+        if (id == 0) tree.SetCond(8, true);
+        if (musicbox[0] && musicbox[1]) tree.SetCond(7, true);
     }
 
-    public void CompleteNextStep()
+    public void FindPipe(int id)
     {
-        CompleteStep(step);
+        id--;
+        if (pipe[id]) return;
+
+        pipe[id] = true;
+
+        tree.SetCond(3, true);
+
+        bool findAllpipe = true;
+        for(int i=0;i<pipe.Length;i++)
+        {
+            if (!pipe[i]) findAllpipe = false;
+        }
+
+        tree.SetCond(2, findAllpipe);
+
+        if ((id == 0 || id == 1)&& pipe[0] && pipe[1]) tree.SetCond(5, true);
+
+        if (id == 2 && pipe[2]) tree.SetCond(9, true);
+    }
+
+    public void FindLP(int id)
+    {
+        id--;
+        if (lp[id]) return;
+
+        lp[id] = true;
+
+        tree.SetCond(11, true);
+
+        if(id == current_lp) tree.SetCond(12, true);
+    }
+
+    public void FindPaper(int id)
+    {
+        id--;
+        if (paper[id]) return;
+
+        paper[id] = true;
+
+        bool findAllpaper = true;
+        for (int i = 0; i < pipe.Length; i++)
+        {
+            if (!paper[i]) findAllpaper = false;
+        }
+
+        tree.SetCond(15, findAllpaper);
     }
 }

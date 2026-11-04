@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class Object_PutOn_ver2 : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class Object_PutOn_ver2 : MonoBehaviour
 
     [Header("이벤트")]
     public UnityEvent OnComplete;
+
+    [SerializeField] OrganSceneManager scene_manager;
 
     private Play_Audio audio_player;
 
@@ -47,6 +50,7 @@ public class Object_PutOn_ver2 : MonoBehaviour
             {
                 if (player.GetComponent<Player_Grab>().hasKey(keyNames[i])){
                     PutOn();
+                    scene_manager.CompleteStep(24);
                     break;
                 }
             }

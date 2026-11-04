@@ -9,6 +9,8 @@ public class Pwd_Turntable : APwd
 
     [SerializeField] private Play_Audio audio_player;
 
+    [SerializeField] private OrganSceneManager scene_manager;
+
     private char[] lp_audio_id = { 'W', 'G', 'R', 'B', 'Y'};
  
     int current_index;
@@ -57,6 +59,8 @@ public class Pwd_Turntable : APwd
             {
                 UnlockEvent?.Invoke();
             }
+
+            scene_manager.PlayLP();
         }
     }
 

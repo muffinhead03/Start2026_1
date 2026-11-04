@@ -12,6 +12,10 @@ public class Object_Pwd_State : MonoBehaviour
     [Header("해제 이벤트")]
     public UnityEvent UnlockEvent;
 
+    [SerializeField] OrganSceneManager scene_manager;
+
+    private bool firstPress = false;
+
     void Start()
     {
         Init();
@@ -25,7 +29,13 @@ public class Object_Pwd_State : MonoBehaviour
 
     public void PressButton(int id)
     {
-        if(id >= input.Length)
+        if (!firstPress)
+        {
+            firstPress = true;
+            scene_manager.CompleteStep(22);
+        }
+
+        if (id >= input.Length)
         {
             Debug.Log("Index out of range :" + id);
             return;
