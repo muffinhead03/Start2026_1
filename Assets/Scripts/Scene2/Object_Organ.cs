@@ -1,11 +1,12 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class Object_Organ : Object_Pwd
+public class Object_Organ : APwd
 {
     [Header("사운드")]
     public AudioClip[] audio_organ;
@@ -13,6 +14,11 @@ public class Object_Organ : Object_Pwd
     private Play_Audio audio_player;
 
     bool isPipeChanged;
+
+    [SerializeField] protected Player_MouseInteraction player;
+
+    public UnityEvent OnSuccess;
+    public UnityEvent OnFailure;
 
     void Start()
     {
@@ -23,6 +29,25 @@ public class Object_Organ : Object_Pwd
         isActive = false;
 
         audio_player = GetComponent<Play_Audio>();
+    }
+
+    public void SetActive(bool active)
+    {
+        isActive = active;
+
+        if (active)
+        {
+            player.SetEnable();
+
+            input = "";
+        }
+        else player.SetDisable();
+    }
+
+    protected override bool CheckAnswer()
+    {
+        if (pwd == input) return true;
+        else return false;
     }
 
     public void ActivateAudio()
