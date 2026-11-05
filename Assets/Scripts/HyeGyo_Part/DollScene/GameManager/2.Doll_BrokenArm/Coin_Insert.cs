@@ -158,6 +158,14 @@ public class Coin_Insert : MonoBehaviour
         }
 
 
+        // 화면이 켜져 있는 동안 / 동전 투입 이후에는 상호작용 불가
+        if (retroGameManager != null &&
+            !retroGameManager.CanInteractMachine)
+        {
+            return;
+        }
+
+
         if (playerGrab == null)
         {
             Debug.LogError(
@@ -186,6 +194,13 @@ public class Coin_Insert : MonoBehaviour
                 "[Coin_Insert] 현재 손에 동전이 없음",
                 this
             );
+
+
+            if (retroGameManager != null)
+            {
+                retroGameManager.OnInteractWithoutCoin();
+            }
+
 
             return;
         }
@@ -231,6 +246,14 @@ public class Coin_Insert : MonoBehaviour
 
             return;
         }
+
+
+        // 동전이 손을 떠났으므로 게임기 상호작용 잠금
+        if (retroGameManager != null)
+        {
+            retroGameManager.AcceptCoin();
+        }
+
     // ============================================
     // Coin Insert이므로
     // 일반 Drop Sound는 이번 한 번 재생하지 않음
@@ -275,6 +298,8 @@ public class Coin_Insert : MonoBehaviour
         {
             isInserting = false;
 
+            NotifyCoinInserted();
+
             yield break;
         }
 
@@ -311,15 +336,10 @@ public class Coin_Insert : MonoBehaviour
 
 
         // ========================================
-        // 4. RetroGameManager에 투입 알림
+        // 4. RetroGameManager 알림은
+        //    동전이 투입구에 완전히 들어간 뒤(9번)로 이동
+        //    → 화면 켜짐 → 인형 팔 배출
         // ========================================
-
-        if (retroGameManager != null)
-        {
-            retroGameManager.SetCoinInserted(
-                true
-            );
-        }
 
 
         // ========================================
@@ -334,6 +354,8 @@ public class Coin_Insert : MonoBehaviour
         if (coin == null)
         {
             isInserting = false;
+
+            NotifyCoinInserted();
 
             yield break;
         }
@@ -352,6 +374,8 @@ public class Coin_Insert : MonoBehaviour
 
 
             isInserting = false;
+
+            NotifyCoinInserted();
 
             yield break;
         }
@@ -397,6 +421,8 @@ public class Coin_Insert : MonoBehaviour
             if (coin == null)
             {
                 isInserting = false;
+
+                NotifyCoinInserted();
 
                 yield break;
             }
@@ -469,6 +495,27 @@ public class Coin_Insert : MonoBehaviour
 
 
         isInserting = false;
+
+
+        // 10. 동전이 완전히 들어감 → 화면 켜짐 → 인형 팔 배출
+        NotifyCoinInserted();
+    }
+
+
+    // ============================================
+    // 동전 투입 완료 알림
+    // ============================================
+
+    private void NotifyCoinInserted()
+    {
+        if (retroGameManager == null)
+        {
+            return;
+        }
+
+        retroGameManager.SetCoinInserted(
+            true
+        );
     }
 
 

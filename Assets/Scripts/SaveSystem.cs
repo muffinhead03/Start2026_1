@@ -7,7 +7,7 @@ public class PlayerData
     public int hintLevel = 1;
     public float mouseSensitivity = 0.1f;
     public float soundEffect = 1;
-    public int language = 0;
+    public int language = 1; // 0: English, 1: Korean
     public int current_stage = 0;
 }
 
@@ -45,7 +45,7 @@ public static class SaveSystem
             hintLevel = 1,
             mouseSensitivity = 0.1f,
             soundEffect = 1,
-            language = 0,
+            language = 1,
             current_stage = 2
         };
     }

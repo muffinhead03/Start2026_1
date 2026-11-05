@@ -25,7 +25,7 @@ public class DollRepairCompletionManager : MonoBehaviour
 
     [Tooltip("인형 이동 모션 시간")]
     [SerializeField]
-    private float repairMotionDuration = 2f;
+    private float repairMotionDuration = 0;
 
 
     // =========================================================

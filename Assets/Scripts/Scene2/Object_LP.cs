@@ -1,34 +1,60 @@
+using Unity.VisualScripting;
 using UnityEngine;
-using System.Collections;
 
-public class Object_LP : MonoBehaviour
+public class Object_LP : MonoBehaviour, IMouseInteractable
 {
-    Animator animator;
-    GameObject LP;
+    MeshRenderer mesh;
+    Material mat_original;
 
-    public void PutOnLP()
+    [SerializeField] private Controll_Mesh controll_mesh;
+
+    [SerializeField] private Object_Turntable turntable;
+
+    [SerializeField] private Object_LP_Needle needle;
+
+    [SerializeField] private Material mat_trans;
+
+    private void Start()
     {
-        animator = GetComponent<Object_PutOn>().putOn.GetComponent<Animator>();
-        animator.enabled = true;
-        animator.SetTrigger("On");
-        GetComponent<Collider>().enabled = false;
-
-        StartCoroutine(PlayLP());
+        if(mesh == null) mesh = GetComponent<MeshRenderer>();
     }
 
-    IEnumerator PlayLP()
+    public void OnMouseClick()
     {
-        yield return new WaitForSeconds(5f);
+        turntable.ResetPanel();
 
-        StopLP();
+        HideLP();
     }
 
-    public void StopLP()
+    public void OnMouseReleased() { }
+
+    public void OnMouseEnter()
     {
-        animator = GetComponent<Object_PutOn>().putOn.GetComponent<Animator>();
-        animator.SetTrigger("Off");
-        animator.enabled = false;
-        GetComponent<Collider>().enabled = true;
-        GetComponent<Object_KeyLocked>().UseKey(GetComponent<Object_PutOn>().putOn.GetComponent<Object_Grabbable>().objectName);
+        mat_original = mesh.sharedMaterial;
+
+        mesh.sharedMaterial = mat_trans;
+    }
+
+    public void OnMouseExit()
+    {
+        mesh.sharedMaterial = mat_original;
+    }
+
+    public void ShowLP(int id)
+    {
+        if (mesh == null) mesh = GetComponent<MeshRenderer>();
+
+        controll_mesh.ShowMesh(id);
+
+        gameObject.SetActive(true);
+
+        needle.SetActive(true);
+    }
+
+    public void HideLP()
+    {
+        gameObject.SetActive(false);
+
+        needle.SetActive(false);
     }
 }

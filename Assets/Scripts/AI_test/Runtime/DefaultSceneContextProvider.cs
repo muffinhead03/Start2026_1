@@ -17,7 +17,7 @@ public class DefaultSceneContextProvider : ISceneContextProvider
     static readonly Dictionary<string, string> SceneOrientation = new Dictionary<string, string>
     {
         { "wine_glass_room",
-            "Scene: A dim Victorian dining room with a wine rack and stained floor, leading into a room with an old bookshelf. " +
+            "Scene: A dim Victorian wine cellar with wine stains on the floor, a paper on the wall with a drawing of colored stains, a memo paper pinned on the wall beside a framed painting, a wine rack with empty slots and a locked glass display cabinet, leading into a room with an old bookshelf. " +
             "The player is trying to escape by solving a puzzle hidden somewhere in this space." },
 
         { "organ_room",

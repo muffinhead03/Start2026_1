@@ -45,6 +45,14 @@ public class GameSetting : MonoBehaviour
         {
             data.current_stage = SceneManager.GetActiveScene().buildIndex;
         }
+
+        ApplyLanguage();
+    }
+
+    // data.language(0: English, 1: 한국어)를 GameData / Localization에 반영
+    void ApplyLanguage()
+    {
+        GameData.SetLanguage(data.language == 1 ? LanguageType.Korean : LanguageType.English);
     }
 
     private void Start()
@@ -140,6 +148,7 @@ public class GameSetting : MonoBehaviour
     {
         if (data.language > 0) data.language--;
 
+        ApplyLanguage();
         ShowSettingPanel() ;
     }
 
@@ -147,6 +156,7 @@ public class GameSetting : MonoBehaviour
     {
         if (data.language < maxLanguage) data.language++;
 
+        ApplyLanguage();
         ShowSettingPanel() ;
     }
 

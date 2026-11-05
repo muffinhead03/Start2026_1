@@ -5,36 +5,20 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class Object_Organ : MonoBehaviour
+public class Object_Organ : Object_Pwd
 {
-    [Header("Answer")]
-    [SerializeField] string answer;
-
-    [Header("Button Layer")]
-    [SerializeField] LayerMask button_layer;
-
-    [Header("해제 완료")]
-    [SerializeField] UnityEvent Unlock;
-
     [Header("사운드")]
     public AudioClip[] audio_organ;
 
     private Play_Audio audio_player;
 
     bool isPipeChanged;
-    bool isActive;
-    string input;
-
-    InputAction click;
 
     void Start()
     {
         isPipeChanged = false;
 
         input = "";
-
-        click = InputSystem.actions.FindAction("Click");
-        click.Disable();
 
         isActive = false;
 
@@ -46,62 +30,24 @@ public class Object_Organ : MonoBehaviour
         isPipeChanged = true;
     }
 
-    public void SetActive(bool active)
+    public override void PressButton(string n)
     {
-        isActive = active;
+        if (!isPipeChanged || !isActive) return;
 
-        if (active)
+        audio_player.PlayAudio(audio_organ[Convert.ToInt32(n)]);
+
+        input += n;
+        if (input.Length >= pwd.Length)
         {
-            input = "";
-            click.performed += ctx => PressButton();
-            click.Enable();
-        }
-        else
-        {
-            click.performed -= ctx => PressButton();
-            click.Disable();
-        }
-    }
-
-    public void PressButton()
-    {
-        if (!isActive) return;
-
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-
-        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 0.8f, button_layer))
-        {
-            var button = hit.collider.GetComponent<APwdButton>();
-
-            if (button != null)
+            if (CheckAnswer())
             {
-                string n = button.GetId();
-
-                button.Pressed();
-
-                if (!isPipeChanged) return;
-
-                audio_player.PlayAudio(audio_organ[Convert.ToInt32(n)]);
-
-                input += n;
-                if (input.Length >= answer.Length) CheckAnswer();
+                UnlockEvent?.Invoke();
+                GetComponent<Object_FixCamera>().UnFixCamera();
             }
-        }
-    }
-
-    void CheckAnswer()
-    {
-        if (answer == input)
-        {
-            Unlock?.Invoke();
-            GetComponent<Object_FixCamera>().UnFixCamera();
-        }
-        else
-        {
-            GetComponent<Object_FixCamera>().UnFixCamera();
+            else
+            {
+                GetComponent<Object_FixCamera>().UnFixCamera();
+            }
         }
     }
 }
