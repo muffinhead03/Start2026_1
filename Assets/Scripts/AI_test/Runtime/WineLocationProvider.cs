@@ -7,7 +7,8 @@ using UnityEngine;
 /// 스텝 완료·최근 행동 기록은 WineHintBridge가 담당하고(10월 리디자인), 이 컴포넌트는 "위치 정보만" 제공하는
 /// 독립 컴포넌트임. 코드에 오브젝트 이름이 박혀 있지 않아서, 퍼즐이 바뀌면 Inspector의 Tracked Objects만 다시 등록하면 됨.
 /// 현재 등록할 이름 (WineGlassRoomData의 relatedObjectName):
-///   HintStain → Room_1/Hint_Stain / BookShelf → Room_3/BookShelfView / wine → 와인렉 / key1 → chestbox (1)
+///   HintStain → Hint_Stain(통로 벽 종이) / BookShelf → Room_3/BookShelfView / wine → 와인렉 / key1 → chestbox (1)
+///   + 1단계 위치 문장용(WineHintBridge가 진행 상황에 따라 바꿔 씀): WineStains → 바닥 얼룩 하나 / Memo → Note_Alphabet
 ///
 /// 구역(방) 판단 — 바닥 타일 묶음 기준:
 ///  - Zones에 "표시 이름 + 바닥 부모(Floor_Room1 / Floor_Corridor 등)"를 등록하면, 시작할 때 그 아래 Renderer 영역을 모아둠
@@ -17,7 +18,7 @@ using UnityEngine;
 ///    (벽 종이처럼 경계 벽에 붙은 물건은 양쪽 타일 거리가 비슷해서 Zone Override로 직접 지정하는 게 안전)
 ///  - 구역이 하나도 등록 안 되면 구역 정보는 null → HintEngine이 기존 거리 문장으로 동작
 /// </summary>
-public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider, IZoneLookupProvider
+public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider, IZoneLookupProvider, ILandmarkProvider
 {
     [Header("힌트 매니저 연결")]
     [SerializeField] HintManager hintManager;
@@ -40,6 +41,10 @@ public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider, IZone
                  "비우면 가장 가까운 바닥 타일 기준으로 자동 판단. " +
                  "벽 종이처럼 두 구역 경계 벽에 붙은 물건은 '플레이어가 서서 보는 쪽' 구역으로 직접 적어주세요.")]
         public string zoneOverride;
+
+        [Tooltip("(선택) 랜드마크 표시 이름 — 플레이어가 이 물건 바로 앞에 서 있으면 관찰 문장이 \"{이름} 앞에 있네\"로 나옴. " +
+                 "예: 책장 / 와인렉 / 장식장 / 상자 / 액자 아래 종이 / 벽 종이. 비우면 랜드마크로 안 씀")]
+        public string landmarkName;
     }
 
     [Header("퍼즐 영역 위치 등록 (relatedObjectName ↔ Transform)")]
@@ -51,7 +56,7 @@ public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider, IZone
     [System.Serializable]
     public class FloorZone
     {
-        [Tooltip("힌트 문장에 그대로 나오는 이름. 예: \"1번 방\", \"통로\" — \"{이름}에 있구나\"로 만들어짐")]
+        [Tooltip("힌트 문장에 그대로 나오는 이름. 예: \"첫 번째 방\", \"통로\" — \"{이름}에 있구나\"로 만들어짐")]
         public string displayName;
 
         [Tooltip("이 구역 바닥 타일들의 부모 (Floor_Room1 / Floor_Room2 / Floor_Room3 / Floor_Corridor). " +
@@ -67,6 +72,10 @@ public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider, IZone
 
     [Tooltip("구역 판단 주기(초)")]
     [SerializeField] float zoneCheckInterval = 0.25f;
+
+    [Header("랜드마크 (\"책장 앞에 있네\")")]
+    [Tooltip("플레이어와 랜드마크 Transform 사이 수평 거리(미터)가 이 값 이하면 '바로 앞'으로 판단")]
+    [SerializeField] float landmarkDistance = 2f;
 
     [Header("디버그")]
     [SerializeField] bool verboseLog = true;
@@ -215,6 +224,34 @@ public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider, IZone
 
     public float GetCurrentZoneStaySeconds()
         => currentZone != null ? Time.time - zoneEnterTime : 0f;
+
+    // =========================================================
+    // ILandmarkProvider
+    // =========================================================
+
+    /// <summary>landmarkName이 있는 Tracked Objects 중 수평 거리 landmarkDistance 안에서 가장 가까운 것의 이름. 없으면 null.</summary>
+    public string GetNearbyLandmarkName()
+    {
+        if (player == null) return null;
+
+        string best = null;
+        float bestSqr = landmarkDistance * landmarkDistance;
+        Vector3 p = player.position;
+
+        foreach (var entry in trackedObjects)
+        {
+            if (string.IsNullOrEmpty(entry.landmarkName) || entry.transform == null) continue;
+            Vector3 o = entry.transform.position;
+            float dx = o.x - p.x, dz = o.z - p.z;
+            float sqr = dx * dx + dz * dz;
+            if (sqr <= bestSqr)
+            {
+                bestSqr = sqr;
+                best = entry.landmarkName;
+            }
+        }
+        return best;
+    }
 
     // =========================================================
     // IZoneLookupProvider

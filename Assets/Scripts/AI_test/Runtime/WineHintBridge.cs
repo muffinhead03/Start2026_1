@@ -9,20 +9,21 @@ using UnityEngine;
 /// 1) 진행 기록 — completedSteps 1~3 (WineGlassRoomData 주석 참고). 뒤 단계가 진행되면 앞 단계도 같이 완료(back-fill).
 /// 2) 최근 행동 — "wine_..." 행동 키를 AddLastAction (DefaultActionLabelProvider가 관찰 문장으로 바꿈)
 ///    - 폴링으로 자동: 메모 열고 닫음(고침/그냥 봄), 병 집음/꽂음/뺌, 열쇠 집음, 렉 완성
-///    - 씬 이벤트에 연결: ReportHintStainViewed / ReportBookshelfViewed (Object_FixCamera.Fixed),
+///    - 씬 이벤트에 연결: ReportHintStainViewed / ReportBookshelfViewed / ReportFloorStainViewed (Object_FixCamera.Fixed),
 ///                        ReportCabinetTried (장식장 문 Event_On_Ray.OnClick)
 /// 3) 손/인벤토리 제공(IPossessionProvider) — 병은 "wine", 열쇠는 "key1"로 넘겨서 HintEngine이 스텝을 override
-///    (병은 글자를 알아낸 뒤(step 1 완료)부터만 넘김 — 처음부터 병을 집으면 앞 단계를 건너뛴 힌트가 나와서)
+///    (병은 숫자까지 찾은 뒤(step 2 완료)부터만 넘김 — 처음부터 병을 집으면 앞 단계를 건너뛴 힌트가 나와서)
 /// 4) 스텝 진행도 제공(IStepProgressProvider) — 진행 구간 × 레벨별 문장으로 hintByLevel을 대신함
-///    - step 1: 벽 그림만 봄 / 메모 일부 맞음
-///    - step 2: 글자 알아낸 뒤 책장 확대 봄
+///    - step 1: 벽 종이 봄(수수께끼 풀기) → 그 힌트 받은 뒤(메모에 적기) / 메모 일부 맞음
+///    - step 2: 책장 확대 봄 (완료는 병을 정답 번호 칸에 꽂을 때)
 ///    - step 3: 다른 병 자리에 꽂음(색 혼동) / 정답 아닌 칸에 꽂음(숫자 혼동) / 일부 맞음
-///    - step 4: 열쇠 보유
+///    - step 4: 열쇠 보유 (열쇠 전엔 위치 문장 기준이 장식장)
 ///    정답 글자·숫자·칸 번호, 맞은 개수는 어떤 문장에도 넣지 않음.
+/// 5) 위치 문장 대상 제공(IStepTargetProvider) — 1단계는 벽 종이 → 바닥 얼룩 → 메모 종이 순으로 거리·방 기준을 바꿈
 ///
 /// 위치 정보는 WineLocationProvider가 그대로 담당 (trackedObjects에 HintStain / BookShelf / wine / key1 등록).
 /// </summary>
-public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionProvider
+public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionProvider, IStepTargetProvider
 {
     [Header("힌트 시스템 (비워두면 자동 탐색)")]
     [SerializeField] private HintManager hintManager;
@@ -39,6 +40,8 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
     [SerializeField] private string bottlePrefix = "wine_";
     [Tooltip("틀린 칸에 꽂으면 failCount를 올릴지 (힌트 레벨이 빨리 오름)")]
     [SerializeField] private bool registerFailOnWrongSlot = true;
+    [Tooltip("틀린 꽂기로 failCount를 올리는 최대 횟수 — 칸이 26개라 이것저것 꽂아보면 레벨이 너무 빨리 5까지 올라가서 제한")]
+    [SerializeField] private int maxWrongSlotFails = 3;
 
     [Header("3·4단계 — 장식장 / 열쇠")]
     [Tooltip("DisplayModularDoorMid의 Object_Door — 잠긴 상태에서 열어보려 했는지 판단용")]
@@ -48,6 +51,14 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
     [Header("손/인벤토리 (읽기 전용, 비워두면 자동 탐색)")]
     [SerializeField] private PerceiveObjectHandPivot handPerception;
     [SerializeField] private InventoryData inventoryData;
+
+    [Header("1단계 위치 문장 대상 (WineLocationProvider Tracked Objects 이름과 똑같이)")]
+    [Tooltip("벽 종이를 본 뒤(수수께끼 풀기 단계) 거리·방 문장의 기준 — 바닥 얼룩")]
+    [SerializeField] private string stainTargetName = "WineStains";
+    [Tooltip("메모에 적을 단계 거리·방 문장의 기준 — 액자 아래 메모 종이")]
+    [SerializeField] private string memoTargetName = "Memo";
+    [Tooltip("4단계 열쇠를 꺼내기 전 거리·방 문장의 기준 — 장식장 (열쇠를 얻은 뒤엔 relatedObjectName = 상자)")]
+    [SerializeField] private string cabinetTargetName = "Cabinet";
 
     [Header("디버그")]
     [SerializeField] private bool verboseLog = true;
@@ -74,8 +85,11 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
 
     // 진행 구간 판단용 기록
     bool hintStainViewed;
-    bool bookshelfViewedWithLetters; // 글자를 알아낸 뒤(step 1 완료 후) 책장을 확대해 봤는지
-    string lastWrongKind;            // 가장 최근 틀린 꽂기 종류 ("color" / "number") — 맞는 꽂기를 하면 풀림
+    int hintCountAtStainView = -1;   // 벽 종이를 처음 본 순간의 hintCount — 이후 힌트를 한 번 받으면 "메모에 적기" 안내로 넘어감
+    bool floorStainViewed;           // 바닥 얼룩을 들여다봤는지 (ReportFloorStainViewed — 씬 연결 후 동작)
+    bool bookshelfViewed;            // 책장을 확대해 본 적이 있는지 (글자를 알기 전이든 후든)
+    string lastWrongKind;            // 가장 최근 틀린 꽂기 종류 ("color" / "number") — 맞게 꽂거나, 렉에 틀린 병이 하나도 없으면 풀림
+    int wrongSlotFails;              // 틀린 꽂기로 RegisterFail 한 횟수 (maxWrongSlotFails까지만)
 
     // 같은 프레임에 "칸에서 뺌"과 "손에 듦"이 같이 일어나면 뺌만 기록
     float lastRemoveTime = -999f;
@@ -141,8 +155,15 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
         else if (!open && memoWasOpen)
         {
             bool changed = memo.CurrentLetters != memoLettersAtOpen;
-            hintManager.AddLastAction(changed ? "wine_memo_written" : "wine_memo_opened");
-            Log($"메모 닫음 ({(changed ? "고침" : "그냥 봄")}) — 정답 {memo.CorrectCount}/4");
+            // 고쳐 쓴 결과에 따라 관찰 문장을 나눔: 다 맞음 / 일부 맞음 / 하나도 안 맞음 / 안 고침
+            // (맞은 칸 개수나 어느 칸인지는 말하지 않음 — "몇 칸은 맞았다"까지만)
+            string action =
+                !changed                 ? "wine_memo_opened"  :
+                memo.IsSolved            ? "wine_memo_solved"  :
+                memo.CorrectCount > 0    ? "wine_memo_partial" :
+                                           "wine_memo_written";
+            hintManager.AddLastAction(action);
+            Log($"메모 닫음 ({(changed ? "고침" : "그냥 봄")}) — 정답 {memo.CorrectCount}/4 → {action}");
 
             if (memo.IsSolved)
                 CompleteStep(StepLetters, "clue_memo_letters", "메모 정답 기록");
@@ -178,8 +199,25 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
             else
             {
                 lastWrongKind = verdict;
-                if (registerFailOnWrongSlot) hintManager.RegisterFail();
+                if (registerFailOnWrongSlot && wrongSlotFails < maxWrongSlotFails)
+                {
+                    wrongSlotFails++;
+                    hintManager.RegisterFail();
+                    Log($"틀린 꽂기 failCount 증가 ({wrongSlotFails}/{maxWrongSlotFails})");
+                }
             }
+
+            // 어떤 병이든 정답 칸 번호(책 숫자)에 꽂았으면 숫자는 찾은 것 → 2단계 완료
+            // (예전엔 책장 확대만 해도 완료돼서, 숫자를 이해 못 해도 바로 렉 힌트로 넘어갔음)
+            if (verdict == "correct" || verdict == "color")
+                CompleteStep(StepBooks, "clue_book_numbers", $"정답 번호 칸에 병 꽂음 ({slot.name})");
+        }
+
+        // 틀린 병을 다 빼서 렉에 틀린 병이 하나도 없으면 "틀렸다" 문장 해제
+        if (lastWrongKind != null && !AnyWrongPlaced())
+        {
+            lastWrongKind = null;
+            Log("렉에 틀린 병 없음 → 틀린 꽂기 문장 해제");
         }
 
         // 병 2개 이상이 정답 칸 → 글자·숫자는 이미 알아낸 것
@@ -242,6 +280,9 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
     /// <summary>Room_1/Hint_Stain의 Object_FixCamera.Fixed에 연결</summary>
     public void ReportHintStainViewed()
     {
+        // 처음 볼 때만 기준을 잡음 (다시 봐도 "메모에 적기" 단계에서 수수께끼 단계로 되돌아가지 않게)
+        if (!hintStainViewed && hintManager != null)
+            hintCountAtStainView = hintManager.currentPlayerState.hintCount;
         hintStainViewed = true;
         hintManager?.AddLastAction("wine_view_hint_stain");
         Log("벽 그림 확대");
@@ -251,13 +292,19 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
     public void ReportBookshelfViewed()
     {
         hintManager?.AddLastAction("wine_view_bookshelf");
-
-        if (IsDone(StepLetters))
-        {
-            bookshelfViewedWithLetters = true;
-            CompleteStep(StepBooks, "clue_book_numbers", "글자 안 뒤 책장 확대");
-        }
+        bookshelfViewed = true; // 2단계 완료는 병을 정답 번호 칸에 꽂을 때 (PollSlots)
         Log($"책장 확대 (글자 앎: {IsDone(StepLetters)})");
+    }
+
+    /// <summary>
+    /// 바닥 얼룩 FloorStain_*의 Object_FixCamera.Fixed에 연결 (얼룩 들여다보기 상호작용이 생기면).
+    /// 벽 종이를 본 뒤 얼룩까지 봤으면 수수께끼는 푸는 중 → 힌트를 기다리지 않고 바로 "메모에 적기" 안내로.
+    /// </summary>
+    public void ReportFloorStainViewed()
+    {
+        floorStainViewed = true;
+        hintManager?.AddLastAction("wine_view_floor_stain");
+        Log("바닥 얼룩 들여다봄");
     }
 
     /// <summary>장식장 문 Event_On_Ray.OnClick에 연결 (Object_Door.OpenCloseDoor 뒤에 추가)</summary>
@@ -310,6 +357,16 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
         int c = 0;
         foreach (char ch in rackPuzzle.pwd) if (ch != '-') c++;
         return c;
+    }
+
+    bool AnyWrongPlaced()
+    {
+        foreach (var s in slots)
+        {
+            var go = CurrentObjectIn(s);
+            if (go != null && Classify(s, go) != "correct") return true;
+        }
+        return false;
     }
 
     int CorrectPlacedCount()
@@ -368,7 +425,8 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
     string ToKind(string objectName)
     {
         if (string.IsNullOrEmpty(objectName)) return null;
-        if (IsBottle(objectName)) return IsDone(StepLetters) ? BottleKind : null;
+        // 병은 숫자까지 찾은 뒤(2단계 완료)부터만 렉 힌트 근거로 씀 — 그 전에 병을 들면 체크리스트 순서(글자/책장) 힌트가 맞음
+        if (IsBottle(objectName)) return IsDone(StepBooks) ? BottleKind : null;
         return objectName;
     }
 
@@ -405,11 +463,17 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
         {
             case StepLetters:
                 if (memo != null && memo.CorrectCount > 0) return $"memo_partial_{memo.CorrectCount}";
-                if (hintStainViewed) return "stain_viewed";
+                if (hintStainViewed)
+                {
+                    // 종이 본 뒤 첫 요청: 수수께끼 풀기 / 그 힌트를 받은 뒤 다음 요청부터(또는 바닥 얼룩까지 봤으면): 메모에 적기
+                    bool stainHintGiven = hintManager != null &&
+                                          hintManager.currentPlayerState.hintCount > hintCountAtStainView;
+                    return (stainHintGiven || floorStainViewed) ? "memo_guide" : "stain_viewed";
+                }
                 return null;
 
             case StepBooks:
-                return bookshelfViewedWithLetters ? "shelf_viewed" : null;
+                return bookshelfViewed ? "shelf_viewed" : null;
 
             case StepRack:
                 if (lastWrongKind == "color")  return "wrong_color";
@@ -426,6 +490,29 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
 
     public int GetMinHintLevel(PuzzleStep step) => 1;
 
+    // =========================================================
+    // IStepTargetProvider — 거리·방 문장 기준 오브젝트 (relatedObjectName 대신)
+    // =========================================================
+
+    /// <summary>
+    /// 1단계는 한 스텝 안에서 가야 할 곳이 바뀜: 벽 종이(기본) → 바닥 얼룩(종이 본 직후) → 메모 종이(그다음 / 메모 일부 맞음).
+    /// null이면 relatedObjectName(벽 종이) 그대로.
+    /// </summary>
+    public string GetTargetObjectName(PuzzleStep step)
+    {
+        if (step == null) return null;
+
+        // 4단계: 열쇠 꺼내기 전엔 장식장, 꺼낸 뒤엔 relatedObjectName(상자) 그대로
+        if (step.id == StepKey) return keyAcquired ? null : cabinetTargetName;
+
+        if (step.id != StepLetters) return null;
+
+        string band = GetProgressBand(step);
+        if (band == null) return null;
+        if (band == "stain_viewed") return stainTargetName;
+        return memoTargetName; // memo_guide / memo_partial_N
+    }
+
     public string GetProgressNote(PuzzleStep step, int hintLevel)
     {
         string band = GetProgressBand(step);
@@ -437,6 +524,7 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
         switch (band)
         {
             case "stain_viewed": return PickByLevel(StainViewedNotes, hintLevel);
+            case "memo_guide":   return PickByLevel(MemoGuideNotes, hintLevel);
             case "shelf_viewed": return PickByLevel(ShelfViewedNotes, hintLevel);
             case "wrong_color":  return PickByLevel(WrongColorNotes, hintLevel);
             case "wrong_number": return PickByLevel(WrongNumberNotes, hintLevel);
@@ -451,78 +539,89 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
     // step 1 — 벽 그림은 봤는데 메모는 아직 하나도 안 맞음
     static readonly string[][] StainViewedNotes =
     {
-        new[] { "그림을 봤으면 이제 바닥을 볼 차례예요.",
-                "그림 속 색깔을 기억해두고 방을 다시 둘러보세요." },
-        new[] { "그림 속 얼룩과 같은 색의 얼룩이 바닥에 있어요. 하나씩 가까이 가서 살펴보세요.",
-                "바닥 얼룩을 그림 속 색깔과 하나씩 맞춰보세요. 얼룩마다 숨은 게 있어요." },
-        new[] { "그림과 같은 색의 바닥 얼룩에서 글자를 찾고, 1번 방 액자 옆 메모 종이의 같은 색 칸에 적으세요.",
-                "바닥 얼룩마다 글자가 숨어 있어요. 색깔별로 찾은 글자를 메모 종이 같은 색 칸에 적어보세요." },
+        new[] { "그림을 봤으면 이제 바닥을 볼 차례야.",
+                "그림 속 색깔을 기억해두고 방을 다시 둘러봐." },
+        new[] { "그림 속 얼룩이랑 같은 색의 얼룩이 바닥에 있어. 하나씩 가까이 가서 살펴봐.",
+                "바닥 얼룩을 그림 속 색깔이랑 하나씩 맞춰봐. 얼룩마다 숨은 게 있어." },
+        new[] { "그림이랑 같은 색의 바닥 얼룩을 찾아서, 얼룩이 있는 자리의 바닥 글자를 확인해.",
+                "바닥 얼룩마다 글자가 숨어 있어. 그림 속 색깔이랑 같은 얼룩을 하나씩 찾아서 그 자리 글자를 확인해봐." },
+    };
+
+    // step 1 — 종이 수수께끼 힌트를 한 번 받은 뒤 (메모는 아직 하나도 안 맞음): 액자 아래 메모 종이에 적게 안내
+    static readonly string[][] MemoGuideNotes =
+    {
+        new[] { "찾아낸 걸 어딘가에 적어둘 수 있을 거야.",
+                "알아낸 걸 기록해둘 곳을 찾아봐." },
+        new[] { "액자 아래 종이에 발견한 글자를 적어봐.",
+                "찾은 글자는 액자 아래 붙은 종이에 적을 수 있어." },
+        new[] { "액자 아래 종이를 가까이서 보고, 칸 색깔이랑 같은 색 얼룩에서 찾은 글자를 하나씩 적어.",
+                "액자 아래 종이의 색깔 칸마다, 같은 색 바닥 얼룩 자리에서 찾은 글자를 적어 넣어." },
     };
 
     // step 1 — 메모에 일부만 맞게 적음
     static readonly string[][] MemoPartialNotes =
     {
-        new[] { "잘하고 있어요. 메모에 적은 것 중에 아직 맞지 않는 게 있어요.",
-                "거의 왔어요. 메모를 다시 한번 확인해보세요." },
-        new[] { "메모 일부는 맞았어요. 나머지 색깔의 얼룩을 다시 찾아가 글자를 확인해보세요.",
-                "아직 틀린 칸이 남아 있어요. 그 칸 색깔과 같은 바닥 얼룩을 다시 보세요." },
-        new[] { "메모 칸 색깔과 바닥 얼룩 색깔이 정확히 같은지 확인하고, 그 얼룩의 글자로 틀린 칸을 고쳐 적으세요.",
-                "틀린 칸은 색깔을 헷갈렸을 가능성이 커요. 벽 그림과 바닥 얼룩 색을 다시 비교해서 그 칸 글자를 고치세요." },
+        new[] { "잘하고 있어. 메모에 적은 것 중에 아직 안 맞는 게 있어.",
+                "거의 다 왔어. 메모를 다시 한번 확인해봐." },
+        new[] { "메모 일부는 맞았어. 나머지 색깔의 얼룩을 다시 찾아가서 글자를 확인해봐.",
+                "아직 틀린 칸이 남아 있어. 그 칸 색깔이랑 같은 바닥 얼룩을 다시 봐." },
+        new[] { "메모 칸 색깔이랑 바닥 얼룩 색깔이 정확히 같은지 확인하고, 그 얼룩의 글자로 틀린 칸을 고쳐 적어.",
+                "틀린 칸은 색깔을 헷갈렸을 가능성이 커. 벽 종이 그림이랑 바닥 얼룩 색을 다시 비교해서 그 칸 글자를 고쳐." },
     };
 
     // step 2 — 글자를 안 뒤 책장을 봤음 (보통 바로 완료되지만, 완료 조건이 바뀌었을 때 대비)
     static readonly string[][] ShelfViewedNotes =
     {
-        new[] { "책장에서 메모 글자와 관련된 걸 찾아보세요.",
-                "책 제목들을 메모와 비교해보세요." },
-        new[] { "메모 글자로 시작하는 책에 숫자가 적혀 있어요.",
-                "메모의 각 글자로 시작하는 책을 찾고 그 숫자를 확인해보세요." },
-        new[] { "메모의 색깔별 글자로 시작하는 책을 하나씩 찾아서, 그 책의 숫자를 색깔별로 기억해두세요.",
-                "책 네 권의 숫자를 색깔과 함께 기억한 뒤 와인렉으로 가보세요." },
+        new[] { "책장에서 메모 글자랑 관련된 걸 찾아봐.",
+                "책 제목들을 메모랑 비교해봐." },
+        new[] { "메모 글자로 시작하는 책에 숫자가 적혀 있어.",
+                "메모의 각 글자로 시작하는 책을 찾고 그 숫자를 확인해봐." },
+        new[] { "메모의 색깔별 글자로 시작하는 책을 하나씩 찾아서, 그 책의 숫자를 색깔별로 기억해둬.",
+                "책 네 권의 숫자를 색깔이랑 같이 기억한 다음 와인렉으로 가봐." },
     };
 
     // step 3 — 다른 병의 정답 칸에 꽂음 (숫자는 찾았는데 병 색 연결이 틀림)
     static readonly string[][] WrongColorNotes =
     {
-        new[] { "칸은 잘 찾았는데 병이 바뀐 것 같아요.",
-                "그 칸에 들어갈 병은 따로 있어요." },
-        new[] { "병마다 해당하는 색이 있어요. 그 색 글자의 숫자 칸에 꽂아야 해요.",
-                "숫자 칸은 맞게 찾았어요. 그 칸에 맞는 색의 병으로 바꿔 꽂아보세요." },
-        new[] { "꽂은 병의 색을 메모 칸 색과 맞춰보세요. 그 색 글자로 찾은 책의 숫자 칸이 그 병의 자리예요.",
-                "병을 빼서, 병 색과 같은 메모 칸의 글자를 확인하고 그 글자 책의 숫자 칸에 다시 꽂으세요." },
+        new[] { "칸은 잘 찾았는데 병이 바뀐 것 같아.",
+                "그 칸에 들어갈 병은 따로 있어." },
+        new[] { "병마다 해당하는 색이 있어. 그 색 글자의 숫자 칸에 꽂아야 해.",
+                "숫자 칸은 맞게 찾았어. 그 칸에 맞는 색의 병으로 바꿔 꽂아봐." },
+        new[] { "꽂은 병의 색을 메모 칸 색이랑 맞춰봐. 그 색 글자로 찾은 책의 숫자 칸이 그 병 자리야.",
+                "병을 빼서, 병 색이랑 같은 메모 칸의 글자를 확인하고 그 글자 책의 숫자 칸에 다시 꽂아." },
     };
 
     // step 3 — 어떤 병의 정답도 아닌 칸에 꽂음 (숫자를 모르거나 아무 데나 꽂음)
     static readonly string[][] WrongNumberNotes =
     {
-        new[] { "그 칸은 아닌 것 같아요. 칸을 고르는 기준이 있어요.",
-                "아무 칸에나 꽂으면 안 돼요. 어디서 숫자를 봤는지 떠올려보세요." },
-        new[] { "와인렉 칸 번호는 책에서 본 숫자와 맞춰야 해요.",
-                "책장에서 메모 글자로 시작하는 책을 다시 보고 그 숫자를 확인하세요." },
-        new[] { "병 색에 맞는 메모 글자로 시작하는 책을 찾고, 그 책 숫자와 같은 번호 칸에 꽂으세요.",
-                "꽂은 병을 빼고, 책장에서 그 병 색 글자의 책 숫자를 확인한 뒤 같은 번호 칸에 꽂으세요." },
+        new[] { "그 칸은 아닌 것 같아. 칸을 고르는 기준이 있어.",
+                "아무 칸에나 꽂으면 안 돼. 어디서 숫자를 봤는지 떠올려봐." },
+        new[] { "와인렉 칸 번호는 책에서 본 숫자랑 맞춰야 해.",
+                "책장에서 메모 글자로 시작하는 책을 다시 보고 그 숫자를 확인해." },
+        new[] { "병 색에 맞는 메모 글자로 시작하는 책을 찾고, 그 책 숫자랑 같은 번호 칸에 꽂아.",
+                "꽂은 병을 빼고, 책장에서 그 병 색 글자의 책 숫자를 확인한 다음 같은 번호 칸에 꽂아." },
     };
 
     // step 3 — 일부 맞게 꽂음 (틀린 꽂기 없음)
     static readonly string[][] RackPartialNotes =
     {
-        new[] { "좋아요, 제대로 꽂고 있어요. 남은 병도 같은 방법으로 해보세요.",
-                "잘 가고 있어요. 나머지 병의 자리도 찾아보세요." },
-        new[] { "맞게 꽂은 병이 있어요. 남은 병도 색깔 → 글자 → 책 숫자 순서로 자리를 찾아보세요.",
-                "같은 방법으로 남은 병의 칸을 찾으면 돼요." },
-        new[] { "남은 병마다 색에 맞는 메모 글자를 확인하고, 그 글자 책의 숫자 칸에 꽂으세요.",
-                "아직 자리를 못 찾은 병을 들고, 그 색 글자의 책 숫자와 같은 번호 칸에 꽂아보세요." },
+        new[] { "좋아, 제대로 꽂고 있어. 남은 병도 같은 방법으로 해봐.",
+                "잘 가고 있어. 나머지 병 자리도 찾아봐." },
+        new[] { "맞게 꽂은 병이 있어. 남은 병도 색깔 → 글자 → 책 숫자 순서로 자리를 찾아봐.",
+                "같은 방법으로 남은 병의 칸을 찾으면 돼." },
+        new[] { "남은 병마다 색에 맞는 메모 글자를 확인하고, 그 글자 책의 숫자 칸에 꽂아.",
+                "아직 자리를 못 찾은 병을 들고, 그 색 글자의 책 숫자랑 같은 번호 칸에 꽂아봐." },
     };
 
     // step 4 — 열쇠를 가지고 있음
     static readonly string[][] HasKeyNotes =
     {
-        new[] { "손에 넣은 걸 쓸 곳이 있을 거예요.",
-                "그 열쇠가 맞는 곳을 찾아보세요." },
-        new[] { "열쇠 구멍이 있는 걸 찾아보세요.",
-                "방 안의 상자를 살펴보세요." },
-        new[] { "열쇠를 들고 상자로 가서 넣어보세요.",
-                "상자에 열쇠를 넣으면 나갈 수 있을 거예요." },
+        new[] { "손에 넣은 걸 쓸 곳이 있을 거야.",
+                "그 열쇠가 맞는 곳을 찾아봐." },
+        new[] { "열쇠 구멍이 있는 걸 찾아봐.",
+                "방 안의 상자를 살펴봐." },
+        new[] { "열쇠를 들고 상자로 가서 넣어봐.",
+                "상자에 열쇠를 넣으면 나갈 수 있을 거야." },
     };
 
     static string PickByLevel(string[][] table, int hintLevel)

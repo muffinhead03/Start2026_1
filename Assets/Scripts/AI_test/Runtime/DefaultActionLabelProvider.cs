@@ -16,7 +16,10 @@ public class DefaultActionLabelProvider : IActionLabelProvider
     static readonly (string prefix, string[] labels)[] Patterns =
     {
         // ── 와인씬 (WineHintBridge) ─────────────────────
-        ("wine_view_hint_stain", new[] { "벽에 걸린 그림을 자세히 봤지", "벽 그림을 한참 들여다보고 있었네" }),
+        ("wine_view_hint_stain", new[] { "통로 벽의 종이를 자세히 봤지", "벽에 붙은 종이를 한참 들여다보고 있었네" }),
+        ("wine_view_floor_stain", new[] { "바닥 얼룩을 들여다보고 있었지", "바닥에 쭈그려 앉아 얼룩을 보고 있었네" }),
+        ("wine_memo_solved",     new[] { "종이에 글자를 전부 맞게 적었네", "메모를 제대로 다 채웠구나" }),
+        ("wine_memo_partial",    new[] { "종이에 몇 칸은 맞게 적었네", "메모를 조금씩 맞춰 가고 있었지" }),
         ("wine_memo_written",    new[] { "종이에 뭔가 적고 있었지", "메모 종이를 고쳐 쓰고 있었네" }),
         ("wine_memo_opened",     new[] { "메모 종이를 들여다보기만 했지", "종이를 펼쳐보고 그냥 내려놨네" }),
         ("wine_view_bookshelf",  new[] { "책장을 한참 들여다보고 있었네", "책등을 쭉 훑어보고 있었지" }),
