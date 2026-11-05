@@ -3,7 +3,8 @@ using System;
 public enum LanguageType
 {
     Korean,
-    English
+    English,
+    Japanese // 준비 중: 아직 설정 UI(GameData.LanguageType)에는 연결하지 않음
 }
 
 public static class LanguageCurrentStatus
