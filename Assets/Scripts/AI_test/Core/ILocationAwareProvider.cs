@@ -22,3 +22,15 @@ public interface ILocationAwareProvider
     /// <summary>그 구역에 머문 시간(초). 구역 시스템 없으면 0.</summary>
     float GetCurrentZoneStaySeconds();
 }
+
+/// <summary>
+/// (선택) 힌트 대상 오브젝트가 어느 구역에 있는지 알려주는 인터페이스.
+/// ILocationAwareProvider 구현체가 이것도 같이 구현하면, HintEngine이 관찰 문장을 거리("멀리 있네") 대신
+/// 구역 기준("1번 방에 있구나... 통로 쪽도 한번 둘러봐")으로 만든다.
+/// 구현 안 한 씬(오르간/인형)은 기존 거리 문장 그대로 — 기존 구현체 수정 필요 없음.
+/// </summary>
+public interface IZoneLookupProvider
+{
+    /// <summary>objectName(PuzzleStep.relatedObjectName)이 속한 구역 이름. 모르면 null.</summary>
+    string GetObjectZoneName(string objectName);
+}

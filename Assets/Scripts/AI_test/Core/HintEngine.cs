@@ -110,18 +110,28 @@ public static class HintEngine
 
         string proximityNote = null;
         string zoneNote      = null;
+        string playerZone    = null; // 관찰 문장용 — 플레이어가 있는 구역 이름 (구역 시스템 없는 씬은 null)
+        string targetZone    = null; // 관찰 문장용 — nextStep 대상 오브젝트의 구역 이름 (IZoneLookupProvider 구현 씬만)
 
         if (locationProvider != null && nextStep != null)
         {
             proximityNote = BuildProximityNote(locationProvider, nextStep);
             zoneNote      = BuildZoneNote(locationProvider);
+
+            playerZone = locationProvider.GetCurrentZoneName();
+            if (!string.IsNullOrEmpty(playerZone) &&
+                !string.IsNullOrEmpty(nextStep.relatedObjectName) &&
+                locationProvider is IZoneLookupProvider zoneLookup)
+            {
+                targetZone = zoneLookup.GetObjectZoneName(nextStep.relatedObjectName);
+            }
         }
 
         string recentAction = (state.lastActions != null && state.lastActions.Count > 0)
             ? state.lastActions[state.lastActions.Count - 1]
             : null;
 
-        string watchingLine = BuildWatchingLine(recentAction, proximityNote);
+        string watchingLine = BuildWatchingLine(recentAction, proximityNote, playerZone, targetZone);
 
         // 진행 문장은 레벨에 따라 구체성이 달라서 레벨을 먼저 정한 뒤에 받는다
         // (HintManager가 같은 스텝 재요청으로 레벨을 조정하면 거기서 한 번 더 다시 받음)
@@ -323,6 +333,21 @@ public static class HintEngine
         { "player-far",        new[] { "좀 멀리 떨어진 곳에 있는 것 같은데", "다른 데 가 있나 보네" } },
     };
 
+    // 구역 기준 관찰 문장 — {0}에 구역 이름(Inspector의 Display Name, 예: "1번 방", "통로")이 들어감.
+    // 구역 이름 뒤에 바로 "에"가 붙으므로 Display Name은 받침 상관없이 "에"가 자연스러운 이름으로.
+    static readonly string[] ZoneHereLabels =
+    {
+        "{0}에 있구나",
+        "{0}에 와 있네",
+    };
+
+    // 대상 오브젝트가 다른 구역에 있을 때 덧붙이는 문장 — 방향만 알려주고 무엇을 할지는 힌트 본문이 담당
+    static readonly string[] ZoneOtherLabels =
+    {
+        "{0} 쪽도 한번 둘러봐.",
+        "{0} 쪽을 살펴보는 게 좋겠어.",
+    };
+
     static string PickRandom(string[] options)
         => options[Random.Range(0, options.Length)];
 
@@ -340,12 +365,30 @@ public static class HintEngine
     /// 프롬프트로 LLM에 맡기지 않고 여기서 직접 조립하는 이유: 로컬 소형 모델은 "선택 반영" 지시를
     /// 안정적으로 안 따라서, "플레이어를 지켜보고 있다"는 느낌이 매번 확실히 나오게 하려면 로직에서 보장해야 함.
     /// 둘 다 없으면 null (아무것도 안 붙임).
+    ///
+    /// playerZone이 있으면(구역 시스템이 있는 씬) 거리 대신 구역 기준으로 만든다 —
+    /// 넓은 방에선 같은 방 안이어도 거리상 "멀리"로 나와서 플레이어가 헷갈리기 때문.
+    ///  - 대상과 같은 구역(또는 대상 구역 모름): "1번 방에 있구나..."
+    ///  - 대상이 다른 구역: "1번 방에 있구나... 통로 쪽도 한번 둘러봐."
     /// </summary>
-    static string BuildWatchingLine(string recentAction, string proximityNote)
+    static string BuildWatchingLine(string recentAction, string proximityNote,
+        string playerZone = null, string targetZone = null)
     {
         string actionPart = !string.IsNullOrEmpty(recentAction)
             ? LabelForAction(recentAction)
             : null;
+
+        if (!string.IsNullOrEmpty(playerZone))
+        {
+            string zonePart = string.Format(PickRandom(ZoneHereLabels), playerZone);
+            string otherPart = (!string.IsNullOrEmpty(targetZone) && targetZone != playerZone)
+                ? " " + string.Format(PickRandom(ZoneOtherLabels), targetZone)
+                : "";
+
+            return actionPart != null
+                ? $"{actionPart}, 지금은 {zonePart}...{otherPart}"
+                : $"{zonePart}...{otherPart}";
+        }
 
         string proximityPart = (!string.IsNullOrEmpty(proximityNote) &&
                                  ProximityLabels.TryGetValue(proximityNote, out var labels))

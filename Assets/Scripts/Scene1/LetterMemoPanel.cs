@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// 책장 옆 메모 종이 — 플레이어가 알아낸 알파벳 4개를 기록하는 UI.
+/// 1번 방 액자 옆 메모 종이 — 플레이어가 알아낸 알파벳 4개를 기록하는 UI.
 ///
 /// 흐름: 종이 상호작용 → Object_FixCamera.Fixed → Open()
 ///       → 상/하 버튼으로 글자 변경 → E → Object_FixCamera.UnFixed → Close()
