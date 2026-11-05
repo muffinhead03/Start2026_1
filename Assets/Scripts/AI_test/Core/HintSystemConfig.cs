@@ -8,4 +8,8 @@ public class HintSystemConfig
     public string language = "Korean";
     public string tone = "creepy and atmospheric";
     public int maxSentences = 2;
+
+    // 한국어일 때 반말(무전기 너머 목소리)로 말할지. 관찰 문장·고정 문구(hintByLevel/진행 문장)가 전부 반말이라
+    // LLM 답변도 맞춰야 한 줄 안에서 말투가 안 섞임. 영어 등 다른 언어에선 무시됨.
+    public bool casualKorean = true;
 }

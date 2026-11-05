@@ -68,10 +68,21 @@ public static class PromptBuilder
         "Never mention information the player has not yet discovered. " +
         "Only suggest actions the player can currently take. " +
         $"Always maintain a {Config.tone} tone. " +
+        SpeechLevelRule +
         $"Again, {Config.language} ONLY. No other language at all. No parenthetical translations.";
         // 해석: 방탈출 게임 힌트 안내 AI. 반드시 설정된 언어(Config.language)만, 다른 언어 단어/괄호 번역/다른 언어 설명 전부 금지.
         // 문장 끝나면 즉시 멈춤. 문장 중간 다른 언어 삽입 금지. 정확히 1~Config.maxSentences 문장. 정답 직접 언급 금지.
-        // 플레이어가 아직 발견 못한 정보 언급 금지. 지금 취할 수 있는 행동만 제안. 항상 설정된 톤(Config.tone) 유지.
+        // 플레이어가 아직 발견 못한 정보 언급 금지. 지금 취할 수 있는 행동만 제안. 항상 설정된 톤(Config.tone) 유지. 한국어면 반말(SpeechLevelRule).
+
+    // 한국어 + casualKorean일 때만 붙는 말투 규칙 — 관찰 문장("~했지, 지금은 ~에 있구나...")과 고정 문구가 반말이라 맞춤.
+    // 소형 모델은 "casual"만 주면 존댓말로 돌아가는 경우가 있어서 어미 예시까지 박아둠.
+    static string SpeechLevelRule =>
+        Config.casualKorean && Config.language != null && Config.language.StartsWith("Korean")
+            ? "Speak in casual Korean (반말), like a friend talking over a walkie-talkie. " +
+              "End sentences with casual endings such as -아, -어, -야, -지, -봐. " +
+              "NEVER use polite endings such as -요, -세요, -습니다, -니다. "
+            : "";
+        // 해석: 무전기 너머 친구처럼 반말로. 어미는 -아/-어/-야/-지/-봐, -요/-세요/-습니다/-니다는 절대 금지.
 
     /// <summary>
     /// HintResult 하나를 받아 LLM에 보낼 유저 프롬프트 전체(씬 컨텍스트+플레이어 상태+힌트 방향)를 조립한다.
@@ -122,7 +133,8 @@ public static class PromptBuilder
             $"Do NOT mention any other puzzle mechanic, object, or step that isn't part of it — " +
             $"{orderNote}\n\n" +
             BuildRepeatNote(previousHint) +
-            $"{Config.language} hint ({Config.language} language only, no other language):";
+            $"{Config.language} hint ({Config.language} language only, no other language" +
+            (SpeechLevelRule.Length > 0 ? ", casual 반말 only" : "") + "):";
     }
 
     // 같은 레벨 재요청일 때만 붙는 한 줄. 방향 문장은 그대로 하나만 두고(1·2차 실험에서 둘 이상 주면 퇴화),
