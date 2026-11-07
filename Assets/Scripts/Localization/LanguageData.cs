@@ -22,6 +22,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Doll's Leg"
+                },
+                {
+                    LanguageType.Japanese,
+                    "人形の脚"
                 }
             }
         },
@@ -37,6 +41,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Teddy Bear"
+                },
+                {
+                    LanguageType.Japanese,
+                    "無傷のクマのぬいぐるみ"
                 }
             }
         },
@@ -53,6 +61,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Teddy Bear's Torn Head"
+                },
+                {
+                    LanguageType.Japanese,
+                    "クマのぬいぐるみの頭"
                 }
             }
         },
@@ -68,6 +80,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Beheaded Teddy Bear"
+                },
+                {
+                    LanguageType.Japanese,
+                    "クマのぬいぐるみの胴体"
                 }
             }
         },
@@ -83,6 +99,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Mysterious Coin"
+                },
+                {
+                    LanguageType.Japanese,
+                    "不思議なコイン"
                 }
             }
         },
@@ -98,6 +118,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Doll's Arm"
+                },
+                {
+                    LanguageType.Japanese,
+                    "人形の腕"
                 }
             }
         },
@@ -113,6 +137,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Escape Key"
+                },
+                {
+                    LanguageType.Japanese,
+                    "脱出の鍵"
                 }
             }
         },
@@ -128,6 +156,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Doll's Spring"
+                },
+                {
+                    LanguageType.Japanese,
+                    "ぜんまい"
                 }
             }
         },
@@ -148,6 +180,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Escape Key"
+                },
+                {
+                    LanguageType.Japanese,
+                    "脱出の鍵"
                 }
             }
         },
@@ -163,6 +199,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Book"
+                },
+                {
+                    LanguageType.Japanese,
+                    "本"
                 }
             }
         },
@@ -178,6 +218,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Ruby Red Wine Bottle"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤ワイン1"
                 }
             }
         },
@@ -193,6 +237,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Tawny Brown Wine Bottle"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤ワイン2"
                 }
             }
         },
@@ -208,6 +256,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Burgundy Wine Bottle"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤ワイン3"
                 }
             }
         },
@@ -223,6 +275,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Maroon Wine Bottle"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤ワイン4"
                 }
             }
         },
@@ -243,6 +299,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Pipe"
+                },
+                {
+                    LanguageType.Japanese,
+                    "オルガンのパイプ"
                 }
             }
         },
@@ -273,6 +333,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Green Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "緑色のレコード"
                 }
             }
         },
@@ -288,6 +352,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Red Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤色のレコード"
                 }
             }
         },
@@ -303,6 +371,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Blue Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "青色のレコード"
                 }
             }
         },
@@ -318,6 +390,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Yellow Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "黄色のレコード"
                 }
             }
         },
@@ -333,6 +409,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "White Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "白色のレコード"
                 }
             }
         },
@@ -363,6 +443,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Book"
+                },
+                {
+                    LanguageType.Japanese,
+                    "本"
                 }
             }
         }
