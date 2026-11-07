@@ -5,7 +5,8 @@ using UnityEngine;
 /// 레트로 게임기 화면 Material 전환.
 ///
 /// Off      : 기본 화면 (평소 / 각 연출이 끝난 뒤 돌아오는 화면)
-/// NoCoin   : 동전 없이 E → noCoinDuration(3초) 켜졌다가 Off로 복귀 (카메라 이동 없음)
+/// NoCoin   : 동전 없이 E → noCoinDuration(3초) 켜졌다가 Off로 복귀
+///            (moveCameraOnNoCoin이면 켜져 있는 동안 카메라 CameraPoint로 이동)
 /// Playing  : 동전을 넣은 뒤 playingDuration(3초) 켜짐 + 카메라 CameraPoint로 이동
 ///            → Off로 복귀하면서 인형 팔 배출
 ///            → 이후에는 Off 화면으로 영구 고정 (다시 켜지지 않음)
@@ -76,6 +77,10 @@ public class RetroGameScreen : MonoBehaviour
     [SerializeField]
     private bool moveCameraWhileOn = true;
 
+    [Tooltip("체크하면 동전 없이 E로 켠 No Coin 화면(3초) 동안에도 카메라가 CameraPoint로 이동하고,\n화면이 꺼지면 바로 원래 위치로 돌아옴")]
+    [SerializeField]
+    private bool moveCameraOnNoCoin = true;
+
     [Tooltip("retro_game/CameraPoint")]
     [SerializeField]
     private Transform cameraPoint;
@@ -85,6 +90,30 @@ public class RetroGameScreen : MonoBehaviour
     private Object_FixCamera cameraFixer;
 
     private bool isCameraMoved = false;
+
+
+    // ============================================
+    // Lights Off (No Coin)
+    // ============================================
+
+    [Header("동전 없이 켠 No Coin 화면 동안 환경광(Ambient) 끄기")]
+    [Tooltip("체크하면 No Coin 화면(3초) 동안 환경광(Ambient)을 끄고, 화면이 꺼지고 시점이 돌아올 때 원래대로 켬")]
+    [SerializeField]
+    private bool turnOffLightsOnNoCoin = true;
+
+    [Tooltip("(선택) 환경광과 함께 끌 Light들. 비워두면 환경광만 끔")]
+    [SerializeField]
+    private Light[] lightsToTurnOff;
+
+    [Tooltip("꺼져 있는 동안의 Ambient 색 (검정 = 완전히 끔)")]
+    [SerializeField]
+    private Color darkAmbientColor = Color.black;
+
+    private bool[] savedLightStates;
+    private Color savedAmbientSky;
+    private Color savedAmbientEquator;
+    private Color savedAmbientGround;
+    private bool isLightsOff = false;
 
     // 동전 연출(Playing)이 한 번 끝나면 true → 이후 화면은 Off로 영구 고정
     private bool isLockedOff = false;
@@ -137,9 +166,20 @@ public class RetroGameScreen : MonoBehaviour
             return false;
         }
 
-        // 동전 없이 켤 때는 카메라 이동 없음
         state = ScreenState.NoCoin;
         ApplyMaterial(noCoinMaterial);
+
+        // No Coin 화면이 켜져 있는 동안 카메라 → CameraPoint
+        if (moveCameraOnNoCoin)
+        {
+            BeginCameraFocus(true);
+        }
+
+        // 방 불 끄기
+        if (turnOffLightsOnNoCoin)
+        {
+            TurnLightsOff();
+        }
 
         noCoinRoutine =
             StartCoroutine(
@@ -166,6 +206,10 @@ public class RetroGameScreen : MonoBehaviour
 
         state = ScreenState.Off;
         ApplyMaterial(offMaterial);
+
+        // 화면이 꺼지자마자 원래 시점으로 복귀 + 불 다시 켜기
+        EndCameraFocus();
+        RestoreLights();
     }
 
 
@@ -238,9 +282,9 @@ public class RetroGameScreen : MonoBehaviour
     // 화면이 켜져 있는 동안 상호작용이 불가능해짐.
     // ============================================
 
-    private void BeginCameraFocus()
+    private void BeginCameraFocus(bool force = false)
     {
-        if (!moveCameraWhileOn ||
+        if ((!moveCameraWhileOn && !force) ||
             isCameraMoved)
         {
             return;
@@ -351,8 +395,74 @@ public class RetroGameScreen : MonoBehaviour
     }
 
 
+    // ============================================
+    // 방 불 끄기 / 다시 켜기
+    // ============================================
+
+    private void TurnLightsOff()
+    {
+        if (isLightsOff)
+        {
+            return;
+        }
+
+        isLightsOff = true;
+
+        savedAmbientSky = RenderSettings.ambientSkyColor;
+        savedAmbientEquator = RenderSettings.ambientEquatorColor;
+        savedAmbientGround = RenderSettings.ambientGroundColor;
+
+        RenderSettings.ambientSkyColor = darkAmbientColor;
+        RenderSettings.ambientEquatorColor = darkAmbientColor;
+        RenderSettings.ambientGroundColor = darkAmbientColor;
+
+        int count = lightsToTurnOff != null ? lightsToTurnOff.Length : 0;
+        savedLightStates = new bool[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            Light light = lightsToTurnOff[i];
+            if (light == null) continue;
+
+            savedLightStates[i] = light.enabled;
+            light.enabled = false;
+        }
+    }
+
+
+    private void RestoreLights()
+    {
+        if (!isLightsOff)
+        {
+            return;
+        }
+
+        isLightsOff = false;
+
+        RenderSettings.ambientSkyColor = savedAmbientSky;
+        RenderSettings.ambientEquatorColor = savedAmbientEquator;
+        RenderSettings.ambientGroundColor = savedAmbientGround;
+
+        if (lightsToTurnOff == null || savedLightStates == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < lightsToTurnOff.Length && i < savedLightStates.Length; i++)
+        {
+            if (lightsToTurnOff[i] != null)
+            {
+                lightsToTurnOff[i].enabled = savedLightStates[i];
+            }
+        }
+    }
+
+
     private void StopNoCoinRoutine()
     {
+        // No Coin 도중 다른 상태로 바뀌거나 비활성화되면 불을 원래대로
+        RestoreLights();
+
         if (noCoinRoutine == null)
         {
             return;
