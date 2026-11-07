@@ -8,7 +8,7 @@ public static class GameData
     public static int BackgroundVolume = 100;
     public static int ObjectSoundVolume = 100;
 
-    public static readonly string[] LanguageType = { "Korean", "English" };
+    public static readonly string[] LanguageType = { "Korean", "English", "Japanese" };
     public static int CurrentLanguageIndex = 0;
     public static string CurrentLanguage = "Korean";
 

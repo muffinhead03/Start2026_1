@@ -3,7 +3,8 @@ using System;
 public enum LanguageType
 {
     Korean,
-    English
+    English,
+    Japanese
 }
 
 public static class LanguageCurrentStatus
