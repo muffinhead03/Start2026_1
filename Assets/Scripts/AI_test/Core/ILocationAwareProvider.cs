@@ -34,3 +34,14 @@ public interface IZoneLookupProvider
     /// <summary>objectName(PuzzleStep.relatedObjectName)이 속한 구역 이름. 모르면 null.</summary>
     string GetObjectZoneName(string objectName);
 }
+
+/// <summary>
+/// (선택) 플레이어가 지금 어떤 눈에 띄는 물건(랜드마크) 바로 앞에 서 있는지 알려주는 인터페이스.
+/// 구현하면 관찰 문장의 위치 부분이 "세 번째 방에 있구나" 대신 "책장 앞에 있네"처럼 더 구체적으로 나옴.
+/// 상호작용(E)을 안 해도 근처에 서 있기만 하면 판단 — 플레이어가 어디를 보고 고민 중인지 알려주는 용도.
+/// </summary>
+public interface ILandmarkProvider
+{
+    /// <summary>플레이어 바로 앞(가까운 거리)에 있는 랜드마크의 표시 이름 (예: "책장"). 없으면 null.</summary>
+    string GetNearbyLandmarkName();
+}

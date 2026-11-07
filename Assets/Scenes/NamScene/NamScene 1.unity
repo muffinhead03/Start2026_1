@@ -4324,6 +4324,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7538298307281771170, guid: b2929d752781a3940bd5cc90f9f47cab, type: 3}
   m_PrefabInstance: {fileID: 236975230}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &174073896 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8773677526911635551, guid: f52312b8e7f6ae44f9a2b883f33ec972, type: 3}
+  m_PrefabInstance: {fileID: 1692836974}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &175299607 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7538298307281771170, guid: b2929d752781a3940bd5cc90f9f47cab, type: 3}
@@ -20660,10 +20665,14 @@ MonoBehaviour:
   slotsRoot: {fileID: 2031229128}
   bottlePrefix: wine_
   registerFailOnWrongSlot: 1
+  maxWrongSlotFails: 3
   cabinetDoor: {fileID: 1015788873}
   keyObjectName: key1
   handPerception: {fileID: 2048120664}
   inventoryData: {fileID: 2048120665}
+  stainTargetName: WineStains
+  memoTargetName: Memo
+  cabinetTargetName: Cabinet
   verboseLog: 1
 --- !u!1001 &835960835
 PrefabInstance:
@@ -41852,26 +41861,39 @@ MonoBehaviour:
   - objectName: HintStain
     transform: {fileID: 1668412323}
     zoneOverride: 
+    landmarkName: "\uBCBD \uC885\uC774"
   - objectName: BookShelf
     transform: {fileID: 2024373794}
     zoneOverride: 
+    landmarkName: "\uCC45\uC7A5"
   - objectName: wine
     transform: {fileID: 1627204547}
     zoneOverride: 
+    landmarkName: "\uC640\uC778\uB809"
   - objectName: key1
     transform: {fileID: 968718896}
     zoneOverride: 
+    landmarkName: "\uC0C1\uC790"
+  - objectName: Memo
+    transform: {fileID: 1814638191}
+    zoneOverride: 
+    landmarkName: "\uBA54\uBAA8"
+  - objectName: Cabinet
+    transform: {fileID: 174073896}
+    zoneOverride: 
+    landmarkName: "\uC7A5\uC2DD\uC7A5"
   zones:
-  - displayName: "1\uBC88 \uBC29"
+  - displayName: "\uCCAB\uBC88\uC9F8 \uBC29"
     floorRoot: {fileID: 1908549035}
-  - displayName: "2\uBC88 \uBC29"
+  - displayName: "\uB450\uBC88\uC9F8 \uBC29"
     floorRoot: {fileID: 1683708775}
-  - displayName: "3\uBC88 \uBC29"
+  - displayName: "\uC138\uBC88\uC9F8 \uBC29"
     floorRoot: {fileID: 1692942791}
-  - displayName: "\uD1B5\uB85C"
+  - displayName: "\uD1B5\uB85C\uBC29"
     floorRoot: {fileID: 951617954}
   tileEdgeTolerance: 0.05
   zoneCheckInterval: 0.25
+  landmarkDistance: 2
   verboseLog: 1
 --- !u!1001 &1596104627
 PrefabInstance:
@@ -55288,6 +55310,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1394311948984224369, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -552
+      objectReference: {fileID: 0}
     - target: {fileID: 1579525285310847247, guid: 526a940d1a22940d99731f8a511201de, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -55315,6 +55341,18 @@ PrefabInstance:
     - target: {fileID: 6729653282953345471, guid: 526a940d1a22940d99731f8a511201de, type: 3}
       propertyPath: m_Name
       value: HintUiCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7997307731694530734, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+      propertyPath: m_fontSize
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7997307731694530734, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7997307731694530734, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 1024
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

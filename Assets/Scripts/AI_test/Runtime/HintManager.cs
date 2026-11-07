@@ -50,7 +50,7 @@ public class HintManager : MonoBehaviour
     [SerializeField] SceneContextData[] sceneContexts;
 
     [Header("힌트 사용 횟수")]
-    [SerializeField] int maxHints = 4;
+    [SerializeField] int maxHints = 10;
 
     [Header("힌트 레벨 판정 튜닝 (데모용 조절 가능 — 기본값은 기존 하드코딩 값과 동일)")]
     [SerializeField] HintTuningConfig hintTuning = new HintTuningConfig();

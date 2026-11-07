@@ -111,27 +111,35 @@ public static class HintEngine
         string proximityNote = null;
         string zoneNote      = null;
         string playerZone    = null; // 관찰 문장용 — 플레이어가 있는 구역 이름 (구역 시스템 없는 씬은 null)
+        string landmark      = null; // 관찰 문장용 — 플레이어 바로 앞 랜드마크 이름 (ILandmarkProvider 구현 씬만)
         string targetZone    = null; // 관찰 문장용 — nextStep 대상 오브젝트의 구역 이름 (IZoneLookupProvider 구현 씬만)
 
         if (locationProvider != null && nextStep != null)
         {
-            proximityNote = BuildProximityNote(locationProvider, nextStep);
+            // 거리/구역 계산 대상 — 기본은 relatedObjectName, 스텝 안에서 가야 할 곳이 바뀌는 씬은
+            // IStepTargetProvider가 진행 상황에 맞는 대상으로 바꿔줌 (예: 와인씬 1단계 벽 종이 → 바닥 얼룩 → 메모)
+            string targetName = GetTargetObjectName(nextStep, progressProvider);
+
+            proximityNote = BuildProximityNote(locationProvider, targetName);
             zoneNote      = BuildZoneNote(locationProvider);
 
             playerZone = locationProvider.GetCurrentZoneName();
             if (!string.IsNullOrEmpty(playerZone) &&
-                !string.IsNullOrEmpty(nextStep.relatedObjectName) &&
+                !string.IsNullOrEmpty(targetName) &&
                 locationProvider is IZoneLookupProvider zoneLookup)
             {
-                targetZone = zoneLookup.GetObjectZoneName(nextStep.relatedObjectName);
+                targetZone = zoneLookup.GetObjectZoneName(targetName);
             }
+
+            if (locationProvider is ILandmarkProvider landmarkProvider)
+                landmark = landmarkProvider.GetNearbyLandmarkName();
         }
 
         string recentAction = (state.lastActions != null && state.lastActions.Count > 0)
             ? state.lastActions[state.lastActions.Count - 1]
             : null;
 
-        string watchingLine = BuildWatchingLine(recentAction, proximityNote, playerZone, targetZone);
+        string watchingLine = BuildWatchingLine(recentAction, proximityNote, playerZone, targetZone, landmark);
 
         // 진행 문장은 레벨에 따라 구체성이 달라서 레벨을 먼저 정한 뒤에 받는다
         // (HintManager가 같은 스텝 재요청으로 레벨을 조정하면 거기서 한 번 더 다시 받음)
@@ -281,13 +289,13 @@ public static class HintEngine
     /// nextStep에 relatedObjectName이 없거나(구역형 퍼즐), provider가 위치를 못 찾으면 null 반환
     /// (해석: "정보 없음"과 "멀리 있음"을 구분 — 모르면 아예 언급 안 하는 게 맞음)
     /// </summary>
-    static string BuildProximityNote(ILocationAwareProvider provider, PuzzleStep nextStep)
+    static string BuildProximityNote(ILocationAwareProvider provider, string targetName)
     {
-        if (string.IsNullOrEmpty(nextStep.relatedObjectName))
+        if (string.IsNullOrEmpty(targetName))
             return null;
 
         Vector3? playerPos = provider.GetPlayerPosition();
-        Vector3? objectPos = provider.GetObjectPosition(nextStep.relatedObjectName);
+        Vector3? objectPos = provider.GetObjectPosition(targetName);
 
         if (!playerPos.HasValue || !objectPos.HasValue)
             return null;
@@ -297,6 +305,20 @@ public static class HintEngine
         if (dist <= ProximityVeryCloseDistance) return "player-very-close";
         if (dist <= ProximityNearbyDistance)    return "player-nearby";
         return "player-far";
+    }
+
+    /// <summary>
+    /// 거리/구역 계산에 쓸 대상 오브젝트 이름. progressProvider가 IStepTargetProvider면 그 값 우선,
+    /// 없거나 null이면 nextStep.relatedObjectName (손/인벤토리 override 매칭은 항상 relatedObjectName 그대로).
+    /// </summary>
+    static string GetTargetObjectName(PuzzleStep nextStep, IStepProgressProvider progressProvider)
+    {
+        if (progressProvider is IStepTargetProvider targetProvider)
+        {
+            string t = targetProvider.GetTargetObjectName(nextStep);
+            if (!string.IsNullOrEmpty(t)) return t;
+        }
+        return nextStep.relatedObjectName;
     }
 
     /// <summary>
@@ -341,6 +363,13 @@ public static class HintEngine
         "{0}에 와 있네",
     };
 
+    // 플레이어가 랜드마크 바로 앞에 서 있을 때 — {0}에 랜드마크 표시 이름 (예: "책장")
+    static readonly string[] LandmarkLabels =
+    {
+        "{0} 앞에 있네",
+        "{0} 앞에 서 있구나",
+    };
+
     // 대상 오브젝트가 다른 구역에 있을 때 덧붙이는 문장 — 방향만 알려주고 무엇을 할지는 힌트 본문이 담당
     static readonly string[] ZoneOtherLabels =
     {
@@ -372,7 +401,7 @@ public static class HintEngine
     ///  - 대상이 다른 구역: "1번 방에 있구나... 통로 쪽도 한번 둘러봐."
     /// </summary>
     static string BuildWatchingLine(string recentAction, string proximityNote,
-        string playerZone = null, string targetZone = null)
+        string playerZone = null, string targetZone = null, string landmark = null)
     {
         string actionPart = !string.IsNullOrEmpty(recentAction)
             ? LabelForAction(recentAction)
@@ -380,7 +409,10 @@ public static class HintEngine
 
         if (!string.IsNullOrEmpty(playerZone))
         {
-            string zonePart = string.Format(PickRandom(ZoneHereLabels), playerZone);
+            // 랜드마크 바로 앞이면 방 이름 대신 "책장 앞에 있네"처럼 더 구체적으로
+            string zonePart = !string.IsNullOrEmpty(landmark)
+                ? string.Format(PickRandom(LandmarkLabels), landmark)
+                : string.Format(PickRandom(ZoneHereLabels), playerZone);
             string otherPart = (!string.IsNullOrEmpty(targetZone) && targetZone != playerZone)
                 ? " " + string.Format(PickRandom(ZoneOtherLabels), targetZone)
                 : "";
