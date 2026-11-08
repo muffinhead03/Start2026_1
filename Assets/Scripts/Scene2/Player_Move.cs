@@ -57,7 +57,7 @@ public class Player_Move : MonoBehaviour
 
     void Awake()
     {
-        yaw = 90;
+        yaw = transform.rotation.eulerAngles.y;
 
         Character = GetComponent<CharacterController>();
 
