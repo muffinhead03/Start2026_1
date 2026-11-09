@@ -122,6 +122,8 @@ public class HintManager : MonoBehaviour
     int currentRequestId = 0;
 
     // 스텝별로 "직전에 어떤 힌트를 줬는지" 기억 — 같은 스텝 재요청 때 레벨 조정 + 표현 다양화에 씀
+    const int MaxRememberedReplies = 3;
+
     class StepHintMemory
     {
         public int    level;        // 직전에 준 레벨
@@ -129,7 +131,16 @@ public class HintManager : MonoBehaviour
         public int    failCount;    // 직전 힌트 시점의 failCount
         public int    actionSerial; // 직전 힌트 시점의 행동 기록 번호
         public string progressBand; // 직전 힌트 시점의 진행 구간 (예: 곰 인형 "early"/"almost")
-        public string lastReply;    // 직전에 LLM이 준 힌트 본문 (관찰 문장 제외) — 같은 레벨 재요청 시 "다르게 말해" 기준
+        // 같은 레벨·같은 진행 구간에서 LLM이 준 최근 힌트 본문들 (관찰 문장 제외, 오래된 것부터) — 재요청 시 "다르게 말해" 기준.
+        // 직전 1개만 기억하면 3번째 요청에서 1번째 답변 표현으로 되돌아가서 최근 MaxRememberedReplies개를 같이 넘김
+        public List<string> recentReplies = new List<string>();
+        public string RepliesForPrompt => recentReplies.Count > 0 ? string.Join("\n", recentReplies) : null;
+        public void AddReply(string reply)
+        {
+            if (string.IsNullOrWhiteSpace(reply)) return;
+            recentReplies.Add(reply);
+            while (recentReplies.Count > MaxRememberedReplies) recentReplies.RemoveAt(0);
+        }
         public string lastNote;     // 직전에 쓴 진행 문장 — 재요청 때 같은 후보가 연속으로 뽑히지 않게
     }
     readonly Dictionary<int, StepHintMemory> stepMemory = new Dictionary<int, StepHintMemory>();
@@ -480,7 +491,7 @@ public class HintManager : MonoBehaviour
             // 같은 레벨 + 같은 진행 구간일 때만 "다른 표현으로" 요청.
             // 구간이 바뀌었으면 방향 문장 자체가 달라서, 직전 답변(예: "계속 던져보세요")을 넘기면 오히려 헷갈림
             if (result.hintLevel == m.level && !progressed)
-                previousHint = m.lastReply;
+                previousHint = m.RepliesForPrompt;
 
             Debug.Log($"[레벨 조정] step {id}: 점수 {scoreLevel} → {result.hintLevel} " +
                       $"(직전 {m.level}, {elapsed:F0}초 경과, 실패 {(failedSince ? "있음" : "없음")}, 새 행동 {(actedSince ? "있음" : "없음")}, " +
@@ -497,7 +508,7 @@ public class HintManager : MonoBehaviour
 
             // 위에서 "같은 레벨이면 다른 표현" 판단을 캡 전 레벨로 했으므로, 캡에 걸려 직전과 같아졌으면 다른 표현 요청
             if (m != null && result.hintLevel == m.level && previousHint == null && bandNow == m.progressBand)
-                previousHint = m.lastReply;
+                previousHint = m.RepliesForPrompt;
         }
 
         // 레벨이 바뀌었거나 재요청이면 진행 문장을 새 레벨로 다시 고름 (같은 레벨이어도 다시 뽑아서 다른 후보가 나올 수 있게)
@@ -519,7 +530,11 @@ public class HintManager : MonoBehaviour
             failCount    = currentPlayerState.failCount,
             actionSerial = actionSerial,
             progressBand = bandNow,
-            lastReply    = m?.lastReply, // 이번 답변이 오면 ContinueHintFlow에서 갱신
+            // 같은 레벨·같은 진행 구간이면 이전 답변들을 이어서 기억, 레벨이나 구간이 바뀌면 새로 시작
+            // (방향 문장 자체가 달라졌으니 옛 답변은 "다르게 말해" 기준이 못 됨). 이번 답변은 ContinueHintFlow에서 추가
+            recentReplies = (m != null && m.level == result.hintLevel && m.progressBand == bandNow)
+                ? m.recentReplies
+                : new List<string>(),
             lastNote     = result.progressNote,
         };
 
@@ -751,7 +766,7 @@ public class HintManager : MonoBehaviour
                           (truncated ? $" / 잘림=true / 원문: {lastReply}" : ""));
 
                 if (stepMemory.TryGetValue(stepId, out var mem))
-                    mem.lastReply = shownReply.Trim();
+                    mem.AddReply(shownReply.Trim());
                 RememberHint(displayPrefix + shownReply, false);
                 LogHintSummary(result, "AI", null, stopwatch.ElapsedMilliseconds);
             },

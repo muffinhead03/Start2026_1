@@ -86,7 +86,7 @@ public static class PromptBuilder
 
     /// <summary>
     /// HintResult 하나를 받아 LLM에 보낼 유저 프롬프트 전체(씬 컨텍스트+플레이어 상태+힌트 방향)를 조립한다.
-    /// previousHint: 같은 스텝·같은 레벨에서 힌트를 다시 요청한 경우에만 직전 답변을 넘김 →
+    /// previousHint: 같은 스텝·같은 레벨에서 힌트를 다시 요청한 경우에만 최근 답변들(줄바꿈 구분)을 넘김 →
     /// "같은 뜻, 다른 표현"으로 말하게 해서 똑같은 문장이 반복되지 않게 한다. 그 외엔 null.
     /// </summary>
     public static string Build(HintResult result, string previousHint = null)
@@ -130,6 +130,10 @@ public static class PromptBuilder
             $"Do NOT invent objects, places, lights, or actions that are not in the [Hint direction]. " +
             // 해석: 힌트 방향에 없는 물건·장소·빛·행동을 지어내지 마. (베타 로그에서 "빛을 향해", "그림 뒤에 숨겨진 비밀",
             // "묘한 빛을 따라" 같은 없는 단서를 지어내서 플레이어를 엉뚱한 곳으로 보낼 위험이 반복 확인됨)
+            $"Mention every object and place named in the [Hint direction] — do not drop or replace any of them. " +
+            // 해석: 힌트 방향에 나온 물건·장소는 하나도 빼거나 바꾸지 말고 다 말해.
+            // (재요청 때 "다른 표현"을 요구하면 소형 모델이 핵심 단어(예: 와인씬 1단계 "알파벳")를 "글자"로 바꾸거나 빼먹을 수 있어서 —
+            //  표현은 바뀌어도 내용(가리키는 대상)은 같게 유지)
             $"Do NOT mention any other puzzle mechanic, object, or step that isn't part of it — " +
             $"{orderNote}\n\n" +
             BuildRepeatNote(previousHint) +
@@ -137,17 +141,26 @@ public static class PromptBuilder
             (SpeechLevelRule.Length > 0 ? ", casual 반말 only" : "") + "):";
     }
 
-    // 같은 레벨 재요청일 때만 붙는 한 줄. 방향 문장은 그대로 하나만 두고(1·2차 실험에서 둘 이상 주면 퇴화),
-    // "이 문장은 이미 들었으니 같은 뜻을 다른 말로"만 덧붙인다.
+    // 같은 레벨 재요청일 때만 붙는 블록. 방향 문장은 그대로 하나만 두고(1·2차 실험에서 둘 이상 주면 퇴화),
+    // "이 문장들은 이미 들었으니 같은 뜻을 다른 말로"만 덧붙인다.
+    // previousHint는 줄바꿈으로 구분된 최근 답변들(최대 HintManager.MaxRememberedReplies개) —
+    // 직전 1개만 주면 3번째 요청에서 1번째 답변 표현으로 돌아가는 경우가 있어서 최근 몇 개를 같이 넘김.
     // 예전엔 프롬프트 맨 끝(답변 시작 신호 뒤)에 붙었는데, 답변 신호 앞으로 옮김.
     static string BuildRepeatNote(string previousHint)
     {
         if (string.IsNullOrWhiteSpace(previousHint))
             return "";
 
-        return $"[Previous hint for this step]\n{previousHint.Trim()}\n" +
-               "The player already heard this. Give the same direction in different words. Do not repeat the previous sentence.\n\n";
-        // 해석: 플레이어가 이미 이 힌트를 들었음. 같은 방향을 다른 말로 전해. 이전 문장을 반복하지 마.
+        var lines = new List<string>();
+        foreach (var line in previousHint.Split('\n'))
+            if (!string.IsNullOrWhiteSpace(line)) lines.Add("- " + line.Trim());
+
+        return $"[Previous hints for this step]\n{string.Join("\n", lines)}\n" +
+               "The player already heard these. Give the same direction with the same objects and places, " +
+               "but in different words and a different sentence structure, like a person rephrasing. " +
+               "Do not reuse any of the sentences above.\n\n";
+        // 해석: 플레이어가 이미 이 힌트들을 들었음. 같은 물건·장소로 같은 방향을 전하되, 사람이 바꿔 말하듯 단어와 문장 구조를 바꿔.
+        // 위 문장들을 그대로 다시 쓰지 마.
     }
 
     /// <summary>
