@@ -8,7 +8,7 @@ public static class GameData
     public static int BackgroundVolume = 100;
     public static int ObjectSoundVolume = 100;
 
-    public static readonly string[] LanguageType = { "Korean", "English" };
+    public static readonly string[] LanguageType = { "Korean", "English", "Japanese" };
     public static int CurrentLanguageIndex = 0;
     public static string CurrentLanguage = "Korean";
 
@@ -94,6 +94,23 @@ public static class GameData
 
         Debug.Log("Current Language Index: " + CurrentLanguageIndex);
         Debug.Log("Current Language: " + CurrentLanguage);
+    }
+
+    // 외부 설정 UI(GameSetting 등)에서 언어를 지정할 때 사용
+    public static void SetLanguage(global::LanguageType language)
+    {
+        int index = System.Array.IndexOf(LanguageType, language.ToString());
+
+        if (index < 0)
+        {
+            return;
+        }
+
+        CurrentLanguageIndex = index;
+        FixLanguageIndex();
+
+        PlayerPrefs.SetInt(CurrentLanguageIndexKey, CurrentLanguageIndex);
+        PlayerPrefs.Save();
     }
 
     public static void SaveLanguage()

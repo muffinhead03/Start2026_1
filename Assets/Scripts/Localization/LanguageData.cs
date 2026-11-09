@@ -22,6 +22,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Doll's Leg"
+                },
+                {
+                    LanguageType.Japanese,
+                    "人形の脚"
                 }
             }
         },
@@ -37,6 +41,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Teddy Bear"
+                },
+                {
+                    LanguageType.Japanese,
+                    "無傷のクマのぬいぐるみ"
                 }
             }
         },
@@ -53,6 +61,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Teddy Bear's Torn Head"
+                },
+                {
+                    LanguageType.Japanese,
+                    "クマのぬいぐるみの頭"
                 }
             }
         },
@@ -68,6 +80,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Beheaded Teddy Bear"
+                },
+                {
+                    LanguageType.Japanese,
+                    "クマのぬいぐるみの胴体"
                 }
             }
         },
@@ -83,6 +99,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Mysterious Coin"
+                },
+                {
+                    LanguageType.Japanese,
+                    "不思議なコイン"
                 }
             }
         },
@@ -98,6 +118,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Doll's Arm"
+                },
+                {
+                    LanguageType.Japanese,
+                    "人形の腕"
                 }
             }
         },
@@ -113,6 +137,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Escape Key"
+                },
+                {
+                    LanguageType.Japanese,
+                    "脱出の鍵"
                 }
             }
         },
@@ -128,6 +156,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Doll's Spring"
+                },
+                {
+                    LanguageType.Japanese,
+                    "ぜんまい"
                 }
             }
         },
@@ -148,6 +180,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Escape Key"
+                },
+                {
+                    LanguageType.Japanese,
+                    "脱出の鍵"
                 }
             }
         },
@@ -163,6 +199,86 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Book"
+                },
+                {
+                    LanguageType.Japanese,
+                    "本"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_RubyRed,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "루비색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Ruby Red Wine Bottle"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤ワイン1"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_TawnyBrown,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "황갈색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Tawny Brown Wine Bottle"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤ワイン2"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_Burgundy,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "버건디색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Burgundy Wine Bottle"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤ワイン3"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.WineScene_Item_WineBottle_Maroon,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "적갈색 와인병"
+                },
+                {
+                    LanguageType.English,
+                    "Maroon Wine Bottle"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤ワイン4"
                 }
             }
         },
@@ -183,6 +299,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Pipe"
+                },
+                {
+                    LanguageType.Japanese,
+                    "オルガンのパイプ"
                 }
             }
         },
@@ -198,6 +318,101 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Vinyl Record"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Green,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "초록색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Green Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "緑色のレコード"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Red,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "빨간색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Red Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "赤色のレコード"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Blue,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "파란색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Blue Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "青色のレコード"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_Yellow,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "노란색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "Yellow Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "黄色のレコード"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.OrganScene_Item_VinylRecord_White,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "흰색 LP판"
+                },
+                {
+                    LanguageType.English,
+                    "White Vinyl Record"
+                },
+                {
+                    LanguageType.Japanese,
+                    "白色のレコード"
                 }
             }
         },
@@ -228,6 +443,10 @@ public static class LanguageData
                 {
                     LanguageType.English,
                     "Book"
+                },
+                {
+                    LanguageType.Japanese,
+                    "本"
                 }
             }
         }
