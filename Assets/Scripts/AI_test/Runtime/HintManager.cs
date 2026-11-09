@@ -40,6 +40,23 @@ public class HintManager : MonoBehaviour
     //  null이면 progressNote만 비고 나머진 기존과 동일하게 동작 — 예: DollHintBridge가 곰 인형 던진 횟수로 판단)
     public IStepProgressProvider ProgressProvider { get; set; }
 
+    // ---- 언어 / UI 문구 / 횟수 저장 (Core 인터페이스로만 의존 — 구현체는 바꿔 끼울 수 있음) ----
+
+    // 힌트 응답 언어. 기본 구현은 팀 공용 LanguageCurrentStatus를 읽음 (GameHintLanguageSource).
+    // 힌트 요청 때마다 다시 읽으므로 게임 중에 언어를 바꿔도 다음 힌트부터 반영됨.
+    public IHintLanguageSource LanguageSource { get; set; } = new GameHintLanguageSource();
+
+    // 힌트 패널 고정 문구 (치지직... / 도움이 필요해? / 더 이상 도움을 받을 수 없어 등).
+    // 기본 구현은 팀 공용 LanguageData에서 현재 언어 문장을 가져옴 (LocalizedHintUIText).
+    public IHintUITextProvider UIText { get; set; } = new LocalizedHintUIText();
+
+    // 힌트 사용 횟수 저장 — 게임을 껐다 켜서(이어하기) 같은 씬에 다시 들어와도 횟수가 다시 차지 않게.
+    // 기본 구현은 PlayerPrefs (PlayerPrefsHintUsageStore). persistHintUsage를 끄면 저장 안 함(씬마다 새로 시작).
+    public IHintUsageStore UsageStore { get; set; } = new PlayerPrefsHintUsageStore();
+
+    // 관찰 문장 번역 테이블. 기본 구현은 힌트 전용 번역 데이터(Runtime/HintLocalization의 HintLanguageData)를 읽음 (HintPhraseTable).
+    public IHintPhraseTable PhraseTable { get; set; } = new HintPhraseTable();
+
     [Header("현재 퍼즐 ID (씬마다 변경)")]
     public string currentPuzzleId = "wine_glass_room";
 
@@ -51,6 +68,9 @@ public class HintManager : MonoBehaviour
 
     [Header("힌트 사용 횟수")]
     [SerializeField] int maxHints = 10;
+    [Tooltip("체크하면 쓴 횟수를 저장해서, 게임을 껐다 켜거나 같은 씬에 다시 들어와도 이어서 셈 (다른 씬에 들어가면 새로 시작).\n" +
+             "에디터에서 매번 처음 횟수로 테스트하고 싶으면 체크 해제.")]
+    [SerializeField] bool persistHintUsage = true;
 
     [Header("힌트 레벨 판정 튜닝 (데모용 조절 가능 — 기본값은 기존 하드코딩 값과 동일)")]
     [SerializeField] HintTuningConfig hintTuning = new HintTuningConfig();
@@ -64,8 +84,7 @@ public class HintManager : MonoBehaviour
     [SerializeField] bool showFallbackTag = true;
     [Tooltip("hintPanel 자식으로 둔 'FallBack (에러 아닙니다)' 배지 오브젝트 (비워두면 배지 없이 태그만)")]
     [SerializeField] GameObject fallbackBadge;
-    const string FallbackTag = "[폴백] ";
-    string FallbackPrefix => showFallbackTag ? FallbackTag : "";
+    string FallbackPrefix => showFallbackTag ? UIText.Get(HintUITextId.FallbackTag) + " " : "";
 
     [Header("실패 쿨다운")]
     [SerializeField] float failCooldown = 2f;
@@ -206,11 +225,12 @@ public class HintManager : MonoBehaviour
         HintEngine.Tuning = hintTuning;
         // 관찰 문장("~하고 있었지")의 씬별 문구 — Core(HintEngine)가 게임 내용을 모르도록 여기서 주입
         HintEngine.ActionLabelProvider = new DefaultActionLabelProvider();
+        // 관찰 문장 틀(위치·거리·이어붙이기)과 구역·랜드마크 이름의 언어별 번역 — Core는 인터페이스(IHintPhraseTable)만 앎
+        HintEngine.Phrases = PhraseTable;
         UpdateUsageUI();
 
-        GameData.LoadLanguage();
-        PromptBuilder.Config.language = GameData.CurrentLanguage;
-        Debug.Log($"[HintManager] 힌트 AI 응답 언어: {PromptBuilder.Config.language}");
+        ApplyCurrentLanguage();
+        RestoreHintUsage();
 
         PromptBuilder.SceneContextProvider = new DefaultSceneContextProvider();
         // sceneContexts를 Inspector에 연결했을 때만 ScriptableObject 기반으로 교체.
@@ -343,7 +363,7 @@ public class HintManager : MonoBehaviour
             }
             else
             {
-                SetHintText("치지직... 도움이 필요해?");
+                SetHintText(Radio + UIText.Get(HintUITextId.Greeting));
             }
         }
         Cursor.lockState = CursorLockMode.None;
@@ -370,6 +390,9 @@ public class HintManager : MonoBehaviour
             return;
         }
 
+        // 요청할 때마다 현재 언어를 다시 읽음 — 게임 중에 설정에서 언어를 바꿔도 이번 힌트부터 반영
+        ApplyCurrentLanguage();
+
         RefreshFallbackBadge(); // LLM 상태 기준으로 다시 맞춤 (폴백 힌트가 나가면 아래에서 다시 켜짐)
 
         Debug.Log("[foundClues] " + string.Join(", ", currentPlayerState.foundClues));
@@ -377,7 +400,7 @@ public class HintManager : MonoBehaviour
 
         if (currentPlayerState.hintCount >= maxHints)
         {
-            SetHintText("더 이상 도움을 받을 수 없어.");
+            SetHintText(UIText.Get(HintUITextId.NoHintsLeft));
             return;
         }
 
@@ -411,7 +434,7 @@ public class HintManager : MonoBehaviour
 
         if (result.nextStep == null)
         {
-            SetHintText("이미 모든 단서를 찾았어.");
+            SetHintText(UIText.Get(HintUITextId.AllCluesFound));
             return;
         }
 
@@ -425,7 +448,7 @@ public class HintManager : MonoBehaviour
         // 타이핑 중에 도착한 응답은 llmTarget 버퍼에 전부 쌓아뒀다가, 관찰 문장이 끝나면
         // RevealLLM이 같은 속도로 한 글자씩 이어서 타이핑한다 (타자기 큐).
         bool hasWatchingLine = !string.IsNullOrEmpty(result.watchingLine);
-        string introText = hasWatchingLine ? "치지직... " + result.watchingLine : null;
+        string introText = hasWatchingLine ? Radio + result.watchingLine : null;
         string displayPrefix = hasWatchingLine ? introText + " " : "";
 
         StopReveal();
@@ -661,7 +684,7 @@ public class HintManager : MonoBehaviour
             yield return null;
 
         string fixedHint = PromptBuilder.GetEffectiveHint(result); // hintByLevel 문구 (스텝 진행 상황이 있으면 그 문장)
-        string appendText = string.IsNullOrEmpty(fixedHint) ? "지금은 응답할 수 없어." : fixedHint;
+        string appendText = string.IsNullOrEmpty(fixedHint) ? UIText.Get(HintUITextId.NoResponse) : fixedHint;
 
         hintText.text = FallbackPrefix + displayPrefix + appendText;
         SetFallbackBadge(true);
@@ -684,8 +707,7 @@ public class HintManager : MonoBehaviour
             string reason = llmClient == null ? "llmClient null" : "LLM 사용 불가";
 
             // 횟수를 먼저 올려야 [힌트요약] 로그의 사용 횟수가 LLM 경로와 똑같이 찍힘
-            currentPlayerState.hintCount++;
-            UpdateUsageUI();
+            ConsumeHint();
 
             if (hasWatchingLine)
                 fallbackCoroutine = StartCoroutine(AppendFallbackAfterIntro(result, displayPrefix, reason));
@@ -773,8 +795,7 @@ public class HintManager : MonoBehaviour
             hintDirection: PromptBuilder.GetEffectiveHint(result) // 프롬프트 맨 끝에 붙는 방향 문구 (진행 상황이 있으면 그 문장)
         );
 
-        currentPlayerState.hintCount++;
-        UpdateUsageUI();
+        ConsumeHint();
     }
 
     // LLM 없이 hintByLevel 고정 문구를 그대로 출력. (베타 로그 비교용으로 fallback=true 남김)
@@ -788,8 +809,8 @@ public class HintManager : MonoBehaviour
         string watchingPart = string.IsNullOrEmpty(result.watchingLine) ? "" : result.watchingLine + " ";
 
         string message = FallbackPrefix + (string.IsNullOrEmpty(fixedHint)
-            ? "치지직... 지금은 응답할 수 없어."
-            : "치지직... " + watchingPart + fixedHint);
+            ? Radio + UIText.Get(HintUITextId.NoResponse)
+            : Radio + watchingPart + fixedHint);
 
         Debug.LogWarning($"[힌트 결과] fallback=true / 사유: {reason} / 레벨: {result.hintLevel} / 상태: {result.playerStatus.ToKoreanLabel()} / 스텝: {result.nextStep?.id} / 응답: {message}");
         LogHintSummary(result, "폴백", reason, -1);
@@ -889,10 +910,10 @@ public class HintManager : MonoBehaviour
         typingCoroutine = StartCoroutine(TypeText(message));
     }
 
-    // displayPrefix(관찰 문장)가 있으면 그 뒤에 점만 찍고, 없으면 "치지직.. 교신 중" + 점
+    // displayPrefix(관찰 문장)가 있으면 그 뒤에 점만 찍고, 없으면 "치지직.. 교신 중"(UIText Connecting) + 점
     IEnumerator LoadingDots(string displayPrefix = "")
     {
-        string baseText = string.IsNullOrEmpty(displayPrefix) ? "치지직.. 교신 중" : displayPrefix.TrimEnd() + " ";
+        string baseText = string.IsNullOrEmpty(displayPrefix) ? UIText.Get(HintUITextId.Connecting) : displayPrefix.TrimEnd() + " ";
         int dotCount = 0;
 
         while (true)
@@ -901,6 +922,50 @@ public class HintManager : MonoBehaviour
             dotCount = (dotCount + 1) % 4;
             yield return new WaitForSecondsRealtime(loadingDotInterval);
         }
+    }
+
+    // =========================================================
+    // 언어 / 힌트 횟수 저장
+    // =========================================================
+
+    // 무전기 잡음 + 띄어쓰기 (예: "치지직... ") — 인사말·관찰 문장·폴백 문구 앞에 붙음
+    string Radio => UIText.Get(HintUITextId.RadioNoise) + " ";
+
+    // 횟수 저장 구분 — 씬 이름 기준 (같은 씬에 다시 들어오면 이어서 셈, 다른 씬이면 새로 시작)
+    string UsageScope => SceneManager.GetActiveScene().name;
+
+    void ApplyCurrentLanguage()
+    {
+        var profile = LanguageSource?.Current ?? HintLanguageProfile.Korean;
+        if (PromptBuilder.Config.languageProfile == profile) return;
+
+        PromptBuilder.Config.languageProfile = profile;
+        Debug.Log($"[HintManager] 힌트 AI 응답 언어: {profile.PromptLanguageName} ({profile.Code})");
+    }
+
+    void RestoreHintUsage()
+    {
+        if (!persistHintUsage || UsageStore == null) return;
+
+        int used = Mathf.Clamp(UsageStore.Restore(UsageScope), 0, maxHints);
+        currentPlayerState.hintCount = used;
+        UpdateUsageUI();
+        if (used > 0)
+            Debug.Log($"[HintManager] 저장된 힌트 사용 횟수 복원: {used}/{maxHints} (씬: {UsageScope})");
+    }
+
+    void SaveHintUsage()
+    {
+        if (!persistHintUsage || UsageStore == null) return;
+        UsageStore.Save(UsageScope, currentPlayerState.hintCount);
+    }
+
+    // 힌트 1회 사용 — 횟수 증가 + 저장 + UI 갱신을 한 곳에서 (LLM 경로 / 폴백 경로 공통)
+    void ConsumeHint()
+    {
+        currentPlayerState.hintCount++;
+        SaveHintUsage();
+        UpdateUsageUI();
     }
 
     void UpdateUsageUI()
@@ -915,6 +980,7 @@ public class HintManager : MonoBehaviour
         currentPuzzleId = newPuzzleId;
         currentPlayerState.hintCount = 0;
         stepMemory.Clear(); // 스텝 id는 씬마다 다시 1부터라 지난 씬 기록이 섞이지 않게
+        SaveHintUsage();
         UpdateUsageUI();
     }
 

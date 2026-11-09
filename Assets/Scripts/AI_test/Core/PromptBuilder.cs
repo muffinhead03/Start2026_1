@@ -72,17 +72,20 @@ public static class PromptBuilder
         $"Again, {Config.language} ONLY. No other language at all. No parenthetical translations.";
         // 해석: 방탈출 게임 힌트 안내 AI. 반드시 설정된 언어(Config.language)만, 다른 언어 단어/괄호 번역/다른 언어 설명 전부 금지.
         // 문장 끝나면 즉시 멈춤. 문장 중간 다른 언어 삽입 금지. 정확히 1~Config.maxSentences 문장. 정답 직접 언급 금지.
-        // 플레이어가 아직 발견 못한 정보 언급 금지. 지금 취할 수 있는 행동만 제안. 항상 설정된 톤(Config.tone) 유지. 한국어면 반말(SpeechLevelRule).
+        // 플레이어가 아직 발견 못한 정보 언급 금지. 지금 취할 수 있는 행동만 제안. 항상 설정된 톤(Config.tone) 유지. 언어별 친구 말투(SpeechLevelRule).
 
-    // 한국어 + casualKorean일 때만 붙는 말투 규칙 — 관찰 문장("~했지, 지금은 ~에 있구나...")과 고정 문구가 반말이라 맞춤.
-    // 소형 모델은 "casual"만 주면 존댓말로 돌아가는 경우가 있어서 어미 예시까지 박아둠.
+    // 친구 말투 규칙 — 언어별 문장은 HintLanguageProfile.CasualStyleRule에 있음 (한국어 반말 / 일본어 タメ口 / 영어 캐주얼).
+    // 관찰 문장("~했지, 지금은 ~에 있구나...")과 고정 문구가 친구 말투라 맞춤. casualSpeech를 끄거나 규칙이 비어 있으면 안 붙음.
     static string SpeechLevelRule =>
-        Config.casualKorean && Config.language != null && Config.language.StartsWith("Korean")
-            ? "Speak in casual Korean (반말), like a friend talking over a walkie-talkie. " +
-              "End sentences with casual endings such as -아, -어, -야, -지, -봐. " +
-              "NEVER use polite endings such as -요, -세요, -습니다, -니다. "
+        Config.casualSpeech && !string.IsNullOrEmpty(Config.Profile.CasualStyleRule)
+            ? Config.Profile.CasualStyleRule + " "
             : "";
-        // 해석: 무전기 너머 친구처럼 반말로. 어미는 -아/-어/-야/-지/-봐, -요/-세요/-습니다/-니다는 절대 금지.
+
+    // 답변 시작 신호 뒤에 붙는 말투 표시 (예: ", casual 반말 only")
+    static string SpeechLevelCue =>
+        SpeechLevelRule.Length > 0 && !string.IsNullOrEmpty(Config.Profile.CasualStyleLabel)
+            ? ", " + Config.Profile.CasualStyleLabel
+            : "";
 
     /// <summary>
     /// HintResult 하나를 받아 LLM에 보낼 유저 프롬프트 전체(씬 컨텍스트+플레이어 상태+힌트 방향)를 조립한다.
@@ -138,7 +141,7 @@ public static class PromptBuilder
             $"{orderNote}\n\n" +
             BuildRepeatNote(previousHint) +
             $"{Config.language} hint ({Config.language} language only, no other language" +
-            (SpeechLevelRule.Length > 0 ? ", casual 반말 only" : "") + "):";
+            SpeechLevelCue + "):";
     }
 
     // 같은 레벨 재요청일 때만 붙는 블록. 방향 문장은 그대로 하나만 두고(1·2차 실험에서 둘 이상 주면 퇴화),
@@ -189,8 +192,11 @@ public static class PromptBuilder
 
     /// <summary>
     /// LLM 응답을 앞에서부터 maxSentences 문장까지만 잘라낸다 (SystemPrompt로 문장 수를 지시해도 소형 모델이 자주 넘겨서 코드로 보장).
-    /// 문장 끝 판정: '.', '?', '!' 뒤에 공백이 오거나 텍스트가 끝날 때.
+    /// 문장 끝 판정:
+    ///  - '.', '?', '!' 뒤에 공백이 오거나 텍스트가 끝날 때 (한국어·영어)
+    ///  - '。', '？', '！' 는 뒤에 공백이 없어도 문장 끝 (일본어 — 문장 사이에 띄어쓰기를 안 함)
     /// 말줄임표("...", "…")는 문장 끝으로 안 셈 — LLM이 "한계인 것 같아요… 조금만 더"처럼 문장 중간에 자주 써서.
+    /// "！？"처럼 문장 끝 기호가 붙어 나오면 마지막 기호에서 한 번만 셈.
     /// 문장이 maxSentences개보다 적으면 그대로 반환 (스트리밍 중간 결과에도 매번 적용해도 안전).
     /// </summary>
     public static string LimitSentences(string text, int maxSentences)
@@ -202,6 +208,25 @@ public static class PromptBuilder
         for (int i = 0; i < text.Length; i++)
         {
             char c = text[i];
+
+            if (IsFullWidthEnd(c))
+            {
+                // "！？"처럼 기호가 이어지면 마지막 기호에서 셈
+                if (i + 1 < text.Length && IsFullWidthEnd(text[i + 1]))
+                    continue;
+
+                // "。」"처럼 닫는 괄호가 붙어 있으면 괄호까지 포함해서 자름
+                int end = i;
+                while (end + 1 < text.Length && (text[end + 1] == '」' || text[end + 1] == '』'))
+                    end++;
+
+                count++;
+                if (count >= maxSentences)
+                    return text.Substring(0, end + 1);
+                i = end;
+                continue;
+            }
+
             if (c != '.' && c != '?' && c != '!')
                 continue;
 
@@ -220,4 +245,6 @@ public static class PromptBuilder
 
         return text;
     }
+
+    static bool IsFullWidthEnd(char c) => c == '。' || c == '？' || c == '！';
 }

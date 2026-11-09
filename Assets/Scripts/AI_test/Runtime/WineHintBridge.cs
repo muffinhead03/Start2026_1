@@ -533,103 +533,82 @@ public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionP
         return null;
     }
 
-    // [레벨 단계][후보] — 레벨 1~2(모호) / 3(분명) / 4~5(거의 정답).
+    // [레벨 단계] 키 — 레벨 1~2(모호) / 3(분명) / 4~5(거의 정답).
     // 이 문장이 hintByLevel 문구를 대신하므로 "할 행동"까지 들어간 완결 문장이어야 함. 정답 글자·숫자·개수는 넣지 않음.
+    // 문장(한·영·일, 단계마다 후보 여러 개)은 HintLanguageData.WineScene.cs의 HintWine_Note{구간}_T0~T2.
+    // 1단계(StainViewed / MemoGuide / MemoPartial) 문장은 전부 "알파벳"을 꼭 넣음 (피드백 반영).
 
     // step 1 — 벽 그림은 봤는데 메모는 아직 하나도 안 맞음
-    // (1단계 문장은 전부 "알파벳"을 꼭 넣음 — 피드백 반영)
-    static readonly string[][] StainViewedNotes =
+    static readonly string[] StainViewedNotes =
     {
-        new[] { "그림을 봤으면 이제 바닥 알파벳을 볼 차례야.",
-                "그림 속 색깔을 기억해두고 바닥 알파벳을 다시 둘러봐." },
-        new[] { "그림 속 얼룩이랑 같은 색의 얼룩이 바닥에 있어. 얼룩이 있는 자리의 알파벳을 하나씩 가까이서 봐.",
-                "바닥 얼룩을 그림 속 색깔이랑 하나씩 맞춰봐. 얼룩마다 알파벳이 하나씩 숨어 있어." },
-        new[] { "그림이랑 같은 색의 바닥 얼룩을 찾아서, 얼룩이 있는 자리의 바닥 알파벳을 확인해.",
-                "바닥 얼룩마다 알파벳이 숨어 있어. 그림 속 색깔이랑 같은 얼룩을 하나씩 찾아서 그 자리 알파벳을 확인해봐." },
+        HintLanguageDataKey.HintWine_NoteStainViewed_T0,
+        HintLanguageDataKey.HintWine_NoteStainViewed_T1,
+        HintLanguageDataKey.HintWine_NoteStainViewed_T2,
     };
 
-    // step 1 — 종이 수수께끼 힌트를 한 번 받은 뒤 (메모는 아직 하나도 안 맞음): 액자 아래 메모 종이에 적게 안내
-    static readonly string[][] MemoGuideNotes =
+    // step 1 — 종이 수수께끼 힌트를 한 번 받은 뒤: 액자 아래 메모 종이에 적게 안내
+    static readonly string[] MemoGuideNotes =
     {
-        new[] { "바닥에서 찾은 알파벳을 어딘가에 적어둘 수 있을 거야.",
-                "알아낸 알파벳을 기록해둘 곳을 찾아봐." },
-        new[] { "액자 아래 종이에 바닥에서 찾은 알파벳을 적어봐.",
-                "찾은 알파벳은 액자 아래 붙은 종이에 적을 수 있어." },
-        new[] { "액자 아래 종이를 가까이서 보고, 칸 색깔이랑 같은 색 얼룩 자리의 바닥 알파벳을 하나씩 적어.",
-                "액자 아래 종이의 색깔 칸마다, 같은 색 바닥 얼룩 자리에서 찾은 알파벳을 적어 넣어." },
+        HintLanguageDataKey.HintWine_NoteMemoGuide_T0,
+        HintLanguageDataKey.HintWine_NoteMemoGuide_T1,
+        HintLanguageDataKey.HintWine_NoteMemoGuide_T2,
     };
 
     // step 1 — 메모에 일부만 맞게 적음
-    static readonly string[][] MemoPartialNotes =
+    static readonly string[] MemoPartialNotes =
     {
-        new[] { "잘하고 있어. 메모에 적은 알파벳 중에 아직 안 맞는 게 있어.",
-                "거의 다 왔어. 메모에 적은 알파벳을 다시 한번 확인해봐." },
-        new[] { "메모 일부는 맞았어. 나머지 색깔의 얼룩을 다시 찾아가서 그 자리 알파벳을 확인해봐.",
-                "아직 틀린 칸이 남아 있어. 그 칸 색깔이랑 같은 바닥 얼룩 자리의 알파벳을 다시 봐." },
-        new[] { "메모 칸 색깔이랑 바닥 얼룩 색깔이 정확히 같은지 확인하고, 그 얼룩 자리의 알파벳으로 틀린 칸을 고쳐 적어.",
-                "틀린 칸은 색깔을 헷갈렸을 가능성이 커. 벽 종이 그림이랑 바닥 얼룩 색을 다시 비교해서 그 칸 알파벳을 고쳐." },
+        HintLanguageDataKey.HintWine_NoteMemoPartial_T0,
+        HintLanguageDataKey.HintWine_NoteMemoPartial_T1,
+        HintLanguageDataKey.HintWine_NoteMemoPartial_T2,
     };
 
-    // step 2 — 글자를 안 뒤 책장을 봤음 (보통 바로 완료되지만, 완료 조건이 바뀌었을 때 대비)
-    static readonly string[][] ShelfViewedNotes =
+    // step 2 — 글자를 안 뒤 책장을 봤음
+    static readonly string[] ShelfViewedNotes =
     {
-        new[] { "책장에서 메모 글자랑 관련된 걸 찾아봐.",
-                "책 제목들을 메모랑 비교해봐." },
-        new[] { "메모 글자로 시작하는 책에 숫자가 적혀 있어.",
-                "메모의 각 글자로 시작하는 책을 찾고 그 숫자를 확인해봐." },
-        new[] { "메모의 색깔별 글자로 시작하는 책을 하나씩 찾아서, 그 책의 숫자를 색깔별로 기억해둬.",
-                "책 네 권의 숫자를 색깔이랑 같이 기억한 다음 와인렉으로 가봐." },
+        HintLanguageDataKey.HintWine_NoteShelfViewed_T0,
+        HintLanguageDataKey.HintWine_NoteShelfViewed_T1,
+        HintLanguageDataKey.HintWine_NoteShelfViewed_T2,
     };
 
     // step 3 — 다른 병의 정답 칸에 꽂음 (숫자는 찾았는데 병 색 연결이 틀림)
-    static readonly string[][] WrongColorNotes =
+    static readonly string[] WrongColorNotes =
     {
-        new[] { "칸은 잘 찾았는데 병이 바뀐 것 같아.",
-                "그 칸에 들어갈 병은 따로 있어." },
-        new[] { "병마다 해당하는 색이 있어. 그 색 글자의 숫자 칸에 꽂아야 해.",
-                "숫자 칸은 맞게 찾았어. 그 칸에 맞는 색의 병으로 바꿔 꽂아봐." },
-        new[] { "꽂은 병의 색을 메모 칸 색이랑 맞춰봐. 그 색 글자로 찾은 책의 숫자 칸이 그 병 자리야.",
-                "병을 빼서, 병 색이랑 같은 메모 칸의 글자를 확인하고 그 글자 책의 숫자 칸에 다시 꽂아." },
+        HintLanguageDataKey.HintWine_NoteWrongColor_T0,
+        HintLanguageDataKey.HintWine_NoteWrongColor_T1,
+        HintLanguageDataKey.HintWine_NoteWrongColor_T2,
     };
 
-    // step 3 — 어떤 병의 정답도 아닌 칸에 꽂음 (숫자를 모르거나 아무 데나 꽂음)
-    static readonly string[][] WrongNumberNotes =
+    // step 3 — 어떤 병의 정답도 아닌 칸에 꽂음
+    static readonly string[] WrongNumberNotes =
     {
-        new[] { "그 칸은 아닌 것 같아. 칸을 고르는 기준이 있어.",
-                "아무 칸에나 꽂으면 안 돼. 어디서 숫자를 봤는지 떠올려봐." },
-        new[] { "와인렉 칸 번호는 책에서 본 숫자랑 맞춰야 해.",
-                "책장에서 메모 글자로 시작하는 책을 다시 보고 그 숫자를 확인해." },
-        new[] { "병 색에 맞는 메모 글자로 시작하는 책을 찾고, 그 책 숫자랑 같은 번호 칸에 꽂아.",
-                "꽂은 병을 빼고, 책장에서 그 병 색 글자의 책 숫자를 확인한 다음 같은 번호 칸에 꽂아." },
+        HintLanguageDataKey.HintWine_NoteWrongNumber_T0,
+        HintLanguageDataKey.HintWine_NoteWrongNumber_T1,
+        HintLanguageDataKey.HintWine_NoteWrongNumber_T2,
     };
 
     // step 3 — 일부 맞게 꽂음 (틀린 꽂기 없음)
-    static readonly string[][] RackPartialNotes =
+    static readonly string[] RackPartialNotes =
     {
-        new[] { "좋아, 제대로 꽂고 있어. 남은 병도 같은 방법으로 해봐.",
-                "잘 가고 있어. 나머지 병 자리도 찾아봐." },
-        new[] { "맞게 꽂은 병이 있어. 남은 병도 색깔 → 글자 → 책 숫자 순서로 자리를 찾아봐.",
-                "같은 방법으로 남은 병의 칸을 찾으면 돼." },
-        new[] { "남은 병마다 색에 맞는 메모 글자를 확인하고, 그 글자 책의 숫자 칸에 꽂아.",
-                "아직 자리를 못 찾은 병을 들고, 그 색 글자의 책 숫자랑 같은 번호 칸에 꽂아봐." },
+        HintLanguageDataKey.HintWine_NoteRackPartial_T0,
+        HintLanguageDataKey.HintWine_NoteRackPartial_T1,
+        HintLanguageDataKey.HintWine_NoteRackPartial_T2,
     };
 
     // step 4 — 열쇠를 가지고 있음
-    static readonly string[][] HasKeyNotes =
+    static readonly string[] HasKeyNotes =
     {
-        new[] { "손에 넣은 걸 쓸 곳이 있을 거야.",
-                "그 열쇠가 맞는 곳을 찾아봐." },
-        new[] { "열쇠 구멍이 있는 걸 찾아봐.",
-                "방 안의 상자를 살펴봐." },
-        new[] { "열쇠를 들고 상자로 가서 넣어봐.",
-                "상자에 열쇠를 넣으면 나갈 수 있을 거야." },
+        HintLanguageDataKey.HintWine_NoteHasKey_T0,
+        HintLanguageDataKey.HintWine_NoteHasKey_T1,
+        HintLanguageDataKey.HintWine_NoteHasKey_T2,
     };
 
-    static string PickByLevel(string[][] table, int hintLevel)
+    // 레벨에 맞는 단계 키 → 현재 언어 후보 중 하나를 랜덤으로
+    static string PickByLevel(string[] tierKeys, int hintLevel)
     {
         int tier = hintLevel <= 2 ? 0 : (hintLevel == 3 ? 1 : 2);
-        tier = Mathf.Clamp(tier, 0, table.Length - 1);
-        var pool = table[tier];
+        tier = Mathf.Clamp(tier, 0, tierKeys.Length - 1);
+        var pool = HintLanguageData.GetCandidates(tierKeys[tier]);
+        if (pool == null || pool.Length == 0) return null; // 번역 키가 빠졌으면 hintByLevel 문구로 대체됨
         return pool[Random.Range(0, pool.Length)];
     }
 

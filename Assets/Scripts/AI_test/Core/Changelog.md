@@ -4,6 +4,21 @@
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르고,
 버전은 [Semantic Versioning](https://semver.org/lang/ko/)을 따른다.
 
+## [Unreleased]
+
+### Added
+- `HintLanguageProfile` — 언어별 프롬프트 언어 이름 + 친구 말투 규칙(한국어 반말 / 영어 캐주얼 / 일본어 タメ口) 묶음. 새 언어는 프로필 추가만으로 대응
+- `IHintLanguageSource` 인터페이스 — 현재 힌트 언어를 알려주는 대상 추상화 (게임 언어 설정과의 결합은 구현체가 담당)
+- `IHintUITextProvider` 인터페이스 + `HintUITextId` — 힌트 패널 고정 문구(잡음, 인사말, 횟수 소진 등)를 언어별로 받는 추상화
+- `IHintUsageStore` 인터페이스 — 힌트 사용 횟수 저장 추상화 (게임을 껐다 켜도 같은 구간이면 횟수 유지)
+- `IHintPhraseTable` 인터페이스 + `ObservationPhraseKeys` — 관찰 문장 틀(위치·거리·이어붙이기)을 언어별 번역 테이블에서 받는 추상화. 테이블이 없으면 한국어 기본값으로 동작
+
+### Changed
+- `HintSystemConfig.language`를 `languageProfile`로 교체 (`language`는 읽기 전용 속성으로 유지), `casualKorean` → `casualSpeech`로 일반화
+- `PromptBuilder`의 말투 규칙을 한국어 하드코딩에서 `HintLanguageProfile` 기반으로 변경
+- `PromptBuilder.LimitSentences`가 일본어 문장 끝(`。！？`, 닫는 괄호 포함)도 문장으로 셈
+- `HintEngine` 관찰 문장의 한국어 하드코딩을 `HintEngine.Phrases`(IHintPhraseTable) 기반으로 변경 — 구역·랜드마크 이름도 테이블에 키가 있으면 번역해서 표시, 영어처럼 대소문자가 있는 언어는 문장 첫 글자를 대문자로
+
 ## [0.1.0] - 2026-08-24
 
 ### Added

@@ -3,6 +3,7 @@
 /// Core 밖으로 옮긴 것 — DefaultSceneContextProvider와 같은 위치/역할.
 ///
 /// action id는 접두사로 매칭한다. 새 씬 추가 시 Patterns에 줄만 추가하면 됨.
+/// 문장 자체(한·영·일)는 HintLanguageData.Actions.cs에 있음 — 여기는 "어떤 행동 → 어떤 번역 키"만 연결 (문장을 고칠 땐 이 파일 안 건드림).
 /// (와인씬: WineHintBridge가 "wine_..." 행동 키로 AddLastAction — 10월 리디자인 기준.
 ///  관찰 문장은 모든 레벨에 붙으므로 "글자/알파벳/숫자"처럼 풀이 방법을 알려주는 단어는 넣지 않음)
 /// (인형씬: DollHintBridge가 스텝 완료 시 "doll_step_NN", 곰 인형 던질 때 "doll_bear_throw_{던진 횟수}")
@@ -13,58 +14,58 @@
 /// </summary>
 public class DefaultActionLabelProvider : IActionLabelProvider
 {
-    static readonly (string prefix, string[] labels)[] Patterns =
+    static readonly (string prefix, string key)[] Patterns =
     {
         // ── 와인씬 (WineHintBridge) ─────────────────────
-        ("wine_view_hint_stain", new[] { "통로 벽의 종이를 자세히 봤지", "벽에 붙은 종이를 한참 들여다보고 있었네" }),
-        ("wine_view_floor_stain", new[] { "바닥 얼룩을 들여다보고 있었지", "바닥에 쭈그려 앉아 얼룩을 보고 있었네" }),
-        ("wine_memo_solved",     new[] { "종이에 글자를 전부 맞게 적었네", "메모를 제대로 다 채웠구나" }),
-        ("wine_memo_partial",    new[] { "종이에 몇 칸은 맞게 적었네", "메모를 조금씩 맞춰 가고 있었지" }),
-        ("wine_memo_written",    new[] { "종이에 뭔가 적고 있었지", "메모 종이를 고쳐 쓰고 있었네" }),
-        ("wine_memo_opened",     new[] { "메모 종이를 들여다보기만 했지", "종이를 펼쳐보고 그냥 내려놨네" }),
-        ("wine_view_bookshelf",  new[] { "책장을 한참 들여다보고 있었네", "책등을 쭉 훑어보고 있었지" }),
-        ("wine_bottle_grabbed",  new[] { "병을 집어 들었네", "와인병 하나를 손에 쥐고 있었지" }),
-        ("wine_bottle_placed",   new[] { "병을 렉에 꽂아보고 있었지", "와인렉 칸에 병을 넣어봤네" }),
-        ("wine_bottle_removed",  new[] { "꽂았던 병을 다시 빼고 있었네", "렉에서 병을 도로 꺼냈지" }),
-        ("wine_cabinet_locked",  new[] { "장식장 문을 열어보려고 했지", "잠긴 장식장 문을 덜컹거려 봤네" }),
-        ("wine_rack_solved",     new[] { "와인렉을 다 채웠지", "장식장 문이 열리는 소리가 났네" }),
-        ("wine_key_grabbed",     new[] { "장식장에서 뭔가 꺼냈지", "작은 열쇠를 손에 넣었네" }),
+        ("wine_view_hint_stain", HintLanguageDataKey.HintAction_WineViewHintStain),
+        ("wine_view_floor_stain", HintLanguageDataKey.HintAction_WineViewFloorStain),
+        ("wine_memo_solved",     HintLanguageDataKey.HintAction_WineMemoSolved),
+        ("wine_memo_partial",    HintLanguageDataKey.HintAction_WineMemoPartial),
+        ("wine_memo_written",    HintLanguageDataKey.HintAction_WineMemoWritten),
+        ("wine_memo_opened",     HintLanguageDataKey.HintAction_WineMemoOpened),
+        ("wine_view_bookshelf",  HintLanguageDataKey.HintAction_WineViewBookshelf),
+        ("wine_bottle_grabbed",  HintLanguageDataKey.HintAction_WineBottleGrabbed),
+        ("wine_bottle_placed",   HintLanguageDataKey.HintAction_WineBottlePlaced),
+        ("wine_bottle_removed",  HintLanguageDataKey.HintAction_WineBottleRemoved),
+        ("wine_cabinet_locked",  HintLanguageDataKey.HintAction_WineCabinetLocked),
+        ("wine_rack_solved",     HintLanguageDataKey.HintAction_WineRackSolved),
+        ("wine_key_grabbed",     HintLanguageDataKey.HintAction_WineKeyGrabbed),
 
         // ── 오르간씬 ───────────────────────────────────────
-        ("organ_step_02", new[] { "거실에서 파이프를 하나 찾아냈지", "파이프 하나를 손에 넣었네" }),
-        ("organ_step_03", new[] { "옆방에서 파이프를 또 찾아냈지", "파이프를 하나 더 챙겼네" }),
-        ("organ_step_04", new[] { "오르골 소리를 듣고 있었지", "오르골 멜로디에 귀 기울이고 있었네" }),
-        ("organ_step_05", new[] { "잠긴 방에서 파이프를 꺼내왔지", "비밀번호 방을 열어냈네" }),
-        ("organ_step_06", new[] { "LP를 틀어서 파이프를 찾아냈지", "턴테이블을 돌려보고 있었네" }),
-        ("organ_step_08", new[] { "오르간에 파이프를 끼워 넣었지", "오르간을 고치고 있었네" }),
-        ("organ_step_09", new[] { "거실 바닥에서 종이 조각을 주웠지", "바닥에 떨어진 악보 조각을 챙겼네" }),
-        ("organ_step_10", new[] { "좁은 통로로 기어 들어갔지", "숨겨진 길을 찾아냈네" }),
-        ("organ_step_11", new[] { "메트로놈 박자를 맞추고 있었지", "캐비닛 안의 악보 조각을 꺼냈네" }),
-        ("organ_step_12", new[] { "책장을 만지작거리고 있었지", "책장 속 책들을 움직이고 있었네" }),
-        ("organ_step_13", new[] { "액자 뒤를 뒤져보고 있었지", "가족사진 액자를 살펴보고 있었네" }),
-        ("organ_step_14", new[] { "책상 위를 뒤지고 있었지", "촛불 켜진 책상 위를 살펴보고 있었네" }),
-        ("organ_step_15", new[] { "악보 조각을 맞추고 있었지", "찢어진 악보를 이어 붙이고 있었네" }),
-        ("organ_step_16", new[] { "오르간 건반을 누르고 있었지", "오르간을 연주하고 있었네" }),
+        ("organ_step_02", HintLanguageDataKey.HintAction_OrganStep02),
+        ("organ_step_03", HintLanguageDataKey.HintAction_OrganStep03),
+        ("organ_step_04", HintLanguageDataKey.HintAction_OrganStep04),
+        ("organ_step_05", HintLanguageDataKey.HintAction_OrganStep05),
+        ("organ_step_06", HintLanguageDataKey.HintAction_OrganStep06),
+        ("organ_step_08", HintLanguageDataKey.HintAction_OrganStep08),
+        ("organ_step_09", HintLanguageDataKey.HintAction_OrganStep09),
+        ("organ_step_10", HintLanguageDataKey.HintAction_OrganStep10),
+        ("organ_step_11", HintLanguageDataKey.HintAction_OrganStep11),
+        ("organ_step_12", HintLanguageDataKey.HintAction_OrganStep12),
+        ("organ_step_13", HintLanguageDataKey.HintAction_OrganStep13),
+        ("organ_step_14", HintLanguageDataKey.HintAction_OrganStep14),
+        ("organ_step_15", HintLanguageDataKey.HintAction_OrganStep15),
+        ("organ_step_16", HintLanguageDataKey.HintAction_OrganStep16),
 
         // 오르간씬 — 손에 새 물건을 들었을 때 "organ_hold_{종류}" (OrganHintBridge가 LP_0 → "LP"처럼 번호를 떼서 넘김).
         // 구체적인 것부터 매칭하고, 목록에 없는 물건은 맨 아래 "organ_hold_" 공통 문구로.
-        ("organ_hold_LP",      new[] { "LP판을 집어 들었지", "LP 한 장을 손에 들고 있었네" }),
-        ("organ_hold_pipe",    new[] { "파이프를 손에 들고 있었지", "파이프를 챙겨 들고 있었네" }),
-        ("organ_hold_paper",   new[] { "악보 조각을 들여다보고 있었지", "찢어진 악보를 손에 들고 있었네" }),
-        ("organ_hold_picture", new[] { "그림을 들고 살펴보고 있었지", "그림을 손에 들고 있었네" }),
-        ("organ_hold_",        new[] { "뭔가를 집어 들었지", "손에 뭔가를 들고 있었네" }),
+        ("organ_hold_LP",      HintLanguageDataKey.HintAction_OrganHoldLP),
+        ("organ_hold_pipe",    HintLanguageDataKey.HintAction_OrganHoldPipe),
+        ("organ_hold_paper",   HintLanguageDataKey.HintAction_OrganHoldPaper),
+        ("organ_hold_picture", HintLanguageDataKey.HintAction_OrganHoldPicture),
+        ("organ_hold_",        HintLanguageDataKey.HintAction_OrganHoldAny),
 
         // ── 인형씬 ─────────────────────────────────────────
         // DollHintBridge가 스텝 완료 시 "doll_step_NN"으로 AddLastAction 호출.
         // (곰 인형 던지기는 횟수가 들어가는 동적 문구라 아래 GetLabels()에서 따로 처리)
         // (08은 탈출 직전이라 이후 힌트 요청이 없어서 제외)
-        ("doll_step_01",    new[] { "자물쇠 번호를 맞춰 열었지", "마트료시카 순서를 알아냈네" }),
-        ("doll_step_02",    new[] { "인형에 다리를 붙여줬지", "부러진 다리를 갈아 끼웠네" }),
-        ("doll_step_03",    new[] { "곰 인형한테서 동전을 얻어냈지", "곰 인형이 동전을 떨어뜨렸네" }),
-        ("doll_step_04",    new[] { "오락기 게임에서 이겼지", "오락기에서 팔을 얻어냈네" }),
-        ("doll_step_05",    new[] { "인형에 팔을 붙여줬지", "인형 팔을 갈아 끼웠네" }),
-        ("doll_step_06",    new[] { "기차 선로를 맞춰서 태엽을 얻었지", "태엽을 손에 넣었네" }),
-        ("doll_step_07",    new[] { "인형에 태엽을 끼워 넣었지", "인형 등에 태엽을 달아줬네" }),
+        ("doll_step_01",    HintLanguageDataKey.HintAction_DollStep01),
+        ("doll_step_02",    HintLanguageDataKey.HintAction_DollStep02),
+        ("doll_step_03",    HintLanguageDataKey.HintAction_DollStep03),
+        ("doll_step_04",    HintLanguageDataKey.HintAction_DollStep04),
+        ("doll_step_05",    HintLanguageDataKey.HintAction_DollStep05),
+        ("doll_step_06",    HintLanguageDataKey.HintAction_DollStep06),
+        ("doll_step_07",    HintLanguageDataKey.HintAction_DollStep07),
     };
 
     // 곰 인형 던지기 — "doll_bear_throw_3"처럼 횟수가 붙어서 들어옴
@@ -78,9 +79,9 @@ public class DefaultActionLabelProvider : IActionLabelProvider
             int.TryParse(actionId.Substring(BearThrowPrefix.Length), out int throwCount))
             return BearThrowLabels(throwCount);
 
-        foreach (var (prefix, labels) in Patterns)
+        foreach (var (prefix, key) in Patterns)
             if (actionId.StartsWith(prefix))
-                return labels;
+                return HintLanguageData.GetCandidates(key); // 현재 언어 문장 후보 (없으면 한국어)
 
         return null;
     }
@@ -88,16 +89,20 @@ public class DefaultActionLabelProvider : IActionLabelProvider
     /// <summary>
     /// 곰 인형을 던진 횟수를 그대로 문장에 반영. 정답 횟수(5번)는 스포일러라 직접 말하지 않음
     /// (남은 횟수까지 알려주고 싶으면 여기서 5 - count를 문장에 넣으면 됨).
+    /// 문장 틀은 HintLanguageData.Actions.cs — {0}에 던진 횟수.
     /// </summary>
     static string[] BearThrowLabels(int count)
     {
-        if (count <= 1)
-            return new[] { "곰 인형을 한 번 던져봤지", "곰 인형을 한 번 집어던졌네" };
+        string key = count <= 1 ? HintLanguageDataKey.HintAction_DollBearThrowOnce
+                   : count < 3  ? HintLanguageDataKey.HintAction_DollBearThrowFew
+                   :              HintLanguageDataKey.HintAction_DollBearThrowMany;
 
-        if (count < 3)
-            return new[] { $"곰 인형을 벌써 {count}번 던졌지", $"곰 인형을 {count}번째 던지고 있었네" };
+        string[] templates = HintLanguageData.GetCandidates(key);
+        if (templates == null) return null;
 
-        // 관찰 문장은 HintEngine에서 "{행동}, 지금은 {거리}." 형태로 이어붙여지므로 라벨 안에는 쉼표를 넣지 않음
-        return new[] { $"곰 인형을 벌써 {count}번이나 던졌지", $"곰 인형을 {count}번이나 집어던졌네" };
+        var labels = new string[templates.Length];
+        for (int i = 0; i < templates.Length; i++)
+            labels[i] = string.Format(templates[i], count);
+        return labels;
     }
 }
