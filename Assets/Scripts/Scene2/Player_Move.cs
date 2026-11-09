@@ -88,10 +88,11 @@ public class Player_Move : MonoBehaviour
 
         Look();
 
+        if (lookAction != null) LookInput = lookAction.ReadValue<Vector2>();
+
         Move();
         Character.Move(Velocity * Time.deltaTime);
 
-        if (lookAction != null) LookInput = lookAction.ReadValue<Vector2>();
         if (moveAction != null) MoveInput = moveAction.ReadValue<Vector2>();
         
         
@@ -222,12 +223,4 @@ public class Player_Move : MonoBehaviour
         }
     }
 
-    //void OpenCloseSettings(InputAction.CallbackContext context)
-    //{
-    //    moveLocked = !moveLocked;
-    //    SceneUI.SetActivePanel(0, moveLocked);
-
-    //    if (moveLocked) SceneUI.UnlockPointer();
-    //    else SceneUI.LockPointer();
-    //}
 }
