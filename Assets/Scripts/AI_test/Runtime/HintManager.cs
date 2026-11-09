@@ -941,6 +941,12 @@ public class HintManager : MonoBehaviour
 
         PromptBuilder.Config.languageProfile = profile;
         Debug.Log($"[HintManager] 힌트 AI 응답 언어: {profile.PromptLanguageName} ({profile.Code})");
+
+        // 언어가 바뀌면 이전 언어로 받은 답변은 "다르게 말해" 기준에서 뺌 —
+        // 한국어 답변을 [Previous hints]로 넘긴 채 영어/일본어로 요청하면 소형 모델이 이전 언어로 끌려갈 수 있어서.
+        // (레벨·진행 구간 기록은 언어와 무관하므로 그대로 둠)
+        foreach (var memory in stepMemory.Values)
+            memory.recentReplies.Clear();
     }
 
     void RestoreHintUsage()
