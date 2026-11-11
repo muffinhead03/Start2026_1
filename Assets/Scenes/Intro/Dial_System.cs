@@ -15,17 +15,16 @@ public class Dial_System : MonoBehaviour
     [SerializeField] UnityEvent OnDialEnd;
 
     private InputAction next;
-    private int current_dial;
-    private int current_script;
+    protected int current_dial;
+    protected int current_script;
 
     private void Start()
     {
-        StartDial(0);
+        current_dial = 0;
     }
 
-    public void StartDial(int id)
+    public void StartDial()
     {
-        current_dial = id;
         current_script = 0;
 
         SceneUI.SetActivePanel(3, true);
@@ -42,6 +41,8 @@ public class Dial_System : MonoBehaviour
         UnregisterInputAction();
 
         OnDialEnd?.Invoke();
+
+        current_dial++;
     }
 
     private void RegisterInputAction()
@@ -68,7 +69,7 @@ public class Dial_System : MonoBehaviour
         else ShowCurrentScript();
     }
 
-    private void ShowCurrentScript()
+    protected virtual void ShowCurrentScript()
     {
         string talker = dials[current_dial].scripts[current_script].talker;
         SceneUI.ChangeText(3, talker);
@@ -77,7 +78,7 @@ public class Dial_System : MonoBehaviour
         StartCoroutine(TypeText(script));
     }
 
-    IEnumerator TypeText(string full_script)
+    protected IEnumerator TypeText(string full_script)
     {
         string temp = "";
 

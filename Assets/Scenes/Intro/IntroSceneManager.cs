@@ -17,20 +17,33 @@ public class IntroSceneManager : MonoBehaviour
 
     [SerializeField] Scene_UI_Manager SceneUI;
 
+    [SerializeField] Intro_StepForCustomer customer;
+
     private enum player_mode { dial, play}
 
-    private player_mode[] step = {player_mode.dial, player_mode.play, player_mode.dial, player_mode.play};
+    private player_mode[] step = {player_mode.dial, player_mode.play, player_mode.dial, player_mode.dial, player_mode.play};
     private int step_id;
+    private int step_customer = 3;
+
+    private bool isCustomerCalled;
 
     private void Start()
     {
         step_id = 0;
 
         ChangeMode(step[step_id]);
+
+        isCustomerCalled = false;
     }
 
     public void NextStep()
     {
+        if(step_id+1 == step_customer && !isCustomerCalled)
+        {
+            CallCustomer();
+            return;
+        }
+
         step_id++;
 
         if(step_id >= step.Length)
@@ -43,6 +56,13 @@ public class IntroSceneManager : MonoBehaviour
         }
     }
 
+    private void CallCustomer()
+    {
+        isCustomerCalled = true;
+
+        customer.SetActive();
+    }
+
     private void ChangeMode(player_mode mode)
     {
         switch (mode)
@@ -52,14 +72,7 @@ public class IntroSceneManager : MonoBehaviour
                 SceneUI.SetActiveCursor(false);
                 player.SetMoveLock(true);
 
-                if (step_id == 0)
-                {
-                    dial.StartDial(0);
-                }
-                else
-                {
-                    dial.StartDial(1);
-                }
+                dial.StartDial();
                 break;
 
             case player_mode.play:
