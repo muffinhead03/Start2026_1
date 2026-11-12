@@ -43,7 +43,8 @@ public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider, IZone
         public string zoneOverride;
 
         [Tooltip("(선택) 랜드마크 표시 이름 — 플레이어가 이 물건 바로 앞에 서 있으면 관찰 문장이 \"{이름} 앞에 있네\"로 나옴. " +
-                 "예: 책장 / 와인렉 / 장식장 / 상자 / 액자 아래 종이 / 벽 종이. 비우면 랜드마크로 안 씀")]
+                 "번역 키(예: HintWine_LandmarkBookshelf)를 적으면 언어별 이름으로 바뀜 (HintLanguageData.WineScene.cs). " +
+                 "그냥 문자열을 적으면 그대로 표시. 비우면 랜드마크로 안 씀")]
         public string landmarkName;
     }
 
@@ -56,7 +57,9 @@ public class WineLocationProvider : MonoBehaviour, ILocationAwareProvider, IZone
     [System.Serializable]
     public class FloorZone
     {
-        [Tooltip("힌트 문장에 그대로 나오는 이름. 예: \"첫 번째 방\", \"통로\" — \"{이름}에 있구나\"로 만들어짐")]
+        [Tooltip("힌트 문장에 나오는 구역 이름 — \"{이름}에 있구나\"로 만들어짐. " +
+                 "번역 키(예: HintWine_ZoneRoom1, HintWine_ZoneCorridor)를 적으면 언어별 이름으로 바뀜 (HintLanguageData.WineScene.cs). " +
+                 "그냥 문자열을 적으면 그대로 표시. Tracked Objects의 Zone Override도 이 값과 똑같이 적기")]
         public string displayName;
 
         [Tooltip("이 구역 바닥 타일들의 부모 (Floor_Room1 / Floor_Room2 / Floor_Room3 / Floor_Corridor). " +

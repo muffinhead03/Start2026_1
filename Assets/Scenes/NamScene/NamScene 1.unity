@@ -41861,35 +41861,35 @@ MonoBehaviour:
   - objectName: HintStain
     transform: {fileID: 1668412323}
     zoneOverride: 
-    landmarkName: "\uBCBD \uC885\uC774"
+    landmarkName: HintWine_LandmarkWallPaper
   - objectName: BookShelf
     transform: {fileID: 2024373794}
     zoneOverride: 
-    landmarkName: "\uCC45\uC7A5"
+    landmarkName: HintWine_LandmarkBookshelf
   - objectName: wine
     transform: {fileID: 1627204547}
     zoneOverride: 
-    landmarkName: "\uC640\uC778\uB809"
+    landmarkName: HintWine_LandmarkWineRack
   - objectName: key1
     transform: {fileID: 968718896}
     zoneOverride: 
-    landmarkName: "\uC0C1\uC790"
+    landmarkName: HintWine_LandmarkBox
   - objectName: Memo
     transform: {fileID: 1814638191}
     zoneOverride: 
-    landmarkName: "\uBA54\uBAA8"
+    landmarkName: HintWine_LandmarkMemo
   - objectName: Cabinet
     transform: {fileID: 174073896}
     zoneOverride: 
-    landmarkName: "\uC7A5\uC2DD\uC7A5"
+    landmarkName: HintWine_LandmarkCabinet
   zones:
-  - displayName: "\uCCAB\uBC88\uC9F8 \uBC29"
+  - displayName: HintWine_ZoneRoom1
     floorRoot: {fileID: 1908549035}
-  - displayName: "\uB450\uBC88\uC9F8 \uBC29"
+  - displayName: HintWine_ZoneRoom2
     floorRoot: {fileID: 1683708775}
-  - displayName: "\uC138\uBC88\uC9F8 \uBC29"
+  - displayName: HintWine_ZoneRoom3
     floorRoot: {fileID: 1692942791}
-  - displayName: "\uD1B5\uB85C\uBC29"
+  - displayName: HintWine_ZoneCorridor
     floorRoot: {fileID: 951617954}
   tileEdgeTolerance: 0.05
   zoneCheckInterval: 0.25
@@ -55357,8 +55357,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6729653282953345471, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2614731262131411429}
   m_SourcePrefab: {fileID: 100100000, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+--- !u!1 &2614731262131411428 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6729653282953345471, guid: 526a940d1a22940d99731f8a511201de, type: 3}
+  m_PrefabInstance: {fileID: 2614731262131411427}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2614731262131411429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2614731262131411428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2ac1d74e42cb48c28bc601f2809e097, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LanguageFontSwitcher
+  japaneseFont: {fileID: 11400000, guid: 1135420749fc4384588fd0c1302c58be, type: 2}
+  targets: []
 --- !u!4 &2867252668658735407
 Transform:
   m_ObjectHideFlags: 0

@@ -72,21 +72,24 @@ public static class PromptBuilder
         $"Again, {Config.language} ONLY. No other language at all. No parenthetical translations.";
         // 해석: 방탈출 게임 힌트 안내 AI. 반드시 설정된 언어(Config.language)만, 다른 언어 단어/괄호 번역/다른 언어 설명 전부 금지.
         // 문장 끝나면 즉시 멈춤. 문장 중간 다른 언어 삽입 금지. 정확히 1~Config.maxSentences 문장. 정답 직접 언급 금지.
-        // 플레이어가 아직 발견 못한 정보 언급 금지. 지금 취할 수 있는 행동만 제안. 항상 설정된 톤(Config.tone) 유지. 한국어면 반말(SpeechLevelRule).
+        // 플레이어가 아직 발견 못한 정보 언급 금지. 지금 취할 수 있는 행동만 제안. 항상 설정된 톤(Config.tone) 유지. 언어별 친구 말투(SpeechLevelRule).
 
-    // 한국어 + casualKorean일 때만 붙는 말투 규칙 — 관찰 문장("~했지, 지금은 ~에 있구나...")과 고정 문구가 반말이라 맞춤.
-    // 소형 모델은 "casual"만 주면 존댓말로 돌아가는 경우가 있어서 어미 예시까지 박아둠.
+    // 친구 말투 규칙 — 언어별 문장은 HintLanguageProfile.CasualStyleRule에 있음 (한국어 반말 / 일본어 タメ口 / 영어 캐주얼).
+    // 관찰 문장("~했지, 지금은 ~에 있구나...")과 고정 문구가 친구 말투라 맞춤. casualSpeech를 끄거나 규칙이 비어 있으면 안 붙음.
     static string SpeechLevelRule =>
-        Config.casualKorean && Config.language != null && Config.language.StartsWith("Korean")
-            ? "Speak in casual Korean (반말), like a friend talking over a walkie-talkie. " +
-              "End sentences with casual endings such as -아, -어, -야, -지, -봐. " +
-              "NEVER use polite endings such as -요, -세요, -습니다, -니다. "
+        Config.casualSpeech && !string.IsNullOrEmpty(Config.Profile.CasualStyleRule)
+            ? Config.Profile.CasualStyleRule + " "
             : "";
-        // 해석: 무전기 너머 친구처럼 반말로. 어미는 -아/-어/-야/-지/-봐, -요/-세요/-습니다/-니다는 절대 금지.
+
+    // 답변 시작 신호 뒤에 붙는 말투 표시 (예: ", casual 반말 only")
+    static string SpeechLevelCue =>
+        SpeechLevelRule.Length > 0 && !string.IsNullOrEmpty(Config.Profile.CasualStyleLabel)
+            ? ", " + Config.Profile.CasualStyleLabel
+            : "";
 
     /// <summary>
     /// HintResult 하나를 받아 LLM에 보낼 유저 프롬프트 전체(씬 컨텍스트+플레이어 상태+힌트 방향)를 조립한다.
-    /// previousHint: 같은 스텝·같은 레벨에서 힌트를 다시 요청한 경우에만 직전 답변을 넘김 →
+    /// previousHint: 같은 스텝·같은 레벨에서 힌트를 다시 요청한 경우에만 최근 답변들(줄바꿈 구분)을 넘김 →
     /// "같은 뜻, 다른 표현"으로 말하게 해서 똑같은 문장이 반복되지 않게 한다. 그 외엔 null.
     /// </summary>
     public static string Build(HintResult result, string previousHint = null)
@@ -130,24 +133,37 @@ public static class PromptBuilder
             $"Do NOT invent objects, places, lights, or actions that are not in the [Hint direction]. " +
             // 해석: 힌트 방향에 없는 물건·장소·빛·행동을 지어내지 마. (베타 로그에서 "빛을 향해", "그림 뒤에 숨겨진 비밀",
             // "묘한 빛을 따라" 같은 없는 단서를 지어내서 플레이어를 엉뚱한 곳으로 보낼 위험이 반복 확인됨)
+            $"Mention every object and place named in the [Hint direction] — do not drop or replace any of them. " +
+            // 해석: 힌트 방향에 나온 물건·장소는 하나도 빼거나 바꾸지 말고 다 말해.
+            // (재요청 때 "다른 표현"을 요구하면 소형 모델이 핵심 단어(예: 와인씬 1단계 "알파벳")를 "글자"로 바꾸거나 빼먹을 수 있어서 —
+            //  표현은 바뀌어도 내용(가리키는 대상)은 같게 유지)
             $"Do NOT mention any other puzzle mechanic, object, or step that isn't part of it — " +
             $"{orderNote}\n\n" +
             BuildRepeatNote(previousHint) +
             $"{Config.language} hint ({Config.language} language only, no other language" +
-            (SpeechLevelRule.Length > 0 ? ", casual 반말 only" : "") + "):";
+            SpeechLevelCue + "):";
     }
 
-    // 같은 레벨 재요청일 때만 붙는 한 줄. 방향 문장은 그대로 하나만 두고(1·2차 실험에서 둘 이상 주면 퇴화),
-    // "이 문장은 이미 들었으니 같은 뜻을 다른 말로"만 덧붙인다.
+    // 같은 레벨 재요청일 때만 붙는 블록. 방향 문장은 그대로 하나만 두고(1·2차 실험에서 둘 이상 주면 퇴화),
+    // "이 문장들은 이미 들었으니 같은 뜻을 다른 말로"만 덧붙인다.
+    // previousHint는 줄바꿈으로 구분된 최근 답변들(최대 HintManager.MaxRememberedReplies개) —
+    // 직전 1개만 주면 3번째 요청에서 1번째 답변 표현으로 돌아가는 경우가 있어서 최근 몇 개를 같이 넘김.
     // 예전엔 프롬프트 맨 끝(답변 시작 신호 뒤)에 붙었는데, 답변 신호 앞으로 옮김.
     static string BuildRepeatNote(string previousHint)
     {
         if (string.IsNullOrWhiteSpace(previousHint))
             return "";
 
-        return $"[Previous hint for this step]\n{previousHint.Trim()}\n" +
-               "The player already heard this. Give the same direction in different words. Do not repeat the previous sentence.\n\n";
-        // 해석: 플레이어가 이미 이 힌트를 들었음. 같은 방향을 다른 말로 전해. 이전 문장을 반복하지 마.
+        var lines = new List<string>();
+        foreach (var line in previousHint.Split('\n'))
+            if (!string.IsNullOrWhiteSpace(line)) lines.Add("- " + line.Trim());
+
+        return $"[Previous hints for this step]\n{string.Join("\n", lines)}\n" +
+               "The player already heard these. Give the same direction with the same objects and places, " +
+               "but in different words and a different sentence structure, like a person rephrasing. " +
+               "Do not reuse any of the sentences above.\n\n";
+        // 해석: 플레이어가 이미 이 힌트들을 들었음. 같은 물건·장소로 같은 방향을 전하되, 사람이 바꿔 말하듯 단어와 문장 구조를 바꿔.
+        // 위 문장들을 그대로 다시 쓰지 마.
     }
 
     /// <summary>
@@ -176,8 +192,11 @@ public static class PromptBuilder
 
     /// <summary>
     /// LLM 응답을 앞에서부터 maxSentences 문장까지만 잘라낸다 (SystemPrompt로 문장 수를 지시해도 소형 모델이 자주 넘겨서 코드로 보장).
-    /// 문장 끝 판정: '.', '?', '!' 뒤에 공백이 오거나 텍스트가 끝날 때.
+    /// 문장 끝 판정:
+    ///  - '.', '?', '!' 뒤에 공백이 오거나 텍스트가 끝날 때 (한국어·영어)
+    ///  - '。', '？', '！' 는 뒤에 공백이 없어도 문장 끝 (일본어 — 문장 사이에 띄어쓰기를 안 함)
     /// 말줄임표("...", "…")는 문장 끝으로 안 셈 — LLM이 "한계인 것 같아요… 조금만 더"처럼 문장 중간에 자주 써서.
+    /// "！？"처럼 문장 끝 기호가 붙어 나오면 마지막 기호에서 한 번만 셈.
     /// 문장이 maxSentences개보다 적으면 그대로 반환 (스트리밍 중간 결과에도 매번 적용해도 안전).
     /// </summary>
     public static string LimitSentences(string text, int maxSentences)
@@ -189,6 +208,25 @@ public static class PromptBuilder
         for (int i = 0; i < text.Length; i++)
         {
             char c = text[i];
+
+            if (IsFullWidthEnd(c))
+            {
+                // "！？"처럼 기호가 이어지면 마지막 기호에서 셈
+                if (i + 1 < text.Length && IsFullWidthEnd(text[i + 1]))
+                    continue;
+
+                // "。」"처럼 닫는 괄호가 붙어 있으면 괄호까지 포함해서 자름
+                int end = i;
+                while (end + 1 < text.Length && (text[end + 1] == '」' || text[end + 1] == '』'))
+                    end++;
+
+                count++;
+                if (count >= maxSentences)
+                    return text.Substring(0, end + 1);
+                i = end;
+                continue;
+            }
+
             if (c != '.' && c != '?' && c != '!')
                 continue;
 
@@ -207,4 +245,6 @@ public static class PromptBuilder
 
         return text;
     }
+
+    static bool IsFullWidthEnd(char c) => c == '。' || c == '？' || c == '！';
 }

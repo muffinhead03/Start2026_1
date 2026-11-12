@@ -339,43 +339,53 @@ public static class HintEngine
 
     // recentAction(action id)을 자연어 라벨로 바꿔주는 제공자. 씬별 문구는 Core가 모르도록 외부(Runtime)에서 주입함
     // (PromptBuilder.SceneContextProvider와 같은 패턴 — HintManager.Start()에서 세팅).
-    // null이거나 매칭되는 라벨이 없으면 GenericActionLabels로 폴백.
+    // null이거나 매칭되는 라벨이 없으면 GenericAction 문장으로 폴백.
     public static IActionLabelProvider ActionLabelProvider { get; set; }
 
-    static readonly string[] GenericActionLabels =
+    // 관찰 문장 틀(위치·거리·이어붙이기)의 언어별 번역 테이블. 외부(Runtime)에서 주입 — HintManager.Start()에서 세팅.
+    // null이거나 키가 빠져 있으면 아래 한국어 기본값을 씀 → Core만 따로 써도(오픈소스 패키지) 그대로 동작.
+    // 구역·랜드마크 이름도 이 테이블에 키로 등록돼 있으면 번역해서 씀 (등록 안 된 이름은 그대로 표시).
+    public static IHintPhraseTable Phrases { get; set; }
+
+    // ---- 한국어 기본값 (Phrases가 없거나 키가 없을 때) ----
+    // 키별 의미·자리표시자는 ObservationPhraseKeys 참고. 실제 게임 문장(한·영·일)은 Runtime의 HintLanguageData에 있음.
+    static readonly Dictionary<string, string[]> DefaultPhrases = new Dictionary<string, string[]>
     {
-        "방금 뭔가를 조사하고 있었지",
-        "조금 전에 뭔가 살펴보고 있었네",
+        { ObservationPhraseKeys.GenericAction,       new[] { "방금 뭔가를 조사하고 있었지", "조금 전에 뭔가 살펴보고 있었네" } },
+        { ObservationPhraseKeys.ProximityVeryClose,  new[] { "바로 근처에 있네", "가까이 와 있구나" } },
+        { ObservationPhraseKeys.ProximityNearby,     new[] { "근처에 있는 것 같은데", "가까운 곳에 있나 보네" } },
+        { ObservationPhraseKeys.ProximityFar,        new[] { "좀 멀리 떨어진 곳에 있는 것 같은데", "다른 데 가 있나 보네" } },
+        // 구역 이름 뒤에 바로 "에"가 붙으므로 구역 이름은 받침 상관없이 "에"가 자연스러운 이름으로 (예: "첫 번째 방", "통로")
+        { ObservationPhraseKeys.ZoneHere,            new[] { "{0}에 있구나", "{0}에 와 있네" } },
+        { ObservationPhraseKeys.Landmark,            new[] { "{0} 앞에 있네", "{0} 앞에 서 있구나" } },
+        // 대상이 다른 구역에 있을 때 덧붙이는 문장 — 방향만 알려주고 무엇을 할지는 힌트 본문이 담당
+        { ObservationPhraseKeys.ZoneOther,           new[] { "{0} 쪽도 한번 둘러봐.", "{0} 쪽을 살펴보는 게 좋겠어." } },
+        { ObservationPhraseKeys.JoinActionPlace,     new[] { "{0}, 지금은 {1}..." } },
+        { ObservationPhraseKeys.JoinPlace,           new[] { "{0}..." } },
+        { ObservationPhraseKeys.JoinActionProximity, new[] { "{0}, 지금은 {1}." } },
+        { ObservationPhraseKeys.JoinSingle,          new[] { "{0}." } },
+        { ObservationPhraseKeys.SentenceGap,         new[] { " " } },
     };
 
-    static readonly Dictionary<string, string[]> ProximityLabels = new Dictionary<string, string[]>
+    // key의 현재 언어 후보 중 하나 (번역 테이블 → 한국어 기본값 순)
+    static string Phrase(string key)
     {
-        { "player-very-close", new[] { "바로 근처에 있네", "가까이 와 있구나" } },
-        { "player-nearby",     new[] { "근처에 있는 것 같은데", "가까운 곳에 있나 보네" } },
-        { "player-far",        new[] { "좀 멀리 떨어진 곳에 있는 것 같은데", "다른 데 가 있나 보네" } },
-    };
+        string[] candidates = Phrases?.GetCandidates(key);
+        if (candidates == null || candidates.Length == 0)
+            DefaultPhrases.TryGetValue(key, out candidates);
 
-    // 구역 기준 관찰 문장 — {0}에 구역 이름(Inspector의 Display Name, 예: "1번 방", "통로")이 들어감.
-    // 구역 이름 뒤에 바로 "에"가 붙으므로 Display Name은 받침 상관없이 "에"가 자연스러운 이름으로.
-    static readonly string[] ZoneHereLabels =
-    {
-        "{0}에 있구나",
-        "{0}에 와 있네",
-    };
+        return candidates != null && candidates.Length > 0 ? PickRandom(candidates) : "";
+    }
 
-    // 플레이어가 랜드마크 바로 앞에 서 있을 때 — {0}에 랜드마크 표시 이름 (예: "책장")
-    static readonly string[] LandmarkLabels =
-    {
-        "{0} 앞에 있네",
-        "{0} 앞에 서 있구나",
-    };
+    static string Format(string key, params object[] args) => string.Format(Phrase(key), args);
 
-    // 대상 오브젝트가 다른 구역에 있을 때 덧붙이는 문장 — 방향만 알려주고 무엇을 할지는 힌트 본문이 담당
-    static readonly string[] ZoneOtherLabels =
+    // 구역·랜드마크 이름 표시용. 씬 Inspector에 적힌 값이 번역 테이블의 키면 현재 언어로 바꾸고, 아니면 그대로.
+    // (판단 로직 — 같은 구역인지 비교 등 — 은 항상 원래 값으로 하고, 문장에 넣을 때만 바꿈)
+    static string DisplayName(string nameOrKey)
     {
-        "{0} 쪽도 한번 둘러봐.",
-        "{0} 쪽을 살펴보는 게 좋겠어.",
-    };
+        string[] candidates = Phrases?.GetCandidates(nameOrKey);
+        return candidates != null && candidates.Length > 0 ? candidates[0] : nameOrKey;
+    }
 
     static string PickRandom(string[] options)
         => options[Random.Range(0, options.Length)];
@@ -386,7 +396,15 @@ public static class HintEngine
         if (labels != null && labels.Length > 0)
             return PickRandom(labels);
 
-        return PickRandom(GenericActionLabels); // 매칭 안 되는 action id도 그냥 생략하지 않고 일반 문구로 커버
+        return Phrase(ObservationPhraseKeys.GenericAction); // 매칭 안 되는 action id도 그냥 생략하지 않고 일반 문구로 커버
+    }
+
+    // 문장 첫 글자를 대문자로 (영어처럼 대소문자가 있는 언어만 바뀜 — 한국어·일본어는 그대로).
+    // 행동·위치 문장은 문장 중간에도 들어가서 소문자로 적어두고, 문장 맨 앞에 올 때만 여기서 올림.
+    static string CapitalizeFirst(string text)
+    {
+        if (string.IsNullOrEmpty(text) || !char.IsLower(text[0])) return text;
+        return char.ToUpperInvariant(text[0]) + text.Substring(1);
     }
 
     /// <summary>
@@ -411,29 +429,41 @@ public static class HintEngine
         {
             // 랜드마크 바로 앞이면 방 이름 대신 "책장 앞에 있네"처럼 더 구체적으로
             string zonePart = !string.IsNullOrEmpty(landmark)
-                ? string.Format(PickRandom(LandmarkLabels), landmark)
-                : string.Format(PickRandom(ZoneHereLabels), playerZone);
+                ? Format(ObservationPhraseKeys.Landmark, DisplayName(landmark))
+                : Format(ObservationPhraseKeys.ZoneHere, DisplayName(playerZone));
             string otherPart = (!string.IsNullOrEmpty(targetZone) && targetZone != playerZone)
-                ? " " + string.Format(PickRandom(ZoneOtherLabels), targetZone)
+                ? Phrase(ObservationPhraseKeys.SentenceGap) + CapitalizeFirst(Format(ObservationPhraseKeys.ZoneOther, DisplayName(targetZone)))
                 : "";
 
-            return actionPart != null
-                ? $"{actionPart}, 지금은 {zonePart}...{otherPart}"
-                : $"{zonePart}...{otherPart}";
+            string placeLine = actionPart != null
+                ? Format(ObservationPhraseKeys.JoinActionPlace, actionPart, zonePart)
+                : Format(ObservationPhraseKeys.JoinPlace, zonePart);
+            return CapitalizeFirst(placeLine) + otherPart;
         }
 
-        string proximityPart = (!string.IsNullOrEmpty(proximityNote) &&
-                                 ProximityLabels.TryGetValue(proximityNote, out var labels))
-            ? PickRandom(labels)
+        string proximityPart = ProximityKey(proximityNote) is string proximityKey
+            ? Phrase(proximityKey)
             : null;
 
         if (actionPart != null && proximityPart != null)
-            return $"{actionPart}, 지금은 {proximityPart}.";
+            return CapitalizeFirst(Format(ObservationPhraseKeys.JoinActionProximity, actionPart, proximityPart));
         if (actionPart != null)
-            return $"{actionPart}.";
+            return CapitalizeFirst(Format(ObservationPhraseKeys.JoinSingle, actionPart));
         if (proximityPart != null)
-            return $"{proximityPart}.";
+            return CapitalizeFirst(Format(ObservationPhraseKeys.JoinSingle, proximityPart));
 
         return null;
+    }
+
+    // BuildProximityNote의 판단 결과("player-very-close" 등) → 문장 키
+    static string ProximityKey(string proximityNote)
+    {
+        switch (proximityNote)
+        {
+            case "player-very-close": return ObservationPhraseKeys.ProximityVeryClose;
+            case "player-nearby":     return ObservationPhraseKeys.ProximityNearby;
+            case "player-far":        return ObservationPhraseKeys.ProximityFar;
+            default:                  return null;
+        }
     }
 }
