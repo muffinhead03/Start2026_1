@@ -13,7 +13,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "치지직..." } },
                 { LanguageType.English,  new[] { "Kzzt..." } },
-                { LanguageType.Japanese, new[] { "ザザッ..." } }
+                { LanguageType.Japanese, new[] { "ザザッ…" } }
             }
         },
 
@@ -33,7 +33,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "치지직.. 교신 중" } },
                 { LanguageType.English,  new[] { "Kzzt.. connecting" } },
-                { LanguageType.Japanese, new[] { "ザザッ.. 交信中" } }
+                { LanguageType.Japanese, new[] { "ザザッ…交信中" } }
             }
         },
 

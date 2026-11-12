@@ -460,7 +460,7 @@ public class HintManager : MonoBehaviour
         // RevealLLM이 같은 속도로 한 글자씩 이어서 타이핑한다 (타자기 큐).
         bool hasWatchingLine = !string.IsNullOrEmpty(result.watchingLine);
         string introText = hasWatchingLine ? Radio + result.watchingLine : null;
-        string displayPrefix = hasWatchingLine ? introText + " " : "";
+        string displayPrefix = hasWatchingLine ? introText + HintLanguageData.Get(HintLanguageDataKey.HintObs_SentenceGap) : ""; // 일본어는 문장 사이 공백 없음
 
         StopReveal();
         StopFallback();
