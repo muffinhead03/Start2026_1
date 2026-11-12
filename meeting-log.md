@@ -479,3 +479,40 @@
   - 현재 DungGeunMo(픽셀 폰트)에 일본어 글자가 없어서 일본어가 NotoSansJP(일반 고딕)로 나옴
   - 한국어와 느낌을 맞추려면 픽셀풍 일본어 폰트를 대체 폰트로 지정해야 함 (후보: DotGothic16)
   - Steam 출시용이라 상업적 이용 가능한 라이선스인지 확인 필요
+
+## 11/12
+
+### 1. 인형씬 힌트 테스트하기
+- 인형씬 플레이 단계마다 폴백용 힌트, LLM용 힌트, 각각에 대한 한/일/영 로컬라이제이션 언어가 자연스러운지 확인하기 : 정혜교
+
+### 2. 라이센스 관련 정리하기
+| 대상 | 라이선스 | 해야 할 것 |
+| --- | --- | --- |
+| Gemma 3 (gemma-3-4b-it Q4_K_M, lmstudio-community GGUF) | Gemma Terms of Use | NOTICE 문장 포함 / 약관 사본 제공 / Prohibited Use Policy 고지 / 로고 사용 금지 |
+| LLMUnity v3.0.2 | Apache 2.0 | 라이선스 사본 + 저작권 고지 |
+| LlamaLib v2.0.4 | Apache 2.0 | 라이선스 사본 + 저작권 고지 |
+| llama.cpp | MIT | 저작권 고지 + MIT 전문 |
+| Vulkan Loader (vulkan-1.dll) | Apache 2.0 | 라이선스 사본 |
+
+- [x]  라이선스 요건 조사 (Gemma 약관 원문, LLMUnity·LlamaLib·llama.cpp 저장소 확인)
+- [x]  고지 파일 5개 작성 (NOTICE.txt, THIRD_PARTY_TERMS.txt, Gemma_Terms_of_Use.txt, LICENSE-Apache-2.0.txt, LICENSE-llama.cpp-MIT.txt)
+- [x]  Gemma_Terms_of_Use.txt에 약관 원문 + Appendix 붙여넣기 (Gemma 3 포함 확인)
+- [x]  빌드 자동 복사 스크립트 작성 (CopyLicensesPostBuild.cs)
+- [x]  THIRD_PARTY_NOTICES.md 교체본 작성 (Built with Gemma 정정)
+- [x]  게임 내 크레딧 문구 한·영·일 작성 (IN_GAME_CREDITS_TEXT.md)
+- [x]  Steam AI 공개 양식 초안 작성 (STEAM_AI_DISCLOSURE.md)
+
+- **라이센스 관련 할 일들**
+- [ ]  빌드 후 콘솔에 "[CopyLicensesPostBuild] 라이선스 파일 5개 복사" 로그 확인
+- [ ]  exe 옆에 Licenses 폴더 생겼는지 확인
+- [ ]  "약관 원문이 아직 안 들어 있음" 경고가 안 뜨는지 확인
+- [ ]  UI 담당과 위치 정하기: 엔딩 크레딧 마지막 or 설정 > 라이선스
+- [ ]  한·영·일 문구를 팀 LanguageData 키로 넣기 (현재 언어 따라 표시)
+- [ ]  로고 없이 글자만 들어갔는지 확인
+- [ ]  반영 끝나면 IN_GAME_CREDITS_TEXT.md는 리포에 안 올리고 노션에만 보관
+
+### 3. 포스터 세션 관련 정리
+- 박남규, 윤민주 컴퓨터로 시연하기
+- 11/17까지 빌드 업로드 진행하기
+
+
