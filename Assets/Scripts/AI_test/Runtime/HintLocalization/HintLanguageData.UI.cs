@@ -11,9 +11,9 @@ public static partial class HintLanguageData
             HintLanguageDataKey.HintUI_RadioNoise,
             new()
             {
-                { LanguageType.Korean,   new[] { "치지직..." } },
-                { LanguageType.English,  new[] { "Kzzt..." } },
-                { LanguageType.Japanese, new[] { "ザザッ..." } }
+                { LanguageType.Korean,   new[] { "..." } },
+                { LanguageType.English,  new[] { "..." } },
+                { LanguageType.Japanese, new[] { "..." } }
             }
         },
 
@@ -31,9 +31,9 @@ public static partial class HintLanguageData
             HintLanguageDataKey.HintUI_Connecting,
             new()
             {
-                { LanguageType.Korean,   new[] { "치지직.. 교신 중" } },
-                { LanguageType.English,  new[] { "Kzzt.. connecting" } },
-                { LanguageType.Japanese, new[] { "ザザッ.. 交信中" } }
+                { LanguageType.Korean,   new[] { ".. 교신 중" } },
+                { LanguageType.English,  new[] { ".. connecting" } },
+                { LanguageType.Japanese, new[] { ".. 交信中" } }
             }
         },
 
