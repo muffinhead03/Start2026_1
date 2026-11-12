@@ -36,6 +36,18 @@ public static class HintLanguageDataKey
     public const string HintUI_FallbackTag =
         nameof(HintUI_FallbackTag);
 
+    public const string HintUI_HintButton =
+        nameof(HintUI_HintButton);
+
+    public const string HintUI_EscClose =
+        nameof(HintUI_EscClose);
+
+    public const string HintUI_FallbackBadgeTitle =
+        nameof(HintUI_FallbackBadgeTitle);
+
+    public const string HintUI_FallbackBadgeSub =
+        nameof(HintUI_FallbackBadgeSub);
+
 
     /*
      * Observation Phrases (Core가 정한 키를 그대로 씀)

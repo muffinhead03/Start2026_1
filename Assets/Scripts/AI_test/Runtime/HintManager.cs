@@ -52,7 +52,7 @@ public class HintManager : MonoBehaviour
 
     // 힌트 사용 횟수 저장 — 게임을 껐다 켜서(이어하기) 같은 씬에 다시 들어와도 횟수가 다시 차지 않게.
     // 기본 구현은 PlayerPrefs (PlayerPrefsHintUsageStore). persistHintUsage를 끄면 저장 안 함(씬마다 새로 시작).
-    public IHintUsageStore UsageStore { get; set; } = new PlayerPrefsHintUsageStore();
+    public IHintUsageStore UsageStore { get; set; } = new SessionHintUsageStore();
 
     // 관찰 문장 번역 테이블. 기본 구현은 힌트 전용 번역 데이터(Runtime/HintLocalization의 HintLanguageData)를 읽음 (HintPhraseTable).
     public IHintPhraseTable PhraseTable { get; set; } = new HintPhraseTable();

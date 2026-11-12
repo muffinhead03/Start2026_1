@@ -23,4 +23,18 @@ public enum HintUITextId
 
     /// <summary>베타 테스트용 폴백 표시 태그 (예: "[폴백]")</summary>
     FallbackTag,
+
+    // ── 아래는 패널에 붙어 있는 고정 라벨 (HintUILocalizedLabel 컴포넌트가 사용) ──
+
+    /// <summary>힌트 버튼 글자 (예: "퍼즐 힌트")</summary>
+    HintButton,
+
+    /// <summary>패널 닫기 안내 (예: "ESC: 닫기")</summary>
+    EscClose,
+
+    /// <summary>폴백 배지 제목 (예: "Fall Back")</summary>
+    FallbackBadgeTitle,
+
+    /// <summary>폴백 배지 부제 (예: "(에러 아닙니다)")</summary>
+    FallbackBadgeSub,
 }
