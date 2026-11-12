@@ -341,8 +341,18 @@ public static partial class HintLanguageData
          * Doll Scene
          */
 
+                {
+            HintLanguageDataKey.HintAction_DollBookViewed,
+            new()
+            {
+                { LanguageType.Korean,   new[] { "마트료시카 그림책을 펼쳐봤지", "시소 그림이 있는 책을 넘겨봤네" } },
+                { LanguageType.English,  new[] { "you opened the matryoshka picture book", "you flipped through the book with the seesaw pictures" } },
+                { LanguageType.Japanese, new[] { "マトリョーシカの絵本を開いてみたね", "シーソーの絵の本をめくってみたね" } }
+            }
+        },
+
         {
-            HintLanguageDataKey.HintAction_DollStep01,
+            HintLanguageDataKey.HintAction_DollLockOpened,
             new()
             {
                 { LanguageType.Korean,   new[] { "자물쇠 번호를 맞춰 열었지", "마트료시카 순서를 알아냈네" } },
@@ -352,7 +362,7 @@ public static partial class HintLanguageData
         },
 
         {
-            HintLanguageDataKey.HintAction_DollStep02,
+            HintLanguageDataKey.HintAction_DollLegFixed,
             new()
             {
                 { LanguageType.Korean,   new[] { "인형에 다리를 붙여줬지", "부러진 다리를 갈아 끼웠네" } },
@@ -362,7 +372,7 @@ public static partial class HintLanguageData
         },
 
         {
-            HintLanguageDataKey.HintAction_DollStep03,
+            HintLanguageDataKey.HintAction_DollCoinGot,
             new()
             {
                 { LanguageType.Korean,   new[] { "곰 인형한테서 동전을 얻어냈지", "곰 인형이 동전을 떨어뜨렸네" } },
@@ -372,17 +382,17 @@ public static partial class HintLanguageData
         },
 
         {
-            HintLanguageDataKey.HintAction_DollStep04,
+            HintLanguageDataKey.HintAction_DollArmGot,
             new()
             {
-                { LanguageType.Korean,   new[] { "오락기 게임에서 이겼지", "오락기에서 팔을 얻어냈네" } },
-                { LanguageType.English,  new[] { "you beat the arcade game", "you won an arm from the arcade machine" } },
-                { LanguageType.Japanese, new[] { "ゲーム機のゲームに勝ったね", "ゲーム機から腕を手に入れたね" } }
+                { LanguageType.Korean,   new[] { "오락기에 동전을 넣어서 팔을 얻었지", "오락기에서 팔이 나왔네" } },
+                { LanguageType.English,  new[] { "you put a coin in the arcade machine and got an arm", "an arm came out of the arcade machine" } },
+                { LanguageType.Japanese, new[] { "ゲーム機にコインを入れて腕を手に入れたね", "ゲーム機から腕が出てきたね" } }
             }
         },
 
         {
-            HintLanguageDataKey.HintAction_DollStep05,
+            HintLanguageDataKey.HintAction_DollArmFixed,
             new()
             {
                 { LanguageType.Korean,   new[] { "인형에 팔을 붙여줬지", "인형 팔을 갈아 끼웠네" } },
@@ -392,7 +402,7 @@ public static partial class HintLanguageData
         },
 
         {
-            HintLanguageDataKey.HintAction_DollStep06,
+            HintLanguageDataKey.HintAction_DollSpringGot,
             new()
             {
                 { LanguageType.Korean,   new[] { "기차 선로를 맞춰서 태엽을 얻었지", "태엽을 손에 넣었네" } },
@@ -402,7 +412,7 @@ public static partial class HintLanguageData
         },
 
         {
-            HintLanguageDataKey.HintAction_DollStep07,
+            HintLanguageDataKey.HintAction_DollSpringFixed,
             new()
             {
                 { LanguageType.Korean,   new[] { "인형에 태엽을 끼워 넣었지", "인형 등에 태엽을 달아줬네" } },
@@ -410,6 +420,7 @@ public static partial class HintLanguageData
                 { LanguageType.Japanese, new[] { "人形にぜんまいを差し込んだね", "人形の背中にぜんまいを付けてあげたね" } }
             }
         },
+
 
         {
             HintLanguageDataKey.HintAction_DollBearThrowOnce,
