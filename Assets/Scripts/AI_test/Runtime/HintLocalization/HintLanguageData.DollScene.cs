@@ -459,7 +459,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "곰 인형이 충격을 받을수록 약해지는 것 같아. 계속 세게 던져봐.", "곰 인형이 던질 때마다 조금씩 망가지고 있어. 멈추지 말고 계속 던져봐." } },
                 { LanguageType.English,  new[] { "The teddy bear seems to get weaker the more it gets hit. Keep throwing it hard.", "The teddy bear is falling apart a little more with every throw. Don't stop, keep throwing." } },
-                { LanguageType.Japanese, new[] { "クマのぬいぐるみ、衝撃を受けるほど弱ってるみたい。強く投げ続けてみて。", "クマのぬいぐるみ、投げるたびに少しずつ壊れてきてる。止めずに投げ続けてみて。" } }
+                { LanguageType.Japanese, new[] { "クマのぬいぐるみ、投げるたびに弱ってるみたい。強く投げ続けてみて。", "クマのぬいぐるみ、投げるたびに少しずつ壊れてきてる。止めずに投げ続けてみて。" } }
             }
         },
         {

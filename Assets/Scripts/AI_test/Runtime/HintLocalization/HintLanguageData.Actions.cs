@@ -367,7 +367,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "인형에 다리를 붙여줬지", "부러진 다리를 갈아 끼웠네" } },
                 { LanguageType.English,  new[] { "you attached a leg to the doll", "you swapped out the broken leg" } },
-                { LanguageType.Japanese, new[] { "人形に脚をつけてあげたね", "折れた脚を付け替えたね" } }
+                { LanguageType.Japanese, new[] { "人形に脚を付けてあげたね", "折れた脚を付け替えたね" } }
             }
         },
 
@@ -397,7 +397,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "인형에 팔을 붙여줬지", "인형 팔을 갈아 끼웠네" } },
                 { LanguageType.English,  new[] { "you attached an arm to the doll", "you swapped in the doll's arm" } },
-                { LanguageType.Japanese, new[] { "人形に腕をつけてあげたね", "人形の腕を付け替えたね" } }
+                { LanguageType.Japanese, new[] { "人形に腕を付けてあげたね", "人形の腕を付け替えたね" } }
             }
         },
 
@@ -438,7 +438,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "곰 인형을 벌써 {0}번 던졌지", "곰 인형을 {0}번째 던지고 있었네" } },
                 { LanguageType.English,  new[] { "you've already thrown the teddy bear {0} times", "you've tossed the teddy bear {0} times now" } },
-                { LanguageType.Japanese, new[] { "クマのぬいぐるみをもう{0}回投げたね", "クマのぬいぐるみを{0}回目投げてたね" } }
+                { LanguageType.Japanese, new[] { "クマのぬいぐるみをもう{0}回投げたね", "クマのぬいぐるみ、これで{0}回投げたね" } }
             }
         },
 

@@ -24,8 +24,8 @@ public static partial class HintLanguageData
             new()
             {
                 { LanguageType.Korean,   new[] { "바로 근처에 있네", "가까이 와 있구나" } },
-                { LanguageType.English,  new[] { "it's right near you", "you're really close" } },
-                { LanguageType.Japanese, new[] { "すぐ近くにいるね", "近くまで来てるね" } }
+                { LanguageType.English,  new[] { "you're right next to it", "you're really close" } },
+                { LanguageType.Japanese, new[] { "探してるものはすぐそこだよ", "もうすぐそばまで来てるよ" } }
             }
         },
 
@@ -34,8 +34,8 @@ public static partial class HintLanguageData
             new()
             {
                 { LanguageType.Korean,   new[] { "근처에 있는 것 같은데", "가까운 곳에 있나 보네" } },
-                { LanguageType.English,  new[] { "you seem to be nearby", "looks like you're not far" } },
-                { LanguageType.Japanese, new[] { "近くにいるみたいだけど", "近いところにいるみたいだね" } }
+                { LanguageType.English,  new[] { "you seem to be getting close", "looks like you're not far" } },
+                { LanguageType.Japanese, new[] { "探してるものに近づいてるよ", "わりと近くまで来てるよ" } }
             }
         },
 
@@ -44,8 +44,8 @@ public static partial class HintLanguageData
             new()
             {
                 { LanguageType.Korean,   new[] { "좀 멀리 떨어진 곳에 있는 것 같은데", "다른 데 가 있나 보네" } },
-                { LanguageType.English,  new[] { "you seem pretty far away", "looks like you're somewhere else" } },
-                { LanguageType.Japanese, new[] { "ちょっと離れたところにいるみたいだけど", "別のところにいるみたいだね" } }
+                { LanguageType.English,  new[] { "you seem pretty far away", "looks like you've wandered off a bit" } },
+                { LanguageType.Japanese, new[] { "探してるものからは少し離れてるよ", "ちょっと遠いところにいるみたい" } }
             }
         },
 
@@ -75,7 +75,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "{0} 쪽도 한번 둘러봐.", "{0} 쪽을 살펴보는 게 좋겠어." } },
                 { LanguageType.English,  new[] { "take a look around {0} too.", "you should check {0}." } },
-                { LanguageType.Japanese, new[] { "{0}の方も見てみて。", "{0}の方を調べたほうがいいよ。" } }
+                { LanguageType.Japanese, new[] { "{0}の方も見てみて。", "{0}も調べてみたら？" } }
             }
         },
 
@@ -85,7 +85,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "{0}, 지금은 {1}..." } },
                 { LanguageType.English,  new[] { "{0}, and now {1}..." } },
-                { LanguageType.Japanese, new[] { "{0}、今は{1}…" } }
+                { LanguageType.Japanese, new[] { "{0}。今は{1}…" } }
             }
         },
 
@@ -105,7 +105,7 @@ public static partial class HintLanguageData
             {
                 { LanguageType.Korean,   new[] { "{0}, 지금은 {1}." } },
                 { LanguageType.English,  new[] { "{0}, and now {1}." } },
-                { LanguageType.Japanese, new[] { "{0}、今は{1}。" } }
+                { LanguageType.Japanese, new[] { "{0}。今は{1}。" } }
             }
         },
 
