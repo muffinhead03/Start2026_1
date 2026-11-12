@@ -6,7 +6,7 @@ using TMPro;
 public class LoadingDotsAnimator : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI text;
-    [SerializeField] private string baseText = "로딩 중";
+    [SerializeField] private string baseText = "Loading";
     [SerializeField] private float dotInterval = 0.4f;
 
     float timer = 0f;

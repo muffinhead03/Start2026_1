@@ -50,10 +50,10 @@ public class LoadingSceneController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI statusText;
 
     [Tooltip("{0} 자리에 남은 초가 들어감")]
-    [SerializeField] private string remainingFormat = "AI 힌트 준비 중... (최대 {0}초)";
+    [SerializeField] private string remainingFormat = "Preparing AI hints... (up to {0}s)";
 
     [Tooltip("건너뛰기가 가능해진 뒤 남은 시간 아래에 붙는 안내 문구")]
-    [SerializeField] private string skipGuide = "아무 키나 누르면 바로 시작합니다\nAI 힌트는 게임 중에 이어서 준비됩니다";
+    [SerializeField] private string skipGuide = "Press any key to skip\nAI hints will keep loading in game";
 
     [Tooltip("로딩 시작 후 이 초가 지나야 건너뛰기 가능 (바로 끝나는 PC에서 실수로 건너뛰는 것 방지). 0이면 처음부터 가능")]
     [SerializeField] private float skipAvailableAfterSeconds = 10f;
@@ -116,7 +116,7 @@ public class LoadingSceneController : MonoBehaviour
 
         if (loadingText != null)
         {
-            loadingText.text = "치지직... 준비 중...";
+            loadingText.text = "Kzzt... Preparing...";
             Debug.Log("[LoadingSceneController] loadingText 갱신됨");
         }
         else
