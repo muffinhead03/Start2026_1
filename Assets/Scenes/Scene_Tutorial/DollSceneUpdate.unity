@@ -11058,6 +11058,7 @@ MonoBehaviour:
   handPerception: {fileID: 743450503}
   inventoryData: {fileID: 1989395466}
   player: {fileID: 743923338}
+  matryoBook: {fileID: 0}
   lockArea: {fileID: 1188803375}
   horseArea: {fileID: 1316076036}
   teddyBear: {fileID: 359126104}
@@ -21736,6 +21737,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: Play_Audio, Assembly-CSharp
         m_MethodName: PlayAudio
         m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 940351274}
+        m_TargetAssemblyTypeName: DollHintBridge, Assembly-CSharp
+        m_MethodName: ReportBookViewed
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

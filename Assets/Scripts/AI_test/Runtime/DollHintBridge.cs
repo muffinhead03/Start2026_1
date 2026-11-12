@@ -5,6 +5,10 @@ using UnityEngine;
 /// 인형씬 게임 상태(DollScene_GameManager / DollScene_ChangeDoll 등)를 읽기 전용으로 폴링해서
 /// 힌트 시스템(HintManager)에 연결하는 브릿지. 혜교님 파트 스크립트는 수정하지 않고 public 프로퍼티만 참조함.
 ///
+/// 2026-11: 인형씬 기획 변경으로 9단계 (1 그림책 봄 → 2 자물쇠 → 3 다리 → 4 곰 인형 → 5 오락기 → 6 팔 → 7 기차 → 8 태엽 → 9 탈출).
+///  1단계는 폴링할 상태가 없어서 씬 이벤트로 받음: Book_Matryo(Book_Inspectable).OnInspectPerformed → ReportBookViewed()
+///  스텝 번호는 아래 Step* 상수로만 씀 — 다시 바뀌면 상수만 고치면 됨.
+///
 /// 역할 5가지:
 /// 1) 진행 기록 — completedSteps / foundClues
 /// 2) 최근 행동 — 스텝 완료 시 "doll_step_NN", 곰 인형 던질 때 "doll_bear_throw_{던진 횟수}"를 AddLastAction으로 넘김
@@ -57,20 +61,23 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
     [Header("위치 (비워두면 자동 탐색)")]
     [Tooltip("거리 계산 기준점. 비우면 Player_Move 오브젝트")]
     [SerializeField] private Transform player;
-    [Tooltip("step 1 자물쇠 — 기본: 1. DollFencePart/NumberLock")]
+    [Tooltip("step 1 마트료시카 그림책 — 기본: 1. DollFencePart/Book_Matryo")]
+    [SerializeField] private Transform matryoBook;
+    [Tooltip("step 2 자물쇠 — 기본: 1. DollFencePart/Fence/NumberLock")]
     [SerializeField] private Transform lockArea;
-    [Tooltip("step 2 다리 찾는 곳 — 기본: 1. DollFencePart/WoodenHorse")]
+    [Tooltip("step 3 다리 찾는 곳 — 기본: 1. DollFencePart/WoodenHorse")]
     [SerializeField] private Transform horseArea;
-    [Tooltip("step 3 곰 인형 — 기본: 2. BrokenTeddyBear/TeddyBear")]
+    [Tooltip("step 4 곰 인형 — 기본: 2. BrokenTeddyBear/TeddyBear")]
     [SerializeField] private Transform teddyBear;
-    [Tooltip("step 4 오락기 — 기본: 3. RetroGame")]
+    [Tooltip("step 5 오락기 — 기본: 3. RetroGame")]
     [SerializeField] private Transform retroGame;
-    [Tooltip("step 6 기차 선로 — 기본: 4. TrainPart/Trainset")]
+    [Tooltip("step 7 기차 선로 — 기본: 4. TrainPart/Trainset")]
     [SerializeField] private Transform trainArea;
-    [Tooltip("step 2/5/7/8 부품 장착하는 인형 — 기본: 5. MarioNet/DollStandHere")]
+    [Tooltip("step 3/6/8/9 부품 장착하는 인형 — 기본: 5. MarioNet/DollStandHere")]
     [SerializeField] private Transform dollStand;
 
-    const string LockAreaPath  = "1. DollFencePart/NumberLock";
+    const string MatryoBookPath = "1. DollFencePart/Book_Matryo";
+    const string LockAreaPath  = "1. DollFencePart/Fence/NumberLock";
     const string HorseAreaPath = "1. DollFencePart/WoodenHorse";
     const string TeddyBearPath = "2. BrokenTeddyBear/TeddyBear";
     const string RetroGamePath = "3. RetroGame";
@@ -79,12 +86,22 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
 
 
     // =========================================================
-    // 스텝 완료 여부 (id1~id8, 중복 보고 방지용)
-    // DollRoomData.cs의 실제 8-step 번호에 맞춤
+    // 스텝 번호 (DollRoomData 9단계와 1:1)
     // =========================================================
 
-    bool step1Reported, step2Reported, step3Reported, step4Reported,
-         step5Reported, step6Reported, step7Reported, step8Reported;
+    const int StepBook   = 1; // 그림책 봄
+    const int StepLock   = 2; // 자물쇠 열기
+    const int StepLeg    = 3; // 다리 교체
+    const int StepBear   = 4; // 곰 인형 → 동전
+    const int StepArcade = 5; // 오락기 → 팔
+    const int StepArm    = 6; // 팔 교체
+    const int StepTrain  = 7; // 선로 → 태엽
+    const int StepSpring = 8; // 태엽 장착
+    const int StepEscape = 9; // 태엽 돌림 → 열쇠 → 탈출
+
+    // 스텝 완료 여부 (중복 보고 방지용)
+    bool bookReported, lockReported, legReported, bearReported,
+         arcadeReported, armReported, trainReported, springReported, escapeReported;
 
     int lastBearHitCount = 0;
 
@@ -125,6 +142,7 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
             if (move != null) player = move.transform;
         }
 
+        matryoBook = matryoBook != null ? matryoBook : FindByPath(MatryoBookPath);
         lockArea  = lockArea  != null ? lockArea  : FindByPath(LockAreaPath);
         horseArea = horseArea != null ? horseArea : FindByPath(HorseAreaPath);
         teddyBear = teddyBear != null ? teddyBear : FindByPath(TeddyBearPath);
@@ -170,76 +188,103 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
     {
         if (hintManager == null) return;
 
-        // id1 : 마트료시카 순서로 자물쇠 번호를 알아내 목마 구역을 연다
-        if (!step1Reported && numberLockManager != null && numberLockManager.IsSolved)
+        // id1 : 그림책을 보고 마트료시카의 무게를 알아낸다
+        // → 상태가 없어서 ReportBookViewed()(씬 이벤트)에서 처리. 책을 안 보고 자물쇠를 먼저 풀었으면 아래에서 같이 완료(back-fill)
+
+        // id2 : 책을 보고난 후 자물쇠 번호를 알아내 목마 구역을 연다
+        if (!lockReported && numberLockManager != null && numberLockManager.IsSolved)
         {
-            step1Reported = true;
-            ReportStep(1, "clue_leg_lock_code");
+            lockReported = true;
+            CompleteBook("자물쇠 열림 (back-fill)");
+            ReportStep(StepLock, "clue_leg_lock_code");
         }
 
-        // id2 : 목마 구역에서 부러진 다리를 찾아 교체한다
-        if (!step2Reported && changeDoll != null && changeDoll.IsBrokenLegFixed)
+        // id3 : 목마 구역에서 부러진 다리를 찾아 교체한다
+        if (!legReported && changeDoll != null && changeDoll.IsBrokenLegFixed)
         {
-            step2Reported = true;
-            ReportStep(2, "clue_doll_leg");
+            legReported = true;
+            ReportStep(StepLeg, "clue_doll_leg");
         }
 
-        // id3 : 말하는 곰 인형을 반복해서 던져 동전을 얻는다
+        // id4 : 말하는 곰 인형을 반복해서 던져 동전을 얻는다
         // (해석: TeddyBear_Grab.wasHeld는 private이라 상호작용 자체의 별도 신호는 없어서,
         //  실질적 결과물인 동전 획득으로 판정)
         // IsCoinFound를 켜는 SpeakingBearDoll.CollectCoin()을 코드에서 부르는 곳이 없음(인스펙터 이벤트로만 연결됐을 수 있음).
-        // 안 켜지면 step 3이 영원히 미완료로 남아서, 동전을 주운 뒤에도 곰 인형 힌트가 계속 나옴 (테스트 표 D10, D12).
-        // 그래서 동전을 들고 있거나 / 오락기에 넣었거나 / 오락기 보상을 받았으면 step 3 완료로 같이 인정
-        if (!step3Reported && IsCoinObtained())
+        // 안 켜지면 곰 인형 단계가 영원히 미완료로 남아서, 동전을 주운 뒤에도 곰 인형 힌트가 계속 나옴 (테스트 표 D10, D12).
+        // 그래서 동전을 들고 있거나 / 오락기에 넣었거나 / 오락기 보상을 받았으면 완료로 같이 인정
+        if (!bearReported && IsCoinObtained())
         {
-            step3Reported = true;
-            ReportStep(3, "clue_coin");
+            bearReported = true;
+            ReportStep(StepBear, "clue_coin");
         }
 
-        // id4 : 오락기에 동전을 넣고 게임에서 승리해 팔을 얻는다
-        if (!step4Reported && retroGameManager != null && retroGameManager.IsArmRewardUnlocked)
+        // id5 : 오락기에 동전을 넣고 화면 연출이 끝나면 나오는 팔을 얻는다
+        if (!arcadeReported && retroGameManager != null && retroGameManager.IsArmRewardUnlocked)
         {
-            step4Reported = true;
-            ReportStep(4, "clue_doll_arm");
+            arcadeReported = true;
+            ReportStep(StepArcade, "clue_doll_arm");
         }
 
-        // id5 : 획득한 팔을 인형에 교체한다
-        if (!step5Reported && changeDoll != null && changeDoll.IsBrokenArmFixed)
+        // id6 : 획득한 팔을 인형에 교체한다
+        if (!armReported && changeDoll != null && changeDoll.IsBrokenArmFixed)
         {
-            step5Reported = true;
-            ReportStep(5, null);
+            armReported = true;
+            ReportStep(StepArm, null);
         }
 
-        // id6 : 버튼으로 선로를 맞춰 검은 기차를 밀어내고 태엽을 얻는다
+        // id7 : 버튼으로 선로를 맞춰 검은 기차를 밀어내고 태엽을 얻는다
         // (주의: changeDoll.IsSpringFixed(= gameManager.IsSpringFound)는 현재 씬에서 태엽을 "인형에 장착"할 때
         //  켜짐 — SpringPickupState.CollectSpring()을 부르는 곳이 없어서 획득 시점엔 안 켜짐.
         //  그래서 "태엽을 손/인벤토리에 들고 있음"을 획득 신호로 쓰고, 장착 완료도 획득한 걸로 같이 인정)
-        if (!step6Reported && (IsHolding("Spring") || (changeDoll != null && changeDoll.IsSpringFixed)))
+        if (!trainReported && (IsHolding("Spring") || (changeDoll != null && changeDoll.IsSpringFixed)))
         {
-            step6Reported = true;
-            ReportStep(6, "clue_spring");
+            trainReported = true;
+            ReportStep(StepTrain, "clue_spring");
         }
 
-        // id7 : 얻은 태엽을 인형에 장착한다
-        if (!step7Reported && step6Reported && changeDoll != null && changeDoll.IsSpringFixed)
+        // id8 : 얻은 태엽을 인형에 장착한다
+        if (!springReported && trainReported && changeDoll != null && changeDoll.IsSpringFixed)
         {
-            step7Reported = true;
-            ReportStep(7, null);
+            springReported = true;
+            ReportStep(StepSpring, null);
         }
 
-        // id8 : 완성된 인형의 태엽을 돌려 수리를 완료하고 열쇠를 얻어 탈출한다
+        // id9 : 완성된 인형의 태엽을 돌려 수리를 완료하고 열쇠를 얻어 탈출한다
         // 예전엔 수리 완료(IsDollRepairCompleted) 순간 완료로 쳤는데, 태엽을 붙이면 수리가 자동으로 돼서
-        // step 7과 8이 동시에 끝나버림 → 열쇠를 줍기 전에 힌트를 누르면 "이미 모든 단서를 찾았어"가 나옴.
+        // 태엽 장착과 탈출 단계가 동시에 끝나버림 → 열쇠를 줍기 전에 힌트를 누르면 "이미 모든 단서를 찾았어"가 나옴.
         // 그래서 탈출(IsStageCleared) 시점에 완료로 바꾸고, 그 전엔 GetProgressNote가
         // "인형 이동 중 / 열쇠 떨어짐" 진행 구간에 맞는 문장을 넘김
-        if (!step8Reported && gameManager != null && gameManager.IsStageCleared)
+        if (!escapeReported && gameManager != null && gameManager.IsStageCleared)
         {
-            step8Reported = true;
-            ReportStep(8, null);
+            escapeReported = true;
+            ReportStep(StepEscape, null);
         }
 
         // 곰인형 HitCount(던진 횟수) 동적 반영
         SyncTeddyBearHitCount();
+    }
+
+
+    // =========================================================
+    // 씬 이벤트에 연결하는 메서드 (UnityEvent)
+    // =========================================================
+
+    /// <summary>
+    /// 1. DollFencePart/Book_Matryo의 Book_Inspectable.OnInspectPerformed에 연결 (책을 펼쳐 본 순간).
+    /// 여러 번 펼쳐도 완료 기록은 한 번만, 관찰 문장(최근 행동)은 처음 한 번만 남김.
+    /// </summary>
+    public void ReportBookViewed()
+    {
+        if (hintManager == null) return;
+        CompleteBook("그림책 조사");
+    }
+
+    void CompleteBook(string why)
+    {
+        if (bookReported) return;
+        bookReported = true;
+        ReportStep(StepBook, "clue_matryoshka_book");
+        Debug.Log($"[DollHintBridge] 그림책 단계 완료 ({why})");
     }
 
 
@@ -311,10 +356,10 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
         }
 
         // 곰 인형은 "던지는" 퍼즐이라 던지는 순간 손을 떠남 → 그대로 두면 던지는 중인데도
-        // 손/인벤토리 override가 풀려서 체크리스트 순서(예: 아직 안 푼 step 1 자물쇠)로 힌트가 돌아감.
+        // 손/인벤토리 override가 풀려서 체크리스트 순서(예: 아직 안 푼 자물쇠)로 힌트가 돌아감.
         // 한 번이라도 던졌고 아직 동전을 못 얻었으면 "곰 인형 퍼즐 진행 중"으로 보고 인벤토리에 있는 것처럼 취급
-        // (HintEngine 2순위 inventory-override로 step 3 유지 — Core 수정 없이 브릿지에서만 처리)
-        if (speakingBearDoll != null && speakingBearDoll.HitCount > 0 && !step3Reported && !names.Contains("TeddyBear"))
+        // (HintEngine 2순위 inventory-override로 곰 인형 단계 유지 — Core 수정 없이 브릿지에서만 처리)
+        if (speakingBearDoll != null && speakingBearDoll.HitCount > 0 && !bearReported && !names.Contains("TeddyBear"))
             names.Add("TeddyBear");
 
         return names;
@@ -337,7 +382,7 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
         return obj.objectName;
     }
 
-    // DollRoomData step 4의 relatedObjectName — 곰 인형에서 나온 동전의 Object_Grabbable.objectName
+    // DollRoomData step 5(오락기)의 relatedObjectName — 곰 인형에서 나온 동전의 Object_Grabbable.objectName
     const string CoinObjectName = "동전";
 
     private bool IsCoinObtained()
@@ -378,13 +423,14 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
     {
         switch (key)
         {
+            case "MatryoBook": return matryoBook;
             case "LockArea":  return lockArea;
             case "DollLeg":   return IsHolding("DollLeg") ? dollStand : horseArea;
             case "TeddyBear": return teddyBear;
             case "동전":       return retroGame;
             case "DollArm":   return IsHolding("DollArm") ? dollStand : retroGame;
             case "TrainArea": return trainArea;
-            case "Spring":    return dollStand; // step 7은 태엽을 이미 얻은 뒤라 항상 인형 쪽
+            case "Spring":    return dollStand; // 태엽 장착 단계는 태엽을 이미 얻은 뒤라 항상 인형 쪽
             case "DollStand": return dollStand;
             default:          return null;
         }
@@ -403,67 +449,57 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
     // 여기선 "거의 다 왔다" 판단 기준으로만 씀 — 바뀌면 이 값만 맞춰주면 됨.
     const int BearAlmostThreshold = 3;
 
-    // [레벨 단계][후보] — 레벨 1~2(모호) / 3(분명) / 4~5(거의 정답).
-    // 같은 칸 안에서 랜덤으로 골라서, 같은 상태·같은 레벨로 다시 물어도 방향 문장 자체가 조금씩 달라짐
+    // [레벨 단계] 키 — 레벨 1~2(모호) / 3(분명) / 4~5(거의 정답).
+    // 키마다 후보 문장이 여러 개라 랜덤으로 골라서, 같은 상태·같은 레벨로 다시 물어도 방향 문장 자체가 조금씩 달라짐
     // (LLM은 방향 문장을 거의 그대로 옮기는 경향이 있어서, 베끼는 걸 막는 대신 베낄 재료를 다양하게 줌).
     // 숫자(던진 횟수, 정답 횟수)는 어떤 문장에도 넣지 않음 — 정답 누설 방지.
-    static readonly string[][] BearEarlyNotes =
+    // 문장(한·영·일)은 HintLanguageData.DollScene.cs의 HintDoll_Note{구간}_T0~T2.
+
+    static readonly string[] BearEarlyNotes =
     {
-        new[] { "곰 인형이 던질 때마다 반응하고 있어요. 멈추지 말고 계속 던져보세요.",
-                "곰 인형 목소리가 조금씩 달라지고 있어요. 한 번 더 던져보세요.",
-                "곰 인형이 던져질 때마다 뭔가 변하는 것 같아요. 계속 던져보세요." },
-        new[] { "곰 인형이 충격을 받을수록 약해지는 것 같아요. 계속 세게 던져보세요.",
-                "곰 인형이 던질 때마다 조금씩 망가지고 있어요. 멈추지 말고 계속 던져보세요." },
-        new[] { "곰 인형을 계속 던지면 안에서 뭔가 떨어질 거예요. 멈추지 마세요.",
-                "곰 인형 안에 뭔가 들어 있어요. 찢어질 때까지 계속 던져보세요." },
+        HintLanguageDataKey.HintDoll_NoteBearEarly_T0,
+        HintLanguageDataKey.HintDoll_NoteBearEarly_T1,
+        HintLanguageDataKey.HintDoll_NoteBearEarly_T2,
     };
 
-    static readonly string[][] BearAlmostNotes =
+    static readonly string[] BearAlmostNotes =
     {
-        new[] { "곰 인형이 이제 거의 버티지 못하는 것 같아요. 조금만 더 던져보세요.",
-                "곰 인형 반응이 점점 약해지고 있어요. 조금만 더 던져보세요.",
-                "곰 인형이 한계에 다다른 것 같아요. 멈추지 말고 조금만 더요." },
-        new[] { "곰 인형이 곧 찢어질 것 같아요. 조금만 더 세게 던져보세요.",
-                "곰 인형 솔기가 터지기 직전이에요. 조금만 더 던져보세요." },
-        new[] { "곰 인형이 찢어지면 안에서 동전이 나올 거예요. 조금만 더 던져보세요.",
-                "조금만 더 던지면 곰 인형이 찢어지면서 동전이 떨어질 거예요." },
+        HintLanguageDataKey.HintDoll_NoteBearAlmost_T0,
+        HintLanguageDataKey.HintDoll_NoteBearAlmost_T1,
+        HintLanguageDataKey.HintDoll_NoteBearAlmost_T2,
     };
 
     // 곰 인형이 찢어졌는데 아직 동전을 안 주운 상태 — 동전이 이미 눈앞에 보이는 상태라 모호하게 말하면 쓸모없음.
     // 그래서 최소 레벨 3(GetMinHintLevel)으로 올리고, 모든 문장에 "동전"을 넣음.
-    // (첫 칸은 레벨 1~2용인데 최소 레벨 때문에 실제로는 안 쓰임 — 테이블 모양을 다른 구간과 맞추려고 둠)
-    static readonly string[][] BearBrokenNotes =
+    // (T0은 레벨 1~2용인데 최소 레벨 때문에 실제로는 안 쓰임 — 모양을 다른 구간과 맞추려고 둠)
+    static readonly string[] BearBrokenNotes =
     {
-        new[] { "찢어진 곰 인형에서 동전이 떨어졌어요. 바닥을 확인해보세요." },
-        new[] { "찢어진 곰 인형에서 동전이 떨어졌어요. 근처 바닥에서 주워보세요.",
-                "곰 인형 안에서 동전이 나왔어요. 바닥에 떨어진 동전을 주워보세요.",
-                "곰 인형이 찢어지면서 동전이 굴러 나왔어요. 바닥을 보고 주워보세요." },
-        new[] { "찢어진 곰 인형 바로 옆 바닥에 떨어진 동전을 주우세요. 그 동전은 오락기에 쓸 수 있어요.",
-                "곰 인형에서 나온 동전을 주워서 챙기세요. 오락기에 넣을 수 있어요." },
+        HintLanguageDataKey.HintDoll_NoteBearBroken_T0,
+        HintLanguageDataKey.HintDoll_NoteBearBroken_T1,
+        HintLanguageDataKey.HintDoll_NoteBearBroken_T2,
     };
 
-    // step 8 — 수리가 끝나고 인형이 움직이는 중 (레벨 상관없이 "지켜보세요", 표현만 랜덤)
-    static readonly string[][] DollMovingNotes =
+    // 탈출 단계 — 수리가 끝나고 인형이 움직이는 중 (레벨 상관없이 "지켜봐", 표현만 랜덤)
+    static readonly string[] DollMovingNotes =
     {
-        new[] { "인형이 움직이기 시작했어요. 잠시 지켜보세요.",
-                "인형이 뭔가 하려는 것 같아요. 조금만 기다려보세요." },
+        HintLanguageDataKey.HintDoll_NoteDollMoving_T0,
     };
 
-    // step 8 — 열쇠가 떨어진 뒤 (곰 인형 찢어진 뒤와 같은 이유로 최소 레벨 3)
-    static readonly string[][] KeyDroppedNotes =
+    // 탈출 단계 — 열쇠가 떨어진 뒤 (곰 인형 찢어진 뒤와 같은 이유로 최소 레벨 3)
+    static readonly string[] KeyDroppedNotes =
     {
-        new[] { "인형 쪽에서 열쇠가 떨어졌어요. 바닥을 확인해보세요." },
-        new[] { "인형 근처 바닥에 떨어진 열쇠를 찾아보세요.",
-                "인형이 떨어뜨린 열쇠가 바닥 어딘가에 있을 거예요." },
-        new[] { "인형이 떨어뜨린 열쇠를 주워서 탈출하세요.",
-                "바닥에 떨어진 열쇠를 주워서 문을 열고 나가세요." },
+        HintLanguageDataKey.HintDoll_NoteKeyDropped_T0,
+        HintLanguageDataKey.HintDoll_NoteKeyDropped_T1,
+        HintLanguageDataKey.HintDoll_NoteKeyDropped_T2,
     };
 
-    static string PickByLevel(string[][] table, int hintLevel)
+    // 레벨에 맞는 단계 키 → 현재 언어 후보 중 하나를 랜덤으로 (WineHintBridge와 같은 방식)
+    static string PickByLevel(string[] tierKeys, int hintLevel)
     {
         int tier = hintLevel <= 2 ? 0 : (hintLevel == 3 ? 1 : 2);
-        tier = Mathf.Clamp(tier, 0, table.Length - 1);
-        var pool = table[tier];
+        tier = Mathf.Clamp(tier, 0, tierKeys.Length - 1);
+        var pool = HintLanguageData.GetCandidates(tierKeys[tier]);
+        if (pool == null || pool.Length == 0) return null; // 번역 키가 빠졌으면 hintByLevel 문구로 대체됨
         return pool[Random.Range(0, pool.Length)];
     }
 
@@ -475,7 +511,7 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
     {
         if (step == null) return null;
 
-        if (step.id == 3 && speakingBearDoll != null)
+        if (step.id == StepBear && speakingBearDoll != null)
         {
             if (speakingBearDoll.IsBroken) return "broken";
             int hit = speakingBearDoll.HitCount;
@@ -483,7 +519,7 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
             return hit < BearAlmostThreshold ? "early" : "almost";
         }
 
-        if (step.id == 8 && gameManager != null)
+        if (step.id == StepEscape && gameManager != null)
         {
             if (gameManager.IsExitKeyDropped) return "key-dropped";
             if (gameManager.IsDollRepaired)   return "doll-moving";
@@ -509,7 +545,7 @@ public class DollHintBridge : MonoBehaviour, IPossessionProvider, ILocationAware
     }
 
     /// <summary>
-    /// step 3(곰 인형 던지기) / step 8(수리 완료 → 열쇠)일 때만, 현재 진행 구간 + 힌트 레벨에 맞는 문장을 돌려줌.
+    /// 곰 인형 던지기 / 탈출(수리 완료 → 열쇠) 단계일 때만, 현재 진행 구간 + 힌트 레벨에 맞는 문장을 돌려줌.
     /// 해당 없으면 null → hintByLevel 문구가 그대로 쓰임.
     /// (이 문장이 hintByLevel 문구를 대신하므로, "계속 던져보세요"처럼 할 행동까지 포함해야 함)
     /// </summary>

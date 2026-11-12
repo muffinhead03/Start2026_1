@@ -56,16 +56,17 @@ public class DefaultActionLabelProvider : IActionLabelProvider
         ("organ_hold_",        HintLanguageDataKey.HintAction_OrganHoldAny),
 
         // ── 인형씬 ─────────────────────────────────────────
-        // DollHintBridge가 스텝 완료 시 "doll_step_NN"으로 AddLastAction 호출.
+                // DollHintBridge가 스텝 완료 시 "doll_step_NN"으로 AddLastAction 호출 (DollRoomData 9단계 번호).
         // (곰 인형 던지기는 횟수가 들어가는 동적 문구라 아래 GetLabels()에서 따로 처리)
-        // (08은 탈출 직전이라 이후 힌트 요청이 없어서 제외)
-        ("doll_step_01",    HintLanguageDataKey.HintAction_DollStep01),
-        ("doll_step_02",    HintLanguageDataKey.HintAction_DollStep02),
-        ("doll_step_03",    HintLanguageDataKey.HintAction_DollStep03),
-        ("doll_step_04",    HintLanguageDataKey.HintAction_DollStep04),
-        ("doll_step_05",    HintLanguageDataKey.HintAction_DollStep05),
-        ("doll_step_06",    HintLanguageDataKey.HintAction_DollStep06),
-        ("doll_step_07",    HintLanguageDataKey.HintAction_DollStep07),
+        // (09는 탈출 직전이라 이후 힌트 요청이 없어서 제외)
+        ("doll_step_01",    HintLanguageDataKey.HintAction_DollBookViewed),
+        ("doll_step_02",    HintLanguageDataKey.HintAction_DollLockOpened),
+        ("doll_step_03",    HintLanguageDataKey.HintAction_DollLegFixed),
+        ("doll_step_04",    HintLanguageDataKey.HintAction_DollCoinGot),
+        ("doll_step_05",    HintLanguageDataKey.HintAction_DollArmGot),
+        ("doll_step_06",    HintLanguageDataKey.HintAction_DollArmFixed),
+        ("doll_step_07",    HintLanguageDataKey.HintAction_DollSpringGot),
+        ("doll_step_08",    HintLanguageDataKey.HintAction_DollSpringFixed),
     };
 
     // 곰 인형 던지기 — "doll_bear_throw_3"처럼 횟수가 붙어서 들어옴

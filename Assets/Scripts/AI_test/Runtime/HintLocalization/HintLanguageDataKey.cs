@@ -104,13 +104,15 @@ public static class HintLanguageDataKey
      * Action Labels — Doll Scene
      */
 
-    public const string HintAction_DollStep01 = nameof(HintAction_DollStep01);
-    public const string HintAction_DollStep02 = nameof(HintAction_DollStep02);
-    public const string HintAction_DollStep03 = nameof(HintAction_DollStep03);
-    public const string HintAction_DollStep04 = nameof(HintAction_DollStep04);
-    public const string HintAction_DollStep05 = nameof(HintAction_DollStep05);
-    public const string HintAction_DollStep06 = nameof(HintAction_DollStep06);
-    public const string HintAction_DollStep07 = nameof(HintAction_DollStep07);
+    // DollHintBridge가 스텝 완료 시 "doll_step_NN" → DefaultActionLabelProvider가 아래 키로 바꿈 (9단계 기준)
+    public const string HintAction_DollBookViewed  = nameof(HintAction_DollBookViewed);   // 1 그림책 봄
+    public const string HintAction_DollLockOpened  = nameof(HintAction_DollLockOpened);   // 2 자물쇠 열림
+    public const string HintAction_DollLegFixed    = nameof(HintAction_DollLegFixed);     // 3 다리 교체
+    public const string HintAction_DollCoinGot     = nameof(HintAction_DollCoinGot);      // 4 동전 얻음
+    public const string HintAction_DollArmGot      = nameof(HintAction_DollArmGot);       // 5 오락기에서 팔 얻음
+    public const string HintAction_DollArmFixed    = nameof(HintAction_DollArmFixed);     // 6 팔 교체
+    public const string HintAction_DollSpringGot   = nameof(HintAction_DollSpringGot);    // 7 태엽 얻음
+    public const string HintAction_DollSpringFixed = nameof(HintAction_DollSpringFixed);  // 8 태엽 장착
 
     // 곰 인형 던진 횟수 — {0}에 횟수
     public const string HintAction_DollBearThrowOnce = nameof(HintAction_DollBearThrowOnce);
@@ -188,4 +190,73 @@ public static class HintLanguageDataKey
     public const string HintWine_NoteHasKey_T0 = nameof(HintWine_NoteHasKey_T0);
     public const string HintWine_NoteHasKey_T1 = nameof(HintWine_NoteHasKey_T1);
     public const string HintWine_NoteHasKey_T2 = nameof(HintWine_NoteHasKey_T2);
+
+
+    /*
+     * Doll Scene — 단계별 힌트 (DollRoomData.hintByLevel, 9단계 × 레벨 1~5)
+     */
+
+    public const string HintDoll_Step1_Level1 = nameof(HintDoll_Step1_Level1);
+    public const string HintDoll_Step1_Level2 = nameof(HintDoll_Step1_Level2);
+    public const string HintDoll_Step1_Level3 = nameof(HintDoll_Step1_Level3);
+    public const string HintDoll_Step1_Level4 = nameof(HintDoll_Step1_Level4);
+    public const string HintDoll_Step1_Level5 = nameof(HintDoll_Step1_Level5);
+    public const string HintDoll_Step2_Level1 = nameof(HintDoll_Step2_Level1);
+    public const string HintDoll_Step2_Level2 = nameof(HintDoll_Step2_Level2);
+    public const string HintDoll_Step2_Level3 = nameof(HintDoll_Step2_Level3);
+    public const string HintDoll_Step2_Level4 = nameof(HintDoll_Step2_Level4);
+    public const string HintDoll_Step2_Level5 = nameof(HintDoll_Step2_Level5);
+    public const string HintDoll_Step3_Level1 = nameof(HintDoll_Step3_Level1);
+    public const string HintDoll_Step3_Level2 = nameof(HintDoll_Step3_Level2);
+    public const string HintDoll_Step3_Level3 = nameof(HintDoll_Step3_Level3);
+    public const string HintDoll_Step3_Level4 = nameof(HintDoll_Step3_Level4);
+    public const string HintDoll_Step3_Level5 = nameof(HintDoll_Step3_Level5);
+    public const string HintDoll_Step4_Level1 = nameof(HintDoll_Step4_Level1);
+    public const string HintDoll_Step4_Level2 = nameof(HintDoll_Step4_Level2);
+    public const string HintDoll_Step4_Level3 = nameof(HintDoll_Step4_Level3);
+    public const string HintDoll_Step4_Level4 = nameof(HintDoll_Step4_Level4);
+    public const string HintDoll_Step4_Level5 = nameof(HintDoll_Step4_Level5);
+    public const string HintDoll_Step5_Level1 = nameof(HintDoll_Step5_Level1);
+    public const string HintDoll_Step5_Level2 = nameof(HintDoll_Step5_Level2);
+    public const string HintDoll_Step5_Level3 = nameof(HintDoll_Step5_Level3);
+    public const string HintDoll_Step5_Level4 = nameof(HintDoll_Step5_Level4);
+    public const string HintDoll_Step5_Level5 = nameof(HintDoll_Step5_Level5);
+    public const string HintDoll_Step6_Level1 = nameof(HintDoll_Step6_Level1);
+    public const string HintDoll_Step6_Level2 = nameof(HintDoll_Step6_Level2);
+    public const string HintDoll_Step6_Level3 = nameof(HintDoll_Step6_Level3);
+    public const string HintDoll_Step6_Level4 = nameof(HintDoll_Step6_Level4);
+    public const string HintDoll_Step6_Level5 = nameof(HintDoll_Step6_Level5);
+    public const string HintDoll_Step7_Level1 = nameof(HintDoll_Step7_Level1);
+    public const string HintDoll_Step7_Level2 = nameof(HintDoll_Step7_Level2);
+    public const string HintDoll_Step7_Level3 = nameof(HintDoll_Step7_Level3);
+    public const string HintDoll_Step7_Level4 = nameof(HintDoll_Step7_Level4);
+    public const string HintDoll_Step7_Level5 = nameof(HintDoll_Step7_Level5);
+    public const string HintDoll_Step8_Level1 = nameof(HintDoll_Step8_Level1);
+    public const string HintDoll_Step8_Level2 = nameof(HintDoll_Step8_Level2);
+    public const string HintDoll_Step8_Level3 = nameof(HintDoll_Step8_Level3);
+    public const string HintDoll_Step8_Level4 = nameof(HintDoll_Step8_Level4);
+    public const string HintDoll_Step8_Level5 = nameof(HintDoll_Step8_Level5);
+    public const string HintDoll_Step9_Level1 = nameof(HintDoll_Step9_Level1);
+    public const string HintDoll_Step9_Level2 = nameof(HintDoll_Step9_Level2);
+    public const string HintDoll_Step9_Level3 = nameof(HintDoll_Step9_Level3);
+    public const string HintDoll_Step9_Level4 = nameof(HintDoll_Step9_Level4);
+    public const string HintDoll_Step9_Level5 = nameof(HintDoll_Step9_Level5);
+
+    /*
+     * Doll Scene — 진행 문장 (DollHintBridge, T0 레벨1~2 / T1 레벨3 / T2 레벨4~5)
+     */
+
+    public const string HintDoll_NoteBearEarly_T0 = nameof(HintDoll_NoteBearEarly_T0);
+    public const string HintDoll_NoteBearEarly_T1 = nameof(HintDoll_NoteBearEarly_T1);
+    public const string HintDoll_NoteBearEarly_T2 = nameof(HintDoll_NoteBearEarly_T2);
+    public const string HintDoll_NoteBearAlmost_T0 = nameof(HintDoll_NoteBearAlmost_T0);
+    public const string HintDoll_NoteBearAlmost_T1 = nameof(HintDoll_NoteBearAlmost_T1);
+    public const string HintDoll_NoteBearAlmost_T2 = nameof(HintDoll_NoteBearAlmost_T2);
+    public const string HintDoll_NoteBearBroken_T0 = nameof(HintDoll_NoteBearBroken_T0);
+    public const string HintDoll_NoteBearBroken_T1 = nameof(HintDoll_NoteBearBroken_T1);
+    public const string HintDoll_NoteBearBroken_T2 = nameof(HintDoll_NoteBearBroken_T2);
+    public const string HintDoll_NoteDollMoving_T0 = nameof(HintDoll_NoteDollMoving_T0);
+    public const string HintDoll_NoteKeyDropped_T0 = nameof(HintDoll_NoteKeyDropped_T0);
+    public const string HintDoll_NoteKeyDropped_T1 = nameof(HintDoll_NoteKeyDropped_T1);
+    public const string HintDoll_NoteKeyDropped_T2 = nameof(HintDoll_NoteKeyDropped_T2);
 }
