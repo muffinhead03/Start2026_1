@@ -18,7 +18,7 @@ public class GameSetting : MonoBehaviour
 
     [Header("Text")]
     string[] hintLevel = { "Easy", "Medium", "Hard" };
-    string[] language = { "English", "ÇÑ±¹¾î", "\u65E5\u672C\u8A9E" }; // English, ÇÑ±¹¾î, ìíÜâåŞ(Japanese)
+    string[] language = { "English", "í•œêµ­ì–´", "\u65E5\u672C\u8A9E" }; // English, í•œêµ­ì–´, æ—¥æœ¬èª(Japanese)
 
     [Header("Player")]
     public Player_Move player;
@@ -46,11 +46,11 @@ public class GameSetting : MonoBehaviour
             data.current_stage = SceneManager.GetActiveScene().buildIndex;
         }
 
-        // ½ÃÀÛ È­¸é ¼³Á¤(GameData)¿¡¼­ ¹Ù²Û ¾ğ¾î¸¦ µ¤¾î¾²Áö ¾Êµµ·Ï ÇöÀç ¾ğ¾î¸¦ data¿¡ ¸ÂÃã
+        // ì‹œì‘ í™”ë©´ ì„¤ì •(GameData)ì—ì„œ ë°”ê¾¼ ì–¸ì–´ë¥¼ ë®ì–´ì“°ì§€ ì•Šë„ë¡ í˜„ì¬ ì–¸ì–´ë¥¼ dataì— ë§ì¶¤
         SyncLanguageFromCurrent();
     }
 
-    // data.language(0: English, 1: ÇÑ±¹¾î, 2: Japanese)¸¦ GameData / Localization¿¡ ¹İ¿µ
+    // data.language(0: English, 1: í•œêµ­ì–´, 2: Japanese)ë¥¼ GameData / Localizationì— ë°˜ì˜
     void ApplyLanguage()
     {
         GameData.SetLanguage(data.language switch
@@ -61,7 +61,7 @@ public class GameSetting : MonoBehaviour
         });
     }
 
-    // LanguageCurrentStatus(PlayerPrefs¿¡¼­ ºÒ·¯¿È) ¡æ data.language (0: English, 1: ÇÑ±¹¾î, 2: Japanese)
+    // LanguageCurrentStatus(PlayerPrefsì—ì„œ ë¶ˆëŸ¬ì˜´) â†’ data.language (0: English, 1: í•œêµ­ì–´, 2: Japanese)
     void SyncLanguageFromCurrent()
     {
         data.language = LanguageCurrentStatus.CurrentLanguage switch
