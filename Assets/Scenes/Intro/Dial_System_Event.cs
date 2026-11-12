@@ -1,21 +1,29 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System;
+
+[Serializable]
+public struct EventInDial
+{
+    public int dial;
+    public int script;
+    public UnityEvent OnScriptPrint;
+}
 
 public class Dial_System_Event: Dial_System
 {
-    [SerializeField] private int[] event_dial;
-    [SerializeField] private int[] event_script;
-
-    [SerializeField] UnityEvent EventInDial;
+    [SerializeField] private EventInDial[] events;
     private int event_id = 0;
 
     protected override void ShowCurrentScript()
     {
         base.ShowCurrentScript();
 
-        if(current_dial == event_dial[event_id] && current_script == event_script[event_id])
+        if(current_dial == events[event_id].dial && current_script == events[event_id].script)
         {
-            EventInDial?.Invoke();
+            events[event_id].OnScriptPrint?.Invoke();
+
+            event_id++;
         }
     }
 }

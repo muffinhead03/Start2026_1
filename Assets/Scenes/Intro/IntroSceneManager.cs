@@ -3,14 +3,6 @@ using UnityEngine.SceneManagement;
 
 public class IntroSceneManager : MonoBehaviour
 {
-    /*
-     * 1. 다이얼 모드. 회전, 이동 잠금
-     * 2. 플레이모드, 이동 잠금
-     * 3. 플레이모드
-     * 4. 다이얼 모드, 회전, 이동 잠금
-     * 5. 플레이모드, 이동 잠금
-     */
-
     [SerializeField] Dial_System dial;
 
     [SerializeField] Player_Move player;
@@ -19,9 +11,11 @@ public class IntroSceneManager : MonoBehaviour
 
     [SerializeField] Intro_StepForCustomer customer;
 
+    [SerializeField] Intro_NextScene nextscene;
+
     private enum player_mode { dial, play}
 
-    private player_mode[] step = {player_mode.dial, player_mode.play, player_mode.dial, player_mode.dial, player_mode.play};
+    private player_mode[] step = {player_mode.dial, player_mode.play, player_mode.dial, player_mode.dial};
     private int step_id;
     private int step_customer = 3;
 
@@ -48,7 +42,7 @@ public class IntroSceneManager : MonoBehaviour
 
         if(step_id >= step.Length)
         {
-            SceneManager.LoadScene("DollSceneUpdate");
+            //SceneManager.LoadScene("DollSceneUpdate");
         }
         else
         {
@@ -61,6 +55,12 @@ public class IntroSceneManager : MonoBehaviour
         isCustomerCalled = true;
 
         customer.SetActive();
+    }
+
+    public void OpentheBox(bool isOpen)
+    {
+        if (isOpen) nextscene.SetActive("DollSceneUpdate");
+        else nextscene.SetActive("StartingScene");
     }
 
     private void ChangeMode(player_mode mode)

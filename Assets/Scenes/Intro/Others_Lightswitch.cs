@@ -23,6 +23,16 @@ public class Others_Lightswitch : MonoBehaviour
         lever.localRotation = Quaternion.Euler(0, lever_rotate[0], 0);
     }
 
+    void OnEnable()
+    {
+        light_material.DisableKeyword("_EMISSION");
+    }
+
+    void OnDisable()
+    {
+        light_material.DisableKeyword("_EMISSION");
+    }
+
     public void ToggleLight()
     {
         if (!isActive) return;

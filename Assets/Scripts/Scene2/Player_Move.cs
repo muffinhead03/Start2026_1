@@ -58,6 +58,7 @@ public class Player_Move : MonoBehaviour
     void Awake()
     {
         yaw = transform.rotation.eulerAngles.y;
+        if (CameraPivot != null) pitch = CameraPivot.localRotation.eulerAngles.x;
 
         Character = GetComponent<CharacterController>();
 
@@ -214,6 +215,9 @@ public class Player_Move : MonoBehaviour
     public void LookForward()
     {
         CameraPivot.localRotation = Quaternion.identity;
+
+        yaw = transform.rotation.eulerAngles.y;
+        if (CameraPivot != null) pitch = CameraPivot.localRotation.eulerAngles.x;
     }
 
     public void PlayFootStepSound()

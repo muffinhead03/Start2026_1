@@ -18,16 +18,26 @@ public class Dial_System : MonoBehaviour
     protected int current_dial;
     protected int current_script;
 
+    private int panel_id = 3;
+    private int button_id = 4;
+    private bool isChoiceDial = false;
+
     private void Start()
     {
         current_dial = 0;
+    }
+
+    private void OnDisable()
+    {
+        SceneUI.LockPointer();
     }
 
     public void StartDial()
     {
         current_script = 0;
 
-        SceneUI.SetActivePanel(3, true);
+        SceneUI.SetActivePanel(panel_id, true);
+        SceneUI.SetActivePanel(button_id, false);
 
         RegisterInputAction();
 
@@ -36,7 +46,8 @@ public class Dial_System : MonoBehaviour
 
     public void EndDial()
     {
-        SceneUI.SetActivePanel(3, false);
+        SceneUI.SetActivePanel(panel_id, false);
+        SceneUI.SetActivePanel(button_id, false);
 
         UnregisterInputAction();
 
@@ -58,7 +69,8 @@ public class Dial_System : MonoBehaviour
 
     private void OnNextPerformed(InputAction.CallbackContext ctx)
     {
-        NextScript();
+        if (!isChoiceDial) NextScript();
+        else NextChoice();
     }
 
     private void NextScript()
@@ -69,6 +81,11 @@ public class Dial_System : MonoBehaviour
         else ShowCurrentScript();
     }
 
+    public void NextChoice()
+    {
+        ShowChoiceButton();
+    }
+
     protected virtual void ShowCurrentScript()
     {
         string talker = dials[current_dial].scripts[current_script].talker;
@@ -76,6 +93,24 @@ public class Dial_System : MonoBehaviour
 
         string script = dials[current_dial].scripts[current_script].text;
         StartCoroutine(TypeText(script));
+    }
+
+    public void SetChoiceDial()
+    {
+        isChoiceDial = true;
+    }
+
+    private void ShowChoiceButton()
+    {
+        SceneUI.SetActivePanel(button_id, true);
+        SceneUI.UnlockPointer();
+
+        next.Disable();
+    }
+
+    public void ClickChoiceButton()
+    {
+        EndDial();
     }
 
     protected IEnumerator TypeText(string full_script)
