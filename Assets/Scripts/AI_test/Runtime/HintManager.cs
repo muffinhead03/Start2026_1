@@ -401,6 +401,8 @@ public class HintManager : MonoBehaviour
             return;
         }
 
+        walkieExamine?.PlayWalkieSound();   // 퍼즐 힌트 버튼 눌렀을 때 무전 소리 한 번 (출력 중 무시된 클릭은 소리 X)
+
         // 요청할 때마다 현재 언어를 다시 읽음 — 게임 중에 설정에서 언어를 바꿔도 이번 힌트부터 반영
         ApplyCurrentLanguage();
 
@@ -925,7 +927,7 @@ public class HintManager : MonoBehaviour
         typingCoroutine = StartCoroutine(TypeText(message));
     }
 
-    // displayPrefix(관찰 문장)가 있으면 그 뒤에 점만 찍고, 없으면 "치지직.. 교신 중"(UIText Connecting) + 점
+    // displayPrefix(관찰 문장)가 있으면 그 뒤에 점만 찍고, 없으면 ".. 교신 중"(UIText Connecting) + 점
     IEnumerator LoadingDots(string displayPrefix = "")
     {
         string baseText = string.IsNullOrEmpty(displayPrefix) ? UIText.Get(HintUITextId.Connecting) : displayPrefix.TrimEnd() + " ";
@@ -943,7 +945,8 @@ public class HintManager : MonoBehaviour
     // 언어 / 힌트 횟수 저장
     // =========================================================
 
-    // 무전기 잡음 + 띄어쓰기 (예: "치지직... ") — 인사말·관찰 문장·폴백 문구 앞에 붙음
+    // 무전기 말머리 + 띄어쓰기 (예: "... ") — 인사말·관찰 문장·폴백 문구 앞에 붙음.
+    // 2026-11: "치지직" 글자는 HintLanguageData.UI의 RadioNoise에서 뺌 (무전 느낌은 WalkieTalkieExamine 사운드로)
     string Radio => UIText.Get(HintUITextId.RadioNoise) + " ";
 
     // 횟수 저장 구분 — 씬 이름 기준 (같은 씬에 다시 들어오면 이어서 셈, 다른 씬이면 새로 시작)
