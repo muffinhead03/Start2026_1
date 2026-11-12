@@ -16,6 +16,12 @@ public class LocalizedHintUIText : IHintUITextProvider
         { HintUITextId.AllCluesFound, HintLanguageDataKey.HintUI_AllCluesFound },
         { HintUITextId.NoResponse,    HintLanguageDataKey.HintUI_NoResponse },
         { HintUITextId.FallbackTag,   HintLanguageDataKey.HintUI_FallbackTag },
+
+        // 패널 고정 라벨 (HintUILocalizedLabel)
+        { HintUITextId.HintButton,         HintLanguageDataKey.HintUI_HintButton },
+        { HintUITextId.EscClose,           HintLanguageDataKey.HintUI_EscClose },
+        { HintUITextId.FallbackBadgeTitle, HintLanguageDataKey.HintUI_FallbackBadgeTitle },
+        { HintUITextId.FallbackBadgeSub,   HintLanguageDataKey.HintUI_FallbackBadgeSub },
     };
 
     public string Get(HintUITextId id)
