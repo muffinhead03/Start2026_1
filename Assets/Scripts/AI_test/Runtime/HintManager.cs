@@ -176,6 +176,10 @@ public class HintManager : MonoBehaviour
     bool lastHintWasFallback = false;
     // 힌트를 받은 시점의 완료 스텝 수 — 그 뒤로 스텝을 더 풀었으면 지난 힌트는 안 보여줌
     int lastHintCompletedCount = -1;
+    // 힌트를 받은 시점의 언어 코드 — 그 뒤로 언어를 바꿨으면 지난 힌트는 안 보여줌
+    // (LanguageFontSwitcher가 언어 변경 즉시 폰트를 바꾸므로, 이전 언어 문장을 그대로 띄우면
+    //  일본어 문장 + 원래 폰트 / 한국어 문장 + 일본어 폰트처럼 글자가 네모로 나옴)
+    string lastHintLanguageCode = null;
 
     Coroutine typingCoroutine;
     Coroutine loadingCoroutine;
@@ -353,6 +357,13 @@ public class HintManager : MonoBehaviour
                 currentPlayerState.completedSteps.Count != lastHintCompletedCount)
             {
                 Debug.Log("[HintManager] 힌트를 받은 뒤 진행된 스텝이 있어서 지난 힌트 대신 인사말 표시");
+                lastHintDisplay = null;
+            }
+
+            // 힌트를 받은 뒤 언어를 바꿨으면 그 힌트는 이전 언어 문장 → 버리고 현재 언어 인사말
+            if (!string.IsNullOrEmpty(lastHintDisplay) && lastHintLanguageCode != CurrentLanguageCode)
+            {
+                Debug.Log($"[HintManager] 힌트를 받은 뒤 언어가 바뀌어서({lastHintLanguageCode} → {CurrentLanguageCode}) 지난 힌트 대신 인사말 표시");
                 lastHintDisplay = null;
             }
 
@@ -828,7 +839,11 @@ public class HintManager : MonoBehaviour
         lastHintDisplay = fullText;
         lastHintWasFallback = isFallback;
         lastHintCompletedCount = currentPlayerState.completedSteps.Count;
+        lastHintLanguageCode = CurrentLanguageCode;
     }
+
+    // 지금 게임 언어 코드 ("ko" / "en" / "ja") — 지난 힌트가 어느 언어였는지 비교용
+    string CurrentLanguageCode => (LanguageSource?.Current ?? HintLanguageProfile.Korean).Code;
 
     // 타이핑 없이 바로 표시 (다시 열었을 때 마지막 힌트 보여주기용)
     void ShowTextInstant(string message)
