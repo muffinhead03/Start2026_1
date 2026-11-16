@@ -31,3 +31,16 @@ public interface IStepProgressProvider
     /// </summary>
     int GetMinHintLevel(PuzzleStep step);
 }
+
+/// <summary>
+/// (선택) 한 스텝 안에서 "지금 가야 할 곳"이 진행 상황에 따라 바뀔 때, 거리/구역 문장의 기준 오브젝트를 바꿔주는 인터페이스.
+/// IStepProgressProvider 구현체가 이것도 같이 구현하면 HintEngine이 relatedObjectName 대신 이 값으로 거리·구역을 계산한다.
+/// 예: 와인씬 1단계 — 벽 종이를 보기 전엔 벽 종이, 본 뒤엔 바닥 얼룩, 그다음엔 메모 종이.
+/// 손/인벤토리 override 매칭은 계속 relatedObjectName을 씀 (이 값은 위치 문장에만 영향).
+/// 구현 안 한 씬(오르간/인형)은 기존 그대로 — 기존 구현체 수정 필요 없음.
+/// </summary>
+public interface IStepTargetProvider
+{
+    /// <summary>ILocationAwareProvider에 등록된 오브젝트 이름. 바꿀 필요 없으면 null.</summary>
+    string GetTargetObjectName(PuzzleStep step);
+}

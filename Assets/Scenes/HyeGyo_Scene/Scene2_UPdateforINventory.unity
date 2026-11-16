@@ -19559,7 +19559,10 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 8176726208811095167, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8573735766143835360, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2099574911}
   m_SourcePrefab: {fileID: 100100000, guid: 9b8ff0f38d60120408e9d08e4ebc1635, type: 3}
 --- !u!4 &743923336 stripped
 Transform:
@@ -49829,6 +49832,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dba7f341dea80264083f4f9537049f7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_FixCamera
+--- !u!114 &2099574911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099574892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 749805d4bd6dfb442bd15632343a622a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_MouseInteraction
+  rayDistance: 1
+  button_layer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1001 &2101381304
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51628,7 +51647,7 @@ GameObject:
   - component: {fileID: 4912378542447362363}
   - component: {fileID: 2742755364862035465}
   - component: {fileID: 4050471420474590926}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51657,7 +51676,7 @@ GameObject:
   - component: {fileID: 7864940763806588737}
   - component: {fileID: 2014506097791427350}
   - component: {fileID: 4915511819224597637}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52278,7 +52297,7 @@ GameObject:
   - component: {fileID: 7169954353405358752}
   - component: {fileID: 2586391338263761488}
   - component: {fileID: 3757264766921604}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53278,7 +53297,7 @@ GameObject:
   - component: {fileID: 696859070381381851}
   - component: {fileID: 4468323621739385143}
   - component: {fileID: 5888981023545114247}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53681,7 +53700,7 @@ GameObject:
   - component: {fileID: 8576237226423588545}
   - component: {fileID: 324976408202723018}
   - component: {fileID: 8764110780059294427}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53977,7 +53996,7 @@ GameObject:
   - component: {fileID: 4272791769680364103}
   - component: {fileID: 9096659211614392239}
   - component: {fileID: 7997100184021018556}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54424,7 +54443,7 @@ GameObject:
   - component: {fileID: 7875377424770108461}
   - component: {fileID: 2108390605876160578}
   - component: {fileID: 1129503895809551378}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54479,7 +54498,7 @@ GameObject:
   - component: {fileID: 1782422743958317589}
   - component: {fileID: 1286009954861564939}
   - component: {fileID: 1156486966284264691}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55313,7 +55332,7 @@ GameObject:
   - component: {fileID: 5520845884545161329}
   - component: {fileID: 7072386825630527805}
   - component: {fileID: 462299898900856130}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56144,7 +56163,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  hintManager: {fileID: 0}
+  player: {fileID: 2099574911}
 --- !u!114 &8503305246738992824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56507,7 +56526,7 @@ GameObject:
   - component: {fileID: 4852544904254611356}
   - component: {fileID: 1826354803289060294}
   - component: {fileID: 9151718130637447428}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Button (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

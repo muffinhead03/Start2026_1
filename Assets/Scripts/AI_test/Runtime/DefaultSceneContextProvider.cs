@@ -17,7 +17,7 @@ public class DefaultSceneContextProvider : ISceneContextProvider
     static readonly Dictionary<string, string> SceneOrientation = new Dictionary<string, string>
     {
         { "wine_glass_room",
-            "Scene: A dim Victorian dining room with a wine rack and stained floor, leading into a room with an old bookshelf. " +
+            "Scene: A dim Victorian wine cellar with wine stains on the floor, a paper on the wall with a drawing of colored stains, a memo paper pinned on the wall beside a framed painting, a wine rack with empty slots and a locked glass display cabinet, leading into a room with an old bookshelf. " +
             "The player is trying to escape by solving a puzzle hidden somewhere in this space." },
 
         { "organ_room",
@@ -25,7 +25,7 @@ public class DefaultSceneContextProvider : ISceneContextProvider
             "The player is trying to repair the organ and perform a piece of music to escape." },
 
         { "doll_room",
-            "Scene: A dim old playroom full of toys — wooden rocking horses, nesting dolls, a toy train, a retro arcade machine and a talking teddy bear. " +
+            "Scene: A dim old playroom full of toys — a picture book with seesaw drawings on the floor, nesting dolls lined up on a cabinet, a combination lock on a fence around wooden rocking horses, a toy train, a retro arcade machine and a talking teddy bear. "  +
             "A broken wooden doll stands in the corner. The player is trying to repair the doll to escape." },
     };
 

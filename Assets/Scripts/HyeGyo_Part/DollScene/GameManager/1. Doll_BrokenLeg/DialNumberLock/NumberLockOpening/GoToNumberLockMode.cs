@@ -36,6 +36,10 @@ public class GoToNumberLockMode : MonoBehaviour
     [SerializeField]
     private GameObject modeLightObject;
 
+    [Tooltip("자물쇠 모드(카메라 고정) 동안만 켜지는 추가 오브젝트 (예: Lights/LightForLock)")]
+    [SerializeField]
+    private GameObject[] extraModeObjects;
+
 
     // ================================================
     // State
@@ -91,10 +95,7 @@ public class GoToNumberLockMode : MonoBehaviour
 
 
         // 연출용 오브젝트도 평상시에는 OFF
-        if (modeLightObject != null)
-        {
-            modeLightObject.SetActive(false);
-        }
+        SetModeObjectsActive(false);
     }
 
 
@@ -185,10 +186,7 @@ public class GoToNumberLockMode : MonoBehaviour
         // 조명 / 연출 오브젝트
         // --------------------------------
 
-        if (modeLightObject != null)
-        {
-            modeLightObject.SetActive(true);
-        }
+        SetModeObjectsActive(true);
 
 
         Debug.Log(
@@ -282,15 +280,38 @@ public class GoToNumberLockMode : MonoBehaviour
         // 조명 / 연출 오브젝트 OFF
         // --------------------------------
 
-        if (modeLightObject != null)
-        {
-            modeLightObject.SetActive(false);
-        }
+        SetModeObjectsActive(false);
 
 
         Debug.Log(
             "[FiveDial] NumberLock Mode OFF"
         );
+    }
+
+
+    // ================================================
+    // 조명 / 연출 오브젝트 ON / OFF
+    // ================================================
+
+    private void SetModeObjectsActive(bool active)
+    {
+        if (modeLightObject != null)
+        {
+            modeLightObject.SetActive(active);
+        }
+
+
+        if (extraModeObjects == null)
+            return;
+
+
+        foreach (GameObject modeObject in extraModeObjects)
+        {
+            if (modeObject != null)
+            {
+                modeObject.SetActive(active);
+            }
+        }
     }
 
 

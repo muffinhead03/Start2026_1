@@ -110,8 +110,10 @@ public class LLMClient : MonoBehaviour, IHintLLMClient
 
         string combined = systemPrompt + "\n\n" + userPrompt;
 
+        // 라벨은 영어로 — 한국어 라벨("[힌트 방향: ")이면 영어/일본어 응답 때 한국어로 끌려갈 수 있어서.
+        // 프롬프트의 다른 라벨([Scene context], [Player state] 등)도 전부 영어라 맞춤
         if (!string.IsNullOrEmpty(hintDirection))
-            combined += "\n\n[힌트 방향: " + hintDirection + "]";
+            combined += "\n\n[Hint direction: " + hintDirection + "]";
 
         // finished: onComplete를 딱 한 번만 부르기 위한 플래그.
         // 타임아웃으로 먼저 끝낸 뒤에 늦게 오는 청크/완료 콜백은 전부 무시함.
@@ -207,7 +209,7 @@ public class LLMClient : MonoBehaviour, IHintLLMClient
 
         // 힌트 방향성이 있으면 프롬프트에 명시적으로 덧붙임
         if (!string.IsNullOrEmpty(hintDirection))
-            combined += "\n\n[힌트 방향: " + hintDirection + "]";
+            combined += "\n\n[Hint direction: " + hintDirection + "]";
 
         _ = SendChat(combined, (reply) =>
         {

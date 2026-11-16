@@ -7,7 +7,7 @@ public class PlayerData
     public int hintLevel = 1;
     public float mouseSensitivity = 0.1f;
     public float soundEffect = 1;
-    public int language = 1; // 0: English, 1: Korean
+    public int language = 1; // 0: English, 1: Korean, 2: Japanese
     public int current_stage = 0;
 }
 

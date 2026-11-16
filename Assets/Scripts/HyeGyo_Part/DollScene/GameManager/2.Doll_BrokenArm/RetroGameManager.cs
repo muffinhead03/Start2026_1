@@ -43,7 +43,7 @@ public class RetroGameManager : MonoBehaviour
     [SerializeField]
     private float armComeOutDuration = 1f;
 
-    [Tooltip("월드 -Z 방향으로 배출되는 거리")]
+    [Tooltip("월드 +X 방향으로 배출되는 거리")]
     [SerializeField]
     private float armComeOutDistance = 0.4f;
 
@@ -299,7 +299,7 @@ public class RetroGameManager : MonoBehaviour
     // ↓
     // DollArmComeOut 중앙에서 팔 등장
     // ↓
-    // 월드 -Z 방향으로 1초간 배출
+    // 월드 +X 방향으로 1초간 배출
     // ↓
     // 완전히 나온 후 Collider + Gravity ON
     // ↓
@@ -368,16 +368,16 @@ public class RetroGameManager : MonoBehaviour
 
 
         // -----------------------------------------------------
-        // 3. 무조건 월드 -Z 방향
+        // 3. 무조건 월드 +X 방향
         //
-        // Vector3.back = (0, 0, -1)
+        // Vector3.right = (1, 0, 0)
         //
         // DollArmComeOut의 Rotation과 관계없이
-        // 항상 씬의 -Z 방향으로 이동합니다.
+        // 항상 씬의 +X 방향으로 이동합니다.
         // -----------------------------------------------------
 
         Vector3 comeOutDirection =
-            Vector3.back;
+            Vector3.right;
 
 
         Vector3 endPosition =
@@ -388,7 +388,7 @@ public class RetroGameManager : MonoBehaviour
         Debug.Log(
             $"[RetroGame] 팔 시작 위치 = {startPosition}, " +
             $"끝 위치 = {endPosition}, " +
-            $"World -Z = {comeOutDirection}"
+            $"World +X = {comeOutDirection}"
         );
 
 
@@ -410,7 +410,7 @@ public class RetroGameManager : MonoBehaviour
          * 팔의 방향은 DollArmComeOut 방향을 사용합니다.
          *
          * 이동 방향은 이 Rotation과 관계없이
-         * 무조건 World -Z입니다.
+         * 무조건 World +X입니다.
          */
         armRewardObject.transform.rotation =
             armComeOutPoint.rotation;
@@ -460,11 +460,11 @@ public class RetroGameManager : MonoBehaviour
 
 
         // -----------------------------------------------------
-        // 7. 월드 -Z 방향으로 1초 동안 배출
+        // 7. 월드 +X 방향으로 1초 동안 배출
         // -----------------------------------------------------
 
         Debug.Log(
-            "[RetroGame] 인형 팔 World -Z 방향 배출 시작"
+            "[RetroGame] 인형 팔 World +X 방향 배출 시작"
         );
 
 
