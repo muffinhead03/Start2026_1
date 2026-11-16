@@ -13,7 +13,7 @@ public class Object_Organ : APwd
 
     private Play_Audio audio_player;
 
-    bool isPipeChanged;
+    bool isPipeChanged = false;
 
     [SerializeField] protected Player_MouseInteraction player;
 
@@ -22,7 +22,7 @@ public class Object_Organ : APwd
 
     void Start()
     {
-        isPipeChanged = false;
+        //isPipeChanged = false;
 
         input = "";
 

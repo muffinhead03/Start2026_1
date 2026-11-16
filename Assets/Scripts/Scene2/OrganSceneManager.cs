@@ -8,6 +8,10 @@ public class OrganSceneManager : MonoBehaviour
     [SerializeField] GameObject[] puzzle_obj;
     [SerializeField] HintTreeNode hint_root;
 
+    [Header("Debug")]
+    [SerializeField] bool organ_fixed;
+    [SerializeField] Object_Cl_Locked organ;
+
     private HintTree tree;
     
     public event System.Action<int> OnStepCompleted;
@@ -26,6 +30,12 @@ public class OrganSceneManager : MonoBehaviour
     private void Start()
     {
         InitHintTree();
+
+        if (organ_fixed)
+        {
+            organ.UnlockEvent?.Invoke();
+        }
+
     }
 
     void InitHintTree()
@@ -107,10 +117,11 @@ public class OrganSceneManager : MonoBehaviour
 
     public void FindPaper(int id)
     {
-        id--;
         if (paper[id]) return;
 
         paper[id] = true;
+
+        tree.SetCond(16, true);
 
         bool findAllpaper = true;
         for (int i = 0; i < pipe.Length; i++)
@@ -119,5 +130,9 @@ public class OrganSceneManager : MonoBehaviour
         }
 
         tree.SetCond(15, findAllpaper);
+
+        if (id == 0) tree.SetCond(17, true);
+        else if (id == 1) tree.SetCond(18, true);
+        else if (id == 2) tree.SetCond(23, true);
     }
 }

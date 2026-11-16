@@ -5954,7 +5954,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  scene_manager: {fileID: 0}
+  scene_manager: {fileID: 654760818}
   putOn: {fileID: 0}
 --- !u!114 &230892622
 MonoBehaviour:
@@ -10755,7 +10755,7 @@ MonoBehaviour:
   player: {fileID: 2099574911}
   controll_mesh: {fileID: 292787182}
   audio_player: {fileID: 389298492}
-  scene_manager: {fileID: 0}
+  scene_manager: {fileID: 654760818}
 --- !u!114 &389298492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16678,12 +16678,12 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 654760818}
         m_TargetAssemblyTypeName: OrganSceneManager, Assembly-CSharp
-        m_MethodName: CompleteStep
+        m_MethodName: FindPaper
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 11
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -18459,6 +18459,8 @@ MonoBehaviour:
   - {fileID: 198530270}
   - {fileID: 1316637209}
   hint_root: {fileID: 11400000, guid: e8aa43f2964050c4e824f1f774eba10e, type: 2}
+  organ_fixed: 0
+  organ: {fileID: 1669542150}
 --- !u!4 &654760819
 Transform:
   m_ObjectHideFlags: 0
@@ -18489,9 +18491,9 @@ MonoBehaviour:
   hintManager: {fileID: 763785486}
   organSceneManager: {fileID: 654760818}
   handPerception: {fileID: 0}
-  inventoryData: {fileID: 0}
   player: {fileID: 2099574905}
   vent: {fileID: 1228620543}
+  pollInterval: 0.25
 --- !u!1001 &657163486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19461,7 +19463,11 @@ MonoBehaviour:
   - {fileID: 2800000, guid: cf02d8dcd81370141ae20905f6578954, type: 3}
   emission_colors: []
   emission_intensity: []
+  textures_English: []
+  textures_Japanese: []
   meshRenderer: {fileID: 690598598}
+  initialTextureId: -1
+  initialProperty: _BaseMap
 --- !u!1 &692657969
 GameObject:
   m_ObjectHideFlags: 0
@@ -25572,7 +25578,11 @@ MonoBehaviour:
   - {fileID: 2800000, guid: ded20a7223fa92b4995af74e90436273, type: 3}
   emission_colors: []
   emission_intensity: []
+  textures_English: []
+  textures_Japanese: []
   meshRenderer: {fileID: 905500867}
+  initialTextureId: -1
+  initialProperty: _BaseMap
 --- !u!1001 &906860108
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36395,12 +36405,12 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 654760818}
         m_TargetAssemblyTypeName: OrganSceneManager, Assembly-CSharp
-        m_MethodName: CompleteStep
+        m_MethodName: FindPaper
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 14
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -44260,6 +44270,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5052051377306578155, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
   m_PrefabInstance: {fileID: 5257253458201178572}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1669542150 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6587469682933064471, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
+  m_PrefabInstance: {fileID: 5257253458201178572}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1669542148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1db4aa3bffe4dfd4891d4d2dff744672, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Object_Cl_Locked
 --- !u!1 &1672685650 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4942835186462276563, guid: d840385721ec6d746af4c3de05617455, type: 3}
@@ -44565,12 +44586,12 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 654760818}
         m_TargetAssemblyTypeName: OrganSceneManager, Assembly-CSharp
-        m_MethodName: CompleteStep
+        m_MethodName: FindPaper
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 13
+          m_IntArgument: 3
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -54109,12 +54130,12 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 654760818}
         m_TargetAssemblyTypeName: OrganSceneManager, Assembly-CSharp
-        m_MethodName: CompleteStep
+        m_MethodName: FindPaper
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 9
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -57342,6 +57363,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3820805667961051191}
   m_Mesh: {fileID: -8413770711982079795, guid: 4aacf43ae22c746ca8a640abe1abf382, type: 3}
+--- !u!114 &784440494973316974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4599008165306780758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03261c71288075b47a4a42f36d637c19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedMaterial
+  slots:
+  - materialIndex: 0
+    korean: {fileID: 2100000, guid: 0370a37df09cdf24e915144d6ad721ef, type: 2}
+    english: {fileID: 2100000, guid: ac38ee338cc83ba4988402f1e7fdb4c2, type: 2}
+    japanese: {fileID: 2100000, guid: 80c6208a5b1cf3c41881b6698b9fb074, type: 2}
 --- !u!1 &829676523871761746
 GameObject:
   m_ObjectHideFlags: 0
@@ -57387,6 +57425,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 81956492}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &883691662019203473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6250822268613422370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03261c71288075b47a4a42f36d637c19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedMaterial
+  slots:
+  - materialIndex: 0
+    korean: {fileID: 2100000, guid: 0370a37df09cdf24e915144d6ad721ef, type: 2}
+    english: {fileID: 2100000, guid: ac38ee338cc83ba4988402f1e7fdb4c2, type: 2}
+    japanese: {fileID: 2100000, guid: 80c6208a5b1cf3c41881b6698b9fb074, type: 2}
 --- !u!114 &919517314141728912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58778,6 +58833,10 @@ PrefabInstance:
       propertyPath: obj
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8392638299920545687, guid: c9226483c97f90b42b8c8adb5928dfc8, type: 3}
+      propertyPath: scene_manager
+      value: 
+      objectReference: {fileID: 654760818}
     - target: {fileID: 8392638299920545687, guid: c9226483c97f90b42b8c8adb5928dfc8, type: 3}
       propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.size
       value: 2
@@ -61135,23 +61194,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &784440494973316974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4599008165306780758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03261c71288075b47a4a42f36d637c19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedMaterial
-  slots:
-  - materialIndex: 0
-    korean: {fileID: 2100000, guid: 0370a37df09cdf24e915144d6ad721ef, type: 2}
-    english: {fileID: 2100000, guid: ac38ee338cc83ba4988402f1e7fdb4c2, type: 2}
-    japanese: {fileID: 2100000, guid: 80c6208a5b1cf3c41881b6698b9fb074, type: 2}
 --- !u!95 &4599008165306780759
 Animator:
   serializedVersion: 7
@@ -62354,7 +62396,7 @@ PrefabInstance:
     - target: {fileID: 6587469682933064471, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
       propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7996609338181977720}
     - target: {fileID: 6587469682933064471, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
       propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[4].m_Target
       value: 
@@ -62369,7 +62411,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6587469682933064471, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
       propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: TeleportTarget
+      value: Drop
       objectReference: {fileID: 0}
     - target: {fileID: 6587469682933064471, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
       propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[4].m_MethodName
@@ -62381,7 +62423,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6587469682933064471, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
       propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[3].m_TargetAssemblyTypeName
-      value: Object_Teleport, Assembly-CSharp
+      value: Others_Vent, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6587469682933064471, guid: 0a4c425a953664d44bba9706e9266d8b, type: 3}
       propertyPath: UnlockEvent.m_PersistentCalls.m_Calls.Array.data[4].m_TargetAssemblyTypeName
@@ -63260,23 +63302,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &883691662019203473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6250822268613422370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03261c71288075b47a4a42f36d637c19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizedMaterial
-  slots:
-  - materialIndex: 0
-    korean: {fileID: 2100000, guid: 0370a37df09cdf24e915144d6ad721ef, type: 2}
-    english: {fileID: 2100000, guid: ac38ee338cc83ba4988402f1e7fdb4c2, type: 2}
-    japanese: {fileID: 2100000, guid: 80c6208a5b1cf3c41881b6698b9fb074, type: 2}
 --- !u!1 &6311231335947218137
 GameObject:
   m_ObjectHideFlags: 0
