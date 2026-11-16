@@ -1,30 +1,29 @@
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 /// <summary>
-/// 오르간씬과 힌트 시스템(HintManager)을 잇는 브릿지. 네 가지 역할을 한다.
+/// 오르간씬과 힌트 시스템(HintManager)을 잇는 브릿지 — scene02(민주) 힌트 트리 기준.
 ///
-/// 1) 진행 기록 — OrganSceneManager.OnStepCompleted 이벤트를 받아 실제로 완료된 스텝 번호만 completedSteps에 기록.
-///    (예전 폴링 방식은 "가장 큰 번호 이하를 전부 채워서" 순서를 건너뛰면 파이프 힌트가 사라지는 문제가 있었음)
-///    별도 완료 신호가 없는 스텝만 예외로 같이 채움:
-///    - 1 (오르간 고장 확인): 아무 스텝이나 진행되면 이미 확인한 걸로 간주
-///    - 7 (파이프 4개 교체): 오르간 UnlockEvent가 CompleteStep(8)을 호출하므로 8이 오면 7도 완료
+/// 1) 진행 기록 — OrganSceneManager.GetCurrentStep()(= 트리 리프 + 1)을 주기적으로 읽어서
+///    LeafToStep으로 OrganRoomData id(진행 순서 1~23)로 바꾼 뒤,
+///    "그 id보다 작은 스텝 = 전부 완료"로 completedSteps를 맞춤.
+///    트리는 뒤로도 갈 수 있으니(LP를 잘못 틀면 조건이 false로 돌아감) 매번 통째로 다시 맞춤.
+///    → HintEngine의 체크리스트(가장 낮은 미완료 id)가 곧 트리가 가리키는 스텝이 됨.
 ///
-/// 2) 최근 행동 — 스텝이 완료될 때 "organ_step_NN", 손에 새 물건을 들었을 때 "organ_hold_{종류}"를 AddLastAction으로 넘김.
-///    DefaultActionLabelProvider가 "오르골 소리를 듣고 있었지", "LP판을 집어 들었지" 같은 관찰 문장으로 바꿈.
-///    (예전엔 스텝 완료만 기록해서, LP를 집어도 관찰 문장이 계속 "파이프를 찾아냈지"로 남는 문제가 있었음)
+/// 2) 최근 행동 — 스텝이 앞으로 넘어가면 방금 끝낸 스텝에 맞는 "organ_step_NN" 문구를 AddLastAction.
+///    (NN은 DefaultActionLabelProvider에 이미 있는 옛 번호 문구를 의미가 맞는 것만 재사용 — StepActionLabel 참고)
+///    손에 새 물건을 들면 "organ_hold_{종류}"도 기록 (기존과 동일).
 ///
-/// 3) 손/인벤토리 제공(IPossessionProvider) — Scene2의 PerceiveObjectHandPivot / InventoryData를 읽기 전용으로 참조.
-///    objectName을 종류별로 묶어서(LP_0~4 → "LP", pipe_0~3 → "pipe") OrganRoomData의 relatedObjectName과 매칭
-///    → 예: LP를 "손에" 들고 있으면 체크리스트 순서와 상관없이 step 6(LP 퍼즐) 힌트로 override.
-///    (LP는 인벤토리에만 있을 땐 override 안 함 — HandOnlyKinds 참고)
+/// 3) 위치 제공(ILocationAwareProvider) — relatedObjectName 키 → OrganSceneManager 배열의 Transform. (기존과 동일)
 ///
-/// 4) 위치 제공(ILocationAwareProvider) — OrganRoomData의 relatedObjectName 키를
-///    OrganSceneManager가 이미 들고 있는 배열(pipes/papers/clues/puzzle_obj)의 Transform으로 매핑.
-///    배열에 없는 환풍구만 Inspector에서 직접 연결.
-///    → HintEngine이 "가까이 와 있구나 / 좀 멀리 떨어진 곳에 있는 것 같은데" 문장을 만듦.
+/// 손/인벤토리 override(IPossessionProvider)는 일부러 등록하지 않음.
+/// 트리가 진행 판정을 다 하는데, LP를 손에 들었다고 다른 스텝으로 튀면 트리랑 어긋나기 때문.
+///
+/// GetCurrentStep()은 scene02의 OrganSceneManager에만 있어서 리플렉션으로 호출함.
+/// → scene02가 develop에 머지되기 전에도 develop에서 컴파일 에러가 나지 않음 (그땐 경고만 찍고 1단계 힌트로 동작).
 /// </summary>
-public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessionProvider
+public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider
 {
     [Header("힌트 시스템")]
     [SerializeField] private HintManager hintManager;
@@ -32,42 +31,71 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
     [Header("오르간룸 상태 참조 (읽기 전용)")]
     [SerializeField] private OrganSceneManager organSceneManager;
 
-    [Header("손/인벤토리 참조 (읽기 전용) — 비워두면 자동으로 찾음")]
+    [Header("손 참조 (최근 행동 기록용) — 비워두면 자동으로 찾음")]
     [SerializeField] private PerceiveObjectHandPivot handPerception;
-    [SerializeField] private InventoryData inventoryData;
 
     [Header("플레이어 (거리 계산 기준점) — 비워두면 Player_Move를 자동으로 찾음")]
     [SerializeField] private Transform player;
 
     [Header("OrganSceneManager 배열에 없는 위치")]
-    [Tooltip("step 10 (비밀 통로) — Vent_EventTrigger 오브젝트 연결")]
+    [Tooltip("step 15 (비밀 통로) — Vent_EventTrigger 오브젝트 연결")]
     [SerializeField] private Transform vent;
 
-    const int TotalSteps = 17;
+    [Header("디버그")]
+    [SerializeField] private float pollInterval = 0.25f;
+
+    const int TotalSteps = 23;
+
+    // 트리 리프(hint_id, 0~22) → OrganRoomData id(진행 순서).
+    // LP 구간만 민주 트리의 리프 번호와 진행 순서가 달라서 표로 둠.
+    //   리프 7 = 1층 LP 찾기, 8 = 2층 LP 찾기, 9 = 축음기 책 보기, 10 = LP 하나라도 찾기
+    static readonly int[] LeafToStep =
+    {
+        1, 2, 3, 4, 5, 6, 7,   // 리프 0~6 : 설명서 → 파이프 → 오르골 → 키패드 → 비밀번호 방 → 파이프 3
+        10, 11, 8, 9,          // 리프 7~10: LP 구간 (위 주석 참고)
+        12,                    // 리프 11  : 파이프 4개 교체
+        13, 14, 15, 16, 17,    // 리프 12~16: 악보 → 떨어진 악보 조각 → 비밀 통로 → 메트로놈 → 캐비닛 악보
+        18, 19, 20, 21,        // 리프 17~20: 책장 → 큰 방 → 책상 악보 → 액자 악보
+        22, 23,                // 리프 21~22: 조합 → 연주
+    };
+
+    // 스텝을 끝냈을 때 남길 최근 행동 키 (DefaultActionLabelProvider의 기존 오르간 문구 재사용).
+    // 맞는 문구가 없는 스텝은 생략 → 손에 든 물건 기록(organ_hold_*)이 대신 관찰 문장을 채움.
+    static readonly Dictionary<int, string> StepActionLabel = new Dictionary<int, string>
+    {
+        { 2,  "organ_step_02" }, // 파이프를 처음 찾음 — "거실에서 파이프를 하나 찾아냈지"
+        { 3,  "organ_step_03" }, // 파이프 1·2 — "옆방에서 파이프를 또 찾아냈지"
+        { 4,  "organ_step_04" }, // 오르골 — "오르골 소리를 듣고 있었지"
+        { 7,  "organ_step_05" }, // 파이프 3 — "잠긴 방에서 파이프를 꺼내왔지"
+        { 11, "organ_step_06" }, // LP로 파이프 4 — "LP를 틀어서 파이프를 찾아냈지"
+        { 12, "organ_step_08" }, // 파이프 교체 — "오르간에 파이프를 끼워 넣었지"
+        { 14, "organ_step_09" }, // 떨어진 악보 조각 — "바닥에 떨어진 악보 조각을 챙겼네"
+        { 15, "organ_step_10" }, // 비밀 통로 — "좁은 통로로 기어 들어갔지"
+        { 16, "organ_step_11" }, // 메트로놈 — "메트로놈 박자를 맞추고 있었지"
+        { 19, "organ_step_12" }, // 책장 — "책장을 만지작거리고 있었지"
+        { 20, "organ_step_14" }, // 책상 악보 — "책상 위를 뒤지고 있었지"
+        { 21, "organ_step_13" }, // 액자 악보 — "액자 뒤를 뒤져보고 있었지"
+        { 22, "organ_step_15" }, // 조합 — "악보 조각을 맞추고 있었지"
+    };
 
     static readonly (int stepId, string clueId)[] ClueMap =
     {
-        (9,  "clue_torn_sheet_pieces"),
-        (15, "clue_completed_sheet"),
+        (4,  "clue_music_box_melody"),
+        (14, "clue_torn_sheet_pieces"),
+        (22, "clue_completed_sheet"),
     };
 
-    // (이 스텝이 완료되면, 이 스텝도 같이 완료)
-    static readonly (int trigger, int implied)[] ImpliedSteps =
-    {
-        (8, 7),
-    };
+    MethodInfo getCurrentStepMethod;
+    int currentStepId = 0;      // 트리가 가리키는 지금 스텝 (0 = 아직 못 읽음)
+    float nextPollTime = 0f;
 
-    // 손에 든 물건 변화 감지용 (같은 물건을 계속 들고 있으면 행동을 반복 기록하지 않음)
     string lastHandName = null;
-
-    // 스텝 완료 행동을 기록한 시각 — 파이프를 집는 순간처럼 "스텝 완료"와 "손에 듦"이 동시에 일어나면
-    // 더 구체적인 스텝 문장("거실에서 파이프를 하나 찾아냈지")을 남기기 위해, 직후의 손 변화 기록은 건너뜀
     float lastStepActionTime = -999f;
     const float HoldActionSuppressSeconds = 1f;
 
     // OrganSceneManager 배열 인덱스 — Scene2.unity Inspector 설정 기준 (2026-09-25 main 확인)
-    // pipes      : [0] Pipe 1(step 2)  [1] Pipe 2(step 3)  [2] Pipe 3(step 5)  [3] Pipe 4(step 6)
-    // papers     : [0] pivot_0(step 11)  [1] pivot_1(step 9)  [2] pivot_2(step 14)  [3] pivot_3(step 13)
+    // pipes      : [0] Pipe 1  [1] Pipe 2  [2] Pipe 3  [3] Pipe 4
+    // papers     : [0] pivot_0  [1] pivot_1  [2] pivot_2  [3] pivot_3
     // clues      : [0] Organ_Manual  [1] Musicbox
     // puzzle_obj : [0] pwd  [1] organ  [2] GramophoneA  [3] Metronome  [4] BookShelf  [5] organ  [6] chestbox
     // 배열 순서가 바뀌면 여기만 고치면 됨.
@@ -80,9 +108,10 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
             case "Organ":       return At(organSceneManager.PuzzleObjects, 1);
             case "Pipe1":       return At(organSceneManager.Pipes, 0);
             case "Pipe2":       return At(organSceneManager.Pipes, 1);
+            case "Pipe3":       return At(organSceneManager.Pipes, 2);
             case "MusicBox":    return At(organSceneManager.Clues, 1);
             case "PwdDoor":     return At(organSceneManager.PuzzleObjects, 0);
-            case "LP":          return At(organSceneManager.PuzzleObjects, 2); // step 6 — LP를 올릴 턴테이블(GramophoneA)
+            case "LP":          return At(organSceneManager.PuzzleObjects, 2); // LP 구간 — 턴테이블(GramophoneA) 기준
             case "SheetPiece2": return At(organSceneManager.Papers, 1);
             case "Vent":        return vent;
             case "Metronome":   return At(organSceneManager.PuzzleObjects, 3);
@@ -105,8 +134,6 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
             organSceneManager = FindFirstObjectByType<OrganSceneManager>();
         if (handPerception == null)
             handPerception = FindFirstObjectByType<PerceiveObjectHandPivot>();
-        if (inventoryData == null)
-            inventoryData = FindFirstObjectByType<InventoryData>();
         if (player == null)
         {
             var move = FindFirstObjectByType<Player_Move>();
@@ -114,37 +141,39 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
         }
 
         if (hintManager == null)
-        {
             Debug.LogError("[OrganHintBridge] HintManager를 찾을 수 없습니다.");
-        }
         else
         {
             hintManager.LocationProvider = this;
-            hintManager.PossessionProvider = this;
+            hintManager.PossessionProvider = null; // 트리 기준으로만 진행 (위 설명 참고)
         }
 
         if (organSceneManager == null)
             Debug.LogError("[OrganHintBridge] OrganSceneManager를 찾을 수 없습니다.");
         else
-            organSceneManager.OnStepCompleted += HandleStepCompleted;
+        {
+            getCurrentStepMethod = organSceneManager.GetType().GetMethod(
+                "GetCurrentStep", BindingFlags.Public | BindingFlags.Instance, null, System.Type.EmptyTypes, null);
+            if (getCurrentStepMethod == null)
+                Debug.LogWarning("[OrganHintBridge] OrganSceneManager.GetCurrentStep()이 없음 — scene02 머지 전 버전. 1단계 힌트로만 동작합니다.");
+        }
 
         if (player == null)
             Debug.LogWarning("[OrganHintBridge] 플레이어 Transform이 없어 거리 문장은 생략됩니다.");
         if (vent == null)
-            Debug.LogWarning("[OrganHintBridge] vent 미연결 — step 10 거리 문장만 생략됩니다.");
-        if (handPerception == null)
-            Debug.LogWarning("[OrganHintBridge] PerceiveObjectHandPivot을 찾지 못함 — 손에 든 물건 기준 힌트/행동 기록이 생략됩니다.");
-    }
-
-    void OnDestroy()
-    {
-        if (organSceneManager != null)
-            organSceneManager.OnStepCompleted -= HandleStepCompleted;
+            Debug.LogWarning("[OrganHintBridge] vent 미연결 — 비밀 통로 스텝 거리 문장만 생략됩니다.");
     }
 
     void Update()
     {
-        if (hintManager == null) return;
+        if (hintManager == null || hintManager.currentPlayerState == null) return;
+
+        if (Time.time >= nextPollTime)
+        {
+            nextPollTime = Time.time + pollInterval;
+            PollTree();
+        }
+
         TrackHandObject();
     }
 
@@ -152,27 +181,77 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
     // 1) 진행 기록 + 2) 최근 행동
     // =========================================================
 
-    void HandleStepCompleted(int stepId)
+    void PollTree()
     {
-        if (hintManager == null) return;
-        if (stepId < 1 || stepId > TotalSteps) return;
+        int stepId = ReadTreeStep();
+        if (stepId <= 0 || stepId == currentStepId) return;
 
-        // 같은 스텝이 두 번 들어와도(예: MusicBoxPlay가 먼저 4를 넣은 경우) 행동 기록은 매번 남김 — 최근 행동이니까
-        hintManager.AddLastAction($"organ_step_{stepId:D2}");
-        lastStepActionTime = Time.time;
+        int prev = currentStepId;
+        currentStepId = stepId;
 
-        ReportStep(1); // 오르간 확인 스텝은 별도 신호가 없어서 첫 진행 시 같이 처리 (중복 호출 안전)
+        SyncCompletedSteps(stepId);
 
-        foreach (var (trigger, implied) in ImpliedSteps)
-            if (trigger == stepId)
-                ReportStep(implied);
+        // 앞으로 넘어갔을 때만 "방금 끝낸 스텝" 행동 기록 (여러 칸 건너뛰면 가장 최근 것 하나만)
+        if (prev > 0 && stepId > prev)
+        {
+            for (int done = stepId - 1; done >= prev; done--)
+            {
+                if (StepActionLabel.TryGetValue(done, out var key))
+                {
+                    hintManager.AddLastAction(key);
+                    lastStepActionTime = Time.time;
+                    break;
+                }
+            }
+        }
 
-        ReportStep(stepId);
+        Debug.Log($"[OrganHintBridge] 트리 스텝 {prev} → {stepId}");
+    }
+
+    /// <summary>트리 리프를 OrganRoomData id로. 못 읽으면 1(첫 스텝).</summary>
+    int ReadTreeStep()
+    {
+        if (organSceneManager == null || getCurrentStepMethod == null) return 1;
+
+        int leaf;
+        try
+        {
+            leaf = (int)getCurrentStepMethod.Invoke(organSceneManager, null) - 1; // GetCurrentStep() = hint_id + 1
+        }
+        catch (System.Exception e)
+        {
+            // 트리 초기화(Start) 전에 읽으면 NullReference — 다음 폴링에서 다시 시도
+            if (currentStepId == 0) Debug.Log($"[OrganHintBridge] 트리 아직 준비 안 됨: {e.InnerException?.GetType().Name ?? e.GetType().Name}");
+            return 0;
+        }
+
+        if (leaf < 0 || leaf >= LeafToStep.Length)
+        {
+            Debug.LogWarning($"[OrganHintBridge] 알 수 없는 트리 리프 {leaf} — LeafToStep 표 확인 필요");
+            return 0;
+        }
+        return LeafToStep[leaf];
+    }
+
+    /// <summary>completedSteps를 [1 .. stepId-1]로 맞춤 (트리가 뒤로 가면 줄어듦).</summary>
+    void SyncCompletedSteps(int stepId)
+    {
+        var state = hintManager.currentPlayerState;
+
+        state.completedSteps.Clear();
+        for (int id = 1; id < stepId && id <= TotalSteps; id++)
+            state.completedSteps.Add(id);
+
+        foreach (var (id, clueId) in ClueMap)
+            if (id < stepId && !state.foundClues.Contains(clueId))
+                state.foundClues.Add(clueId);
+
+        Debug.Log($"[OrganHintBridge] 완료 스텝 → [{string.Join(", ", state.completedSteps)}]");
     }
 
     /// <summary>
     /// 손에 든 물건이 바뀌면 "organ_hold_{종류}"를 최근 행동으로 기록.
-    /// 스텝 완료 직후(파이프/악보 조각을 집는 순간 등)는 스텝 문장이 더 구체적이라 건너뜀.
+    /// 스텝이 막 넘어간 직후(파이프/악보를 집는 순간 등)는 스텝 문장이 더 구체적이라 건너뜀.
     /// </summary>
     void TrackHandObject()
     {
@@ -186,28 +265,7 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
         hintManager.AddLastAction($"organ_hold_{hand}");
     }
 
-    void ReportStep(int stepId)
-    {
-        var state = hintManager.currentPlayerState;
-        if (state.completedSteps.Contains(stepId)) return;
-
-        foreach (var (id, clueId) in ClueMap)
-            if (id == stepId && !state.foundClues.Contains(clueId))
-                state.foundClues.Add(clueId);
-
-        state.completedSteps.Add(stepId);
-        Debug.Log($"[OrganHintBridge] step {stepId} 완료 기록 → 현재: [{string.Join(", ", state.completedSteps)}]");
-    }
-
-    // =========================================================
-    // 3) IPossessionProvider
-    // =========================================================
-
-    /// <summary>
-    /// objectName을 종류 단위로 묶음. Scene2의 LP는 LP_0~LP_4, 파이프는 pipe_0~pipe_3, 악보는 paper_0~paper_3처럼
-    /// "종류_번호" 형식이라 마지막 '_' 앞부분만 사용 → "LP", "pipe", "paper".
-    /// (relatedObjectName 하나로 같은 종류 여러 개를 매칭하기 위함. '_'가 없으면 그대로)
-    /// </summary>
+    /// <summary>LP_0~4 → "LP", pipe_0~3 → "pipe"처럼 마지막 '_' 뒤 번호를 뗌.</summary>
     static string NormalizeName(string objectName)
     {
         if (string.IsNullOrEmpty(objectName)) return objectName;
@@ -215,7 +273,7 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
         return idx > 0 ? objectName.Substring(0, idx) : objectName;
     }
 
-    public string GetHandObjectName()
+    string GetHandObjectName()
     {
         if (handPerception == null || handPerception.CurrentObject == null)
             return null;
@@ -223,31 +281,8 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
         return NormalizeName(handPerception.CurrentObject.objectName);
     }
 
-    // 인벤토리에 들어 있어도 override 근거로 쓰지 않을 종류.
-    // LP는 5장이라 한 번 주우면 퍼즐을 풀 때까지 인벤토리에 계속 남아서, 다른 걸 하는 중에도 힌트가 LP로 고정됨
-    // (베타 로그: 파이프를 새로 주웠는데 힌트는 계속 그림/LP 얘기) → LP는 "손에 들고 있을 때"만 step 6으로 override.
-    static readonly HashSet<string> HandOnlyKinds = new HashSet<string> { "LP" };
-
-    public List<string> GetInventoryObjectNames()
-    {
-        var names = new List<string>();
-        if (inventoryData == null) return names;
-
-        for (int i = 0; i < inventoryData.SlotCount; i++)
-        {
-            Object_Grabbable obj = inventoryData.GetObjectAt(i);
-            if (obj == null) continue;
-
-            string kind = NormalizeName(obj.objectName);
-            if (!HandOnlyKinds.Contains(kind))
-                names.Add(kind);
-        }
-
-        return names;
-    }
-
     // =========================================================
-    // 4) ILocationAwareProvider
+    // 3) ILocationAwareProvider
     // =========================================================
 
     public Vector3? GetPlayerPosition()
@@ -259,7 +294,6 @@ public class OrganHintBridge : MonoBehaviour, ILocationAwareProvider, IPossessio
         return t != null ? t.position : (Vector3?)null;
     }
 
-    // 구역 시스템은 아직 없음 (와인씬과 동일) — null/0이면 HintEngine이 구역 문장만 생략함
     public string GetCurrentZoneName() => null;
     public float GetCurrentZoneStaySeconds() => 0f;
 }

@@ -7,6 +7,7 @@
 ///  - HintUI_     : 힌트 패널 고정 문구 (LocalizedHintUIText)
 ///  - HintObs_    : 관찰 문장 틀 (HintEngine — 키 값은 Core의 ObservationPhraseKeys와 같게 연결)
 ///  - HintAction_ : 최근 행동 라벨 (DefaultActionLabelProvider)
+///  - HintOrgan_  : 오르간씬 단계별 힌트 (HintLanguageData.OrganScene.cs)
 ///  - HintWine_   : 와인씬 구역·랜드마크 이름(씬 Inspector에 키를 적음) / 단계별 힌트 / 진행 문장
 /// </summary>
 public static class HintLanguageDataKey
@@ -271,4 +272,147 @@ public static class HintLanguageDataKey
     public const string HintDoll_NoteKeyDropped_T0 = nameof(HintDoll_NoteKeyDropped_T0);
     public const string HintDoll_NoteKeyDropped_T1 = nameof(HintDoll_NoteKeyDropped_T1);
     public const string HintDoll_NoteKeyDropped_T2 = nameof(HintDoll_NoteKeyDropped_T2);
+
+
+    /*
+     * Organ Scene — 단계별 힌트 (OrganRoomData.hintByLevel, 23단계 × 레벨 1~5)
+     */
+
+    public const string HintOrgan_Step1_Level1 = nameof(HintOrgan_Step1_Level1);
+    public const string HintOrgan_Step1_Level2 = nameof(HintOrgan_Step1_Level2);
+    public const string HintOrgan_Step1_Level3 = nameof(HintOrgan_Step1_Level3);
+    public const string HintOrgan_Step1_Level4 = nameof(HintOrgan_Step1_Level4);
+    public const string HintOrgan_Step1_Level5 = nameof(HintOrgan_Step1_Level5);
+
+    public const string HintOrgan_Step2_Level1 = nameof(HintOrgan_Step2_Level1);
+    public const string HintOrgan_Step2_Level2 = nameof(HintOrgan_Step2_Level2);
+    public const string HintOrgan_Step2_Level3 = nameof(HintOrgan_Step2_Level3);
+    public const string HintOrgan_Step2_Level4 = nameof(HintOrgan_Step2_Level4);
+    public const string HintOrgan_Step2_Level5 = nameof(HintOrgan_Step2_Level5);
+
+    public const string HintOrgan_Step3_Level1 = nameof(HintOrgan_Step3_Level1);
+    public const string HintOrgan_Step3_Level2 = nameof(HintOrgan_Step3_Level2);
+    public const string HintOrgan_Step3_Level3 = nameof(HintOrgan_Step3_Level3);
+    public const string HintOrgan_Step3_Level4 = nameof(HintOrgan_Step3_Level4);
+    public const string HintOrgan_Step3_Level5 = nameof(HintOrgan_Step3_Level5);
+
+    public const string HintOrgan_Step4_Level1 = nameof(HintOrgan_Step4_Level1);
+    public const string HintOrgan_Step4_Level2 = nameof(HintOrgan_Step4_Level2);
+    public const string HintOrgan_Step4_Level3 = nameof(HintOrgan_Step4_Level3);
+    public const string HintOrgan_Step4_Level4 = nameof(HintOrgan_Step4_Level4);
+    public const string HintOrgan_Step4_Level5 = nameof(HintOrgan_Step4_Level5);
+
+    public const string HintOrgan_Step5_Level1 = nameof(HintOrgan_Step5_Level1);
+    public const string HintOrgan_Step5_Level2 = nameof(HintOrgan_Step5_Level2);
+    public const string HintOrgan_Step5_Level3 = nameof(HintOrgan_Step5_Level3);
+    public const string HintOrgan_Step5_Level4 = nameof(HintOrgan_Step5_Level4);
+    public const string HintOrgan_Step5_Level5 = nameof(HintOrgan_Step5_Level5);
+
+    public const string HintOrgan_Step6_Level1 = nameof(HintOrgan_Step6_Level1);
+    public const string HintOrgan_Step6_Level2 = nameof(HintOrgan_Step6_Level2);
+    public const string HintOrgan_Step6_Level3 = nameof(HintOrgan_Step6_Level3);
+    public const string HintOrgan_Step6_Level4 = nameof(HintOrgan_Step6_Level4);
+    public const string HintOrgan_Step6_Level5 = nameof(HintOrgan_Step6_Level5);
+
+    public const string HintOrgan_Step7_Level1 = nameof(HintOrgan_Step7_Level1);
+    public const string HintOrgan_Step7_Level2 = nameof(HintOrgan_Step7_Level2);
+    public const string HintOrgan_Step7_Level3 = nameof(HintOrgan_Step7_Level3);
+    public const string HintOrgan_Step7_Level4 = nameof(HintOrgan_Step7_Level4);
+    public const string HintOrgan_Step7_Level5 = nameof(HintOrgan_Step7_Level5);
+
+    public const string HintOrgan_Step8_Level1 = nameof(HintOrgan_Step8_Level1);
+    public const string HintOrgan_Step8_Level2 = nameof(HintOrgan_Step8_Level2);
+    public const string HintOrgan_Step8_Level3 = nameof(HintOrgan_Step8_Level3);
+    public const string HintOrgan_Step8_Level4 = nameof(HintOrgan_Step8_Level4);
+    public const string HintOrgan_Step8_Level5 = nameof(HintOrgan_Step8_Level5);
+
+    public const string HintOrgan_Step9_Level1 = nameof(HintOrgan_Step9_Level1);
+    public const string HintOrgan_Step9_Level2 = nameof(HintOrgan_Step9_Level2);
+    public const string HintOrgan_Step9_Level3 = nameof(HintOrgan_Step9_Level3);
+    public const string HintOrgan_Step9_Level4 = nameof(HintOrgan_Step9_Level4);
+    public const string HintOrgan_Step9_Level5 = nameof(HintOrgan_Step9_Level5);
+
+    public const string HintOrgan_Step10_Level1 = nameof(HintOrgan_Step10_Level1);
+    public const string HintOrgan_Step10_Level2 = nameof(HintOrgan_Step10_Level2);
+    public const string HintOrgan_Step10_Level3 = nameof(HintOrgan_Step10_Level3);
+    public const string HintOrgan_Step10_Level4 = nameof(HintOrgan_Step10_Level4);
+    public const string HintOrgan_Step10_Level5 = nameof(HintOrgan_Step10_Level5);
+
+    public const string HintOrgan_Step11_Level1 = nameof(HintOrgan_Step11_Level1);
+    public const string HintOrgan_Step11_Level2 = nameof(HintOrgan_Step11_Level2);
+    public const string HintOrgan_Step11_Level3 = nameof(HintOrgan_Step11_Level3);
+    public const string HintOrgan_Step11_Level4 = nameof(HintOrgan_Step11_Level4);
+    public const string HintOrgan_Step11_Level5 = nameof(HintOrgan_Step11_Level5);
+
+    public const string HintOrgan_Step12_Level1 = nameof(HintOrgan_Step12_Level1);
+    public const string HintOrgan_Step12_Level2 = nameof(HintOrgan_Step12_Level2);
+    public const string HintOrgan_Step12_Level3 = nameof(HintOrgan_Step12_Level3);
+    public const string HintOrgan_Step12_Level4 = nameof(HintOrgan_Step12_Level4);
+    public const string HintOrgan_Step12_Level5 = nameof(HintOrgan_Step12_Level5);
+
+    public const string HintOrgan_Step13_Level1 = nameof(HintOrgan_Step13_Level1);
+    public const string HintOrgan_Step13_Level2 = nameof(HintOrgan_Step13_Level2);
+    public const string HintOrgan_Step13_Level3 = nameof(HintOrgan_Step13_Level3);
+    public const string HintOrgan_Step13_Level4 = nameof(HintOrgan_Step13_Level4);
+    public const string HintOrgan_Step13_Level5 = nameof(HintOrgan_Step13_Level5);
+
+    public const string HintOrgan_Step14_Level1 = nameof(HintOrgan_Step14_Level1);
+    public const string HintOrgan_Step14_Level2 = nameof(HintOrgan_Step14_Level2);
+    public const string HintOrgan_Step14_Level3 = nameof(HintOrgan_Step14_Level3);
+    public const string HintOrgan_Step14_Level4 = nameof(HintOrgan_Step14_Level4);
+    public const string HintOrgan_Step14_Level5 = nameof(HintOrgan_Step14_Level5);
+
+    public const string HintOrgan_Step15_Level1 = nameof(HintOrgan_Step15_Level1);
+    public const string HintOrgan_Step15_Level2 = nameof(HintOrgan_Step15_Level2);
+    public const string HintOrgan_Step15_Level3 = nameof(HintOrgan_Step15_Level3);
+    public const string HintOrgan_Step15_Level4 = nameof(HintOrgan_Step15_Level4);
+    public const string HintOrgan_Step15_Level5 = nameof(HintOrgan_Step15_Level5);
+
+    public const string HintOrgan_Step16_Level1 = nameof(HintOrgan_Step16_Level1);
+    public const string HintOrgan_Step16_Level2 = nameof(HintOrgan_Step16_Level2);
+    public const string HintOrgan_Step16_Level3 = nameof(HintOrgan_Step16_Level3);
+    public const string HintOrgan_Step16_Level4 = nameof(HintOrgan_Step16_Level4);
+    public const string HintOrgan_Step16_Level5 = nameof(HintOrgan_Step16_Level5);
+
+    public const string HintOrgan_Step17_Level1 = nameof(HintOrgan_Step17_Level1);
+    public const string HintOrgan_Step17_Level2 = nameof(HintOrgan_Step17_Level2);
+    public const string HintOrgan_Step17_Level3 = nameof(HintOrgan_Step17_Level3);
+    public const string HintOrgan_Step17_Level4 = nameof(HintOrgan_Step17_Level4);
+    public const string HintOrgan_Step17_Level5 = nameof(HintOrgan_Step17_Level5);
+
+    public const string HintOrgan_Step18_Level1 = nameof(HintOrgan_Step18_Level1);
+    public const string HintOrgan_Step18_Level2 = nameof(HintOrgan_Step18_Level2);
+    public const string HintOrgan_Step18_Level3 = nameof(HintOrgan_Step18_Level3);
+    public const string HintOrgan_Step18_Level4 = nameof(HintOrgan_Step18_Level4);
+    public const string HintOrgan_Step18_Level5 = nameof(HintOrgan_Step18_Level5);
+
+    public const string HintOrgan_Step19_Level1 = nameof(HintOrgan_Step19_Level1);
+    public const string HintOrgan_Step19_Level2 = nameof(HintOrgan_Step19_Level2);
+    public const string HintOrgan_Step19_Level3 = nameof(HintOrgan_Step19_Level3);
+    public const string HintOrgan_Step19_Level4 = nameof(HintOrgan_Step19_Level4);
+    public const string HintOrgan_Step19_Level5 = nameof(HintOrgan_Step19_Level5);
+
+    public const string HintOrgan_Step20_Level1 = nameof(HintOrgan_Step20_Level1);
+    public const string HintOrgan_Step20_Level2 = nameof(HintOrgan_Step20_Level2);
+    public const string HintOrgan_Step20_Level3 = nameof(HintOrgan_Step20_Level3);
+    public const string HintOrgan_Step20_Level4 = nameof(HintOrgan_Step20_Level4);
+    public const string HintOrgan_Step20_Level5 = nameof(HintOrgan_Step20_Level5);
+
+    public const string HintOrgan_Step21_Level1 = nameof(HintOrgan_Step21_Level1);
+    public const string HintOrgan_Step21_Level2 = nameof(HintOrgan_Step21_Level2);
+    public const string HintOrgan_Step21_Level3 = nameof(HintOrgan_Step21_Level3);
+    public const string HintOrgan_Step21_Level4 = nameof(HintOrgan_Step21_Level4);
+    public const string HintOrgan_Step21_Level5 = nameof(HintOrgan_Step21_Level5);
+
+    public const string HintOrgan_Step22_Level1 = nameof(HintOrgan_Step22_Level1);
+    public const string HintOrgan_Step22_Level2 = nameof(HintOrgan_Step22_Level2);
+    public const string HintOrgan_Step22_Level3 = nameof(HintOrgan_Step22_Level3);
+    public const string HintOrgan_Step22_Level4 = nameof(HintOrgan_Step22_Level4);
+    public const string HintOrgan_Step22_Level5 = nameof(HintOrgan_Step22_Level5);
+
+    public const string HintOrgan_Step23_Level1 = nameof(HintOrgan_Step23_Level1);
+    public const string HintOrgan_Step23_Level2 = nameof(HintOrgan_Step23_Level2);
+    public const string HintOrgan_Step23_Level3 = nameof(HintOrgan_Step23_Level3);
+    public const string HintOrgan_Step23_Level4 = nameof(HintOrgan_Step23_Level4);
+    public const string HintOrgan_Step23_Level5 = nameof(HintOrgan_Step23_Level5);
 }
