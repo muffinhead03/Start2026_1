@@ -7,8 +7,6 @@ public class Object_Turntable: MonoBehaviour
 
     [SerializeField] private Object_LP LP;
 
-    [SerializeField] private GameObject trumpet;
-
     [SerializeField] private Animator panel_animator;
 
     [SerializeField] private Pwd_Turntable pwd_LP;
@@ -26,8 +24,6 @@ public class Object_Turntable: MonoBehaviour
     {
         EnablePanel();
 
-        trumpet.SetActive(false);
-
         SceneUI.UnlockPointer();
     }
 
@@ -36,9 +32,9 @@ public class Object_Turntable: MonoBehaviour
         DisablePanel();
         LP.HideLP();
 
-        trumpet.SetActive(true);
-
         SceneUI.LockPointer();
+
+        pwd_LP.PauseMusic();
     }
 
     public void ClickButton(int id)

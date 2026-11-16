@@ -28,6 +28,7 @@ public static partial class HintLanguageData
             ActionData,
             WineSceneData,
             DollSceneData,
+            OrganSceneData,
         };
 
         foreach (var part in parts)

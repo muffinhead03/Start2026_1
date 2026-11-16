@@ -1,18 +1,35 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// 오르간씬 퍼즐 설정. relatedObjectName은 OrganHintBridge.ResolveTarget()의 위치 키와 1:1로 맞춰둔 값.
-/// step 6의 "LP"만 손/인벤토리 override에도 쓰임 (OrganHintBridge가 LP_0~LP_4를 "LP"로 묶어서 넘김).
-/// 나머지 키는 실제 objectName과 겹치지 않게 지어서 위치 전용으로만 동작.
+/// 오르간씬 퍼즐 설정 (scene02 민주 힌트 트리 기준, 23스텝).
+///
+/// id = 실제 진행 순서(1~23). HintEngine은 "가장 낮은 id의 미완료 스텝"을 고르므로
+/// OrganHintBridge가 트리 리프를 id로 바꾼 뒤 그보다 작은 id를 전부 완료 처리한다.
+/// 트리 리프 번호 → id 매핑은 OrganHintBridge.LeafToStep에 있음 (각 스텝 주석에도 리프 번호 표기).
+///
+/// relatedObjectName은 OrganHintBridge.ResolveTarget()의 위치 키 (거리 문장용).
+/// 손/인벤토리 override는 쓰지 않음 — 트리가 진행 판정을 전부 하기 때문.
+///
+/// hintByLevel 문장(한·영·일)은 HintLanguageData.OrganScene.cs에 있음 — 여기는 퍼즐 구조와 "어느 키를 쓸지"만.
+/// GetConfig()는 힌트를 요청할 때마다 새로 불리므로, 그 순간의 언어 설정으로 문장이 채워짐.
 /// </summary>
 public static class OrganRoomData
 {
+    // 레벨 1~5 키 → 현재 언어 문장 (없으면 한국어) — DollRoomData와 같은 방식
+    static string[] Levels(params string[] keys)
+    {
+        var lines = new string[keys.Length];
+        for (int i = 0; i < keys.Length; i++)
+            lines[i] = HintLanguageData.Get(keys[i]);
+        return lines;
+    }
+
     public static PuzzleConfig GetConfig()
     {
         return new PuzzleConfig
         {
             puzzleId = "organ_room",
-            totalSteps = 17, // Phase 1(7) + Phase 2(7) + Phase 3(3)
+            totalSteps = 23, // Phase 1(12) + Phase 2(9) + Phase 3(2)
             requiredClues = new List<string>
             {
                 "clue_organ_broken",
@@ -25,231 +42,269 @@ public static class OrganRoomData
             {
                 // ── Phase 1 : 파이프 4개 찾아 교체하기 ──────────────────
                 new PuzzleStep
-                {
-                    id = 1, goal = "오르간이 고장났음을 확인한다",
+                { // 트리 리프 0 (GetCurrentStep() == 1)
+                    id = 1, goal = "오르간 설명서 책을 확인한다",
                     relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "이 방의 중심에 있는 것을 살펴보는 게 어떨까요.",
-                        "오르간 쪽에 뭔가 문제가 있어 보여요.",
-                        "오르간을 조사해 무엇이 문제인지 확인하세요.",
-                        "오르간을 자세히 조사하면 소리가 안 나는 이유를 알 수 있을 거예요.",
-                        "방 중앙의 오르간으로 다가가 조사하세요. 파이프 몇 개가 녹슬어 있어서 소리가 안 나는 걸 확인할 수 있을 거예요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step1_Level1,
+                        HintLanguageDataKey.HintOrgan_Step1_Level2,
+                        HintLanguageDataKey.HintOrgan_Step1_Level3,
+                        HintLanguageDataKey.HintOrgan_Step1_Level4,
+                        HintLanguageDataKey.HintOrgan_Step1_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 2, goal = "거실에서 파이프 1을 찾는다",
+                { // 트리 리프 1 (GetCurrentStep() == 2)
+                    id = 2, goal = "파이프를 하나라도 교체한다",
+                    relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step2_Level1,
+                        HintLanguageDataKey.HintOrgan_Step2_Level2,
+                        HintLanguageDataKey.HintOrgan_Step2_Level3,
+                        HintLanguageDataKey.HintOrgan_Step2_Level4,
+                        HintLanguageDataKey.HintOrgan_Step2_Level5)
+                },
+                new PuzzleStep
+                { // 트리 리프 2 (GetCurrentStep() == 3)
+                    id = 3, goal = "파이프 1과 2를 찾는다",
                     relatedObjectName = "Pipe1", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "다른 공간도 살펴봐야 할 것 같아요.",
-                        "가까운 곳에 뭔가 숨겨져 있을지도 몰라요.",
-                        "1층 거실을 살펴보세요.",
-                        "거실 어딘가에 숨겨진 파이프 하나를 찾아보세요.",
-                        "1층 거실로 이동해서 오르간 뒤쪽을 살펴보면 파이프 하나를 찾을 수 있어요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step3_Level1,
+                        HintLanguageDataKey.HintOrgan_Step3_Level2,
+                        HintLanguageDataKey.HintOrgan_Step3_Level3,
+                        HintLanguageDataKey.HintOrgan_Step3_Level4,
+                        HintLanguageDataKey.HintOrgan_Step3_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 3, goal = "1층 왼쪽 방에서 파이프 2를 찾는다",
-                    relatedObjectName = "Pipe2", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "1층 공간을 다시 살펴보는 것도 좋을 것 같아요.",
-                        "1층 오르간 가까운 곳에 또 다른 것이 있을 수 있어요.",
-                        "오르간의 왼쪽 방을 살펴보세요.",
-                        "오르간의 왼쪽 방 안에서 파이프 하나를 더 찾아보세요.",
-                        "오르간의 왼쪽 방을 다시 둘러보세요. 눈에 잘 안 띄는 구석에 파이프가 하나 더 있어요."
-                    }
-                },
-                new PuzzleStep
-                {
+                { // 트리 리프 3 (GetCurrentStep() == 4)
                     id = 4, goal = "거실의 오르골을 재생해 멜로디를 확인한다",
                     relatedObjectName = "MusicBox", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "소리 나는 물건이 있을지도 몰라요.",
-                        "거실 쪽에서 소리가 날 수도 있어요.",
-                        "거실의 오르골을 재생해보세요.",
-                        "오르골을 재생해서 나오는 멜로디를 기억해두세요.",
-                        "거실에 있는 오르골을 찾아 태엽을 감거나 재생 버튼을 눌러보세요. 흘러나오는 멜로디를 잘 기억해야 다음 단계에 쓸 수 있어요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step4_Level1,
+                        HintLanguageDataKey.HintOrgan_Step4_Level2,
+                        HintLanguageDataKey.HintOrgan_Step4_Level3,
+                        HintLanguageDataKey.HintOrgan_Step4_Level4,
+                        HintLanguageDataKey.HintOrgan_Step4_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 5, goal = "오르골 멜로디로 비밀번호 방을 열고 파이프 3을 찾는다",
+                { // 트리 리프 4 (GetCurrentStep() == 5)
+                    id = 5, goal = "2층에 비밀번호 키패드가 있음을 인지한다",
                     relatedObjectName = "PwdDoor", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "방금 들은 것이 다른 곳에 쓰일 수도 있어요.",
-                        "숫자로 여는 문이 있는 곳이 있어요.",
-                        "오르골과 같은 소리가 나는 비밀번호를 입력하세요.",
-                        "오르골 멜로디를 숫자로 바꿔 비밀번호 문에 입력하고 안에서 파이프를 찾아보세요.",
-                        "오르골 멜로디의 음 하나하나를 숫자로 바꿔서 순서대로 비밀번호 문에 입력하세요. 문이 열리면 안에서 파이프를 찾을 수 있어요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step5_Level1,
+                        HintLanguageDataKey.HintOrgan_Step5_Level2,
+                        HintLanguageDataKey.HintOrgan_Step5_Level3,
+                        HintLanguageDataKey.HintOrgan_Step5_Level4,
+                        HintLanguageDataKey.HintOrgan_Step5_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 6, goal = "거실 그림을 보고 올바른 색 LP를 재생해 파이프 4를 찾는다",
+                { // 트리 리프 5 (GetCurrentStep() == 6)
+                    id = 6, goal = "오르골 멜로디로 비밀번호 방을 연다",
+                    relatedObjectName = "PwdDoor", // OrganHintBridge 위치 매핑 키
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step6_Level1,
+                        HintLanguageDataKey.HintOrgan_Step6_Level2,
+                        HintLanguageDataKey.HintOrgan_Step6_Level3,
+                        HintLanguageDataKey.HintOrgan_Step6_Level4,
+                        HintLanguageDataKey.HintOrgan_Step6_Level5)
+                },
+                new PuzzleStep
+                { // 트리 리프 6 (GetCurrentStep() == 7)
+                    id = 7, goal = "파이프 3을 얻는다",
+                    relatedObjectName = "Pipe3", // OrganHintBridge 위치 매핑 키
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step7_Level1,
+                        HintLanguageDataKey.HintOrgan_Step7_Level2,
+                        HintLanguageDataKey.HintOrgan_Step7_Level3,
+                        HintLanguageDataKey.HintOrgan_Step7_Level4,
+                        HintLanguageDataKey.HintOrgan_Step7_Level5)
+                },
+                new PuzzleStep
+                { // 트리 리프 9 (GetCurrentStep() == 10)
+                    id = 8, goal = "축음기 방에서 곡에 대한 책을 본다",
                     relatedObjectName = "LP", // LP_0~4를 들고 있으면 이 스텝으로 override + 위치는 턴테이블(GramophoneA) — OrganHintBridge
-                    hintByLevel = new[]
-                    {
-                        "거실에 걸린 것도 관련이 있을 수 있어요.",
-                        "그림이 뭔가를 가리키고 있을지도 몰라요.",
-                        "그림이 어떤 색 LP를 가리키는지 확인하세요.",
-                        "그림에 나온 원의 개수가 가리키는 색의 LP를 재생하면 파이프가 나타날 거예요.",
-                        "그림에 나온 원의 개수를 확인하세요. 원이 제일 많은 색깔의 LP판을 턴테이블에 올려 재생하세요. 그러면 파이프가 나타나요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step8_Level1,
+                        HintLanguageDataKey.HintOrgan_Step8_Level2,
+                        HintLanguageDataKey.HintOrgan_Step8_Level3,
+                        HintLanguageDataKey.HintOrgan_Step8_Level4,
+                        HintLanguageDataKey.HintOrgan_Step8_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 7, goal = "파이프 4개를 오르간에 교체한다",
-                    relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "지금까지 모은 것들을 쓸 차례인 것 같아요.",
-                        "오르간에 무언가를 사용해야 할 것 같아요.",
-                        "모은 파이프를 오르간에 교체하세요.",
-                        "찾은 파이프 4개를 모두 오르간에 교체해보세요.",
-                        "지금까지 모은 파이프 네 개를 인벤토리에서 꺼내 오르간의 빈 자리에 하나씩 끼워 넣으세요."
-                    }
+                { // 트리 리프 10 (GetCurrentStep() == 11)
+                    id = 9, goal = "LP를 하나라도 찾는다",
+                    relatedObjectName = "LP",
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step9_Level1,
+                        HintLanguageDataKey.HintOrgan_Step9_Level2,
+                        HintLanguageDataKey.HintOrgan_Step9_Level3,
+                        HintLanguageDataKey.HintOrgan_Step9_Level4,
+                        HintLanguageDataKey.HintOrgan_Step9_Level5)
                 },
-
+                new PuzzleStep
+                { // 트리 리프 7 (GetCurrentStep() == 8)
+                    id = 10, goal = "1층에서 LP를 찾는다",
+                    relatedObjectName = "LP",
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step10_Level1,
+                        HintLanguageDataKey.HintOrgan_Step10_Level2,
+                        HintLanguageDataKey.HintOrgan_Step10_Level3,
+                        HintLanguageDataKey.HintOrgan_Step10_Level4,
+                        HintLanguageDataKey.HintOrgan_Step10_Level5)
+                },
+                new PuzzleStep
+                { // 트리 리프 8 (GetCurrentStep() == 9)
+                    id = 11, goal = "2층에서 LP를 찾는다",
+                    relatedObjectName = "LP",
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step11_Level1,
+                        HintLanguageDataKey.HintOrgan_Step11_Level2,
+                        HintLanguageDataKey.HintOrgan_Step11_Level3,
+                        HintLanguageDataKey.HintOrgan_Step11_Level4,
+                        HintLanguageDataKey.HintOrgan_Step11_Level5)
+                },
+                new PuzzleStep
+                { // 트리 리프 11 (GetCurrentStep() == 12)
+                    id = 12, goal = "파이프 4개를 오르간에 교체한다",
+                    relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step12_Level1,
+                        HintLanguageDataKey.HintOrgan_Step12_Level2,
+                        HintLanguageDataKey.HintOrgan_Step12_Level3,
+                        HintLanguageDataKey.HintOrgan_Step12_Level4,
+                        HintLanguageDataKey.HintOrgan_Step12_Level5)
+                },
                 // ── Phase 2 : 악보 4조각 찾기 ───────────────────────────
                 new PuzzleStep
-                {
-                    id = 8, goal = "파이프 교체 후 흩어진 악보 조각들을 확인한다",
-                    relatedObjectName = "SheetPiece2", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "주변이 조금 달라진 것 같아요.",
-                        "거실 상황이 바뀐 것 같아요.",
-                        "파이프를 교체하고 나면 거실 상황이 바뀝니다.",
-                        "거실을 다시 둘러보며 흩어진 종이 조각들을 확인해보세요.",
-                        "파이프를 다 교체하면 거실 상태가 바뀌어요. 거실로 돌아가 바닥이나 가구 주변에 흩어진 종이 조각들을 확인하세요."
-                    }
+                { // 트리 리프 12 (GetCurrentStep() == 13)
+                    id = 13, goal = "악보를 하나라도 찾는다",
+                    relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step13_Level1,
+                        HintLanguageDataKey.HintOrgan_Step13_Level2,
+                        HintLanguageDataKey.HintOrgan_Step13_Level3,
+                        HintLanguageDataKey.HintOrgan_Step13_Level4,
+                        HintLanguageDataKey.HintOrgan_Step13_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 9, goal = "거실 바닥에서 악보 조각 2를 찾는다",
+                { // 트리 리프 13 (GetCurrentStep() == 14)
+                    id = 14, goal = "파이프 교체 후 흩어진 악보 조각1을 찾는다",
                     relatedObjectName = "SheetPiece2", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "발밑을 살펴보는 게 좋을 것 같아요.",
-                        "거실 바닥에 뭔가 떨어져 있을지도 몰라요.",
-                        "거실 바닥에 흩어진 악보를 확인하세요.",
-                        "거실 바닥에서 악보 조각 하나를 주워보세요.",
-                        "거실 바닥을 자세히 살펴보면 떨어져 있는 악보 조각 하나가 보일 거예요. 주워서 인벤토리에 넣으세요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step14_Level1,
+                        HintLanguageDataKey.HintOrgan_Step14_Level2,
+                        HintLanguageDataKey.HintOrgan_Step14_Level3,
+                        HintLanguageDataKey.HintOrgan_Step14_Level4,
+                        HintLanguageDataKey.HintOrgan_Step14_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 10, goal = "비밀 통로를 통해 메트로놈 방으로 이동한다",
+                { // 트리 리프 14 (GetCurrentStep() == 15)
+                    id = 15, goal = "비밀 통로를 통해 메트로놈 방으로 이동한다",
                     relatedObjectName = "Vent", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "지나온 곳 중 하나에 다른 길이 있을지도 몰라요.",
-                        "눈사람이 있던 방 쪽에 뭔가 있을 수 있어요.",
-                        "눈사람이 있던 방에서 비밀 통로를 찾아보세요.",
-                        "눈사람이 있던 방에서 숨겨진 통로를 찾아 메트로놈 방으로 들어가보세요.",
-                        "눈사람이 있던 방의 벽이나 가구를 조사해보세요. 숨겨진 통로가 하나 나오는데, 그걸 통해 메트로놈이 있는 방으로 들어갈 수 있어요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step15_Level1,
+                        HintLanguageDataKey.HintOrgan_Step15_Level2,
+                        HintLanguageDataKey.HintOrgan_Step15_Level3,
+                        HintLanguageDataKey.HintOrgan_Step15_Level4,
+                        HintLanguageDataKey.HintOrgan_Step15_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 11, goal = "메트로놈 박자를 맞춰 캐비닛을 열고 악보 조각 1을 찾는다",
+                { // 트리 리프 15 (GetCurrentStep() == 16)
+                    id = 16, goal = "메트로놈 박자를 맞춰 캐비닛을 연다",
                     relatedObjectName = "Metronome", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "소리에 맞춰 무언가를 해야 할 것 같아요.",
-                        "메트로놈이 있는 곳에서 시도해볼 게 있어요.",
-                        "메트로놈의 박자에 맞게 상호작용하세요.",
-                        "메트로놈 박자에 맞춰 상호작용하면 초록 캐비닛이 열리고 악보 조각이 나올 거예요.",
-                        "메트로놈을 작동시켜서 그림 속 타이밍에 맞춰 상호작용하세요. 성공하면 캐비닛이 열리고 안에서 악보 조각을 찾을 수 있어요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step16_Level1,
+                        HintLanguageDataKey.HintOrgan_Step16_Level2,
+                        HintLanguageDataKey.HintOrgan_Step16_Level3,
+                        HintLanguageDataKey.HintOrgan_Step16_Level4,
+                        HintLanguageDataKey.HintOrgan_Step16_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 12, goal = "캐비닛 안 힌트 그림대로 책장을 조작해 큰 방을 연다",
+                { // 트리 리프 16 (GetCurrentStep() == 17)
+                    id = 17, goal = "캐비닛에서 악보 2를 찾는다",
+                    relatedObjectName = "Metronome", // OrganHintBridge 위치 매핑 키
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step17_Level1,
+                        HintLanguageDataKey.HintOrgan_Step17_Level2,
+                        HintLanguageDataKey.HintOrgan_Step17_Level3,
+                        HintLanguageDataKey.HintOrgan_Step17_Level4,
+                        HintLanguageDataKey.HintOrgan_Step17_Level5)
+                },
+                new PuzzleStep
+                { // 트리 리프 17 (GetCurrentStep() == 18)
+                    id = 18, goal = "책장을 조작해본다",
                     relatedObjectName = "BookShelf", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "방금 연 것 안에 또 다른 단서가 있을지도 몰라요.",
-                        "캐비닛 안쪽을 잘 살펴보세요.",
-                        "캐비닛 안쪽 그림을 확인하고 2층 책장의 책을 조작하세요.",
-                        "캐비닛 안 그림이 가리키는 대로 2층 책장의 책들을 순서대로 조작해보세요.",
-                        "캐비닛 안쪽에 그려진 그림을 잘 기억해두고, 2층 책장에서 그림과 같은 순서로 책을 하나씩 당기거나 누르세요. 순서가 맞으면 큰 방으로 가는 길이 열려요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step18_Level1,
+                        HintLanguageDataKey.HintOrgan_Step18_Level2,
+                        HintLanguageDataKey.HintOrgan_Step18_Level3,
+                        HintLanguageDataKey.HintOrgan_Step18_Level4,
+                        HintLanguageDataKey.HintOrgan_Step18_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 13, goal = "가족 사진 액자 안에서 악보 조각 3을 찾는다",
+                { // 트리 리프 18 (GetCurrentStep() == 19)
+                    id = 19, goal = "캐비닛 안 힌트 그림대로 책장을 조작해 큰 방을 연다",
+                    relatedObjectName = "BookShelf", // OrganHintBridge 위치 매핑 키
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step19_Level1,
+                        HintLanguageDataKey.HintOrgan_Step19_Level2,
+                        HintLanguageDataKey.HintOrgan_Step19_Level3,
+                        HintLanguageDataKey.HintOrgan_Step19_Level4,
+                        HintLanguageDataKey.HintOrgan_Step19_Level5)
+                },
+                new PuzzleStep
+                { // 트리 리프 19 (GetCurrentStep() == 20)
+                    id = 20, goal = "책상 위에서 악보 조각 3을 찾는다",
                     relatedObjectName = "SheetPiece3", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "새로 열린 방에 뭔가 있을 것 같아요.",
-                        "새로 열린 방에서 벽에 걸린 것을 살펴보세요.",
-                        "2층 큰 방의 액자를 확인하세요.",
-                        "가족 사진 액자 안쪽을 확인해 악보 조각을 찾아보세요.",
-                        "2층 큰 방의 벽에 걸린 가족 사진을 액자에서 빼낼 수 있어요. 액자 안쪽에 악보 조각이 숨겨져 있어요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step20_Level1,
+                        HintLanguageDataKey.HintOrgan_Step20_Level2,
+                        HintLanguageDataKey.HintOrgan_Step20_Level3,
+                        HintLanguageDataKey.HintOrgan_Step20_Level4,
+                        HintLanguageDataKey.HintOrgan_Step20_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 14, goal = "책상 위에서 악보 조각 4를 찾는다",
+                { // 트리 리프 20 (GetCurrentStep() == 21)
+                    id = 21, goal = "가족 사진 액자 안에서 악보 조각 4를 찾는다",
                     relatedObjectName = "SheetPiece4", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "구석에 있는 것도 살펴볼 만해요.",
-                        "2층 큰 방에 뭔가 있을지도 몰라요.",
-                        "2층 큰 방의 책상을 확인하세요.",
-                        "2층 큰 방의 책상 위를 살펴 마지막 악보 조각을 찾아보세요.",
-                        "2층 큰 방 촛불이 켜진 책상 위에 마지막 남은 악보 조각이 있어요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step21_Level1,
+                        HintLanguageDataKey.HintOrgan_Step21_Level2,
+                        HintLanguageDataKey.HintOrgan_Step21_Level3,
+                        HintLanguageDataKey.HintOrgan_Step21_Level4,
+                        HintLanguageDataKey.HintOrgan_Step21_Level5)
                 },
-
                 // ── Phase 3 : 오르간 연주 & 탈출 ────────────────────────
                 new PuzzleStep
-                {
-                    id = 15, goal = "모은 악보 조각을 기존 조각과 조합해 완성한다",
+                { // 트리 리프 21 (GetCurrentStep() == 22)
+                    id = 22, goal = "모은 악보 조각을 기존 조각과 조합해 완성한다",
                     relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "모은 것들을 정리할 때가 된 것 같아요.",
-                        "조각들이 서로 맞춰질 수 있어요.",
-                        "모은 악보 조각들을 오르간의 기존 조각과 맞춰보세요.",
-                        "모은 악보 조각 4개를 오르간에 있던 조각과 합쳐 악보를 완성해보세요.",
-                        "인벤토리에 모은 악보 조각 네 개를 오르간에 원래 붙어있던 조각과 순서에 맞게 이어 붙여서 악보 전체를 완성하세요."
-                    }
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step22_Level1,
+                        HintLanguageDataKey.HintOrgan_Step22_Level2,
+                        HintLanguageDataKey.HintOrgan_Step22_Level3,
+                        HintLanguageDataKey.HintOrgan_Step22_Level4,
+                        HintLanguageDataKey.HintOrgan_Step22_Level5)
                 },
                 new PuzzleStep
-                {
-                    id = 16, goal = "완성된 악보의 숫자 순서대로 건반을 눌러 연주한다",
+                { // 트리 리프 22 (GetCurrentStep() == 23)
+                    id = 23, goal = "완성된 악보의 숫자 순서대로 건반을 눌러 연주한다",
                     relatedObjectName = "Organ", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "이제 오르간으로 뭔가 해야 할 것 같아요.",
-                        "완성된 것을 오르간에서 사용해보세요.",
-                        "오르간에서 건반을 순서대로 누르세요.",
-                        "완성된 악보에 적힌 숫자 순서대로 건반을 눌러 연주해보세요.",
-                        "완성된 악보에 적힌 숫자들을 순서대로 확인하고, 오르간 건반 위에 표시된 같은 숫자를 그 순서 그대로 눌러 연주하세요."
-                    }
-                },
-                new PuzzleStep
-                {
-                    id = 17, goal = "연주 후 떨어진 열쇠를 찾아 상자에 넣고 탈출한다",
-                    relatedObjectName = "Chest", // OrganHintBridge 위치 매핑 키
-                    hintByLevel = new[]
-                    {
-                        "연주가 끝나면 뭔가 달라질 수 있어요.",
-                        "오르간 주변에 뭔가 나타났을지도 몰라요.",
-                        "연주가 끝나면 오르간 주변을 확인하세요.",
-                        "떨어진 열쇠를 찾아 상자에 넣고 탈출하세요.",
-                        "연주가 끝나면 오르간 근처에 열쇠가 떨어져요. 그 열쇠를 주워서 상자에 넣고 문으로 나가면 탈출에 성공해요."
-                    }
-                },
+                    hintByLevel = Levels(
+                        HintLanguageDataKey.HintOrgan_Step23_Level1,
+                        HintLanguageDataKey.HintOrgan_Step23_Level2,
+                        HintLanguageDataKey.HintOrgan_Step23_Level3,
+                        HintLanguageDataKey.HintOrgan_Step23_Level4,
+                        HintLanguageDataKey.HintOrgan_Step23_Level5)
+                }
             }
         };
     }
+
+    // ── 보류: 트리에 대응하는 리프가 없는 스텝 (민주 확인 후 살리거나 삭제) ──
+    // 리프 11은 "파이프 다 찾음(c2)"과 "다음 LP를 이미 가지고 있음(c12)" 두 경로에서 같이 나와서,
+    // 플레이리스트 재생 중인데도 "파이프 교체" 힌트가 나올 수 있음. 리프를 나눠주면 아래 두 스텝을 다시 넣고
+    // HintLanguageData.OrganScene.cs에 키를 추가하면 됨.
+    //  - "LP로 플레이리스트를 재생한다"        : 찾아낸 LP를 축음기에 넣고 돌려봐. / 플레이리스트대로 재생하면 돼.
+    //  - "거실 그림을 보고 올바른 색 LP를 재생해 파이프 4를 찾는다"
+    //                                        : 그림이 어떤 색 LP를 가리키는지 확인해봐. / 원이 제일 많은 색깔의 LP판을 턴테이블에 올려 재생하면 파이프가 나타나.
 }

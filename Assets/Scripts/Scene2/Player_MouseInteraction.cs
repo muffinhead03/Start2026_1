@@ -35,6 +35,16 @@ public class Player_MouseInteraction : MonoBehaviour
         isActive = false;
 
         UnRegisterInput();
+
+        if (DragTarget != null)
+        {
+            DragTarget.OnMouseReleased();
+
+            DragTarget.OnMouseExit();
+        }
+
+        DragTarget = null;
+        CurrentTarget = null;
     }
 
     void RegisterInput()
@@ -107,7 +117,7 @@ public class Player_MouseInteraction : MonoBehaviour
         {
             CurrentTarget.OnMouseClick();
 
-            CurrentTarget.OnMouseExit();
+            //CurrentTarget.OnMouseExit();
 
             DragTarget = CurrentTarget;
         }
@@ -120,6 +130,9 @@ public class Player_MouseInteraction : MonoBehaviour
         if (DragTarget != null)
         {
             DragTarget.OnMouseReleased();
+
+            DragTarget.OnMouseExit();
+
             DragTarget = null;
 
             CurrentTarget = null;

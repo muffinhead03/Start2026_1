@@ -5,6 +5,11 @@ public class Controll_Mesh: MonoBehaviour
     [Header("Textures (Korean = default)")]
     [SerializeField] private Texture2D[] textures;
 
+    [ColorUsage (true,true)]
+    [SerializeField] private Color[] emission_colors;
+
+    [SerializeField] private float[] emission_intensity;
+
     [Header("Localized Textures (empty slot -> Korean)")]
     [SerializeField] private Texture2D[] textures_English;
     [SerializeField] private Texture2D[] textures_Japanese;
@@ -54,6 +59,19 @@ public class Controll_Mesh: MonoBehaviour
         meshRenderer.SetPropertyBlock(TextureChange.Instance);
 
         meshRenderer.enabled = true;
+    }
+
+    public void SetEmission(int id)
+    {
+        if (id >= textures.Length || id < 0) return;
+
+        TextureChange.Instance.Clear();
+
+        meshRenderer.GetPropertyBlock(TextureChange.Instance);
+
+        TextureChange.Instance.SetColor("_EmissionColor", emission_colors[id] * emission_intensity[id] );
+
+        meshRenderer.SetPropertyBlock(TextureChange.Instance);
     }
 
     public void ShowMesh(int id)

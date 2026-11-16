@@ -11,6 +11,8 @@ public abstract class APwd: MonoBehaviour
 
     protected bool isActive;
 
+    protected bool isLocked;
+
     protected string input;
 
     public abstract void PressButton(string n);

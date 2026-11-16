@@ -4,7 +4,7 @@ public class Book_Inspectable: Object_Inspectable
 {
     [SerializeField] private int max_page;
 
-    [SerializeField] private Controll_Material material;
+    [SerializeField] private Controll_Material_Original material;
 
     [SerializeField] private Play_Audio audio_player;
     private int current_page;
