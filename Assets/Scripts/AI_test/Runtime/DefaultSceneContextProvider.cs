@@ -25,7 +25,7 @@ public class DefaultSceneContextProvider : ISceneContextProvider
             "The player is trying to repair the organ and perform a piece of music to escape." },
 
         { "doll_room",
-            "Scene: A dim old playroom full of toys — wooden rocking horses, nesting dolls, a toy train, a retro arcade machine and a talking teddy bear. " +
+            "Scene: A dim old playroom full of toys — a picture book with seesaw drawings on the floor, nesting dolls lined up on a cabinet, a combination lock on a fence around wooden rocking horses, a toy train, a retro arcade machine and a talking teddy bear. "  +
             "A broken wooden doll stands in the corner. The player is trying to repair the doll to escape." },
     };
 

@@ -52,7 +52,7 @@ public class HintManager : MonoBehaviour
 
     // 힌트 사용 횟수 저장 — 게임을 껐다 켜서(이어하기) 같은 씬에 다시 들어와도 횟수가 다시 차지 않게.
     // 기본 구현은 PlayerPrefs (PlayerPrefsHintUsageStore). persistHintUsage를 끄면 저장 안 함(씬마다 새로 시작).
-    public IHintUsageStore UsageStore { get; set; } = new PlayerPrefsHintUsageStore();
+    public IHintUsageStore UsageStore { get; set; } = new SessionHintUsageStore();
 
     // 관찰 문장 번역 테이블. 기본 구현은 힌트 전용 번역 데이터(Runtime/HintLocalization의 HintLanguageData)를 읽음 (HintPhraseTable).
     public IHintPhraseTable PhraseTable { get; set; } = new HintPhraseTable();
@@ -176,6 +176,10 @@ public class HintManager : MonoBehaviour
     bool lastHintWasFallback = false;
     // 힌트를 받은 시점의 완료 스텝 수 — 그 뒤로 스텝을 더 풀었으면 지난 힌트는 안 보여줌
     int lastHintCompletedCount = -1;
+    // 힌트를 받은 시점의 언어 코드 — 그 뒤로 언어를 바꿨으면 지난 힌트는 안 보여줌
+    // (LanguageFontSwitcher가 언어 변경 즉시 폰트를 바꾸므로, 이전 언어 문장을 그대로 띄우면
+    //  일본어 문장 + 원래 폰트 / 한국어 문장 + 일본어 폰트처럼 글자가 네모로 나옴)
+    string lastHintLanguageCode = null;
 
     Coroutine typingCoroutine;
     Coroutine loadingCoroutine;
@@ -356,6 +360,13 @@ public class HintManager : MonoBehaviour
                 lastHintDisplay = null;
             }
 
+            // 힌트를 받은 뒤 언어를 바꿨으면 그 힌트는 이전 언어 문장 → 버리고 현재 언어 인사말
+            if (!string.IsNullOrEmpty(lastHintDisplay) && lastHintLanguageCode != CurrentLanguageCode)
+            {
+                Debug.Log($"[HintManager] 힌트를 받은 뒤 언어가 바뀌어서({lastHintLanguageCode} → {CurrentLanguageCode}) 지난 힌트 대신 인사말 표시");
+                lastHintDisplay = null;
+            }
+
             if (!string.IsNullOrEmpty(lastHintDisplay))
             {
                 ShowTextInstant(lastHintDisplay);
@@ -389,6 +400,8 @@ public class HintManager : MonoBehaviour
             Debug.Log("[HintManager] 힌트 출력 중이라 요청 무시");
             return;
         }
+
+        walkieExamine?.PlayWalkieSound();   // 퍼즐 힌트 버튼 눌렀을 때 무전 소리 한 번 (출력 중 무시된 클릭은 소리 X)
 
         // 요청할 때마다 현재 언어를 다시 읽음 — 게임 중에 설정에서 언어를 바꿔도 이번 힌트부터 반영
         ApplyCurrentLanguage();
@@ -449,7 +462,7 @@ public class HintManager : MonoBehaviour
         // RevealLLM이 같은 속도로 한 글자씩 이어서 타이핑한다 (타자기 큐).
         bool hasWatchingLine = !string.IsNullOrEmpty(result.watchingLine);
         string introText = hasWatchingLine ? Radio + result.watchingLine : null;
-        string displayPrefix = hasWatchingLine ? introText + " " : "";
+        string displayPrefix = hasWatchingLine ? introText + HintLanguageData.Get(HintLanguageDataKey.HintObs_SentenceGap) : ""; // 일본어는 문장 사이 공백 없음
 
         StopReveal();
         StopFallback();
@@ -828,7 +841,11 @@ public class HintManager : MonoBehaviour
         lastHintDisplay = fullText;
         lastHintWasFallback = isFallback;
         lastHintCompletedCount = currentPlayerState.completedSteps.Count;
+        lastHintLanguageCode = CurrentLanguageCode;
     }
+
+    // 지금 게임 언어 코드 ("ko" / "en" / "ja") — 지난 힌트가 어느 언어였는지 비교용
+    string CurrentLanguageCode => (LanguageSource?.Current ?? HintLanguageProfile.Korean).Code;
 
     // 타이핑 없이 바로 표시 (다시 열었을 때 마지막 힌트 보여주기용)
     void ShowTextInstant(string message)
@@ -910,7 +927,7 @@ public class HintManager : MonoBehaviour
         typingCoroutine = StartCoroutine(TypeText(message));
     }
 
-    // displayPrefix(관찰 문장)가 있으면 그 뒤에 점만 찍고, 없으면 "치지직.. 교신 중"(UIText Connecting) + 점
+    // displayPrefix(관찰 문장)가 있으면 그 뒤에 점만 찍고, 없으면 ".. 교신 중"(UIText Connecting) + 점
     IEnumerator LoadingDots(string displayPrefix = "")
     {
         string baseText = string.IsNullOrEmpty(displayPrefix) ? UIText.Get(HintUITextId.Connecting) : displayPrefix.TrimEnd() + " ";
@@ -928,7 +945,8 @@ public class HintManager : MonoBehaviour
     // 언어 / 힌트 횟수 저장
     // =========================================================
 
-    // 무전기 잡음 + 띄어쓰기 (예: "치지직... ") — 인사말·관찰 문장·폴백 문구 앞에 붙음
+    // 무전기 말머리 + 띄어쓰기 (예: "... ") — 인사말·관찰 문장·폴백 문구 앞에 붙음.
+    // 2026-11: "치지직" 글자는 HintLanguageData.UI의 RadioNoise에서 뺌 (무전 느낌은 WalkieTalkieExamine 사운드로)
     string Radio => UIText.Get(HintUITextId.RadioNoise) + " ";
 
     // 횟수 저장 구분 — 씬 이름 기준 (같은 씬에 다시 들어오면 이어서 셈, 다른 씬이면 새로 시작)
