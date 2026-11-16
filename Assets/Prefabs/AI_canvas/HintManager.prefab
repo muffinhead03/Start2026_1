@@ -53,7 +53,8 @@ MonoBehaviour:
   puzzleHintButton: {fileID: 0}
   currentPuzzleId: wine_glass_room
   sceneContexts: []
-  maxHints: 4
+  maxHints: 10
+  persistHintUsage: 1
   hintTuning:
     staySecondsMidThreshold: 120
     staySecondsMidBonus: 1.5
@@ -80,6 +81,16 @@ MonoBehaviour:
     visitedRooms: []
     lastActions: []
     repeatedInspections: []
+  numberLockMode: {fileID: 0}
+  blockWhenCursorFree: 1
+  varyRepeatedHints: 1
+  minRetrySeconds: 20
+  easyMinLevel: 3
+  easyMaxLevel: 5
+  mediumMinLevel: 1
+  mediumMaxLevel: 5
+  hardMinLevel: 1
+  hardMaxLevel: 3
 --- !u!114 &5347934386039576611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,3 +109,19 @@ MonoBehaviour:
   rotateSpeed: 20
   targetLocalEuler: {x: 0, y: 0, z: 0}
   rotateAxis: {x: 0, y: 1, z: 0}
+  walkieClips:
+  - {fileID: 8300000, guid: b61a45f20e72b4790a2a6a63dd2d7d29, type: 3}
+  - {fileID: 8300000, guid: cc3fd3cc0c6a3402a88df8b4fe07c2e4, type: 3}
+  - {fileID: 8300000, guid: d9e06ab1fb27846c9bff7ce063439510, type: 3}
+  - {fileID: 8300000, guid: ff96fac23c2924db4a6b865635bab3a0, type: 3}
+  - {fileID: 8300000, guid: fc2f9b5c3afa446078b132137a425637, type: 3}
+  - {fileID: 8300000, guid: 02983eaa99555454eb0e0aaf76a3a262, type: 3}
+  - {fileID: 8300000, guid: 37901e01240c54bdaa15036bb05b09cd, type: 3}
+  - {fileID: 8300000, guid: 9bfe551bad93d4bff8a7b7c351c0b0c9, type: 3}
+  - {fileID: 8300000, guid: 8ab65bf505a3f40c8839204b294f8c5e, type: 3}
+  outputGroup: {fileID: 24300002, guid: 64453ad28c662784b971bd5fc140a407, type: 2}
+  walkieVolume: 0.3
+  stopFadeTime: 0.2
+  playDuration: 5
+  autoFadeTime: 1
+  randomStartPoint: 1
