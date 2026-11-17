@@ -17,7 +17,7 @@ public class GameSetting : MonoBehaviour
     public static PlayerData data;
 
     [Header("Text")]
-    string[] hintLevel = { "Easy", "Medium", "Hard" };
+    string[] hintLevelKeys = { LanguageDataKey.Setting_Hint_Easy, LanguageDataKey.Setting_Hint_Medium, LanguageDataKey.Setting_Hint_Hard };
     string[] language = { "English", "한국어", "\u65E5\u672C\u8A9E" }; // English, 한국어, 日本語(Japanese)
 
     [Header("Player")]
@@ -207,7 +207,7 @@ public class GameSetting : MonoBehaviour
 
     void ShowSettingPanel()
     {
-        SceneUI.ChangeText(1, hintLevel[data.hintLevel]);
+        SceneUI.ChangeText(1, LanguageData.Get(hintLevelKeys[data.hintLevel]));
         SceneUI.ChangeText(2, language[data.language]);
         SceneUI.SetSlider(0, (data.mouseSensitivity - minSensitivity) / (maxSensitivity - minSensitivity));
         SceneUI.SetSlider(1, data.soundEffect);

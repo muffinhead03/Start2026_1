@@ -449,6 +449,295 @@ public static class LanguageData
                     "本"
                 }
             }
+        },
+
+        /*
+         * Setting Menu / Title Menu
+         */
+
+        {
+            LanguageDataKey.Setting_Title,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "설정"
+                },
+                {
+                    LanguageType.English,
+                    "Settings"
+                },
+                {
+                    LanguageType.Japanese,
+                    "設定"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_HintLevel,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "힌트 난이도"
+                },
+                {
+                    LanguageType.English,
+                    "Hint Level"
+                },
+                {
+                    LanguageType.Japanese,
+                    "ヒントレベル"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_MouseSensitivity,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "마우스 감도"
+                },
+                {
+                    LanguageType.English,
+                    "Mouse Sensitivity"
+                },
+                {
+                    LanguageType.Japanese,
+                    "マウス感度"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_SoundEffects,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "효과음"
+                },
+                {
+                    LanguageType.English,
+                    "Sound Effects"
+                },
+                {
+                    LanguageType.Japanese,
+                    "効果音"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_Language,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "언어"
+                },
+                {
+                    LanguageType.English,
+                    "Language"
+                },
+                {
+                    LanguageType.Japanese,
+                    "言語"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_ReturnToTitle,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "타이틀로 돌아가기"
+                },
+                {
+                    LanguageType.English,
+                    "Return to Title"
+                },
+                {
+                    LanguageType.Japanese,
+                    "タイトルに戻る"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_ExitGame,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "게임 종료"
+                },
+                {
+                    LanguageType.English,
+                    "Exit Game"
+                },
+                {
+                    LanguageType.Japanese,
+                    "ゲーム終了"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_Close,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "닫기(Q)"
+                },
+                {
+                    LanguageType.English,
+                    "Close(Q)"
+                },
+                {
+                    LanguageType.Japanese,
+                    "閉じる(Q)"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_Hint_Easy,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "쉬움"
+                },
+                {
+                    LanguageType.English,
+                    "Easy"
+                },
+                {
+                    LanguageType.Japanese,
+                    "やさしい"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_Hint_Medium,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "보통"
+                },
+                {
+                    LanguageType.English,
+                    "Medium"
+                },
+                {
+                    LanguageType.Japanese,
+                    "ふつう"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Setting_Hint_Hard,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "어려움"
+                },
+                {
+                    LanguageType.English,
+                    "Hard"
+                },
+                {
+                    LanguageType.Japanese,
+                    "むずかしい"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Title_Continue,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "이어하기"
+                },
+                {
+                    LanguageType.English,
+                    "Continue"
+                },
+                {
+                    LanguageType.Japanese,
+                    "つづきから"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Title_Start,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "시작하기"
+                },
+                {
+                    LanguageType.English,
+                    "Start"
+                },
+                {
+                    LanguageType.Japanese,
+                    "はじめから"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Title_Setting,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "설정"
+                },
+                {
+                    LanguageType.English,
+                    "Setting"
+                },
+                {
+                    LanguageType.Japanese,
+                    "設定"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.Title_Exit,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "종료"
+                },
+                {
+                    LanguageType.English,
+                    "Exit"
+                },
+                {
+                    LanguageType.Japanese,
+                    "終了"
+                }
+            }
         }
     };
 

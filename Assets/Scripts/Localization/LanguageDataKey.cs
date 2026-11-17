@@ -82,4 +82,54 @@ public static class LanguageDataKey
 
     public const string OrganScene_Item_Book =
         nameof(OrganScene_Item_Book);
+
+
+    /*
+     * Setting Menu / Title Menu
+     */
+
+    public const string Setting_Title =
+        nameof(Setting_Title);
+
+    public const string Setting_HintLevel =
+        nameof(Setting_HintLevel);
+
+    public const string Setting_MouseSensitivity =
+        nameof(Setting_MouseSensitivity);
+
+    public const string Setting_SoundEffects =
+        nameof(Setting_SoundEffects);
+
+    public const string Setting_Language =
+        nameof(Setting_Language);
+
+    public const string Setting_ReturnToTitle =
+        nameof(Setting_ReturnToTitle);
+
+    public const string Setting_ExitGame =
+        nameof(Setting_ExitGame);
+
+    public const string Setting_Close =
+        nameof(Setting_Close);
+
+    public const string Setting_Hint_Easy =
+        nameof(Setting_Hint_Easy);
+
+    public const string Setting_Hint_Medium =
+        nameof(Setting_Hint_Medium);
+
+    public const string Setting_Hint_Hard =
+        nameof(Setting_Hint_Hard);
+
+    public const string Title_Continue =
+        nameof(Title_Continue);
+
+    public const string Title_Start =
+        nameof(Title_Start);
+
+    public const string Title_Setting =
+        nameof(Title_Setting);
+
+    public const string Title_Exit =
+        nameof(Title_Exit);
 }
