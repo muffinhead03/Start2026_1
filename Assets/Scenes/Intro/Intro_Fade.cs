@@ -1,62 +1,51 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Intro_StepForCustomer : MonoBehaviour
+public class Intro_Fade : MonoBehaviour
 {
     [SerializeField] GameObject panel_fade;
 
-    [SerializeField] Transform player, customer;
-    [SerializeField] Transform target_player, target_customer;
-    [SerializeField] Player_Move player_look;
+    [SerializeField] UnityEvent OnBlackEnter, OnBlackExit; 
 
-    [SerializeField] Play_Audio audio_player;
+    public void FadeOutToIn()
+    {
+        StartCoroutine(FadeOut());
+    }
 
-    [SerializeField] IntroSceneManager intro;
-
-    public void SetActive()
+    IEnumerator FadeOut()
     {
         panel_fade.SetActive(true);
 
         panel_fade.GetComponent<Animator>().SetTrigger("Out");
 
-        StartCoroutine(DuringBlack());
-    }
-
-    IEnumerator DuringBlack()
-    {
         yield return new WaitForSeconds(2.0f);
 
-        SetObjectPos(player, target_player);
-        SetObjectPos(customer, target_customer);
-
-        player_look.LookForward();
-
-        audio_player.PlayAudio(0);
-
-        yield return new WaitForSeconds(1.0f);
-
-        FadeIn();
+        DuringBlack();
     }
 
-    private void FadeIn()
+    protected virtual void DuringBlack()
     {
+        OnBlackEnter?.Invoke();
+
+        StartCoroutine(FadeIn(1.0f));
+    }
+
+    protected IEnumerator FadeIn(float wait)
+    {
+        yield return new WaitForSeconds(wait);
+
         panel_fade.GetComponent<Animator>().SetTrigger("In");
 
-        StartCoroutine(AfterBlack());
-    }
-
-    IEnumerator AfterBlack()
-    {
         yield return new WaitForSeconds(2.0f);
 
         panel_fade.SetActive(false);
 
-        intro.NextStep();
+        AfterBlack();
     }
 
-    private void SetObjectPos(Transform obj, Transform target_obj)
+    protected virtual void AfterBlack()
     {
-        obj.position = target_obj.position;
-        obj.rotation = target_obj.rotation;
+        OnBlackExit?.Invoke();
     }
 }

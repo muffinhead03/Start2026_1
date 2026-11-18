@@ -18,10 +18,6 @@ public class Player_Interaction : MonoBehaviour
     [Header("UI")]
     public Scene_UI_Manager SceneUI;
 
-    [Header("Inventory")]
-    [SerializeField]
-    private InventoryUIManager inventoryUIManager;
-
     InputAction interact;
     InputAction interact_inspecting;
 
@@ -48,7 +44,7 @@ public class Player_Interaction : MonoBehaviour
             var Interactable = hit.collider.GetComponent<IRayInteractable>();
 
             // 상호작용 가능한 물체
-            if (Interactable != null)
+            if (Interactable != null && Interactable.IsInteractable())
             {
                 if (CurrentTarget != Interactable)
                 {

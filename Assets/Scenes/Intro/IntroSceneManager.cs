@@ -5,17 +5,18 @@ public class IntroSceneManager : MonoBehaviour
 {
     [SerializeField] Dial_System dial;
 
-    [SerializeField] Player_Move player;
-
     [SerializeField] Scene_UI_Manager SceneUI;
+    [SerializeField] private Player_Move player;
 
-    [SerializeField] Intro_StepForCustomer customer;
+    [SerializeField] Intro_Fade customer;
+
+    [SerializeField] Intro_Fade after_box_open;
 
     [SerializeField] Intro_NextScene nextscene;
 
     private enum player_mode { dial, play}
 
-    private player_mode[] step = {player_mode.dial, player_mode.play, player_mode.dial, player_mode.dial};
+    private player_mode[] step = {player_mode.dial, player_mode.play, player_mode.dial, player_mode.dial, player_mode.play};
     private int step_id;
     private int step_customer = 3;
 
@@ -28,6 +29,16 @@ public class IntroSceneManager : MonoBehaviour
         ChangeMode(step[step_id]);
 
         isCustomerCalled = false;
+    }
+
+    private void OnEnable()
+    {
+        dial.OnDialEnd += EndDial;
+    }
+
+    private void OnDisable()
+    {
+        dial.OnDialEnd -= EndDial;
     }
 
     public void NextStep()
@@ -50,16 +61,23 @@ public class IntroSceneManager : MonoBehaviour
         }
     }
 
+    public void EndDial(int id)
+    {
+        if (id == 1) CallCustomer();
+        else if (id == 2) return;
+        else NextStep();
+    }
+
     private void CallCustomer()
     {
         isCustomerCalled = true;
 
-        customer.SetActive();
+        customer.FadeOutToIn();
     }
 
     public void OpentheBox(bool isOpen)
     {
-        if (isOpen) nextscene.SetActive("DollSceneUpdate");
+        if (isOpen) after_box_open.FadeOutToIn();
         else nextscene.SetActive("StartingScene");
     }
 
@@ -69,6 +87,7 @@ public class IntroSceneManager : MonoBehaviour
         {
             case player_mode.dial:
                 InputManager.EnableDialInput();
+                SceneUI.UnlockPointer();
                 SceneUI.SetActiveCursor(false);
                 player.SetMoveLock(true);
 
@@ -77,6 +96,7 @@ public class IntroSceneManager : MonoBehaviour
 
             case player_mode.play:
                 player.SetMoveLock(false);
+                SceneUI.LockPointer();
                 SceneUI.SetActiveCursor(true);
                 InputManager.EnablePlayerInput();
                 break;

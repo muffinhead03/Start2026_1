@@ -212,8 +212,11 @@ public class Player_Move : MonoBehaviour
         }
     }
 
-    public void LookForward()
+    public void Spawn(Transform target)
     {
+        transform.position = target.position;
+        transform.rotation = target.rotation;
+
         CameraPivot.localRotation = Quaternion.identity;
 
         yaw = transform.rotation.eulerAngles.y;
