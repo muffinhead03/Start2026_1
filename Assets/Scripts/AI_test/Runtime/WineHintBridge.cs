@@ -1,256 +1,619 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 와인씬 쪽지 퍼즐(2단계 쪽지 찾기 / 3단계 벽 종이에 붙이기)의 세부 진행도를 힌트 시스템에 연결하는 브릿지.
-/// FloorStainManager / HintPaperNotesManager의 읽기 전용 개수를 매 프레임 폴링함 (DollHintBridge와 같은 패턴).
+/// 와인씬(10월 리디자인)을 힌트 시스템에 연결하는 브릿지. DollHintBridge처럼 씬 상태를 읽기 전용으로 폴링함
+/// (팀원 스크립트 수정 없음 — LetterMemoPanel / Object_PutOn.putOn / Object_Puzzle.pwd / Object_Door.isLocked / 손·인벤토리만 읽음).
 ///
-/// 역할 3가지:
-/// 1) 진행 기록 — 진짜 쪽지를 하나라도 찾으면 step 1 자동 완료 (얼룩을 안 보고 쪽지부터 주운 경우),
-///    쪽지 4장을 다 붙이면 step 3 완료 + clue_hint_paper
-/// 2) 최근 행동 — 쪽지 찾음 / 붙임 / 가짜 시도를 "wine_note_..."로 AddLastAction
-///    (DefaultActionLabelProvider가 "쪽지를 벌써 2장 모았지" 같은 관찰 문장으로 바꿈)
-/// 3) 스텝 진행도 제공(IStepProgressProvider) — (구간 × 힌트 레벨)별 문장 풀에서 랜덤으로 골라 hintByLevel을 대신함
-///    - step 2: 일부 찾음("partial") / 가짜 시도("decoy")
-///    - step 3: 다 모았는데 안 붙임("ready") / 붙이는 중("attaching") / 가짜 시도("decoy")
-///    가짜 시도 구간은 진짜 쪽지를 새로 찾거나 붙이면 풀림.
-///    (남은 개수, 정답 알파벳은 어떤 문장에도 넣지 않음 — 정답 누설 방지)
+/// 역할 4가지:
+/// 1) 진행 기록 — completedSteps 1~3 (WineGlassRoomData 주석 참고). 뒤 단계가 진행되면 앞 단계도 같이 완료(back-fill).
+/// 2) 최근 행동 — "wine_..." 행동 키를 AddLastAction (DefaultActionLabelProvider가 관찰 문장으로 바꿈)
+///    - 폴링으로 자동: 메모 열고 닫음(고침/그냥 봄), 병 집음/꽂음/뺌, 열쇠 집음, 렉 완성
+///    - 씬 이벤트에 연결: ReportHintStainViewed / ReportBookshelfViewed / ReportFloorStainViewed (Object_FixCamera.Fixed),
+///                        ReportCabinetTried (장식장 문 Event_On_Ray.OnClick)
+/// 3) 손/인벤토리 제공(IPossessionProvider) — 병은 "wine", 열쇠는 "key1"로 넘겨서 HintEngine이 스텝을 override
+///    (병은 숫자까지 찾은 뒤(step 2 완료)부터만 넘김 — 처음부터 병을 집으면 앞 단계를 건너뛴 힌트가 나와서)
+/// 4) 스텝 진행도 제공(IStepProgressProvider) — 진행 구간 × 레벨별 문장으로 hintByLevel을 대신함
+///    - step 1: 벽 종이 봄(수수께끼 풀기) → 그 힌트 받은 뒤(메모에 적기) / 메모 일부 맞음
+///    - step 2: 책장 확대 봄 (완료는 병을 정답 번호 칸에 꽂을 때)
+///    - step 3: 다른 병 자리에 꽂음(색 혼동) / 정답 아닌 칸에 꽂음(숫자 혼동) / 일부 맞음
+///    - step 4: 열쇠 보유 (열쇠 전엔 위치 문장 기준이 장식장)
+///    정답 글자·숫자·칸 번호, 맞은 개수는 어떤 문장에도 넣지 않음.
+/// 5) 위치 문장 대상 제공(IStepTargetProvider) — 1단계는 벽 종이 → 바닥 얼룩 → 메모 종이 순으로 거리·방 기준을 바꿈
 ///
-/// 위치 정보는 기존 WineLocationProvider가 그대로 담당 (step 3의 "HintPaper"는 거기에 등록).
+/// 위치 정보는 WineLocationProvider가 그대로 담당 (trackedObjects에 HintStain / BookShelf / wine / key1 등록).
 /// </summary>
-public class WineHintBridge : MonoBehaviour, IStepProgressProvider
+public class WineHintBridge : MonoBehaviour, IStepProgressProvider, IPossessionProvider, IStepTargetProvider
 {
-    [Header("힌트 시스템")]
+    [Header("힌트 시스템 (비워두면 자동 탐색)")]
     [SerializeField] private HintManager hintManager;
 
-    [Header("와인씬 상태 참조 (읽기 전용, 비워두면 자동 탐색)")]
-    [SerializeField] private FloorStainManager stainManager;
-    [SerializeField] private HintPaperNotesManager notesManager;
+    [Header("1단계 — 메모 종이 (Note_Alphabet의 LetterMemoPanel)")]
+    [SerializeField] private LetterMemoPanel memo;
 
-    // WineGlassRoomData의 스텝 번호
-    const int StepStains = 1;
-    const int StepFindNotes = 2;
-    const int StepAttachNotes = 3;
+    [Header("3단계 — 와인렉")]
+    [Tooltip("Room_2/WineRackPuzzle의 Object_Puzzle (정답 pwd를 여기서 읽음)")]
+    [SerializeField] private Object_Puzzle rackPuzzle;
+    [Tooltip("wine_slots 부모 — 아래 slot_1~26의 Object_Puzzle_Piece를 자동으로 모음")]
+    [SerializeField] private Transform slotsRoot;
+    [Tooltip("병 objectName 접두사 (wine_1 ~ wine_4)")]
+    [SerializeField] private string bottlePrefix = "wine_";
+    [Tooltip("틀린 칸에 꽂으면 failCount를 올릴지 (힌트 레벨이 빨리 오름)")]
+    [SerializeField] private bool registerFailOnWrongSlot = true;
+    [Tooltip("틀린 꽂기로 failCount를 올리는 최대 횟수 — 칸이 26개라 이것저것 꽂아보면 레벨이 너무 빨리 5까지 올라가서 제한")]
+    [SerializeField] private int maxWrongSlotFails = 3;
 
-    int lastFound;
-    int lastPlaced;
-    int lastDecoyAttempts;
-    bool decoyActive;     // 가짜 쪽지를 붙이려 한 뒤 아직 진짜로 진행한 게 없음
-    bool step3Reported;
+    [Header("3·4단계 — 장식장 / 열쇠")]
+    [Tooltip("DisplayModularDoorMid의 Object_Door — 잠긴 상태에서 열어보려 했는지 판단용")]
+    [SerializeField] private Object_Door cabinetDoor;
+    [SerializeField] private string keyObjectName = "key1";
+
+    [Header("손/인벤토리 (읽기 전용, 비워두면 자동 탐색)")]
+    [SerializeField] private PerceiveObjectHandPivot handPerception;
+    [SerializeField] private InventoryData inventoryData;
+
+    [Header("1단계 위치 문장 대상 (WineLocationProvider Tracked Objects 이름과 똑같이)")]
+    [Tooltip("벽 종이를 본 뒤(수수께끼 풀기 단계) 거리·방 문장의 기준 — 바닥 얼룩")]
+    [SerializeField] private string stainTargetName = "WineStains";
+    [Tooltip("메모에 적을 단계 거리·방 문장의 기준 — 액자 아래 메모 종이")]
+    [SerializeField] private string memoTargetName = "Memo";
+    [Tooltip("4단계 열쇠를 꺼내기 전 거리·방 문장의 기준 — 장식장 (열쇠를 얻은 뒤엔 relatedObjectName = 상자)")]
+    [SerializeField] private string cabinetTargetName = "Cabinet";
+
+    [Header("디버그")]
+    [SerializeField] private bool verboseLog = true;
+
+    // WineGlassRoomData 스텝 번호
+    const int StepLetters = 1;
+    const int StepBooks   = 2;
+    const int StepRack    = 3;
+    const int StepKey     = 4;
+
+    // relatedObjectName과 맞춘 이름
+    const string BottleKind = "wine";
+
+    // 슬롯 상태
+    readonly List<Object_Puzzle_Piece> slots = new List<Object_Puzzle_Piece>();
+    readonly Dictionary<Object_Puzzle_Piece, GameObject> lastSlotObject = new Dictionary<Object_Puzzle_Piece, GameObject>();
+
+    // 폴링 상태
+    bool memoWasOpen;
+    string memoLettersAtOpen;
+    string lastHandName;
+    bool keyAcquired;
+    bool rackSolvedReported;
+
+    // 진행 구간 판단용 기록
+    bool hintStainViewed;
+    int hintCountAtStainView = -1;   // 벽 종이를 처음 본 순간의 hintCount — 이후 힌트를 한 번 받으면 "메모에 적기" 안내로 넘어감
+    bool floorStainViewed;           // 바닥 얼룩을 들여다봤는지 (ReportFloorStainViewed — 씬 연결 후 동작)
+    bool bookshelfViewed;            // 책장을 확대해 본 적이 있는지 (글자를 알기 전이든 후든)
+    string lastWrongKind;            // 가장 최근 틀린 꽂기 종류 ("color" / "number") — 맞게 꽂거나, 렉에 틀린 병이 하나도 없으면 풀림
+    int wrongSlotFails;              // 틀린 꽂기로 RegisterFail 한 횟수 (maxWrongSlotFails까지만)
+
+    // 같은 프레임에 "칸에서 뺌"과 "손에 듦"이 같이 일어나면 뺌만 기록
+    float lastRemoveTime = -999f;
+    const float GrabSuppressSeconds = 0.5f;
+
+    // =========================================================
+    // 초기화
+    // =========================================================
 
     void Start()
     {
-        if (hintManager == null)
-            hintManager = FindFirstObjectByType<HintManager>();
-
-        if (stainManager == null)
-            stainManager = FindFirstObjectByType<FloorStainManager>();
-
-        if (notesManager == null)
-            notesManager = FindFirstObjectByType<HintPaperNotesManager>();
+        if (hintManager == null)    hintManager    = FindFirstObjectByType<HintManager>();
+        if (memo == null)           memo           = FindFirstObjectByType<LetterMemoPanel>(FindObjectsInactive.Include);
+        if (handPerception == null) handPerception = FindFirstObjectByType<PerceiveObjectHandPivot>();
+        if (inventoryData == null)  inventoryData  = FindFirstObjectByType<InventoryData>();
 
         if (hintManager == null)
         {
             Debug.LogError("[WineHintBridge] HintManager를 찾을 수 없습니다.");
+            enabled = false;
             return;
         }
 
-        if (stainManager == null) Debug.LogWarning("[WineHintBridge] FloorStainManager를 못 찾음 — 쪽지 찾기 진행도가 빠집니다.");
-        if (notesManager == null) Debug.LogWarning("[WineHintBridge] HintPaperNotesManager를 못 찾음 — 벽 종이 진행도가 빠집니다.");
+        if (slotsRoot != null)
+            slotsRoot.GetComponentsInChildren(true, slots);
 
-        lastFound = stainManager != null ? stainManager.InspectedMidpointCount : 0;
-        lastPlaced = notesManager != null ? notesManager.PlacedCount : 0;
-        lastDecoyAttempts = notesManager != null ? notesManager.DecoyAttemptCount : 0;
+        if (memo == null)           Debug.LogWarning("[WineHintBridge] LetterMemoPanel 없음 — 1단계 진행도가 빠집니다.");
+        if (rackPuzzle == null)     Debug.LogWarning("[WineHintBridge] Rack Puzzle 칸이 비어 있음 — 3단계 정답 판단이 빠집니다.");
+        if (slots.Count == 0)       Debug.LogWarning("[WineHintBridge] Slots Root 아래 Object_Puzzle_Piece가 없음 — 병 꽂기 판단이 빠집니다.");
+        if (cabinetDoor == null)    Debug.LogWarning("[WineHintBridge] Cabinet Door 칸이 비어 있음 — 잠긴 장식장 시도 기록이 항상 남습니다.");
+        if (handPerception == null) Debug.LogWarning("[WineHintBridge] PerceiveObjectHandPivot 없음 — 손 기준 override가 빠집니다.");
 
-        hintManager.ProgressProvider = this;
-        Debug.Log("[WineHintBridge] HintManager.ProgressProvider로 등록됨");
+        foreach (var s in slots)
+            lastSlotObject[s] = CurrentObjectIn(s);
+
+        hintManager.ProgressProvider   = this;
+        hintManager.PossessionProvider = this;
+        Debug.Log($"[WineHintBridge] 등록 완료 (Progress/Possession) — 슬롯 {slots.Count}개, 정답 칸 {AnswerSlotCount()}개");
     }
 
-
     // =========================================================
-    // Update — 매 프레임 상태 폴링
+    // Update — 상태 폴링
     // =========================================================
 
     void Update()
     {
-        if (hintManager == null) return;
-
-        PollFoundNotes();
-        PollPlacedNotes();
-        PollDecoyAttempts(); // 진행 체크 뒤에 — 같은 프레임이면 가짜 시도가 마지막 행동으로 남음
+        PollMemo();
+        PollSlots();   // 손보다 먼저 — 칸에서 뺀 병이 손에 들리는 걸 "뺌"으로 기록하려고
+        PollHand();
+        PollKey();
+        PollRackSolved();
     }
 
-    void PollFoundNotes()
+    void PollMemo()
     {
-        if (stainManager == null) return;
+        if (memo == null) return;
 
-        int found = stainManager.InspectedMidpointCount;
-        if (found <= lastFound) return;
-        lastFound = found;
-        decoyActive = false;
-
-        // 얼룩을 안 보고 교차점 쪽지부터 주운 경우 — step 1의 목적(중점 쪽지 찾기)은 이미 달성한 셈이라 같이 완료
-        var state = hintManager.currentPlayerState;
-        if (!state.completedSteps.Contains(StepStains))
+        bool open = memo.IsOpen;
+        if (open && !memoWasOpen)
         {
-            state.completedSteps.Add(StepStains);
-            Debug.Log("[WineHintBridge] 진짜 쪽지 발견 → step 1 자동 완료");
+            memoLettersAtOpen = memo.CurrentLetters;
+        }
+        else if (!open && memoWasOpen)
+        {
+            bool changed = memo.CurrentLetters != memoLettersAtOpen;
+            // 고쳐 쓴 결과에 따라 관찰 문장을 나눔: 다 맞음 / 일부 맞음 / 하나도 안 맞음 / 안 고침
+            // (맞은 칸 개수나 어느 칸인지는 말하지 않음 — "몇 칸은 맞았다"까지만)
+            string action =
+                !changed                 ? "wine_memo_opened"  :
+                memo.IsSolved            ? "wine_memo_solved"  :
+                memo.CorrectCount > 0    ? "wine_memo_partial" :
+                                           "wine_memo_written";
+            hintManager.AddLastAction(action);
+            Log($"메모 닫음 ({(changed ? "고침" : "그냥 봄")}) — 정답 {memo.CorrectCount}/4 → {action}");
+
+            if (memo.IsSolved)
+                CompleteStep(StepLetters, "clue_memo_letters", "메모 정답 기록");
+        }
+        memoWasOpen = open;
+    }
+
+    void PollSlots()
+    {
+        foreach (var slot in slots)
+        {
+            GameObject now = CurrentObjectIn(slot);
+            lastSlotObject.TryGetValue(slot, out GameObject before);
+            if (now == before) continue;
+            lastSlotObject[slot] = now;
+
+            if (now == null)
+            {
+                lastRemoveTime = Time.time;
+                hintManager.AddLastAction("wine_bottle_removed");
+                Log($"병 뺌: {slot.name}");
+                continue;
+            }
+
+            string verdict = Classify(slot, now);
+            hintManager.AddLastAction("wine_bottle_placed");
+            Log($"병 꽂음: {NameOf(now)} → {slot.name} ({verdict})");
+
+            if (verdict == "correct")
+            {
+                lastWrongKind = null;
+            }
+            else
+            {
+                lastWrongKind = verdict;
+                if (registerFailOnWrongSlot && wrongSlotFails < maxWrongSlotFails)
+                {
+                    wrongSlotFails++;
+                    hintManager.RegisterFail();
+                    Log($"틀린 꽂기 failCount 증가 ({wrongSlotFails}/{maxWrongSlotFails})");
+                }
+            }
+
+            // 어떤 병이든 정답 칸 번호(책 숫자)에 꽂았으면 숫자는 찾은 것 → 2단계 완료
+            // (예전엔 책장 확대만 해도 완료돼서, 숫자를 이해 못 해도 바로 렉 힌트로 넘어갔음)
+            if (verdict == "correct" || verdict == "color")
+                CompleteStep(StepBooks, "clue_book_numbers", $"정답 번호 칸에 병 꽂음 ({slot.name})");
         }
 
-        hintManager.AddLastAction(found >= stainManager.TotalMidpoints
-            ? "wine_note_found_all"
-            : $"wine_note_found_{found}");
-    }
-
-    void PollPlacedNotes()
-    {
-        if (notesManager == null) return;
-
-        int placed = notesManager.PlacedCount;
-        if (placed <= lastPlaced) return;
-        lastPlaced = placed;
-        decoyActive = false;
-
-        if (placed >= notesManager.TotalNotes)
+        // 틀린 병을 다 빼서 렉에 틀린 병이 하나도 없으면 "틀렸다" 문장 해제
+        if (lastWrongKind != null && !AnyWrongPlaced())
         {
-            hintManager.AddLastAction("wine_note_all_placed");
-            ReportStep3();
+            lastWrongKind = null;
+            Log("렉에 틀린 병 없음 → 틀린 꽂기 문장 해제");
         }
-        else
+
+        // 병 2개 이상이 정답 칸 → 글자·숫자는 이미 알아낸 것
+        if (CorrectPlacedCount() >= 2)
         {
-            hintManager.AddLastAction($"wine_note_placed_{placed}");
+            CompleteStep(StepLetters, "clue_memo_letters", "병 2개 이상 정답 칸 (back-fill)");
+            CompleteStep(StepBooks,   "clue_book_numbers", "병 2개 이상 정답 칸 (back-fill)");
         }
     }
 
-    void PollDecoyAttempts()
+    void PollHand()
     {
-        if (notesManager == null) return;
+        string hand = RawHandName();
+        if (hand == lastHandName) return;
+        lastHandName = hand;
 
-        int attempts = notesManager.DecoyAttemptCount;
-        if (attempts <= lastDecoyAttempts) return;
-        lastDecoyAttempts = attempts;
-        decoyActive = true;
+        if (string.IsNullOrEmpty(hand)) return;
+        if (Time.time - lastRemoveTime < GrabSuppressSeconds) return; // 칸에서 뺀 거면 "뺌"으로 이미 기록
 
-        hintManager.AddLastAction("wine_note_decoy");
+        if (IsBottle(hand))
+        {
+            hintManager.AddLastAction("wine_bottle_grabbed");
+            Log($"병 집음: {hand}");
+        }
     }
 
-    void ReportStep3()
+    void PollKey()
     {
-        if (step3Reported) return;
-        step3Reported = true;
+        if (keyAcquired) return;
+        if (RawHandName() != keyObjectName && !InventoryHas(keyObjectName)) return;
 
-        var state = hintManager.currentPlayerState;
-        if (!state.foundClues.Contains("clue_hint_paper"))
-            state.foundClues.Add("clue_hint_paper");
-        if (!state.completedSteps.Contains(StepAttachNotes))
-            state.completedSteps.Add(StepAttachNotes);
-
-        Debug.Log($"[WineHintBridge] step 3 완료 (벽 종이에 쪽지 전부 부착) → 현재: [{string.Join(", ", state.completedSteps)}]");
+        keyAcquired = true;
+        hintManager.AddLastAction("wine_key_grabbed");
+        // 열쇠를 손에 넣었으면 렉은 풀린 것 (렉 판단이 어긋났을 때 대비)
+        CompleteStep(StepLetters, "clue_memo_letters", "열쇠 획득 (back-fill)");
+        CompleteStep(StepBooks,   "clue_book_numbers", "열쇠 획득 (back-fill)");
+        CompleteStep(StepRack,    "clue_wine_rack",    "열쇠 획득 (back-fill)");
     }
 
+    void PollRackSolved()
+    {
+        if (rackSolvedReported) return;
+
+        // 장식장 잠금 상태로는 판단하지 않음 (Inspector에서 Is Locked를 안 켜면 처음부터 풀려 있어서 오판)
+        bool solved = AnswerSlotCount() > 0 && CorrectPlacedCount() == AnswerSlotCount();
+        if (!solved) return;
+
+        rackSolvedReported = true;
+        lastWrongKind = null;
+        hintManager.AddLastAction("wine_rack_solved");
+        CompleteStep(StepLetters, "clue_memo_letters", "렉 완성 (back-fill)");
+        CompleteStep(StepBooks,   "clue_book_numbers", "렉 완성 (back-fill)");
+        CompleteStep(StepRack,    "clue_wine_rack",    "렉 완성");
+    }
 
     // =========================================================
-    // IStepProgressProvider 구현
+    // 씬 이벤트에 연결하는 메서드 (UnityEvent)
     // =========================================================
 
-    // [레벨 단계][후보] — 레벨 1~2(모호) / 3(분명) / 4~5(거의 정답).
-    // 같은 칸 안에서 랜덤으로 골라서, 같은 상태·같은 레벨로 다시 물어도 방향 문장이 조금씩 달라짐.
-    // 숫자(남은 개수)와 정답 알파벳은 넣지 않음.
-
-    // step 2 — 진짜 쪽지를 일부 찾음
-    static readonly string[][] PartialNotes =
+    /// <summary>Room_1/Hint_Stain의 Object_FixCamera.Fixed에 연결</summary>
+    public void ReportHintStainViewed()
     {
-        new[] { "잘하고 있어요. 바닥 얼룩 색깔이 몇 가지였는지 떠올려보고, 남은 쪽지도 찾아보세요.",
-                "좋아요, 제대로 찾고 있어요. 얼룩 쌍이 몇 개였는지 생각해보면 쪽지가 더 있을 거예요.",
-                "잘 가고 있어요. 아직 쪽지를 못 찾은 얼룩 색깔이 남아 있을지도 몰라요." },
-        new[] { "잘하고 있어요. 아직 중점을 확인하지 않은 얼룩 색깔이 남아 있어요. 그 색 얼룩 두 개의 가운데를 찾아보세요.",
-                "좋아요. 얼룩 색깔마다 쪽지가 하나씩 있어요. 아직 안 찾은 색깔의 얼룩 쌍을 찾아보세요." },
-        new[] { "얼룩 색깔마다 진짜 쪽지가 하나씩 있어요. 아직 쪽지를 못 찾은 색깔의 얼룩 두 개를 찾고, 그 정확한 중간 지점에 놓인 쪽지를 주우세요.",
-                "남은 색깔의 얼룩 두 개를 찾아 그 사이 정확한 가운데를 보세요. 거기 놓인 쪽지만 진짜예요." },
-    };
+        // 처음 볼 때만 기준을 잡음 (다시 봐도 "메모에 적기" 단계에서 수수께끼 단계로 되돌아가지 않게)
+        if (!hintStainViewed && hintManager != null)
+            hintCountAtStainView = hintManager.currentPlayerState.hintCount;
+        hintStainViewed = true;
+        hintManager?.AddLastAction("wine_view_hint_stain");
+        Log("벽 그림 확대");
+    }
 
-    // step 3 — 진짜 쪽지를 다 모았는데 아직 하나도 안 붙임
-    static readonly string[][] ReadyNotes =
+    /// <summary>Room_3/BookShelfView의 Object_FixCamera.Fixed에 연결</summary>
+    public void ReportBookshelfViewed()
     {
-        new[] { "쪽지를 다 모았는데 왜 망설여요? 이 쪽지들을 붙일 만한 종이가 어딘가 있을 거예요.",
-                "쪽지는 다 모았어요. 이제 이걸 어디에 쓸지 찾아보세요. 또 다른 종이가 있을지도 몰라요.",
-                "모은 쪽지를 들고만 있으면 소용없어요. 쪽지를 붙일 곳을 찾아보세요." },
-        new[] { "벽 쪽을 살펴보세요. 쪽지를 붙일 수 있는 낡은 종이가 붙어 있어요.",
-                "방 벽에 낡은 종이가 붙어 있어요. 모은 쪽지를 거기에 붙여보세요." },
-        new[] { "모은 쪽지를 하나씩 손에 들고, 벽에 붙은 낡은 종이의 빈 칸에 붙이세요.",
-                "벽의 낡은 종이로 가서 모은 쪽지 네 장을 하나씩 붙이면 종이에 뭔가 나타날 거예요." },
-    };
-
-    // step 3 — 일부 붙임
-    static readonly string[][] AttachingNotes =
-    {
-        new[] { "좋아요, 종이에 쪽지가 붙기 시작했어요. 남은 쪽지도 마저 붙여보세요.",
-                "잘하고 있어요. 종이가 아직 다 채워지지 않았어요." },
-        new[] { "아직 종이에 빈자리가 남아 있어요. 모아둔 쪽지를 들고 가서 마저 붙이세요.",
-                "남은 쪽지도 같은 종이에 붙이면 돼요. 빈 칸을 채워보세요." },
-        new[] { "모아둔 나머지 쪽지를 하나씩 손에 들고 벽 종이의 빈 칸에 붙이면 종이에 뭔가 나타날 거예요.",
-                "벽 종이의 빈 칸이 다 채워질 때까지 남은 쪽지를 하나씩 붙이세요." },
-    };
-
-    // step 2/3 — 가짜 쪽지를 붙이려 함
-    static readonly string[][] DecoyNotes =
-    {
-        new[] { "그 쪽지가 아니에요. 같은 색 얼룩 사이 중점에 있던 쪽지가 필요해요.",
-                "종이가 그 쪽지는 원하지 않는 것 같아요. 얼룩 중점에 놓여 있던 쪽지를 찾아보세요.",
-                "그건 엉뚱한 쪽지예요. 얼룩 쌍 사이에 있던 쪽지를 떠올려보세요." },
-        new[] { "바닥에 흩어진 쪽지 중엔 가짜도 섞여 있어요. 같은 색 얼룩 두 개의 정확한 가운데에 있던 쪽지만 붙일 수 있어요.",
-                "아무 쪽지나 붙일 수 있는 게 아니에요. 같은 색 얼룩 쌍의 중점에 놓인 쪽지만 진짜예요." },
-        new[] { "아무 데나 떨어진 쪽지는 소용없어요. 같은 색 얼룩 두 개를 찾고, 그 정확한 중간 지점에 놓인 쪽지만 주워서 붙이세요.",
-                "그 쪽지는 버리고, 같은 색 얼룩 두 개 사이 정확한 가운데에 놓인 쪽지를 주워서 붙이세요." },
-    };
-
-    static string PickByLevel(string[][] table, int hintLevel)
-    {
-        int tier = hintLevel <= 2 ? 0 : (hintLevel == 3 ? 1 : 2);
-        tier = Mathf.Clamp(tier, 0, table.Length - 1);
-        var pool = table[tier];
-        return pool[Random.Range(0, pool.Length)];
+        hintManager?.AddLastAction("wine_view_bookshelf");
+        bookshelfViewed = true; // 2단계 완료는 병을 정답 번호 칸에 꽂을 때 (PollSlots)
+        Log($"책장 확대 (글자 앎: {IsDone(StepLetters)})");
     }
 
     /// <summary>
-    /// 진행 구간 이름. 같은 스텝 재요청 때 HintManager가 "지난 힌트 이후 진행이 있었는지" 보는 데 씀
-    /// (구간이 바뀌었으면 잘 가고 있는 거라 레벨을 올리지 않음).
+    /// 바닥 얼룩 FloorStain_*의 Object_FixCamera.Fixed에 연결 (얼룩 들여다보기 상호작용이 생기면).
+    /// 벽 종이를 본 뒤 얼룩까지 봤으면 수수께끼는 푸는 중 → 힌트를 기다리지 않고 바로 "메모에 적기" 안내로.
+    /// </summary>
+    public void ReportFloorStainViewed()
+    {
+        floorStainViewed = true;
+        hintManager?.AddLastAction("wine_view_floor_stain");
+        Log("바닥 얼룩 들여다봄");
+    }
+
+    /// <summary>장식장 문 Event_On_Ray.OnClick에 연결 (Object_Door.OpenCloseDoor 뒤에 추가)</summary>
+    public void ReportCabinetTried()
+    {
+        if (cabinetDoor != null && !cabinetDoor.isLocked) return; // 열린 뒤엔 그냥 여닫기라 기록 안 함
+        hintManager?.AddLastAction("wine_cabinet_locked");
+        Log("잠긴 장식장 열어보려 함");
+    }
+
+    // =========================================================
+    // 슬롯 판정
+    // =========================================================
+
+    static GameObject CurrentObjectIn(Object_Puzzle_Piece slot)
+        => slot != null && slot.putOn != null ? slot.putOn.putOn : null;
+
+    static string NameOf(GameObject go)
+    {
+        if (go == null) return null;
+        var g = go.GetComponent<Object_Grabbable>();
+        return g != null ? g.objectName : go.name;
+    }
+
+    char AnswerAt(Object_Puzzle_Piece slot)
+    {
+        if (rackPuzzle == null || string.IsNullOrEmpty(rackPuzzle.pwd)) return '-';
+        if (slot.id < 0 || slot.id >= rackPuzzle.pwd.Length) return '-';
+        return rackPuzzle.pwd[slot.id];
+    }
+
+    /// <summary>
+    /// "correct" — 맞는 칸
+    /// "color"   — 다른 병의 정답 칸 (숫자는 맞게 찾았는데 병 색↔글자 연결이 틀림)
+    /// "number"  — 어떤 병의 정답도 아닌 칸 (책 숫자를 잘못 찾았거나 아무 데나 꽂음)
+    /// </summary>
+    string Classify(Object_Puzzle_Piece slot, GameObject bottle)
+    {
+        char answer = AnswerAt(slot);
+        if (answer == '-') return "number";
+
+        string n = NameOf(bottle);
+        char id = string.IsNullOrEmpty(n) ? '?' : n[n.Length - 1]; // Object_PutOn.GetKeyId와 같은 규칙
+        return id == answer ? "correct" : "color";
+    }
+
+    int AnswerSlotCount()
+    {
+        if (rackPuzzle == null || string.IsNullOrEmpty(rackPuzzle.pwd)) return 0;
+        int c = 0;
+        foreach (char ch in rackPuzzle.pwd) if (ch != '-') c++;
+        return c;
+    }
+
+    bool AnyWrongPlaced()
+    {
+        foreach (var s in slots)
+        {
+            var go = CurrentObjectIn(s);
+            if (go != null && Classify(s, go) != "correct") return true;
+        }
+        return false;
+    }
+
+    int CorrectPlacedCount()
+    {
+        int c = 0;
+        foreach (var s in slots)
+        {
+            var go = CurrentObjectIn(s);
+            if (go != null && Classify(s, go) == "correct") c++;
+        }
+        return c;
+    }
+
+    // =========================================================
+    // 진행 기록
+    // =========================================================
+
+    bool IsDone(int stepId) => hintManager != null && hintManager.currentPlayerState.completedSteps.Contains(stepId);
+
+    void CompleteStep(int stepId, string clueId, string why)
+    {
+        var state = hintManager.currentPlayerState;
+        if (state.completedSteps.Contains(stepId)) return;
+
+        state.completedSteps.Add(stepId);
+        if (!string.IsNullOrEmpty(clueId) && !state.foundClues.Contains(clueId))
+            state.foundClues.Add(clueId);
+
+        Debug.Log($"[WineHintBridge] step {stepId} 완료 ({why}) → 현재: [{string.Join(", ", state.completedSteps)}]");
+    }
+
+    // =========================================================
+    // IPossessionProvider
+    // =========================================================
+
+    bool IsBottle(string objectName)
+        => !string.IsNullOrEmpty(objectName) && objectName.StartsWith(bottlePrefix);
+
+    string RawHandName()
+        => handPerception != null && handPerception.CurrentObject != null
+            ? handPerception.CurrentObject.objectName
+            : null;
+
+    bool InventoryHas(string objectName)
+    {
+        if (inventoryData == null) return false;
+        for (int i = 0; i < inventoryData.SlotCount; i++)
+        {
+            var obj = inventoryData.GetObjectAt(i);
+            if (obj != null && obj.objectName == objectName) return true;
+        }
+        return false;
+    }
+
+    // 병 → "wine" (step 3), 열쇠 → "key1" (step 4). 병은 글자를 알아낸 뒤부터만 override 근거로 씀.
+    string ToKind(string objectName)
+    {
+        if (string.IsNullOrEmpty(objectName)) return null;
+        // 병은 숫자까지 찾은 뒤(2단계 완료)부터만 렉 힌트 근거로 씀 — 그 전에 병을 들면 체크리스트 순서(글자/책장) 힌트가 맞음
+        if (IsBottle(objectName)) return IsDone(StepBooks) ? BottleKind : null;
+        return objectName;
+    }
+
+    public string GetHandObjectName() => ToKind(RawHandName());
+
+    public List<string> GetInventoryObjectNames()
+    {
+        var names = new List<string>();
+        if (inventoryData == null) return names;
+
+        for (int i = 0; i < inventoryData.SlotCount; i++)
+        {
+            var obj = inventoryData.GetObjectAt(i);
+            if (obj == null) continue;
+            string kind = ToKind(obj.objectName);
+            if (kind != null && !names.Contains(kind)) names.Add(kind);
+        }
+        return names;
+    }
+
+    // =========================================================
+    // IStepProgressProvider
+    // =========================================================
+
+    /// <summary>
+    /// 진행 구간 이름. 같은 스텝 재요청 때 HintManager가 "지난 힌트 이후 진행이 있었는지" 보는 데 씀.
+    /// null이면 hintByLevel 문구가 그대로 쓰임.
     /// </summary>
     public string GetProgressBand(PuzzleStep step)
     {
         if (step == null) return null;
 
-        if (step.id == StepFindNotes && stainManager != null)
+        switch (step.id)
         {
-            if (decoyActive) return "decoy";
-            int found = stainManager.InspectedMidpointCount;
-            if (found > 0 && found < stainManager.TotalMidpoints) return "partial";
-            return null; // 아직 하나도 못 찾음 → hintByLevel 그대로
-        }
+            case StepLetters:
+                if (memo != null && memo.CorrectCount > 0) return $"memo_partial_{memo.CorrectCount}";
+                if (hintStainViewed)
+                {
+                    // 종이 본 뒤 첫 요청: 수수께끼 풀기 / 그 힌트를 받은 뒤 다음 요청부터(또는 바닥 얼룩까지 봤으면): 메모에 적기
+                    bool stainHintGiven = hintManager != null &&
+                                          hintManager.currentPlayerState.hintCount > hintCountAtStainView;
+                    return (stainHintGiven || floorStainViewed) ? "memo_guide" : "stain_viewed";
+                }
+                return null;
 
-        if (step.id == StepAttachNotes && notesManager != null)
-        {
-            if (decoyActive) return "decoy";
-            return notesManager.PlacedCount == 0 ? "ready" : "attaching";
-        }
+            case StepBooks:
+                return bookshelfViewed ? "shelf_viewed" : null;
 
+            case StepRack:
+                if (lastWrongKind == "color")  return "wrong_color";
+                if (lastWrongKind == "number") return "wrong_number";
+                int correct = CorrectPlacedCount();
+                if (correct > 0) return $"rack_partial_{correct}";
+                return null;
+
+            case StepKey:
+                return keyAcquired ? "has_key" : null;
+        }
         return null;
     }
 
     public int GetMinHintLevel(PuzzleStep step) => 1;
 
+    // =========================================================
+    // IStepTargetProvider — 거리·방 문장 기준 오브젝트 (relatedObjectName 대신)
+    // =========================================================
+
     /// <summary>
-    /// step 2/3일 때만 현재 진행 구간 + 힌트 레벨에 맞는 문장을 돌려줌. 해당 없으면 null → hintByLevel 문구가 그대로 쓰임.
-    /// (이 문장이 hintByLevel 문구를 대신하므로 할 행동까지 포함한 완결 문장이어야 함)
+    /// 1단계는 한 스텝 안에서 가야 할 곳이 바뀜: 벽 종이(기본) → 바닥 얼룩(종이 본 직후) → 메모 종이(그다음 / 메모 일부 맞음).
+    /// null이면 relatedObjectName(벽 종이) 그대로.
     /// </summary>
+    public string GetTargetObjectName(PuzzleStep step)
+    {
+        if (step == null) return null;
+
+        // 4단계: 열쇠 꺼내기 전엔 장식장, 꺼낸 뒤엔 relatedObjectName(상자) 그대로
+        if (step.id == StepKey) return keyAcquired ? null : cabinetTargetName;
+
+        if (step.id != StepLetters) return null;
+
+        string band = GetProgressBand(step);
+        if (band == null) return null;
+        if (band == "stain_viewed") return stainTargetName;
+        return memoTargetName; // memo_guide / memo_partial_N
+    }
+
     public string GetProgressNote(PuzzleStep step, int hintLevel)
     {
-        switch (GetProgressBand(step))
+        string band = GetProgressBand(step);
+        if (band == null) return null;
+
+        if (band.StartsWith("memo_partial_")) return PickByLevel(MemoPartialNotes, hintLevel);
+        if (band.StartsWith("rack_partial_")) return PickByLevel(RackPartialNotes, hintLevel);
+
+        switch (band)
         {
-            case "partial":   return PickByLevel(PartialNotes, hintLevel);
-            case "ready":     return PickByLevel(ReadyNotes, hintLevel);
-            case "attaching": return PickByLevel(AttachingNotes, hintLevel);
-            case "decoy":     return PickByLevel(DecoyNotes, hintLevel);
-            default:          return null;
+            case "stain_viewed": return PickByLevel(StainViewedNotes, hintLevel);
+            case "memo_guide":   return PickByLevel(MemoGuideNotes, hintLevel);
+            case "shelf_viewed": return PickByLevel(ShelfViewedNotes, hintLevel);
+            case "wrong_color":  return PickByLevel(WrongColorNotes, hintLevel);
+            case "wrong_number": return PickByLevel(WrongNumberNotes, hintLevel);
+            case "has_key":      return PickByLevel(HasKeyNotes, hintLevel);
         }
+        return null;
+    }
+
+    // [레벨 단계] 키 — 레벨 1~2(모호) / 3(분명) / 4~5(거의 정답).
+    // 이 문장이 hintByLevel 문구를 대신하므로 "할 행동"까지 들어간 완결 문장이어야 함. 정답 글자·숫자·개수는 넣지 않음.
+    // 문장(한·영·일, 단계마다 후보 여러 개)은 HintLanguageData.WineScene.cs의 HintWine_Note{구간}_T0~T2.
+    // 1단계(StainViewed / MemoGuide / MemoPartial) 문장은 전부 "알파벳"을 꼭 넣음 (피드백 반영).
+
+    // step 1 — 벽 그림은 봤는데 메모는 아직 하나도 안 맞음
+    static readonly string[] StainViewedNotes =
+    {
+        HintLanguageDataKey.HintWine_NoteStainViewed_T0,
+        HintLanguageDataKey.HintWine_NoteStainViewed_T1,
+        HintLanguageDataKey.HintWine_NoteStainViewed_T2,
+    };
+
+    // step 1 — 종이 수수께끼 힌트를 한 번 받은 뒤: 액자 아래 메모 종이에 적게 안내
+    static readonly string[] MemoGuideNotes =
+    {
+        HintLanguageDataKey.HintWine_NoteMemoGuide_T0,
+        HintLanguageDataKey.HintWine_NoteMemoGuide_T1,
+        HintLanguageDataKey.HintWine_NoteMemoGuide_T2,
+    };
+
+    // step 1 — 메모에 일부만 맞게 적음
+    static readonly string[] MemoPartialNotes =
+    {
+        HintLanguageDataKey.HintWine_NoteMemoPartial_T0,
+        HintLanguageDataKey.HintWine_NoteMemoPartial_T1,
+        HintLanguageDataKey.HintWine_NoteMemoPartial_T2,
+    };
+
+    // step 2 — 글자를 안 뒤 책장을 봤음
+    static readonly string[] ShelfViewedNotes =
+    {
+        HintLanguageDataKey.HintWine_NoteShelfViewed_T0,
+        HintLanguageDataKey.HintWine_NoteShelfViewed_T1,
+        HintLanguageDataKey.HintWine_NoteShelfViewed_T2,
+    };
+
+    // step 3 — 다른 병의 정답 칸에 꽂음 (숫자는 찾았는데 병 색 연결이 틀림)
+    static readonly string[] WrongColorNotes =
+    {
+        HintLanguageDataKey.HintWine_NoteWrongColor_T0,
+        HintLanguageDataKey.HintWine_NoteWrongColor_T1,
+        HintLanguageDataKey.HintWine_NoteWrongColor_T2,
+    };
+
+    // step 3 — 어떤 병의 정답도 아닌 칸에 꽂음
+    static readonly string[] WrongNumberNotes =
+    {
+        HintLanguageDataKey.HintWine_NoteWrongNumber_T0,
+        HintLanguageDataKey.HintWine_NoteWrongNumber_T1,
+        HintLanguageDataKey.HintWine_NoteWrongNumber_T2,
+    };
+
+    // step 3 — 일부 맞게 꽂음 (틀린 꽂기 없음)
+    static readonly string[] RackPartialNotes =
+    {
+        HintLanguageDataKey.HintWine_NoteRackPartial_T0,
+        HintLanguageDataKey.HintWine_NoteRackPartial_T1,
+        HintLanguageDataKey.HintWine_NoteRackPartial_T2,
+    };
+
+    // step 4 — 열쇠를 가지고 있음
+    static readonly string[] HasKeyNotes =
+    {
+        HintLanguageDataKey.HintWine_NoteHasKey_T0,
+        HintLanguageDataKey.HintWine_NoteHasKey_T1,
+        HintLanguageDataKey.HintWine_NoteHasKey_T2,
+    };
+
+    // 레벨에 맞는 단계 키 → 현재 언어 후보 중 하나를 랜덤으로
+    static string PickByLevel(string[] tierKeys, int hintLevel)
+    {
+        int tier = hintLevel <= 2 ? 0 : (hintLevel == 3 ? 1 : 2);
+        tier = Mathf.Clamp(tier, 0, tierKeys.Length - 1);
+        var pool = HintLanguageData.GetCandidates(tierKeys[tier]);
+        if (pool == null || pool.Length == 0) return null; // 번역 키가 빠졌으면 hintByLevel 문구로 대체됨
+        return pool[Random.Range(0, pool.Length)];
+    }
+
+    void Log(string msg)
+    {
+        if (verboseLog) Debug.Log($"[WineHintBridge] {msg}");
     }
 }

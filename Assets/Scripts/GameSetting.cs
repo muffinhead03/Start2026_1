@@ -10,15 +10,15 @@ using static UnityEngine.Rendering.DebugUI;
 public class GameSetting : MonoBehaviour
 {
     const int maxLevel = 2;
-    const int maxLanguage = 1;
+    const int maxLanguage = 2;
     const float minSensitivity = 0.01f;
     const float maxSensitivity = 0.5f;
 
     public static PlayerData data;
 
     [Header("Text")]
-    string[] hintLevel = { "Easy", "Medium", "Hard" };
-    string[] language = { "English", "�ѱ���" };
+    string[] hintLevelKeys = { LanguageDataKey.Setting_Hint_Easy, LanguageDataKey.Setting_Hint_Medium, LanguageDataKey.Setting_Hint_Hard };
+    string[] language = { "English", "한국어", "\u65E5\u672C\u8A9E" }; // English, 한국어, 日本語(Japanese)
 
     [Header("Player")]
     public Player_Move player;
@@ -46,13 +46,30 @@ public class GameSetting : MonoBehaviour
             data.current_stage = SceneManager.GetActiveScene().buildIndex;
         }
 
-        ApplyLanguage();
+        // 시작 화면 설정(GameData)에서 바꾼 언어를 덮어쓰지 않도록 현재 언어를 data에 맞춤
+        SyncLanguageFromCurrent();
     }
 
-    // data.language(0: English, 1: �ѱ���)�� GameData / Localization�� �ݿ�
+    // data.language(0: English, 1: 한국어, 2: Japanese)를 GameData / Localization에 반영
     void ApplyLanguage()
     {
-        GameData.SetLanguage(data.language == 1 ? LanguageType.Korean : LanguageType.English);
+        GameData.SetLanguage(data.language switch
+        {
+            1 => LanguageType.Korean,
+            2 => LanguageType.Japanese,
+            _ => LanguageType.English
+        });
+    }
+
+    // LanguageCurrentStatus(PlayerPrefs에서 불러옴) → data.language (0: English, 1: 한국어, 2: Japanese)
+    void SyncLanguageFromCurrent()
+    {
+        data.language = LanguageCurrentStatus.CurrentLanguage switch
+        {
+            LanguageType.Korean => 1,
+            LanguageType.Japanese => 2,
+            _ => 0
+        };
     }
 
     private void Start()
@@ -190,7 +207,7 @@ public class GameSetting : MonoBehaviour
 
     void ShowSettingPanel()
     {
-        SceneUI.ChangeText(1, hintLevel[data.hintLevel]);
+        SceneUI.ChangeText(1, LanguageData.Get(hintLevelKeys[data.hintLevel]));
         SceneUI.ChangeText(2, language[data.language]);
         SceneUI.SetSlider(0, (data.mouseSensitivity - minSensitivity) / (maxSensitivity - minSensitivity));
         SceneUI.SetSlider(1, data.soundEffect);
