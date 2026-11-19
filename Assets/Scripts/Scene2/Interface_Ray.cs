@@ -2,6 +2,8 @@ using UnityEngine;
 
 public interface IRayInteractable
 {
+    bool IsInteractable();
+
     void OnRayEnter();
     void OnRayStay();
     void OnRayExit();

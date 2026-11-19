@@ -31,6 +31,12 @@ public class Object_Inspectable : MonoBehaviour, IInspectInteractHandler, IRayIn
 
     private Camera mainCamera;
 
+    private bool isInteractable;
+
+    public bool IsInteractable()
+    {
+        return isInteractable;
+    }
     public void OnRayEnter() { }
     public void OnRayStay() { }
     public void OnRayExit() { }

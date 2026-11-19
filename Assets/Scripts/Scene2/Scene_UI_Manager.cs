@@ -33,7 +33,8 @@ public class Scene_UI_Manager : MonoBehaviour
 
     private void OnEnable()
     {
-        if(pointerInitState) LockPointer();
+        if (pointerInitState) LockPointer();
+        else UnlockPointer();
     }
 
     public void SetActivePanel(int id, bool active)

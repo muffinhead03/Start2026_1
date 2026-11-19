@@ -6,8 +6,7 @@ using UnityEngine.UI;
 public class StartingScene : MonoBehaviour
 {
     [Header("Start Game")]
-    [SerializeField] private string tutorialSceneName = "Tutorial";
-    [SerializeField] private int defaultSceneNumber = 1;
+    [SerializeField] private string IntroScene = "Intro";
 
     [Header("Intro Screen")]
     [SerializeField] private Image introScreen;
@@ -40,7 +39,7 @@ public class StartingScene : MonoBehaviour
         if (introScreen == null)
         {
             Debug.LogError("Intro Screen이 연결되지 않았습니다.");
-            SceneManager.LoadScene(tutorialSceneName);
+            SceneManager.LoadScene(IntroScene);
             yield break;
         }
 
@@ -69,7 +68,7 @@ public class StartingScene : MonoBehaviour
         color.a = 1f;
         introScreen.color = color;
 
-        SceneManager.LoadScene(tutorialSceneName);
+        SceneManager.LoadScene(IntroScene);
     }
 
     public void ContinueGame()

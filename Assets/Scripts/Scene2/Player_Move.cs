@@ -49,7 +49,7 @@ public class Player_Move : MonoBehaviour
     InputAction moveAction;
     InputAction runAction;
     InputAction hideAction;
-    InputAction jumpAction;
+    //InputAction jumpAction;
 
     bool moveLocked = false;
     bool isRunning = false;
@@ -57,7 +57,8 @@ public class Player_Move : MonoBehaviour
 
     void Awake()
     {
-        yaw = 90;
+        yaw = transform.rotation.eulerAngles.y;
+        if (CameraPivot != null) pitch = CameraPivot.localRotation.eulerAngles.x;
 
         Character = GetComponent<CharacterController>();
 
@@ -79,7 +80,7 @@ public class Player_Move : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
         runAction = InputSystem.actions.FindAction("Run");
         hideAction = InputSystem.actions.FindAction("Hide");
-        jumpAction = InputSystem.actions.FindAction("Jump");
+        //jumpAction = InputSystem.actions.FindAction("Jump");
     }
 
     void Update()
@@ -88,10 +89,11 @@ public class Player_Move : MonoBehaviour
 
         Look();
 
+        if (lookAction != null) LookInput = lookAction.ReadValue<Vector2>();
+
         Move();
         Character.Move(Velocity * Time.deltaTime);
 
-        if (lookAction != null) LookInput = lookAction.ReadValue<Vector2>();
         if (moveAction != null) MoveInput = moveAction.ReadValue<Vector2>();
         
         
@@ -114,7 +116,7 @@ public class Player_Move : MonoBehaviour
     {
         isRunning = (runAction != null && runAction.IsPressed());
         isHiding = (hideAction != null && hideAction.IsPressed());
-        bool isJumping = (jumpAction != null && jumpAction.triggered);
+        //bool isJumping = (jumpAction != null && jumpAction.triggered);
 
         float currentSpeed = walkSpeed;
         float targetHeight = originalHeight;
@@ -176,11 +178,11 @@ public class Player_Move : MonoBehaviour
         }
 
         // 스페이스바를 눌렀고, 바닥에 닿아있을 때 점프 실행
-        if (!isHiding && isJumping && Character.isGrounded)
-        {
-            // 물리 공식: v = sqrt(h * -2 * g)
-            Velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
+        //if (!isHiding && isJumping && Character.isGrounded)
+        //{
+        //    // 물리 공식: v = sqrt(h * -2 * g)
+        //    Velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        //}
 
         // 매 프레임마다 중력 적용
         Velocity.y += gravity * Time.deltaTime;
@@ -210,6 +212,17 @@ public class Player_Move : MonoBehaviour
         }
     }
 
+    public void Spawn(Transform target)
+    {
+        transform.position = target.position;
+        transform.rotation = target.rotation;
+
+        CameraPivot.localRotation = Quaternion.identity;
+
+        yaw = transform.rotation.eulerAngles.y;
+        if (CameraPivot != null) pitch = CameraPivot.localRotation.eulerAngles.x;
+    }
+
     public void PlayFootStepSound()
     {
         if (audioSource == null) return;
@@ -222,12 +235,4 @@ public class Player_Move : MonoBehaviour
         }
     }
 
-    //void OpenCloseSettings(InputAction.CallbackContext context)
-    //{
-    //    moveLocked = !moveLocked;
-    //    SceneUI.SetActivePanel(0, moveLocked);
-
-    //    if (moveLocked) SceneUI.UnlockPointer();
-    //    else SceneUI.LockPointer();
-    //}
 }
