@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
+using static UnityEngine.Rendering.DebugUI;
 
 public class Object_Door : MonoBehaviour
 {
@@ -44,8 +45,23 @@ public class Object_Door : MonoBehaviour
             return;
         }
 
-        int value = (animator.GetInteger("Open") == 0) ? 1 : 0;
-        animator.SetInteger("Open", value);
+        if (animator.GetInteger("Open") == 0) OpenDoor();
+        else CloseDoor();
+    }
+
+    public void OpenDoor()
+    {
+        if (animator.GetInteger("Open") == 1) return;
+
+        animator.SetInteger("Open", 1);
+        audio_player?.PlayAudio(audio_open);
+    }
+
+    public void CloseDoor()
+    {
+        if (animator.GetInteger("Open") == 0) return;
+
+        animator.SetInteger("Open", 0);
         audio_player?.PlayAudio(audio_open);
     }
 }
