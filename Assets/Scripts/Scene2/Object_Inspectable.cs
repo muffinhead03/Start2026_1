@@ -31,7 +31,7 @@ public class Object_Inspectable : MonoBehaviour, IInspectInteractHandler, IRayIn
 
     private Camera mainCamera;
 
-    private bool isInteractable;
+    [SerializeField] private bool isInteractable = true;
 
     public bool IsInteractable()
     {

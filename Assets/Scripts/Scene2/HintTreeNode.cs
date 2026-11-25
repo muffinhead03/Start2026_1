@@ -47,7 +47,6 @@ public class HintTree
             else current = current.left;
         }
 
-        Debug.Log(current.hint_id);
         return current.hint_id+1;
     }
 }

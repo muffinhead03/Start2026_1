@@ -14,6 +14,8 @@ public class IntroSceneManager : MonoBehaviour
 
     [SerializeField] Intro_NextScene nextscene;
 
+    [SerializeField] Animator box_animator;
+
     private enum player_mode { dial, play}
 
     private player_mode[] step = {player_mode.dial, player_mode.play, player_mode.dial, player_mode.dial, player_mode.play};
@@ -77,12 +79,17 @@ public class IntroSceneManager : MonoBehaviour
 
     public void OpentheBox(bool isOpen)
     {
-        if (isOpen) after_box_open.FadeOutToIn();
+        if (isOpen)
+        {
+            after_box_open.FadeOutToIn();
+            box_animator.SetInteger("Open", 1);
+        }
         else nextscene.SetActive("StartingScene");
     }
 
     private void ChangeMode(player_mode mode)
     {
+        Debug.Log(step_id);
         switch (mode)
         {
             case player_mode.dial:

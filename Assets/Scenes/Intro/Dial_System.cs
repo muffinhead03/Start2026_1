@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class Dial_System : MonoBehaviour
 {
-    [SerializeField] Dial[] dials;
+    [SerializeField] protected Dial[] dials;
 
     [SerializeField] protected Scene_UI_Manager SceneUI;
 
@@ -14,18 +14,21 @@ public class Dial_System : MonoBehaviour
     public Action<int> OnDialEnd;
 
     protected InputAction next;
+    protected Dial dial;
     protected int current_dial;
     protected int current_script;
+    protected bool isInitialized = false;
 
     [SerializeField] protected int panel_id = 3;
     [SerializeField] private int button_id = 4;
-    [SerializeField] private int text_talker = 3;
-    [SerializeField] private int text_talking = 4;
+    [SerializeField] protected int text_talker = 3;
+    [SerializeField] protected int text_talking = 4;
     private bool isChoiceDial = false;
 
-    private void Start()
+    public virtual void InitDial()
     {
         current_dial = 0;
+        isInitialized = true;
     }
 
     private void OnDisable()
@@ -33,9 +36,19 @@ public class Dial_System : MonoBehaviour
         SceneUI.LockPointer();
     }
 
+    protected virtual void GetDial()
+    {
+        if (current_dial < dials.Length) dial = dials[current_dial];
+        else dial = null;
+    }
+
     public virtual void StartDial()
     {
+        if (!isInitialized) InitDial();
+        else if (current_dial + 1 < dials.Length) current_dial++;
 
+        GetDial();
+        
         current_script = 0;
 
         SceneUI.SetActivePanel(panel_id, true);
@@ -54,8 +67,6 @@ public class Dial_System : MonoBehaviour
         UnregisterInputAction();
 
         OnDialEnd?.Invoke(current_dial);
-
-        current_dial++;
     }
 
     protected void RegisterInputAction()
@@ -77,10 +88,12 @@ public class Dial_System : MonoBehaviour
 
     protected void NextScript()
     {
-        current_script++;
-
-        if (current_script >= dials[current_dial].scripts.Length) EndDial();
-        else ShowCurrentScript();
+        if (current_script + 1 >= dial.scripts.Length) EndDial();
+        else
+        {
+            current_script++;
+            ShowCurrentScript();
+        }
     }
 
     public void ClickChoiceButton()
@@ -95,10 +108,10 @@ public class Dial_System : MonoBehaviour
 
     protected virtual void ShowCurrentScript()
     {
-        string talker = dials[current_dial].scripts[current_script].talker;
+        string talker = dial.scripts[current_script].talker;
         SceneUI.ChangeText(text_talker, talker);
 
-        string script = dials[current_dial].scripts[current_script].text;
+        string script = dial.scripts[current_script].text;
         StartCoroutine(TypeText(script));
     }
 

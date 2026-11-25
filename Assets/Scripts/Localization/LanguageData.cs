@@ -8,6 +8,48 @@ public static class LanguageData
     > Data = new()
     {
         /*
+         * Intro Scene
+         */
+
+        {
+            LanguageDataKey.IntroScene_Text_Open,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "연다"
+                },
+                {
+                    LanguageType.English,
+                    "Open"
+                },
+                {
+                    LanguageType.Japanese,
+                    "開ける"
+                }
+            }
+        },
+
+        {
+            LanguageDataKey.IntroScene_Text_DoNotOpen,
+            new()
+            {
+                {
+                    LanguageType.Korean,
+                    "열지 않는다"
+                },
+                {
+                    LanguageType.English,
+                    "Do not open"
+                },
+                {
+                    LanguageType.Japanese,
+                    "開けない"
+                }
+            }
+        },
+
+        /*
          * Doll Scene
          */
 

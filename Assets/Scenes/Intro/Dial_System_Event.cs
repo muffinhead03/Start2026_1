@@ -19,6 +19,8 @@ public class Dial_System_Event: Dial_System
     {
         base.ShowCurrentScript();
 
+        if (event_id >= events.Length) return;
+
         if(current_dial == events[event_id].dial && current_script == events[event_id].script)
         {
             events[event_id].OnScriptPrint?.Invoke();

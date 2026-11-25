@@ -1,6 +1,15 @@
 public static class LanguageDataKey
 {
     /*
+     * Intro Scene
+     */
+    public const string IntroScene_Text_Open =
+        nameof(IntroScene_Text_Open);
+
+    public const string IntroScene_Text_DoNotOpen =
+        nameof(IntroScene_Text_DoNotOpen);
+
+    /*
      * Doll Scene
      */
 

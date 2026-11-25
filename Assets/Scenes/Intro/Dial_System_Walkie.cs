@@ -3,21 +3,32 @@ using System.Collections;
 using TMPro;
 using UnityEngine.InputSystem;
 
-public class Dial_System_Walkie: Dial_System
+public class Dial_System_Walkie: Dial_System_Localization
 {
-    [SerializeField] string[] texts;
-
     [SerializeField] WalkieTalkieExamine walkietalkie;
 
     [SerializeField] Player_Move player;
 
     private InputAction open, close;
 
+    private void ConnectAction()
+    {
+        LanguageCurrentStatus.OnLanguageChanged += Apply;
+
+        Apply(LanguageCurrentStatus.CurrentLanguage);
+
+        isInitialized = true;
+    }
+
     public void ShowScriptDuringPlay(int id)
     {
+        current_dial = id;
+        if (!isInitialized) ConnectAction();
+        else GetDial();
+
         SceneUI.SetActivePanel(panel_id, true);
 
-        StartCoroutine(TypeText(texts[id]));
+        StartCoroutine(TypeText(dial.scripts[0].text));
     }
 
     public override void StartDial()
