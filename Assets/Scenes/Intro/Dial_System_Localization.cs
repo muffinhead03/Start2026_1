@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static Unity.VisualScripting.Icons;
 
 public class Dial_System_Localization: Dial_System_Event
 {

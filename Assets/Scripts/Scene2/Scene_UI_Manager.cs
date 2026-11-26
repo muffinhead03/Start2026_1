@@ -33,7 +33,7 @@ public class Scene_UI_Manager : MonoBehaviour
 
     private void OnEnable()
     {
-        if (pointerInitState) LockPointer();
+        if (pointerInitState)LockPointer();
         else UnlockPointer();
     }
 
